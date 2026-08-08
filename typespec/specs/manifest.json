@@ -1,0 +1,655 @@
+{
+  "apiVersion": "7.2",
+  "generator": "typespec/tools/convert.mjs",
+  "specs": [
+    {
+      "area": "account",
+      "name": "accounts",
+      "swagger": "specification/account/7.2/accounts.json",
+      "typespec": "typespec/specs/account/accounts",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 169
+    },
+    {
+      "area": "advancedSecurity",
+      "name": "advancedSecurity.Reporting",
+      "swagger": "specification/advancedSecurity/7.2/advancedSecurity.Reporting.json",
+      "typespec": "typespec/specs/advancedSecurity/advancedSecurity.Reporting",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 987
+    },
+    {
+      "area": "advancedSecurity",
+      "name": "alert",
+      "swagger": "specification/advancedSecurity/7.2/alert.json",
+      "typespec": "typespec/specs/advancedSecurity/alert",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1769
+    },
+    {
+      "area": "advancedSecurity",
+      "name": "management",
+      "swagger": "specification/advancedSecurity/7.2/management.json",
+      "typespec": "typespec/specs/advancedSecurity/management",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 626
+    },
+    {
+      "area": "advancedSecurity",
+      "name": "reporting",
+      "swagger": "specification/advancedSecurity/7.2/reporting.json",
+      "typespec": "typespec/specs/advancedSecurity/reporting",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 76
+    },
+    {
+      "area": "approvalsAndChecks",
+      "name": "pipelinePermissions",
+      "swagger": "specification/approvalsAndChecks/7.2/pipelinePermissions.json",
+      "typespec": "typespec/specs/approvalsAndChecks/pipelinePermissions",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 178
+    },
+    {
+      "area": "approvalsAndChecks",
+      "name": "pipelinesChecks",
+      "swagger": "specification/approvalsAndChecks/7.2/pipelinesChecks.json",
+      "typespec": "typespec/specs/approvalsAndChecks/pipelinesChecks",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 832
+    },
+    {
+      "area": "approvalsAndChecks",
+      "name": "pipelinesapproval",
+      "swagger": "specification/approvalsAndChecks/7.2/pipelinesapproval.json",
+      "typespec": "typespec/specs/approvalsAndChecks/pipelinesapproval",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 605
+    },
+    {
+      "area": "artifacts",
+      "name": "feed",
+      "swagger": "specification/artifacts/7.2/feed.json",
+      "typespec": "typespec/specs/artifacts/feed",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1790
+    },
+    {
+      "area": "artifacts",
+      "name": "provenance",
+      "swagger": "specification/artifacts/7.2/provenance.json",
+      "typespec": "typespec/specs/artifacts/provenance",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 72
+    },
+    {
+      "area": "artifacts",
+      "name": "sbom",
+      "swagger": "specification/artifacts/7.2/sbom.json",
+      "typespec": "typespec/specs/artifacts/sbom",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 202
+    },
+    {
+      "area": "artifactsPackageTypes",
+      "name": "cargoApi-AzureArtifacts",
+      "swagger": "specification/artifactsPackageTypes/7.2/cargoApi-AzureArtifacts.json",
+      "typespec": "typespec/specs/artifactsPackageTypes/cargoApi-AzureArtifacts",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 472
+    },
+    {
+      "area": "artifactsPackageTypes",
+      "name": "maven",
+      "swagger": "specification/artifactsPackageTypes/7.2/maven.json",
+      "typespec": "typespec/specs/artifactsPackageTypes/maven",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 682
+    },
+    {
+      "area": "artifactsPackageTypes",
+      "name": "npm",
+      "swagger": "specification/artifactsPackageTypes/7.2/npm.json",
+      "typespec": "typespec/specs/artifactsPackageTypes/npm",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 886
+    },
+    {
+      "area": "artifactsPackageTypes",
+      "name": "nuGet",
+      "swagger": "specification/artifactsPackageTypes/7.2/nuGet.json",
+      "typespec": "typespec/specs/artifactsPackageTypes/nuGet",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 520
+    },
+    {
+      "area": "artifactsPackageTypes",
+      "name": "pyPiApi",
+      "swagger": "specification/artifactsPackageTypes/7.2/pyPiApi.json",
+      "typespec": "typespec/specs/artifactsPackageTypes/pyPiApi",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 502
+    },
+    {
+      "area": "artifactsPackageTypes",
+      "name": "universal",
+      "swagger": "specification/artifactsPackageTypes/7.2/universal.json",
+      "typespec": "typespec/specs/artifactsPackageTypes/universal",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 369
+    },
+    {
+      "area": "audit",
+      "name": "audit",
+      "swagger": "specification/audit/7.2/audit.json",
+      "typespec": "typespec/specs/audit/audit",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 491
+    },
+    {
+      "area": "build",
+      "name": "build",
+      "swagger": "specification/build/7.2/build.json",
+      "typespec": "typespec/specs/build/build",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 2
+      },
+      "lines": 5964
+    },
+    {
+      "area": "core",
+      "name": "core",
+      "swagger": "specification/core/7.2/core.json",
+      "typespec": "typespec/specs/core/core",
+      "patched": {
+        "duplicateProperties": 1,
+        "pathParameters": 0
+      },
+      "lines": 1139
+    },
+    {
+      "area": "dashboard",
+      "name": "dashboard",
+      "swagger": "specification/dashboard/7.2/dashboard.json",
+      "typespec": "typespec/specs/dashboard/dashboard",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 832
+    },
+    {
+      "area": "delegatedAuth",
+      "name": "delegatedAuthorization",
+      "swagger": "specification/delegatedAuth/7.2/delegatedAuthorization.json",
+      "typespec": "typespec/specs/delegatedAuth/delegatedAuthorization",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 508
+    },
+    {
+      "area": "distributedTask",
+      "name": "dynamicPipelines",
+      "swagger": "specification/distributedTask/7.2/dynamicPipelines.json",
+      "typespec": "typespec/specs/distributedTask/dynamicPipelines",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 167
+    },
+    {
+      "area": "distributedTask",
+      "name": "elastic",
+      "swagger": "specification/distributedTask/7.2/elastic.json",
+      "typespec": "typespec/specs/distributedTask/elastic",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 802
+    },
+    {
+      "area": "distributedTask",
+      "name": "task",
+      "swagger": "specification/distributedTask/7.2/task.json",
+      "typespec": "typespec/specs/distributedTask/task",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 801
+    },
+    {
+      "area": "distributedTask",
+      "name": "taskAgent",
+      "swagger": "specification/distributedTask/7.2/taskAgent.json",
+      "typespec": "typespec/specs/distributedTask/taskAgent",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 5411
+    },
+    {
+      "area": "environments",
+      "name": "environments",
+      "swagger": "specification/environments/7.2/environments.json",
+      "typespec": "typespec/specs/environments/environments",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1006
+    },
+    {
+      "area": "extensionManagement",
+      "name": "extensionManagement",
+      "swagger": "specification/extensionManagement/7.2/extensionManagement.json",
+      "typespec": "typespec/specs/extensionManagement/extensionManagement",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1405
+    },
+    {
+      "area": "favorite",
+      "name": "favorite",
+      "swagger": "specification/favorite/7.2/favorite.json",
+      "typespec": "typespec/specs/favorite/favorite",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 252
+    },
+    {
+      "area": "git",
+      "name": "git",
+      "swagger": "specification/git/7.2/git.json",
+      "typespec": "typespec/specs/git/git",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 7835
+    },
+    {
+      "area": "graph",
+      "name": "graph",
+      "swagger": "specification/graph/7.2/graph.json",
+      "typespec": "typespec/specs/graph/graph",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1152
+    },
+    {
+      "area": "hooks",
+      "name": "serviceHooks",
+      "swagger": "specification/hooks/7.2/serviceHooks.json",
+      "typespec": "typespec/specs/hooks/serviceHooks",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1366
+    },
+    {
+      "area": "ims",
+      "name": "identities",
+      "swagger": "specification/ims/7.2/identities.json",
+      "typespec": "typespec/specs/ims/identities",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 390
+    },
+    {
+      "area": "memberEntitlementManagement",
+      "name": "memberEntitlementManagement",
+      "swagger": "specification/memberEntitlementManagement/7.2/memberEntitlementManagement.json",
+      "typespec": "typespec/specs/memberEntitlementManagement/memberEntitlementManagement",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1427
+    },
+    {
+      "area": "notification",
+      "name": "notification",
+      "swagger": "specification/notification/7.2/notification.json",
+      "typespec": "typespec/specs/notification/notification",
+      "patched": {
+        "duplicateProperties": 10,
+        "pathParameters": 0
+      },
+      "lines": 2045
+    },
+    {
+      "area": "operations",
+      "name": "operations",
+      "swagger": "specification/operations/7.2/operations.json",
+      "typespec": "typespec/specs/operations/operations",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 104
+    },
+    {
+      "area": "permissionsReport",
+      "name": "permissionsReport",
+      "swagger": "specification/permissionsReport/7.2/permissionsReport.json",
+      "typespec": "typespec/specs/permissionsReport/permissionsReport",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 208
+    },
+    {
+      "area": "pipelines",
+      "name": "pipelines",
+      "swagger": "specification/pipelines/7.2/pipelines.json",
+      "typespec": "typespec/specs/pipelines/pipelines",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 644
+    },
+    {
+      "area": "policy",
+      "name": "policy",
+      "swagger": "specification/policy/7.2/policy.json",
+      "typespec": "typespec/specs/policy/policy",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 487
+    },
+    {
+      "area": "processadmin",
+      "name": "workItemTrackingProcessTemplate",
+      "swagger": "specification/processadmin/7.2/workItemTrackingProcessTemplate.json",
+      "typespec": "typespec/specs/processadmin/workItemTrackingProcessTemplate",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 240
+    },
+    {
+      "area": "processes",
+      "name": "workItemTrackingProcess",
+      "swagger": "specification/processes/7.2/workItemTrackingProcess.json",
+      "typespec": "typespec/specs/processes/workItemTrackingProcess",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 2504
+    },
+    {
+      "area": "profile",
+      "name": "profile",
+      "swagger": "specification/profile/7.2/profile.json",
+      "typespec": "typespec/specs/profile/profile",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 234
+    },
+    {
+      "area": "release",
+      "name": "release",
+      "swagger": "specification/release/7.2/release.json",
+      "typespec": "typespec/specs/release/release",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 5150
+    },
+    {
+      "area": "resourceUsage",
+      "name": "resourceUsage",
+      "swagger": "specification/resourceUsage/7.2/resourceUsage.json",
+      "typespec": "typespec/specs/resourceUsage/resourceUsage",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 83
+    },
+    {
+      "area": "search",
+      "name": "search",
+      "swagger": "specification/search/7.2/search.json",
+      "typespec": "typespec/specs/search/search",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 917
+    },
+    {
+      "area": "security",
+      "name": "security",
+      "swagger": "specification/security/7.2/security.json",
+      "typespec": "typespec/specs/security/security",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 408
+    },
+    {
+      "area": "securityRoles",
+      "name": "securityRoles",
+      "swagger": "specification/securityRoles/7.2/securityRoles.json",
+      "typespec": "typespec/specs/securityRoles/securityRoles",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 275
+    },
+    {
+      "area": "serviceEndpoint",
+      "name": "serviceEndpoint",
+      "swagger": "specification/serviceEndpoint/7.2/serviceEndpoint.json",
+      "typespec": "typespec/specs/serviceEndpoint/serviceEndpoint",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1354
+    },
+    {
+      "area": "status",
+      "name": "status",
+      "swagger": "specification/status/7.2/status.json",
+      "typespec": "typespec/specs/status/status",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 333
+    },
+    {
+      "area": "symbol",
+      "name": "symbol",
+      "swagger": "specification/symbol/7.2/symbol.json",
+      "typespec": "typespec/specs/symbol/symbol",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 510
+    },
+    {
+      "area": "test",
+      "name": "test",
+      "swagger": "specification/test/7.2/test.json",
+      "typespec": "typespec/specs/test/test",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 6233
+    },
+    {
+      "area": "testPlan",
+      "name": "testPlan",
+      "swagger": "specification/testPlan/7.2/testPlan.json",
+      "typespec": "typespec/specs/testPlan/testPlan",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 2687
+    },
+    {
+      "area": "testResults",
+      "name": "testResults",
+      "swagger": "specification/testResults/7.2/testResults.json",
+      "typespec": "typespec/specs/testResults/testResults",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 4950
+    },
+    {
+      "area": "tfvc",
+      "name": "tfvc",
+      "swagger": "specification/tfvc/7.2/tfvc.json",
+      "typespec": "typespec/specs/tfvc/tfvc",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1374
+    },
+    {
+      "area": "tokenAdmin",
+      "name": "tokenAdmin",
+      "swagger": "specification/tokenAdmin/7.2/tokenAdmin.json",
+      "typespec": "typespec/specs/tokenAdmin/tokenAdmin",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 239
+    },
+    {
+      "area": "tokens",
+      "name": "tokens",
+      "swagger": "specification/tokens/7.2/tokens.json",
+      "typespec": "typespec/specs/tokens/tokens",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 411
+    },
+    {
+      "area": "wiki",
+      "name": "wiki",
+      "swagger": "specification/wiki/7.2/wiki.json",
+      "typespec": "typespec/specs/wiki/wiki",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 1397
+    },
+    {
+      "area": "wit",
+      "name": "workItemTracking",
+      "swagger": "specification/wit/7.2/workItemTracking.json",
+      "typespec": "typespec/specs/wit/workItemTracking",
+      "patched": {
+        "duplicateProperties": 1,
+        "pathParameters": 0
+      },
+      "lines": 4058
+    },
+    {
+      "area": "work",
+      "name": "work",
+      "swagger": "specification/work/7.2/work.json",
+      "typespec": "typespec/specs/work/work",
+      "patched": {
+        "duplicateProperties": 0,
+        "pathParameters": 0
+      },
+      "lines": 2721
+    }
+  ]
+}

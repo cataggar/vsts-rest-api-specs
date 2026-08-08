@@ -1,0 +1,6 @@
+{
+  "apiVersion": "7.2",
+  "exclude": [
+    "advancedSecurity/managementInternal"
+  ]
+}

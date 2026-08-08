@@ -1,0 +1,19 @@
+{
+  "name": "vsts-rest-api-specs-typespec",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Converts the Azure DevOps Swagger 2.0 specification set into TypeSpec.",
+  "scripts": {
+    "convert": "node tools/convert.mjs",
+    "check": "node tools/convert.mjs --check",
+    "test": "node --test tools/*.test.mjs"
+  },
+  "dependencies": {
+    "@typespec/compiler": "1.12.0",
+    "@typespec/http": "1.12.0",
+    "@typespec/openapi": "1.12.0",
+    "@typespec/openapi3": "1.12.0",
+    "swagger2openapi": "^7.0.8"
+  }
+}
