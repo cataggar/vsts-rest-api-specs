@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "WorkItemTrackingProcessTemplate" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace WorkItemTrackingProcessTemplate;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Describes an admin behavior for a process. */
 model AdminBehavior {
@@ -147,93 +153,97 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Returns a list of behaviors for the process. */
-@tag("Behaviors")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "behaviors")
-@extension("x-ms-vss-method", "GetBehaviors")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/work/processadmin/{processId}/behaviors")
-@get
-op Behaviors_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the process */
-  @format("uuid") @path processId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AdminBehavior[]>;
-
-/** Returns requested process template. */
-@tag("Processes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "processes")
-@extension("x-ms-vss-method", "Export")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/work/processadmin/processes/export/{id}")
-@get
-op Processes_ExportProcessTemplate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the process */
-  @format("uuid") @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/zip";
-  @body @format("Stream") body: string;
-};
-
-/** Imports a process from zip file. */
-@tag("Processes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "processes")
-@extension("x-ms-vss-method", "Import")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/work/processadmin/processes/import")
-@post
-op Processes_ImportProcessTemplate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Ignores validation warnings. Default value is false. */
-  @query(#{ explode: true }) ignoreWarnings?: boolean,
-
-  /** Replaces the existing template. Default value is true. */
-  @query(#{ explode: true }) replaceExistingTemplate?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/octet-stream",
-
-  /** Stream to upload */
-  @body body: string,
-): ProcessImportResult;
-
-/** Tells whether promote has completed for the specified promote job ID. */
-@tag("Processes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "processes")
-@extension("x-ms-vss-method", "Status")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/work/processadmin/processes/status/{id}")
-@get
-op Processes_ImportProcessTemplateStatus(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the promote job operation */
-  @format("uuid") @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ProcessPromoteStatus;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Behaviors {
+  /** Returns a list of behaviors for the process. */
+  @tag("Behaviors")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "behaviors")
+  @extension("x-ms-vss-method", "GetBehaviors")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/work/processadmin/{processId}/behaviors")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the process */
+    @format("uuid") @path processId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AdminBehavior[]>;
+}
+
+interface Processes {
+  /** Returns requested process template. */
+  @tag("Processes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "processes")
+  @extension("x-ms-vss-method", "Export")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/work/processadmin/processes/export/{id}")
+  @get
+  ExportProcessTemplate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the process */
+    @format("uuid") @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/zip";
+    @body @format("Stream") body: string;
+  };
+
+  /** Imports a process from zip file. */
+  @tag("Processes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "processes")
+  @extension("x-ms-vss-method", "Import")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/work/processadmin/processes/import")
+  @post
+  ImportProcessTemplate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Ignores validation warnings. Default value is false. */
+    @query(#{ explode: true }) ignoreWarnings?: boolean,
+
+    /** Replaces the existing template. Default value is true. */
+    @query(#{ explode: true }) replaceExistingTemplate?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/octet-stream",
+
+    /** Stream to upload */
+    @body body: string,
+  ): ProcessImportResult;
+
+  /** Tells whether promote has completed for the specified promote job ID. */
+  @tag("Processes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "processes")
+  @extension("x-ms-vss-method", "Status")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/work/processadmin/processes/status/{id}")
+  @get
+  ImportProcessTemplateStatus(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the promote job operation */
+    @format("uuid") @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ProcessPromoteStatus;
 }

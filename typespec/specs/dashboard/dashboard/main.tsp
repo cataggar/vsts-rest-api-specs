@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Dashboard" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Dashboard;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Copy options of a Dashboard. */
 model CopyDashboardOptions {
@@ -383,449 +389,455 @@ model WidgetTypesResponse {
   widgetTypes?: WidgetMetadata[];
 }
 
-/** Get all available widget metadata in alphabetical order, including widgets marked with isVisibleFromCatalog == false. */
-@tag("Widget Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "widgetTypes")
-@extension("x-ms-vss-method", "GetWidgetTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/dashboard/widgettypes")
-@get
-op WidgetTypes_GetWidgetTypes(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WidgetScope",
-      values: #[
-        #{ value: "collection_User", description: "" },
-        #{ value: "project_Team", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $scope: "collection_User" | "project_Team",
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): WidgetTypesResponse;
-
-/** Get the widget metadata satisfying the specified contribution ID. */
-@tag("Widget Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "widgetTypes")
-@extension("x-ms-vss-method", "GetWidgetMetadata")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/dashboard/widgettypes/{contributionId}")
-@get
-op WidgetTypes_GetWidgetMetadata(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of Contribution for the Widget */
-  @path contributionId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): WidgetMetadataResponse;
-
-/** Get a list of dashboards under a project. */
-@tag("Dashboards")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "dashboards")
-@extension("x-ms-vss-method", "GetDashboardsByProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
-@get
-op Dashboards_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<Dashboard[]>;
-
-/** Create the supplied dashboard. */
-@tag("Dashboards")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "dashboards")
-@extension("x-ms-vss-method", "CreateDashboard")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
-@post
-op Dashboards_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The initial state of the dashboard */
-  @body body: Dashboard,
-): Dashboard;
-
-/** Update the name and position of dashboards in the supplied group, and remove omitted dashboards. Does not modify dashboard content. */
-@tag("Dashboards")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "dashboards")
-@extension("x-ms-vss-method", "ReplaceDashboards")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
-@put
-op Dashboards_ReplaceDashboards(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-  @body body: DashboardGroup,
-): DashboardGroup;
-
-/** Delete a dashboard given its ID. This also deletes the widgets associated with this dashboard. */
-@tag("Dashboards")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "dashboards")
-@extension("x-ms-vss-method", "DeleteDashboard")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
-@delete
-op Dashboards_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard to delete. */
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Get a dashboard by its ID. */
-@tag("Dashboards")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "dashboards")
-@extension("x-ms-vss-method", "GetDashboard")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
-@get
-op Dashboards_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Dashboard;
-
-/** Replace configuration for the specified dashboard. Replaces Widget list on Dashboard, only if property is supplied. */
-@tag("Dashboards")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "dashboards")
-@extension("x-ms-vss-method", "ReplaceDashboard")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
-@put
-op Dashboards_ReplaceDashboard(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard to replace. */
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The Configuration of the dashboard to replace. */
-  @body body: Dashboard,
-): Dashboard;
-
-/** Get widgets contained on the specified dashboard. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "GetWidgets")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
-@get
-op Widgets_GetWidgets(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard to read. */
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Dashboard Widgets Version */
-  @header eTag?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): {
-  @header ETag?: string;
-  @body body: Widget[];
-};
-
-/** Update the supplied widgets on the dashboard using supplied state. State of existing Widgets not passed in the widget list is preserved. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "UpdateWidgets")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
-@patch
-op Widgets_UpdateWidgets(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the Dashboard to modify. */
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Dashboard Widgets Version */
-  @header eTag?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The set of widget states to update on the dashboard. */
-  @body body: Widget[],
-): {
-  @header ETag?: string;
-  @body body: Widget[];
-};
-
-/** Create a widget on the specified dashboard. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "CreateWidget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
-@post
-op Widgets_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of dashboard the widget will be added to. */
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** State of the widget to add */
-  @body body: Widget,
-): Widget;
-
-/** Replace the widgets on specified dashboard with the supplied widgets. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "ReplaceWidgets")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
-@put
-op Widgets_ReplaceWidgets(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the Dashboard to modify. */
-  @format("uuid") @path dashboardId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Dashboard Widgets Version */
-  @header eTag?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Revised state of widgets to store for the dashboard. */
-  @body body: Widget[],
-): {
-  @header ETag?: string;
-  @body body: Widget[];
-};
-
-/** Delete the specified widget. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "DeleteWidget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
-@delete
-op Widgets_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard containing the widget. */
-  @format("uuid") @path dashboardId: string,
-
-  /** ID of the widget to update. */
-  @format("uuid") @path widgetId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Dashboard;
-
-/** Get the current state of the specified widget. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "GetWidget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
-@get
-op Widgets_GetWidget(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard containing the widget. */
-  @format("uuid") @path dashboardId: string,
-
-  /** ID of the widget to read. */
-  @format("uuid") @path widgetId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Widget;
-
-/** Perform a partial update of the specified widget. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "UpdateWidget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
-@patch
-op Widgets_UpdateWidget(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard containing the widget. */
-  @format("uuid") @path dashboardId: string,
-
-  /** ID of the widget to update. */
-  @format("uuid") @path widgetId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Description of the widget changes to apply. All non-null fields will be replaced. */
-  @body body: Widget,
-): Widget;
-
-/** Override the state of the specified widget. */
-@tag("Widgets")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "widgets")
-@extension("x-ms-vss-method", "ReplaceWidget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
-@put
-op Widgets_ReplaceWidget(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the dashboard containing the widget. */
-  @format("uuid") @path dashboardId: string,
-
-  /** ID of the widget to update. */
-  @format("uuid") @path widgetId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** State to be written for the widget. */
-  @body body: Widget,
-): Widget;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface WidgetTypes {
+  /** Get all available widget metadata in alphabetical order, including widgets marked with isVisibleFromCatalog == false. */
+  @tag("Widget Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "widgetTypes")
+  @extension("x-ms-vss-method", "GetWidgetTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/dashboard/widgettypes")
+  @get
+  GetWidgetTypes(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WidgetScope",
+        values: #[
+          #{ value: "collection_User", description: "" },
+          #{ value: "project_Team", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $scope: "collection_User" | "project_Team",
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): WidgetTypesResponse;
+
+  /** Get the widget metadata satisfying the specified contribution ID. */
+  @tag("Widget Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "widgetTypes")
+  @extension("x-ms-vss-method", "GetWidgetMetadata")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/dashboard/widgettypes/{contributionId}")
+  @get
+  GetWidgetMetadata(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of Contribution for the Widget */
+    @path contributionId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): WidgetMetadataResponse;
+}
+
+interface Dashboards {
+  /** Get a list of dashboards under a project. */
+  @tag("Dashboards")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "dashboards")
+  @extension("x-ms-vss-method", "GetDashboardsByProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<Dashboard[]>;
+
+  /** Create the supplied dashboard. */
+  @tag("Dashboards")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "dashboards")
+  @extension("x-ms-vss-method", "CreateDashboard")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The initial state of the dashboard */
+    @body body: Dashboard,
+  ): Dashboard;
+
+  /** Update the name and position of dashboards in the supplied group, and remove omitted dashboards. Does not modify dashboard content. */
+  @tag("Dashboards")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "dashboards")
+  @extension("x-ms-vss-method", "ReplaceDashboards")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
+  @put
+  ReplaceDashboards(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+    @body body: DashboardGroup,
+  ): DashboardGroup;
+
+  /** Delete a dashboard given its ID. This also deletes the widgets associated with this dashboard. */
+  @tag("Dashboards")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "dashboards")
+  @extension("x-ms-vss-method", "DeleteDashboard")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard to delete. */
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Get a dashboard by its ID. */
+  @tag("Dashboards")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "dashboards")
+  @extension("x-ms-vss-method", "GetDashboard")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Dashboard;
+
+  /** Replace configuration for the specified dashboard. Replaces Widget list on Dashboard, only if property is supplied. */
+  @tag("Dashboards")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "dashboards")
+  @extension("x-ms-vss-method", "ReplaceDashboard")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
+  @put
+  ReplaceDashboard(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard to replace. */
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The Configuration of the dashboard to replace. */
+    @body body: Dashboard,
+  ): Dashboard;
+}
+
+interface Widgets {
+  /** Get widgets contained on the specified dashboard. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "GetWidgets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
+  @get
+  GetWidgets(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard to read. */
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Dashboard Widgets Version */
+    @header eTag?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): {
+    @header ETag?: string;
+    @body body: Widget[];
+  };
+
+  /** Update the supplied widgets on the dashboard using supplied state. State of existing Widgets not passed in the widget list is preserved. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "UpdateWidgets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
+  @patch
+  UpdateWidgets(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the Dashboard to modify. */
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Dashboard Widgets Version */
+    @header eTag?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The set of widget states to update on the dashboard. */
+    @body body: Widget[],
+  ): {
+    @header ETag?: string;
+    @body body: Widget[];
+  };
+
+  /** Create a widget on the specified dashboard. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "CreateWidget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of dashboard the widget will be added to. */
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** State of the widget to add */
+    @body body: Widget,
+  ): Widget;
+
+  /** Replace the widgets on specified dashboard with the supplied widgets. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "ReplaceWidgets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
+  @put
+  ReplaceWidgets(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the Dashboard to modify. */
+    @format("uuid") @path dashboardId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Dashboard Widgets Version */
+    @header eTag?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Revised state of widgets to store for the dashboard. */
+    @body body: Widget[],
+  ): {
+    @header ETag?: string;
+    @body body: Widget[];
+  };
+
+  /** Delete the specified widget. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "DeleteWidget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard containing the widget. */
+    @format("uuid") @path dashboardId: string,
+
+    /** ID of the widget to update. */
+    @format("uuid") @path widgetId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Dashboard;
+
+  /** Get the current state of the specified widget. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "GetWidget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
+  @get
+  GetWidget(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard containing the widget. */
+    @format("uuid") @path dashboardId: string,
+
+    /** ID of the widget to read. */
+    @format("uuid") @path widgetId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Widget;
+
+  /** Perform a partial update of the specified widget. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "UpdateWidget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
+  @patch
+  UpdateWidget(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard containing the widget. */
+    @format("uuid") @path dashboardId: string,
+
+    /** ID of the widget to update. */
+    @format("uuid") @path widgetId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Description of the widget changes to apply. All non-null fields will be replaced. */
+    @body body: Widget,
+  ): Widget;
+
+  /** Override the state of the specified widget. */
+  @tag("Widgets")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "widgets")
+  @extension("x-ms-vss-method", "ReplaceWidget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
+  @put
+  ReplaceWidget(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the dashboard containing the widget. */
+    @format("uuid") @path dashboardId: string,
+
+    /** ID of the widget to update. */
+    @format("uuid") @path widgetId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** State to be written for the widget. */
+    @body body: Widget,
+  ): Widget;
 }

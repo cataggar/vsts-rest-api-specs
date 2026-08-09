@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Work" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Work;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model Activity {
   capacityPerDay?: float32;
@@ -1280,1441 +1286,1493 @@ model WorkItemTypeStateInfo {
   workItemTypeName?: string;
 }
 
-/** Get available board columns in a project */
-@tag("Boardcolumns")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boardcolumns")
-@extension("x-ms-vss-method", "GetColumnSuggestedValues")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/boardcolumns")
-@get
-op Boardcolumns_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BoardSuggestedValue[]>;
-
-/** Get available board rows in a project */
-@tag("Boardrows")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boardrows")
-@extension("x-ms-vss-method", "GetRowSuggestedValues")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/boardrows")
-@get
-op Boardrows_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BoardSuggestedValue[]>;
-
-/** Get an iteration's capacity for all teams in iteration */
-@tag("Iterationcapacities")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "iterationcapacities")
-@extension("x-ms-vss-method", "GetTotalIterationCapacities")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/iterations/{iterationId}/iterationcapacities")
-@get
-op Iterationcapacities_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): IterationCapacity;
-
-/** Get the information for all the plans configured for the given team */
-@tag("Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "GetPlans")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/plans")
-@get
-op Plans_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Plan[]>;
-
-/** Add a new plan for the team */
-@tag("Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "CreatePlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/plans")
-@post
-op Plans_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Plan definition */
-  @body body: CreatePlan,
-): Plan;
-
-/** Delete the specified plan */
-@tag("Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "DeletePlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/plans/{id}")
-@delete
-op Plans_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier of the plan */
-  @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get the information for the specified plan */
-@tag("Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "GetPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/plans/{id}")
-@get
-op Plans_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier of the plan */
-  @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Plan;
-
-/** Update the information for the specified plan */
-@tag("Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "UpdatePlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/plans/{id}")
-@put
-op Plans_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier of the plan */
-  @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Plan definition to be updated */
-  @body body: UpdatePlan,
-): Plan;
-
-/** Get Delivery View Data */
-@tag("Deliverytimeline")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deliverytimeline")
-@extension("x-ms-vss-method", "GetDeliveryTimelineData")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/plans/{id}/deliverytimeline")
-@get
-op Deliverytimeline_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier for delivery view */
-  @path id: string,
-
-  /** Revision of the plan for which you want data. If the current plan is a different revision you will get an ViewRevisionMismatchException exception. If you do not supply a revision you will get data for the latest revision. */
-  @query(#{ explode: true }) revision?: int32,
-
-  /** The start date of timeline */
-  @query(#{ explode: true }) startDate?: utcDateTime,
-
-  /** The end date of timeline */
-  @query(#{ explode: true }) endDate?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): DeliveryViewData;
-
-/** Retrieves the set of known queries */
-@tag("Predefined Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "predefinedQueries")
-@extension("x-ms-vss-method", "GetPredefinedQueries")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/predefinedqueries")
-@get
-op PredefinedQueries_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PredefinedQuery[]>;
-
-/** Retrieves the specified predefined query including the query results */
-@tag("Predefined Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "predefinedQueries")
-@extension("x-ms-vss-method", "GetPredefinedQueryResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/predefinedqueries/{id}")
-@get
-op PredefinedQueries_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the query to run */
-  @path id: string,
-
-  /** The maximum number of items to return */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Whether or not to retrieve the 'completed' work items (work items in the 'completed' meta state) */
-  @query(#{ explode: true }) includeCompleted?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PredefinedQuery;
-
-/** Get process configuration */
-@tag("Processconfiguration")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "processconfiguration")
-@extension("x-ms-vss-method", "GetProcessConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/work/processconfiguration")
-@get
-op Processconfiguration_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ProcessConfiguration;
-
-/** Gets backlog configuration for a team */
-@tag("Backlogconfiguration")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "backlogconfiguration")
-@extension("x-ms-vss-method", "GetBacklogConfigurations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/backlogconfiguration")
-@get
-op Backlogconfiguration_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): BacklogConfiguration;
-
-/** List all backlog levels */
-@tag("Backlogs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "backlogs")
-@extension("x-ms-vss-method", "GetBacklogs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/backlogs")
-@get
-op Backlogs_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BacklogLevelConfiguration[]>;
-
-/** Get a list of work items within a backlog level */
-@tag("Backlogs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "backlogs")
-@extension("x-ms-vss-method", "GetBacklogLevelWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/backlogs/{backlogId}/workItems")
-@get
-op Backlogs_GetBacklogLevelWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  @path backlogId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): BacklogLevelWorkItems;
-
-/** Get a backlog level */
-@tag("Backlogs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "backlogs")
-@extension("x-ms-vss-method", "GetBacklog")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/backlogs/{id}")
-@get
-op Backlogs_GetBacklog(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** The id of the backlog level */
-  @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): BacklogLevelConfiguration;
-
-/** Get boards */
-@tag("Boards")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boards")
-@extension("x-ms-vss-method", "GetBoards")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards")
-@get
-op Boards_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BoardReference[]>;
-
-/** Get board user settings for a board id */
-@tag("Boardusersettings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boardusersettings")
-@extension("x-ms-vss-method", "GetBoardUserSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/boardusersettings")
-@get
-op Boardusersettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Board ID or Name */
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): BoardUserSettings;
-
-/** Update board user settings for the board id We don't want stakeholders to update board settings (currently just autorefresh). The BacklogManagement feature check validates this. */
-@tag("Boardusersettings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boardusersettings")
-@extension("x-ms-vss-method", "UpdateBoardUserSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/boardusersettings")
-@patch
-op Boardusersettings_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: Record<string>,
-): BoardUserSettings;
-
-/** Get board card Rule settings for the board id or board by name */
-@tag("Cardrulesettings")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cardrulesettings")
-@extension("x-ms-vss-method", "GetBoardCardRuleSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardrulesettings")
-@get
-op Cardrulesettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): BoardCardRuleSettings;
-
-/** Update board card Rule settings for the board id or board by name */
-@tag("Cardrulesettings")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cardrulesettings")
-@extension("x-ms-vss-method", "UpdateBoardCardRuleSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardrulesettings")
-@patch
-op Cardrulesettings_UpdateBoardCardRuleSettings(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: BoardCardRuleSettings,
-): BoardCardRuleSettings;
-
-/** Get board card settings for the board id or board by name */
-@tag("Cardsettings")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cardsettings")
-@extension("x-ms-vss-method", "GetBoardCardSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardsettings")
-@get
-op Cardsettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): BoardCardSettings;
-
-/** Update board card settings for the board id or board by name */
-@tag("Cardsettings")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cardsettings")
-@extension("x-ms-vss-method", "UpdateBoardCardSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardsettings")
-@put
-op Cardsettings_UpdateBoardCardSettings(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: BoardCardSettings,
-): BoardCardSettings;
-
-/** Get a board chart image. */
-@tag("Chartimages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "chartimages")
-@extension("x-ms-vss-method", "GetBoardChartImage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/chartimages/{name}")
-@get
-op Chartimages_GetBoardChartImage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** Identifier for board, either board's backlog level name (e.g. 'Issues') or Id. */
-  @path board: string,
-
-  /** The chart name. e.g. CumulativeFlow. */
-  @path name: string,
-
-  /** The width of the chart in pixels. Must be greater than 0. */
-  @query(#{ explode: true }) width?: int32,
-
-  /** The height of the chart in pixels. Must be greater than 0. */
-  @query(#{ explode: true }) height?: int32,
-
-  /** Whether or not the chart should include detailed information (e.g. axis labels, titles, trend lines, etc.). */
-  @query(#{ explode: true }) showDetails?: boolean,
-
-  /** The title of the chart. Can only be dislayed if ShowLabels is true. */
-  @query(#{ explode: true }) title?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<string>;
-
-/** Get board charts */
-@tag("Charts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "charts")
-@extension("x-ms-vss-method", "GetBoardCharts")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/charts")
-@get
-op Charts_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier for board, either board's backlog level name (Eg:'Stories') or Id */
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BoardChartReference[]>;
-
-/** Get a board chart */
-@tag("Charts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "charts")
-@extension("x-ms-vss-method", "GetBoardChart")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/charts/{name}")
-@get
-op Charts_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier for board, either board's backlog level name (Eg:'Stories') or Id */
-  @path board: string,
-
-  /** The chart name */
-  @path name: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): BoardChart;
-
-/** Update a board chart */
-@tag("Charts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "charts")
-@extension("x-ms-vss-method", "UpdateBoardChart")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/charts/{name}")
-@patch
-op Charts_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Identifier for board, either board's backlog level name (Eg:'Stories') or Id */
-  @path board: string,
-
-  /** The chart name */
-  @path name: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: BoardChart,
-): BoardChart;
-
-/** Get columns on a board */
-@tag("Columns")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "columns")
-@extension("x-ms-vss-method", "GetBoardColumns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/columns")
-@get
-op Columns_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name or ID of the specific board */
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BoardColumn[]>;
-
-/** Update columns on a board */
-@tag("Columns")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "columns")
-@extension("x-ms-vss-method", "UpdateBoardColumns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/columns")
-@put
-op Columns_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name or ID of the specific board */
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** List of board columns to update */
-  @body body: BoardColumn[],
-): Body<BoardColumn[]>;
-
-/** Get rows on a board */
-@tag("Rows")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "rows")
-@extension("x-ms-vss-method", "GetBoardRows")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/rows")
-@get
-op Rows_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name or ID of the specific board */
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BoardRow[]>;
-
-/** Update rows on a board */
-@tag("Rows")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "rows")
-@extension("x-ms-vss-method", "UpdateBoardRows")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{board}/rows")
-@put
-op Rows_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name or ID of the specific board */
-  @path board: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** List of board rows to update */
-  @body body: BoardRow[],
-): Body<BoardRow[]>;
-
-/** Get board */
-@tag("Boards")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boards")
-@extension("x-ms-vss-method", "GetBoard")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{id}")
-@get
-op Boards_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** identifier for board, either board's backlog level name (Eg:'Stories') or Id */
-  @path id: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Board;
-
-/** Update board options */
-@tag("Boards")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boards")
-@extension("x-ms-vss-method", "SetBoardOptions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/{id}")
-@put
-op Boards_SetBoardOptions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** identifier for board, either category plural name (Eg:'Stories') or guid */
-  @path id: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** options to updated */
-  @body body: Record<string>,
-): Body<Record<string>>;
-
-/** Returns the list of parent field filter model for the given list of workitem ids */
-@tag("Boardparents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "boardparents")
-@extension("x-ms-vss-method", "GetBoardMappingParentItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/boards/boardparents")
-@get
-op Boardparents_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @query(#{ explode: true }) childBacklogContextCategoryRefName: string,
-  @format("array (int32)") @query(#{ explode: true }) workitemIds: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ParentChildWIMap[]>;
-
-/** Get an iteration chart image. */
-@tag("Chartimages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "chartimages")
-@extension("x-ms-vss-method", "GetIterationChartImage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/iterations/{iterationId}/chartimages/{name}")
-@get
-op Chartimages_GetIterationChartImage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** ID of the iteration. */
-  @format("uuid") @path iterationId: string,
-
-  /** The chart name. e.g. Burndown. */
-  @path name: string,
-
-  /** The width of the chart in pixels. Must be greater than 0. */
-  @query(#{ explode: true }) width?: int32,
-
-  /** The height of the chart in pixels. Must be greater than 0. */
-  @query(#{ explode: true }) height?: int32,
-
-  /** Whether or not the chart should include detailed information (e.g. axis labels, titles, trend lines, etc.) */
-  @query(#{ explode: true }) showDetails?: boolean,
-
-  /** The title of the chart. Can only be dislayed if ShowLabels is true. */
-  @query(#{ explode: true }) title?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<string>;
-
-/** Reorder Sprint Backlog/Taskboard Work Items */
-@tag("Workitemsorder")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workitemsorder")
-@extension("x-ms-vss-method", "ReorderIterationWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/iterations/{iterationId}/workitemsorder")
-@patch
-op Workitemsorder_ReorderIterationWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** The id of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ReorderOperation,
-): Body<ReorderResult[]>;
-
-/** Get an iterations chart image. */
-@tag("Chartimages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "chartimages")
-@extension("x-ms-vss-method", "GetIterationsChartImage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/iterations/chartimages/{name}")
-@get
-op Chartimages_GetIterationsChartImage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** The chart name. e.g. Velocity. */
-  @path name: string,
-
-  /** Number of iterations the chart is for. */
-  @query(#{ explode: true }) iterationsNumber?: int32,
-
-  /** The width of the chart in pixels. Must be greater than 0. */
-  @query(#{ explode: true }) width?: int32,
-
-  /** The height of the chart in pixels. Must be greater than 0. */
-  @query(#{ explode: true }) height?: int32,
-
-  /** Whether or not the chart should include detailed information (e.g. axis labels, titles, trend lines, etc.) */
-  @query(#{ explode: true }) showDetails?: boolean,
-
-  /** The title of the chart. Can only be dislayed if ShowLabels is true. */
-  @query(#{ explode: true }) title?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<string>;
-
-/** Update taskboard card Rule settings */
-@tag("Cardrulesettings")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cardrulesettings")
-@extension("x-ms-vss-method", "UpdateTaskboardCardRuleSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/taskboard/cardrulesettings")
-@patch
-op Cardrulesettings_UpdateTaskboardCardRuleSettings(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: BoardCardRuleSettings,
-): OkResponse;
-
-/** Update taskboard card settings */
-@tag("Cardsettings")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cardsettings")
-@extension("x-ms-vss-method", "UpdateTaskboardCardSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/taskboard/cardsettings")
-@put
-op Cardsettings_UpdateTaskboardCardSettings(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: BoardCardSettings,
-): OkResponse;
-
-@tag("Taskboard Columns")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskboardColumns")
-@extension("x-ms-vss-method", "GetColumns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/taskboardcolumns")
-@get
-op TaskboardColumns_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskboardColumns;
-
-@tag("Taskboard Columns")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskboardColumns")
-@extension("x-ms-vss-method", "UpdateColumns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/taskboardcolumns")
-@put
-op TaskboardColumns_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: UpdateTaskboardColumn[],
-): TaskboardColumns;
-
-@tag("Taskboard Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskboardWorkItems")
-@extension("x-ms-vss-method", "GetWorkItemColumns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/taskboardworkitems/{iterationId}")
-@get
-op TaskboardWorkItems_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  @format("uuid") @path iterationId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskboardWorkItemColumn[]>;
-
-@tag("Taskboard Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskboardWorkItems")
-@extension("x-ms-vss-method", "UpdateWorkItemColumn")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/taskboardworkitems/{iterationId}/{workItemId}")
-@patch
-op TaskboardWorkItems_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  @format("uuid") @path iterationId: string,
-  @path workItemId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: UpdateTaskboardWorkItemColumn,
-): OkResponse;
-
-/** Get a team's settings */
-@tag("Teamsettings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "teamsettings")
-@extension("x-ms-vss-method", "GetTeamSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings")
-@get
-op Teamsettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TeamSetting;
-
-/** Update a team's settings */
-@tag("Teamsettings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "teamsettings")
-@extension("x-ms-vss-method", "UpdateTeamSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings")
-@patch
-op Teamsettings_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** TeamSettings changes */
-  @body body: TeamSettingsPatch,
-): TeamSetting;
-
-/** Get a team's iterations using timeframe filter */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "iterations")
-@extension("x-ms-vss-method", "GetTeamIterations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations")
-@get
-op Iterations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** A filter for which iterations are returned based on relative time. Only Current is supported currently. */
-  @query(#{ explode: true }) $timeframe?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TeamSettingsIteration[]>;
-
-/** Add an iteration to the team */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "iterations")
-@extension("x-ms-vss-method", "PostTeamIteration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations")
-@post
-op Iterations_PostTeamIteration(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Iteration to add */
-  @body body: TeamSettingsIteration,
-): TeamSettingsIteration;
-
-/** Delete a team's iteration by iterationId */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "iterations")
-@extension("x-ms-vss-method", "DeleteTeamIteration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{id}")
-@delete
-op Iterations_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path id: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get team's iteration by iterationId */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "iterations")
-@extension("x-ms-vss-method", "GetTeamIteration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{id}")
-@get
-op Iterations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path id: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TeamSettingsIteration;
-
-/** Get a team's capacity including total capacity and days off */
-@tag("Capacities")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "capacities")
-@extension("x-ms-vss-method", "GetCapacitiesWithIdentityRefAndTotals")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities")
-@get
-op Capacities_GetCapacitiesWithIdentityRefAndTotals(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): TeamCapacity;
-
-/** Replace a team's capacity */
-@tag("Capacities")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "capacities")
-@extension("x-ms-vss-method", "ReplaceCapacitiesWithIdentityRef")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities")
-@put
-op Capacities_ReplaceCapacitiesWithIdentityRef(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** Team capacity to replace */
-  @body body: TeamMemberCapacityIdentityRef[],
-): Body<TeamMemberCapacityIdentityRef[]>;
-
-/** Get a team member's capacity */
-@tag("Capacities")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "capacities")
-@extension("x-ms-vss-method", "GetCapacityWithIdentityRef")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities/{teamMemberId}")
-@get
-op Capacities_GetCapacityWithIdentityRef(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** ID of the team member */
-  @format("uuid") @path teamMemberId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): TeamMemberCapacityIdentityRef;
-
-/** Update a team member's capacity */
-@tag("Capacities")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "capacities")
-@extension("x-ms-vss-method", "UpdateCapacityWithIdentityRef")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities/{teamMemberId}")
-@patch
-op Capacities_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** ID of the team member */
-  @format("uuid") @path teamMemberId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** Updated capacity */
-  @body body: CapacityPatch,
-): TeamMemberCapacityIdentityRef;
-
-/** Get team's days off for an iteration */
-@tag("Teamdaysoff")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "teamdaysoff")
-@extension("x-ms-vss-method", "GetTeamDaysOff")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/teamdaysoff")
-@get
-op Teamdaysoff_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TeamSettingsDaysOff;
-
-/** Set a team's days off for an iteration */
-@tag("Teamdaysoff")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "teamdaysoff")
-@extension("x-ms-vss-method", "UpdateTeamDaysOff")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/teamdaysoff")
-@patch
-op Teamdaysoff_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Team's days off patch containing a list of start and end dates */
-  @body body: TeamSettingsDaysOffPatch,
-): TeamSettingsDaysOff;
-
-/** Get work items for iteration */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workitems")
-@extension("x-ms-vss-method", "GetIterationWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/workitems")
-@get
-op Iterations_GetIterationWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the iteration */
-  @format("uuid") @path iterationId: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): IterationWorkItems;
-
-/** Get a collection of team field values */
-@tag("Teamfieldvalues")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "teamfieldvalues")
-@extension("x-ms-vss-method", "GetTeamFieldValues")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/teamfieldvalues")
-@get
-op Teamfieldvalues_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TeamFieldValues;
-
-/** Update team field values */
-@tag("Teamfieldvalues")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "teamfieldvalues")
-@extension("x-ms-vss-method", "UpdateTeamFieldValues")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/teamsettings/teamfieldvalues")
-@patch
-op Teamfieldvalues_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: TeamFieldValuesPatch,
-): TeamFieldValues;
-
-/** Reorder Product Backlog/Boards Work Items */
-@tag("Workitemsorder")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workitemsorder")
-@extension("x-ms-vss-method", "ReorderBacklogWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/work/workitemsorder")
-@patch
-op Workitemsorder_ReorderBacklogWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ReorderOperation,
-): Body<ReorderResult[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Boardcolumns {
+  /** Get available board columns in a project */
+  @tag("Boardcolumns")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boardcolumns")
+  @extension("x-ms-vss-method", "GetColumnSuggestedValues")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/boardcolumns")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BoardSuggestedValue[]>;
+}
+
+interface Boardrows {
+  /** Get available board rows in a project */
+  @tag("Boardrows")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boardrows")
+  @extension("x-ms-vss-method", "GetRowSuggestedValues")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/boardrows")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BoardSuggestedValue[]>;
+}
+
+interface Iterationcapacities {
+  /** Get an iteration's capacity for all teams in iteration */
+  @tag("Iterationcapacities")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "iterationcapacities")
+  @extension("x-ms-vss-method", "GetTotalIterationCapacities")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/iterations/{iterationId}/iterationcapacities")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): IterationCapacity;
+}
+
+interface Plans {
+  /** Get the information for all the plans configured for the given team */
+  @tag("Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "GetPlans")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/plans")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Plan[]>;
+
+  /** Add a new plan for the team */
+  @tag("Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "CreatePlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/plans")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Plan definition */
+    @body body: CreatePlan,
+  ): Plan;
+
+  /** Delete the specified plan */
+  @tag("Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "DeletePlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/plans/{id}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier of the plan */
+    @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get the information for the specified plan */
+  @tag("Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "GetPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/plans/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier of the plan */
+    @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Plan;
+
+  /** Update the information for the specified plan */
+  @tag("Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "UpdatePlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/plans/{id}")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier of the plan */
+    @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Plan definition to be updated */
+    @body body: UpdatePlan,
+  ): Plan;
+}
+
+interface Deliverytimeline {
+  /** Get Delivery View Data */
+  @tag("Deliverytimeline")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deliverytimeline")
+  @extension("x-ms-vss-method", "GetDeliveryTimelineData")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/plans/{id}/deliverytimeline")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier for delivery view */
+    @path id: string,
+
+    /** Revision of the plan for which you want data. If the current plan is a different revision you will get an ViewRevisionMismatchException exception. If you do not supply a revision you will get data for the latest revision. */
+    @query(#{ explode: true }) revision?: int32,
+
+    /** The start date of timeline */
+    @query(#{ explode: true }) startDate?: utcDateTime,
+
+    /** The end date of timeline */
+    @query(#{ explode: true }) endDate?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): DeliveryViewData;
+}
+
+interface PredefinedQueries {
+  /** Retrieves the set of known queries */
+  @tag("Predefined Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "predefinedQueries")
+  @extension("x-ms-vss-method", "GetPredefinedQueries")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/predefinedqueries")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PredefinedQuery[]>;
+
+  /** Retrieves the specified predefined query including the query results */
+  @tag("Predefined Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "predefinedQueries")
+  @extension("x-ms-vss-method", "GetPredefinedQueryResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/predefinedqueries/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the query to run */
+    @path id: string,
+
+    /** The maximum number of items to return */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Whether or not to retrieve the 'completed' work items (work items in the 'completed' meta state) */
+    @query(#{ explode: true }) includeCompleted?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PredefinedQuery;
+}
+
+interface Processconfiguration {
+  /** Get process configuration */
+  @tag("Processconfiguration")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "processconfiguration")
+  @extension("x-ms-vss-method", "GetProcessConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/work/processconfiguration")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ProcessConfiguration;
+}
+
+interface Backlogconfiguration {
+  /** Gets backlog configuration for a team */
+  @tag("Backlogconfiguration")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "backlogconfiguration")
+  @extension("x-ms-vss-method", "GetBacklogConfigurations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/backlogconfiguration")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BacklogConfiguration;
+}
+
+interface Backlogs {
+  /** List all backlog levels */
+  @tag("Backlogs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "backlogs")
+  @extension("x-ms-vss-method", "GetBacklogs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/backlogs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BacklogLevelConfiguration[]>;
+
+  /** Get a list of work items within a backlog level */
+  @tag("Backlogs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "backlogs")
+  @extension("x-ms-vss-method", "GetBacklogLevelWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/backlogs/{backlogId}/workItems")
+  @get
+  GetBacklogLevelWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    @path backlogId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BacklogLevelWorkItems;
+
+  /** Get a backlog level */
+  @tag("Backlogs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "backlogs")
+  @extension("x-ms-vss-method", "GetBacklog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/backlogs/{id}")
+  @get
+  GetBacklog(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** The id of the backlog level */
+    @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BacklogLevelConfiguration;
+}
+
+interface Boards {
+  /** Get boards */
+  @tag("Boards")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boards")
+  @extension("x-ms-vss-method", "GetBoards")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BoardReference[]>;
+
+  /** Get board */
+  @tag("Boards")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boards")
+  @extension("x-ms-vss-method", "GetBoard")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** identifier for board, either board's backlog level name (Eg:'Stories') or Id */
+    @path id: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Board;
+
+  /** Update board options */
+  @tag("Boards")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boards")
+  @extension("x-ms-vss-method", "SetBoardOptions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{id}")
+  @put
+  SetBoardOptions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** identifier for board, either category plural name (Eg:'Stories') or guid */
+    @path id: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** options to updated */
+    @body body: Record<string>,
+  ): Body<Record<string>>;
+}
+
+interface Boardusersettings {
+  /** Get board user settings for a board id */
+  @tag("Boardusersettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boardusersettings")
+  @extension("x-ms-vss-method", "GetBoardUserSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/boardusersettings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Board ID or Name */
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BoardUserSettings;
+
+  /** Update board user settings for the board id We don't want stakeholders to update board settings (currently just autorefresh). The BacklogManagement feature check validates this. */
+  @tag("Boardusersettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boardusersettings")
+  @extension("x-ms-vss-method", "UpdateBoardUserSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/boardusersettings")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: Record<string>,
+  ): BoardUserSettings;
+}
+
+interface Cardrulesettings {
+  /** Get board card Rule settings for the board id or board by name */
+  @tag("Cardrulesettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cardrulesettings")
+  @extension("x-ms-vss-method", "GetBoardCardRuleSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardrulesettings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): BoardCardRuleSettings;
+
+  /** Update board card Rule settings for the board id or board by name */
+  @tag("Cardrulesettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cardrulesettings")
+  @extension("x-ms-vss-method", "UpdateBoardCardRuleSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardrulesettings")
+  @patch
+  UpdateBoardCardRuleSettings(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: BoardCardRuleSettings,
+  ): BoardCardRuleSettings;
+
+  /** Update taskboard card Rule settings */
+  @tag("Cardrulesettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cardrulesettings")
+  @extension("x-ms-vss-method", "UpdateTaskboardCardRuleSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/taskboard/cardrulesettings")
+  @patch
+  UpdateTaskboardCardRuleSettings(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: BoardCardRuleSettings,
+  ): OkResponse;
+}
+
+interface Cardsettings {
+  /** Get board card settings for the board id or board by name */
+  @tag("Cardsettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cardsettings")
+  @extension("x-ms-vss-method", "GetBoardCardSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardsettings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): BoardCardSettings;
+
+  /** Update board card settings for the board id or board by name */
+  @tag("Cardsettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cardsettings")
+  @extension("x-ms-vss-method", "UpdateBoardCardSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardsettings")
+  @put
+  UpdateBoardCardSettings(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: BoardCardSettings,
+  ): BoardCardSettings;
+
+  /** Update taskboard card settings */
+  @tag("Cardsettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cardsettings")
+  @extension("x-ms-vss-method", "UpdateTaskboardCardSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/taskboard/cardsettings")
+  @put
+  UpdateTaskboardCardSettings(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: BoardCardSettings,
+  ): OkResponse;
+}
+
+interface Chartimages {
+  /** Get a board chart image. */
+  @tag("Chartimages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "chartimages")
+  @extension("x-ms-vss-method", "GetBoardChartImage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/chartimages/{name}")
+  @get
+  GetBoardChartImage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** Identifier for board, either board's backlog level name (e.g. 'Issues') or Id. */
+    @path board: string,
+
+    /** The chart name. e.g. CumulativeFlow. */
+    @path name: string,
+
+    /** The width of the chart in pixels. Must be greater than 0. */
+    @query(#{ explode: true }) width?: int32,
+
+    /** The height of the chart in pixels. Must be greater than 0. */
+    @query(#{ explode: true }) height?: int32,
+
+    /** Whether or not the chart should include detailed information (e.g. axis labels, titles, trend lines, etc.). */
+    @query(#{ explode: true }) showDetails?: boolean,
+
+    /** The title of the chart. Can only be dislayed if ShowLabels is true. */
+    @query(#{ explode: true }) title?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<string>;
+
+  /** Get an iteration chart image. */
+  @tag("Chartimages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "chartimages")
+  @extension("x-ms-vss-method", "GetIterationChartImage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/iterations/{iterationId}/chartimages/{name}")
+  @get
+  GetIterationChartImage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** ID of the iteration. */
+    @format("uuid") @path iterationId: string,
+
+    /** The chart name. e.g. Burndown. */
+    @path name: string,
+
+    /** The width of the chart in pixels. Must be greater than 0. */
+    @query(#{ explode: true }) width?: int32,
+
+    /** The height of the chart in pixels. Must be greater than 0. */
+    @query(#{ explode: true }) height?: int32,
+
+    /** Whether or not the chart should include detailed information (e.g. axis labels, titles, trend lines, etc.) */
+    @query(#{ explode: true }) showDetails?: boolean,
+
+    /** The title of the chart. Can only be dislayed if ShowLabels is true. */
+    @query(#{ explode: true }) title?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<string>;
+
+  /** Get an iterations chart image. */
+  @tag("Chartimages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "chartimages")
+  @extension("x-ms-vss-method", "GetIterationsChartImage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/iterations/chartimages/{name}")
+  @get
+  GetIterationsChartImage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** The chart name. e.g. Velocity. */
+    @path name: string,
+
+    /** Number of iterations the chart is for. */
+    @query(#{ explode: true }) iterationsNumber?: int32,
+
+    /** The width of the chart in pixels. Must be greater than 0. */
+    @query(#{ explode: true }) width?: int32,
+
+    /** The height of the chart in pixels. Must be greater than 0. */
+    @query(#{ explode: true }) height?: int32,
+
+    /** Whether or not the chart should include detailed information (e.g. axis labels, titles, trend lines, etc.) */
+    @query(#{ explode: true }) showDetails?: boolean,
+
+    /** The title of the chart. Can only be dislayed if ShowLabels is true. */
+    @query(#{ explode: true }) title?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<string>;
+}
+
+interface Charts {
+  /** Get board charts */
+  @tag("Charts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "charts")
+  @extension("x-ms-vss-method", "GetBoardCharts")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/charts")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier for board, either board's backlog level name (Eg:'Stories') or Id */
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BoardChartReference[]>;
+
+  /** Get a board chart */
+  @tag("Charts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "charts")
+  @extension("x-ms-vss-method", "GetBoardChart")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/charts/{name}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier for board, either board's backlog level name (Eg:'Stories') or Id */
+    @path board: string,
+
+    /** The chart name */
+    @path name: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BoardChart;
+
+  /** Update a board chart */
+  @tag("Charts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "charts")
+  @extension("x-ms-vss-method", "UpdateBoardChart")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/charts/{name}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Identifier for board, either board's backlog level name (Eg:'Stories') or Id */
+    @path board: string,
+
+    /** The chart name */
+    @path name: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: BoardChart,
+  ): BoardChart;
+}
+
+interface Columns {
+  /** Get columns on a board */
+  @tag("Columns")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "columns")
+  @extension("x-ms-vss-method", "GetBoardColumns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/columns")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name or ID of the specific board */
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BoardColumn[]>;
+
+  /** Update columns on a board */
+  @tag("Columns")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "columns")
+  @extension("x-ms-vss-method", "UpdateBoardColumns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/columns")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name or ID of the specific board */
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** List of board columns to update */
+    @body body: BoardColumn[],
+  ): Body<BoardColumn[]>;
+}
+
+interface Rows {
+  /** Get rows on a board */
+  @tag("Rows")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "rows")
+  @extension("x-ms-vss-method", "GetBoardRows")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/rows")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name or ID of the specific board */
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BoardRow[]>;
+
+  /** Update rows on a board */
+  @tag("Rows")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "rows")
+  @extension("x-ms-vss-method", "UpdateBoardRows")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/rows")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name or ID of the specific board */
+    @path board: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** List of board rows to update */
+    @body body: BoardRow[],
+  ): Body<BoardRow[]>;
+}
+
+interface Boardparents {
+  /** Returns the list of parent field filter model for the given list of workitem ids */
+  @tag("Boardparents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "boardparents")
+  @extension("x-ms-vss-method", "GetBoardMappingParentItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/boards/boardparents")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @query(#{ explode: true }) childBacklogContextCategoryRefName: string,
+    @format("array (int32)") @query(#{ explode: true }) workitemIds: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ParentChildWIMap[]>;
+}
+
+interface Workitemsorder {
+  /** Reorder Sprint Backlog/Taskboard Work Items */
+  @tag("Workitemsorder")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workitemsorder")
+  @extension("x-ms-vss-method", "ReorderIterationWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/iterations/{iterationId}/workitemsorder")
+  @patch
+  ReorderIterationWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** The id of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ReorderOperation,
+  ): Body<ReorderResult[]>;
+
+  /** Reorder Product Backlog/Boards Work Items */
+  @tag("Workitemsorder")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workitemsorder")
+  @extension("x-ms-vss-method", "ReorderBacklogWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/workitemsorder")
+  @patch
+  ReorderBacklogWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ReorderOperation,
+  ): Body<ReorderResult[]>;
+}
+
+interface TaskboardColumnsOperations {
+  @tag("Taskboard Columns")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskboardColumns")
+  @extension("x-ms-vss-method", "GetColumns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/taskboardcolumns")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskboardColumns;
+
+  @tag("Taskboard Columns")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskboardColumns")
+  @extension("x-ms-vss-method", "UpdateColumns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/taskboardcolumns")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: UpdateTaskboardColumn[],
+  ): TaskboardColumns;
+}
+
+interface TaskboardWorkItems {
+  @tag("Taskboard Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskboardWorkItems")
+  @extension("x-ms-vss-method", "GetWorkItemColumns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/taskboardworkitems/{iterationId}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    @format("uuid") @path iterationId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskboardWorkItemColumn[]>;
+
+  @tag("Taskboard Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskboardWorkItems")
+  @extension("x-ms-vss-method", "UpdateWorkItemColumn")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/taskboardworkitems/{iterationId}/{workItemId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    @format("uuid") @path iterationId: string,
+    @path workItemId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: UpdateTaskboardWorkItemColumn,
+  ): OkResponse;
+}
+
+interface Teamsettings {
+  /** Get a team's settings */
+  @tag("Teamsettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "teamsettings")
+  @extension("x-ms-vss-method", "GetTeamSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TeamSetting;
+
+  /** Update a team's settings */
+  @tag("Teamsettings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "teamsettings")
+  @extension("x-ms-vss-method", "UpdateTeamSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** TeamSettings changes */
+    @body body: TeamSettingsPatch,
+  ): TeamSetting;
+}
+
+interface Iterations {
+  /** Get a team's iterations using timeframe filter */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "iterations")
+  @extension("x-ms-vss-method", "GetTeamIterations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** A filter for which iterations are returned based on relative time. Only Current is supported currently. */
+    @query(#{ explode: true }) $timeframe?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TeamSettingsIteration[]>;
+
+  /** Add an iteration to the team */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "iterations")
+  @extension("x-ms-vss-method", "PostTeamIteration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations")
+  @post
+  PostTeamIteration(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Iteration to add */
+    @body body: TeamSettingsIteration,
+  ): TeamSettingsIteration;
+
+  /** Delete a team's iteration by iterationId */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "iterations")
+  @extension("x-ms-vss-method", "DeleteTeamIteration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{id}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path id: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get team's iteration by iterationId */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "iterations")
+  @extension("x-ms-vss-method", "GetTeamIteration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path id: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TeamSettingsIteration;
+
+  /** Get work items for iteration */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workitems")
+  @extension("x-ms-vss-method", "GetIterationWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/workitems")
+  @get
+  GetIterationWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): IterationWorkItems;
+}
+
+interface Capacities {
+  /** Get a team's capacity including total capacity and days off */
+  @tag("Capacities")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "capacities")
+  @extension("x-ms-vss-method", "GetCapacitiesWithIdentityRefAndTotals")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities")
+  @get
+  GetCapacitiesWithIdentityRefAndTotals(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): TeamCapacity;
+
+  /** Replace a team's capacity */
+  @tag("Capacities")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "capacities")
+  @extension("x-ms-vss-method", "ReplaceCapacitiesWithIdentityRef")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities")
+  @put
+  ReplaceCapacitiesWithIdentityRef(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** Team capacity to replace */
+    @body body: TeamMemberCapacityIdentityRef[],
+  ): Body<TeamMemberCapacityIdentityRef[]>;
+
+  /** Get a team member's capacity */
+  @tag("Capacities")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "capacities")
+  @extension("x-ms-vss-method", "GetCapacityWithIdentityRef")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities/{teamMemberId}")
+  @get
+  GetCapacityWithIdentityRef(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** ID of the team member */
+    @format("uuid") @path teamMemberId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): TeamMemberCapacityIdentityRef;
+
+  /** Update a team member's capacity */
+  @tag("Capacities")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "capacities")
+  @extension("x-ms-vss-method", "UpdateCapacityWithIdentityRef")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities/{teamMemberId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** ID of the team member */
+    @format("uuid") @path teamMemberId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** Updated capacity */
+    @body body: CapacityPatch,
+  ): TeamMemberCapacityIdentityRef;
+}
+
+interface Teamdaysoff {
+  /** Get team's days off for an iteration */
+  @tag("Teamdaysoff")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "teamdaysoff")
+  @extension("x-ms-vss-method", "GetTeamDaysOff")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/teamdaysoff")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TeamSettingsDaysOff;
+
+  /** Set a team's days off for an iteration */
+  @tag("Teamdaysoff")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "teamdaysoff")
+  @extension("x-ms-vss-method", "UpdateTeamDaysOff")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/teamdaysoff")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the iteration */
+    @format("uuid") @path iterationId: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Team's days off patch containing a list of start and end dates */
+    @body body: TeamSettingsDaysOffPatch,
+  ): TeamSettingsDaysOff;
+}
+
+interface Teamfieldvalues {
+  /** Get a collection of team field values */
+  @tag("Teamfieldvalues")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "teamfieldvalues")
+  @extension("x-ms-vss-method", "GetTeamFieldValues")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/teamfieldvalues")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TeamFieldValues;
+
+  /** Update team field values */
+  @tag("Teamfieldvalues")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "teamfieldvalues")
+  @extension("x-ms-vss-method", "UpdateTeamFieldValues")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/work/teamsettings/teamfieldvalues")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: TeamFieldValuesPatch,
+  ): TeamFieldValues;
 }

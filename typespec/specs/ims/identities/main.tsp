@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Identity" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://vssps.dev.azure.com")
 namespace Identity;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Container class for changed identities */
 model ChangedIdentities {
@@ -326,64 +332,66 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Resolve legacy identity information for use with older APIs such as the Security APIs */
-@tag("Identities")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "identities")
-@extension("x-ms-vss-method", "ReadIdentities")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/identities")
-@get
-op Identities_ReadIdentities(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** A comma separated list of identity descriptors to resolve */
-  @query(#{ explode: true }) descriptors?: string,
-
-  /** A comma seperated list of storage keys to resolve */
-  @query(#{ explode: true }) identityIds?: string,
-
-  /** A comma seperated list of subject descriptors to resolve */
-  @query(#{ explode: true }) subjectDescriptors?: string,
-
-  /** The type of search to perform. Values can be AccountName (domainalias), DisplayName, MailAddress, General (display name, account name, or unique name), or LocalGroupName (only search Azure Devops groups). */
-  @query(#{ explode: true }) searchFilter?: string,
-
-  /** The search value, as specified by the searchFilter. */
-  @query(#{ explode: true }) filterValue?: string,
-
-  /** The membership information to include with the identities. Values can be None for no membership data or Direct to include the groups that the identity is a member of and the identities that are a member of this identity (groups only) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "QueryMembership",
-      values: #[
-        #{ value: "none", description: "Query will not return any membership data" },
-        #{ value: "direct", description: "Query will return only direct membership data" },
-        #{ value: "expanded", description: "Query will return expanded membership data" },
-        #{
-          value: "expandedUp",
-          description: "Query will return expanded up membership data (parents only)",
-        },
-        #{
-          value: "expandedDown",
-          description: "Query will return expanded down membership data (children only)",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryMembership?: "none" | "direct" | "expanded" | "expandedUp" | "expandedDown",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Identity[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Identities {
+  /** Resolve legacy identity information for use with older APIs such as the Security APIs */
+  @tag("Identities")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "identities")
+  @extension("x-ms-vss-method", "ReadIdentities")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/identities")
+  @get
+  ReadIdentities(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** A comma separated list of identity descriptors to resolve */
+    @query(#{ explode: true }) descriptors?: string,
+
+    /** A comma seperated list of storage keys to resolve */
+    @query(#{ explode: true }) identityIds?: string,
+
+    /** A comma seperated list of subject descriptors to resolve */
+    @query(#{ explode: true }) subjectDescriptors?: string,
+
+    /** The type of search to perform. Values can be AccountName (domainalias), DisplayName, MailAddress, General (display name, account name, or unique name), or LocalGroupName (only search Azure Devops groups). */
+    @query(#{ explode: true }) searchFilter?: string,
+
+    /** The search value, as specified by the searchFilter. */
+    @query(#{ explode: true }) filterValue?: string,
+
+    /** The membership information to include with the identities. Values can be None for no membership data or Direct to include the groups that the identity is a member of and the identities that are a member of this identity (groups only) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "QueryMembership",
+        values: #[
+          #{ value: "none", description: "Query will not return any membership data" },
+          #{ value: "direct", description: "Query will return only direct membership data" },
+          #{ value: "expanded", description: "Query will return expanded membership data" },
+          #{
+            value: "expandedUp",
+            description: "Query will return expanded up membership data (parents only)",
+          },
+          #{
+            value: "expandedDown",
+            description: "Query will return expanded down membership data (children only)",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryMembership?: "none" | "direct" | "expanded" | "expandedUp" | "expandedDown",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Identity[]>;
 }

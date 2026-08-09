@@ -12,7 +12,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 169
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 177
     },
     {
       "area": "advancedSecurity",
@@ -24,7 +29,35 @@
         "pathParameters": 0,
         "operationIds": 8
       },
-      "lines": 987
+      "interfaces": 2,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "criteria.alertTypes": "criteriaAlertTypes",
+        "criteria.keywords": "criteriaKeywords",
+        "criteria.projects": "criteriaProjects",
+        "criteria.severities": "criteriaSeverities",
+        "criteria.componentNames": "criteriaComponentNames",
+        "criteria.componentTypes": "criteriaComponentTypes",
+        "criteria.dismissalTypes": "criteriaDismissalTypes",
+        "criteria.fixedDateEnd": "criteriaFixedDateEnd",
+        "criteria.fixedDateStart": "criteriaFixedDateStart",
+        "criteria.introducedDateEnd": "criteriaIntroducedDateEnd",
+        "criteria.introducedDateStart": "criteriaIntroducedDateStart",
+        "criteria.repositories": "criteriaRepositories",
+        "criteria.repositoryIds": "criteriaRepositoryIds",
+        "criteria.ruleNames": "criteriaRuleNames",
+        "criteria.secretTypes": "criteriaSecretTypes",
+        "criteria.toolNames": "criteriaToolNames",
+        "criteria.states.anyTool": "criteriaStatesAnyTool",
+        "criteria.states.codeAlerts": "criteriaStatesCodeAlerts",
+        "criteria.states.codePRAlerts": "criteriaStatesCodePRAlerts",
+        "criteria.states.dependencyAlerts": "criteriaStatesDependencyAlerts",
+        "criteria.states.dependencyPRAlerts": "criteriaStatesDependencyPRAlerts",
+        "criteria.states.pushProtection": "criteriaStatesPushProtection",
+        "criteria.states.secretAlerts": "criteriaStatesSecretAlerts",
+        "api-version": "apiVersion"
+      },
+      "lines": 997
     },
     {
       "area": "advancedSecurity",
@@ -36,7 +69,34 @@
         "pathParameters": 0,
         "operationIds": 4
       },
-      "lines": 1769
+      "interfaces": 8,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "criteria.alertIds": "criteriaAlertIds",
+        "criteria.confidenceLevels": "criteriaConfidenceLevels",
+        "criteria.dependencyName": "criteriaDependencyName",
+        "criteria.fromDate": "criteriaFromDate",
+        "criteria.hasLinkedWorkItems": "criteriaHasLinkedWorkItems",
+        "criteria.isTriaged": "criteriaIsTriaged",
+        "criteria.keywords": "criteriaKeywords",
+        "criteria.licenseName": "criteriaLicenseName",
+        "criteria.modifiedSince": "criteriaModifiedSince",
+        "criteria.onlyDefaultBranch": "criteriaOnlyDefaultBranch",
+        "criteria.phaseId": "criteriaPhaseId",
+        "criteria.phaseName": "criteriaPhaseName",
+        "criteria.pipelineId": "criteriaPipelineId",
+        "criteria.pipelineName": "criteriaPipelineName",
+        "criteria.ref": "criteriaRef",
+        "criteria.ruleId": "criteriaRuleId",
+        "criteria.ruleName": "criteriaRuleName",
+        "criteria.severities": "criteriaSeverities",
+        "criteria.states": "criteriaStates",
+        "criteria.toDate": "criteriaToDate",
+        "criteria.toolName": "criteriaToolName",
+        "criteria.validity": "criteriaValidity",
+        "api-version": "apiVersion"
+      },
+      "lines": 1791
     },
     {
       "area": "advancedSecurity",
@@ -48,7 +108,14 @@
         "pathParameters": 0,
         "operationIds": 10
       },
-      "lines": 626
+      "interfaces": 7,
+      "renamedInterfaces": {
+        "MeterUsage": "MeterUsageOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 646
     },
     {
       "area": "advancedSecurity",
@@ -60,7 +127,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 76
+      "interfaces": 0,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 82
     },
     {
       "area": "approvalsAndChecks",
@@ -72,7 +144,12 @@
         "pathParameters": 0,
         "operationIds": 3
       },
-      "lines": 178
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 186
     },
     {
       "area": "approvalsAndChecks",
@@ -84,7 +161,12 @@
         "pathParameters": 0,
         "operationIds": 9
       },
-      "lines": 832
+      "interfaces": 2,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 842
     },
     {
       "area": "approvalsAndChecks",
@@ -96,7 +178,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 605
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 613
     },
     {
       "area": "artifacts",
@@ -108,7 +195,12 @@
         "pathParameters": 0,
         "operationIds": 36
       },
-      "lines": 1790
+      "interfaces": 7,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1810
     },
     {
       "area": "artifacts",
@@ -120,7 +212,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 72
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 80
     },
     {
       "area": "artifacts",
@@ -132,7 +229,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 202
+      "interfaces": 0,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 208
     },
     {
       "area": "artifactsPackageTypes",
@@ -144,7 +246,12 @@
         "pathParameters": 0,
         "operationIds": 9
       },
-      "lines": 472
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 480
     },
     {
       "area": "artifactsPackageTypes",
@@ -156,7 +263,12 @@
         "pathParameters": 0,
         "operationIds": 7
       },
-      "lines": 682
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 690
     },
     {
       "area": "artifactsPackageTypes",
@@ -168,7 +280,12 @@
         "pathParameters": 0,
         "operationIds": 13
       },
-      "lines": 886
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 894
     },
     {
       "area": "artifactsPackageTypes",
@@ -180,7 +297,12 @@
         "pathParameters": 0,
         "operationIds": 10
       },
-      "lines": 520
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 528
     },
     {
       "area": "artifactsPackageTypes",
@@ -192,7 +314,12 @@
         "pathParameters": 0,
         "operationIds": 10
       },
-      "lines": 502
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 510
     },
     {
       "area": "artifactsPackageTypes",
@@ -204,7 +331,12 @@
         "pathParameters": 0,
         "operationIds": 7
       },
-      "lines": 369
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 377
     },
     {
       "area": "audit",
@@ -216,7 +348,12 @@
         "pathParameters": 0,
         "operationIds": 6
       },
-      "lines": 491
+      "interfaces": 4,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 505
     },
     {
       "area": "build",
@@ -228,7 +365,14 @@
         "pathParameters": 2,
         "operationIds": 48
       },
-      "lines": 5964
+      "interfaces": 28,
+      "renamedInterfaces": {
+        "Timeline": "TimelineOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 6026
     },
     {
       "area": "core",
@@ -240,7 +384,12 @@
         "pathParameters": 0,
         "operationIds": 8
       },
-      "lines": 1139
+      "interfaces": 5,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1155
     },
     {
       "area": "dashboard",
@@ -252,7 +401,12 @@
         "pathParameters": 0,
         "operationIds": 10
       },
-      "lines": 832
+      "interfaces": 3,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 844
     },
     {
       "area": "delegatedAuth",
@@ -264,7 +418,12 @@
         "pathParameters": 0,
         "operationIds": 2
       },
-      "lines": 508
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 516
     },
     {
       "area": "distributedTask",
@@ -276,7 +435,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 167
+      "interfaces": 0,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 173
     },
     {
       "area": "distributedTask",
@@ -288,7 +452,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 802
+      "interfaces": 3,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 814
     },
     {
       "area": "distributedTask",
@@ -300,7 +469,12 @@
         "pathParameters": 0,
         "operationIds": 3
       },
-      "lines": 801
+      "interfaces": 5,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 817
     },
     {
       "area": "distributedTask",
@@ -312,7 +486,12 @@
         "pathParameters": 0,
         "operationIds": 9
       },
-      "lines": 5411
+      "interfaces": 13,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 5443
     },
     {
       "area": "environments",
@@ -324,7 +503,12 @@
         "pathParameters": 0,
         "operationIds": 2
       },
-      "lines": 1006
+      "interfaces": 6,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1024
     },
     {
       "area": "extensionManagement",
@@ -336,7 +520,12 @@
         "pathParameters": 0,
         "operationIds": 5
       },
-      "lines": 1405
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1413
     },
     {
       "area": "favorite",
@@ -348,7 +537,12 @@
         "pathParameters": 0,
         "operationIds": 4
       },
-      "lines": 252
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 260
     },
     {
       "area": "git",
@@ -360,7 +554,30 @@
         "pathParameters": 0,
         "operationIds": 88
       },
-      "lines": 7835
+      "interfaces": 37,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "searchCriteria.creatorId": "searchCriteriaCreatorId",
+        "searchCriteria.includeLinks": "searchCriteriaIncludeLinks",
+        "searchCriteria.labels": "searchCriteriaLabels",
+        "searchCriteria.maxTime": "searchCriteriaMaxTime",
+        "searchCriteria.minTime": "searchCriteriaMinTime",
+        "searchCriteria.repositoryId": "searchCriteriaRepositoryId",
+        "searchCriteria.reviewerId": "searchCriteriaReviewerId",
+        "searchCriteria.sourceRefName": "searchCriteriaSourceRefName",
+        "searchCriteria.sourceRepositoryId": "searchCriteriaSourceRepositoryId",
+        "searchCriteria.targetRefName": "searchCriteriaTargetRefName",
+        "searchCriteria.title": "searchCriteriaTitle",
+        "versionDescriptor.version": "versionDescriptorVersion",
+        "searchCriteria.fromDate": "searchCriteriaFromDate",
+        "searchCriteria.includeRefUpdates": "searchCriteriaIncludeRefUpdates",
+        "searchCriteria.pusherId": "searchCriteriaPusherId",
+        "searchCriteria.refName": "searchCriteriaRefName",
+        "searchCriteria.toDate": "searchCriteriaToDate",
+        "baseVersionDescriptor.version": "baseVersionDescriptorVersion",
+        "api-version": "apiVersion"
+      },
+      "lines": 7915
     },
     {
       "area": "graph",
@@ -372,7 +589,12 @@
         "pathParameters": 0,
         "operationIds": 13
       },
-      "lines": 1152
+      "interfaces": 12,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1182
     },
     {
       "area": "hooks",
@@ -384,7 +606,12 @@
         "pathParameters": 0,
         "operationIds": 8
       },
-      "lines": 1366
+      "interfaces": 5,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1382
     },
     {
       "area": "ims",
@@ -396,7 +623,12 @@
         "pathParameters": 0,
         "operationIds": 1
       },
-      "lines": 390
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 398
     },
     {
       "area": "memberEntitlementManagement",
@@ -408,7 +640,12 @@
         "pathParameters": 0,
         "operationIds": 19
       },
-      "lines": 1427
+      "interfaces": 6,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1445
     },
     {
       "area": "notification",
@@ -420,7 +657,12 @@
         "pathParameters": 0,
         "operationIds": 5
       },
-      "lines": 2045
+      "interfaces": 6,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 2063
     },
     {
       "area": "operations",
@@ -432,7 +674,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 104
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 112
     },
     {
       "area": "permissionsReport",
@@ -444,7 +691,14 @@
         "pathParameters": 0,
         "operationIds": 4
       },
-      "lines": 208
+      "interfaces": 2,
+      "renamedInterfaces": {
+        "PermissionsReport": "PermissionsReportOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 218
     },
     {
       "area": "pipelines",
@@ -456,7 +710,12 @@
         "pathParameters": 0,
         "operationIds": 1
       },
-      "lines": 644
+      "interfaces": 5,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 660
     },
     {
       "area": "policy",
@@ -468,7 +727,12 @@
         "pathParameters": 0,
         "operationIds": 1
       },
-      "lines": 487
+      "interfaces": 4,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 501
     },
     {
       "area": "processadmin",
@@ -480,7 +744,12 @@
         "pathParameters": 0,
         "operationIds": 3
       },
-      "lines": 240
+      "interfaces": 2,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 250
     },
     {
       "area": "processes",
@@ -492,7 +761,12 @@
         "pathParameters": 0,
         "operationIds": 21
       },
-      "lines": 2504
+      "interfaces": 13,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 2536
     },
     {
       "area": "profile",
@@ -504,7 +778,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 234
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 242
     },
     {
       "area": "release",
@@ -516,7 +795,12 @@
         "pathParameters": 0,
         "operationIds": 16
       },
-      "lines": 5150
+      "interfaces": 8,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 5172
     },
     {
       "area": "resourceUsage",
@@ -528,7 +812,12 @@
         "pathParameters": 0,
         "operationIds": 1
       },
-      "lines": 83
+      "interfaces": 2,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 93
     },
     {
       "area": "search",
@@ -540,7 +829,12 @@
         "pathParameters": 0,
         "operationIds": 4
       },
-      "lines": 917
+      "interfaces": 6,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 935
     },
     {
       "area": "security",
@@ -552,7 +846,12 @@
         "pathParameters": 0,
         "operationIds": 9
       },
-      "lines": 408
+      "interfaces": 4,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 422
     },
     {
       "area": "securityRoles",
@@ -564,7 +863,12 @@
         "pathParameters": 0,
         "operationIds": 4
       },
-      "lines": 275
+      "interfaces": 2,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 285
     },
     {
       "area": "serviceEndpoint",
@@ -576,7 +880,12 @@
         "pathParameters": 0,
         "operationIds": 7
       },
-      "lines": 1354
+      "interfaces": 4,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 1368
     },
     {
       "area": "status",
@@ -588,7 +897,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 333
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 341
     },
     {
       "area": "symbol",
@@ -600,7 +914,12 @@
         "pathParameters": 0,
         "operationIds": 10
       },
-      "lines": 510
+      "interfaces": 5,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 526
     },
     {
       "area": "test",
@@ -612,7 +931,14 @@
         "pathParameters": 0,
         "operationIds": 21
       },
-      "lines": 6233
+      "interfaces": 11,
+      "renamedInterfaces": {
+        "ResultRetentionSettings": "ResultRetentionSettingsOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 6261
     },
     {
       "area": "testPlan",
@@ -624,7 +950,14 @@
         "pathParameters": 0,
         "operationIds": 32
       },
-      "lines": 2687
+      "interfaces": 13,
+      "renamedInterfaces": {
+        "TestPoint": "TestPointOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 2719
     },
     {
       "area": "testResults",
@@ -636,7 +969,29 @@
         "pathParameters": 0,
         "operationIds": 40
       },
-      "lines": 4950
+      "interfaces": 41,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "buildToCompare.branchName": "buildToCompareBranchName",
+        "buildToCompare.buildSystem": "buildToCompareBuildSystem",
+        "buildToCompare.definitionId": "buildToCompareDefinitionId",
+        "buildToCompare.id": "buildToCompareId",
+        "buildToCompare.number": "buildToCompareNumber",
+        "buildToCompare.repositoryId": "buildToCompareRepositoryId",
+        "buildToCompare.uri": "buildToCompareUri",
+        "releaseToCompare.attempt": "releaseToCompareAttempt",
+        "releaseToCompare.creationDate": "releaseToCompareCreationDate",
+        "releaseToCompare.definitionId": "releaseToCompareDefinitionId",
+        "releaseToCompare.environmentCreationDate": "releaseToCompareEnvironmentCreationDate",
+        "releaseToCompare.environmentDefinitionId": "releaseToCompareEnvironmentDefinitionId",
+        "releaseToCompare.environmentDefinitionName": "releaseToCompareEnvironmentDefinitionName",
+        "releaseToCompare.environmentId": "releaseToCompareEnvironmentId",
+        "releaseToCompare.environmentName": "releaseToCompareEnvironmentName",
+        "releaseToCompare.id": "releaseToCompareId",
+        "releaseToCompare.name": "releaseToCompareName",
+        "api-version": "apiVersion"
+      },
+      "lines": 5038
     },
     {
       "area": "tfvc",
@@ -648,7 +1003,32 @@
         "pathParameters": 0,
         "operationIds": 9
       },
-      "lines": 1374
+      "interfaces": 5,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "requestData.includeDetails": "requestDataIncludeDetails",
+        "requestData.includeLinks": "requestDataIncludeLinks",
+        "requestData.includeWorkItems": "requestDataIncludeWorkItems",
+        "requestData.maxChangeCount": "requestDataMaxChangeCount",
+        "requestData.maxCommentLength": "requestDataMaxCommentLength",
+        "requestData.name": "requestDataName",
+        "requestData.owner": "requestDataOwner",
+        "searchCriteria.author": "searchCriteriaAuthor",
+        "searchCriteria.followRenames": "searchCriteriaFollowRenames",
+        "searchCriteria.fromDate": "searchCriteriaFromDate",
+        "searchCriteria.fromId": "searchCriteriaFromId",
+        "searchCriteria.includeLinks": "searchCriteriaIncludeLinks",
+        "searchCriteria.itemPath": "searchCriteriaItemPath",
+        "searchCriteria.mappings": "searchCriteriaMappings",
+        "searchCriteria.toDate": "searchCriteriaToDate",
+        "searchCriteria.toId": "searchCriteriaToId",
+        "versionDescriptor.version": "versionDescriptorVersion",
+        "requestData.itemLabelFilter": "requestDataItemLabelFilter",
+        "requestData.labelScope": "requestDataLabelScope",
+        "requestData.maxItemCount": "requestDataMaxItemCount",
+        "api-version": "apiVersion"
+      },
+      "lines": 1390
     },
     {
       "area": "tokenAdmin",
@@ -660,7 +1040,12 @@
         "pathParameters": 0,
         "operationIds": 3
       },
-      "lines": 239
+      "interfaces": 3,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 251
     },
     {
       "area": "tokens",
@@ -672,7 +1057,12 @@
         "pathParameters": 0,
         "operationIds": 0
       },
-      "lines": 411
+      "interfaces": 1,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 419
     },
     {
       "area": "wiki",
@@ -684,7 +1074,13 @@
         "pathParameters": 0,
         "operationIds": 8
       },
-      "lines": 1397
+      "interfaces": 6,
+      "renamedInterfaces": {},
+      "renamedParameters": {
+        "versionDescriptor.version": "versionDescriptorVersion",
+        "api-version": "apiVersion"
+      },
+      "lines": 1415
     },
     {
       "area": "wit",
@@ -696,7 +1092,15 @@
         "pathParameters": 0,
         "operationIds": 56
       },
-      "lines": 4058
+      "interfaces": 32,
+      "renamedInterfaces": {
+        "ArtifactUriQuery": "ArtifactUriQueryOperations",
+        "Wiql": "WiqlOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 4128
     },
     {
       "area": "work",
@@ -708,7 +1112,14 @@
         "pathParameters": 0,
         "operationIds": 23
       },
-      "lines": 2721
+      "interfaces": 26,
+      "renamedInterfaces": {
+        "TaskboardColumns": "TaskboardColumnsOperations"
+      },
+      "renamedParameters": {
+        "api-version": "apiVersion"
+      },
+      "lines": 2779
     }
   ]
 }

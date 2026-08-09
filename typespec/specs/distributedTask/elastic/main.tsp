@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Elastic" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Elastic;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Data and settings for an elastic node */
 model ElasticNode {
@@ -594,208 +600,214 @@ model TaskAgentQueue {
   @format("uuid") projectId?: string;
 }
 
-/** Get a list of all Elastic Pools. */
-@tag("Elasticpools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "elasticpools")
-@extension("x-ms-vss-method", "GetElasticPools")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools")
-@get
-op Elasticpools_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ElasticPool[]>;
-
-/** Create a new elastic pool. This will create a new TaskAgentPool at the organization level. If a project id is provided, this will create a new TaskAgentQueue in the specified project. */
-@tag("Elasticpools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "elasticpools")
-@extension("x-ms-vss-method", "CreateElasticPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools")
-@post
-op Elasticpools_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name to use for the new TaskAgentPool */
-  @query(#{ explode: true }) poolName: string,
-
-  /** Setting to determine if all pipelines are authorized to use this TaskAgentPool by default. */
-  @query(#{ explode: true }) authorizeAllPipelines?: boolean,
-
-  /** Setting to automatically provision TaskAgentQueues in every project for the new pool. */
-  @query(#{ explode: true }) autoProvisionProjectPools?: boolean,
-
-  /** Optional: If provided, a new TaskAgentQueue will be created in the specified project. */
-  @format("uuid") @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Elastic pool to create. Contains the properties necessary for configuring a new ElasticPool. */
-  @body body: ElasticPool,
-): ElasticPoolCreationResult;
-
-/** Returns the Elastic Pool with the specified Pool Id. */
-@tag("Elasticpools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "elasticpools")
-@extension("x-ms-vss-method", "GetElasticPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools/{poolId}")
-@get
-op Elasticpools_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Pool Id of the associated TaskAgentPool */
-  @path poolId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ElasticPool;
-
-/** Update settings on a specified Elastic Pool. */
-@tag("Elasticpools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "elasticpools")
-@extension("x-ms-vss-method", "UpdateElasticPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools/{poolId}")
-@patch
-op Elasticpools_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path poolId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** New Elastic Pool settings data */
-  @body body: ElasticPoolSettings,
-): ElasticPool;
-
-/** Get elastic pool diagnostics logs for a specified Elastic Pool. */
-@tag("Elasticpoollogs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "elasticpoollogs")
-@extension("x-ms-vss-method", "GetElasticPoolLogs")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools/{poolId}/logs")
-@get
-op Elasticpoollogs_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Pool Id of the Elastic Pool */
-  @path poolId: int32,
-
-  /** Number of elastic pool logs to retrieve */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ElasticPoolLog[]>;
-
-/** Get a list of ElasticNodes currently in the ElasticPool */
-@tag("Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "nodes")
-@extension("x-ms-vss-method", "GetElasticNodes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools/{poolId}/nodes")
-@get
-op Nodes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Pool id of the ElasticPool */
-  @path poolId: int32,
-
-  /** Optional: Filter to only retrieve ElasticNodes in the given ElasticNodeState */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ElasticNodeState",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "new", description: "" },
-        #{ value: "creatingCompute", description: "" },
-        #{ value: "startingAgent", description: "" },
-        #{ value: "idle", description: "" },
-        #{ value: "assigned", description: "" },
-        #{ value: "offline", description: "" },
-        #{ value: "pendingReimage", description: "" },
-        #{ value: "pendingDelete", description: "" },
-        #{ value: "saved", description: "" },
-        #{ value: "deletingCompute", description: "" },
-        #{ value: "deleted", description: "" },
-        #{ value: "lost", description: "" },
-        #{ value: "reimagingCompute", description: "" },
-        #{ value: "restartingAgent", description: "" },
-        #{ value: "failedToStartPendingDelete", description: "" },
-        #{ value: "failedToRestartPendingDelete", description: "" },
-        #{ value: "failedVMPendingDelete", description: "" },
-        #{ value: "assignedPendingDelete", description: "" },
-        #{ value: "retryDelete", description: "" },
-        #{ value: "unhealthyVm", description: "" },
-        #{ value: "unhealthyVmPendingDelete", description: "" },
-        #{ value: "pendingReimageCandidate", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $state?:
-    | "none"
-    | "new"
-    | "creatingCompute"
-    | "startingAgent"
-    | "idle"
-    | "assigned"
-    | "offline"
-    | "pendingReimage"
-    | "pendingDelete"
-    | "saved"
-    | "deletingCompute"
-    | "deleted"
-    | "lost"
-    | "reimagingCompute"
-    | "restartingAgent"
-    | "failedToStartPendingDelete"
-    | "failedToRestartPendingDelete"
-    | "failedVMPendingDelete"
-    | "assignedPendingDelete"
-    | "retryDelete"
-    | "unhealthyVm"
-    | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ElasticNode[]>;
-
-/** Update properties on a specified ElasticNode */
-@tag("Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "nodes")
-@extension("x-ms-vss-method", "UpdateElasticNode")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/elasticpools/{poolId}/nodes/{elasticNodeId}")
-@patch
-op Nodes_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path poolId: int32,
-  @path elasticNodeId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ElasticNodeSettings,
-): ElasticNode;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Elasticpools {
+  /** Get a list of all Elastic Pools. */
+  @tag("Elasticpools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "elasticpools")
+  @extension("x-ms-vss-method", "GetElasticPools")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ElasticPool[]>;
+
+  /** Create a new elastic pool. This will create a new TaskAgentPool at the organization level. If a project id is provided, this will create a new TaskAgentQueue in the specified project. */
+  @tag("Elasticpools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "elasticpools")
+  @extension("x-ms-vss-method", "CreateElasticPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name to use for the new TaskAgentPool */
+    @query(#{ explode: true }) poolName: string,
+
+    /** Setting to determine if all pipelines are authorized to use this TaskAgentPool by default. */
+    @query(#{ explode: true }) authorizeAllPipelines?: boolean,
+
+    /** Setting to automatically provision TaskAgentQueues in every project for the new pool. */
+    @query(#{ explode: true }) autoProvisionProjectPools?: boolean,
+
+    /** Optional: If provided, a new TaskAgentQueue will be created in the specified project. */
+    @format("uuid") @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Elastic pool to create. Contains the properties necessary for configuring a new ElasticPool. */
+    @body body: ElasticPool,
+  ): ElasticPoolCreationResult;
+
+  /** Returns the Elastic Pool with the specified Pool Id. */
+  @tag("Elasticpools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "elasticpools")
+  @extension("x-ms-vss-method", "GetElasticPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools/{poolId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Pool Id of the associated TaskAgentPool */
+    @path poolId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ElasticPool;
+
+  /** Update settings on a specified Elastic Pool. */
+  @tag("Elasticpools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "elasticpools")
+  @extension("x-ms-vss-method", "UpdateElasticPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools/{poolId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path poolId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** New Elastic Pool settings data */
+    @body body: ElasticPoolSettings,
+  ): ElasticPool;
+}
+
+interface Elasticpoollogs {
+  /** Get elastic pool diagnostics logs for a specified Elastic Pool. */
+  @tag("Elasticpoollogs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "elasticpoollogs")
+  @extension("x-ms-vss-method", "GetElasticPoolLogs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools/{poolId}/logs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Pool Id of the Elastic Pool */
+    @path poolId: int32,
+
+    /** Number of elastic pool logs to retrieve */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ElasticPoolLog[]>;
+}
+
+interface Nodes {
+  /** Get a list of ElasticNodes currently in the ElasticPool */
+  @tag("Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "nodes")
+  @extension("x-ms-vss-method", "GetElasticNodes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools/{poolId}/nodes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Pool id of the ElasticPool */
+    @path poolId: int32,
+
+    /** Optional: Filter to only retrieve ElasticNodes in the given ElasticNodeState */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ElasticNodeState",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "new", description: "" },
+          #{ value: "creatingCompute", description: "" },
+          #{ value: "startingAgent", description: "" },
+          #{ value: "idle", description: "" },
+          #{ value: "assigned", description: "" },
+          #{ value: "offline", description: "" },
+          #{ value: "pendingReimage", description: "" },
+          #{ value: "pendingDelete", description: "" },
+          #{ value: "saved", description: "" },
+          #{ value: "deletingCompute", description: "" },
+          #{ value: "deleted", description: "" },
+          #{ value: "lost", description: "" },
+          #{ value: "reimagingCompute", description: "" },
+          #{ value: "restartingAgent", description: "" },
+          #{ value: "failedToStartPendingDelete", description: "" },
+          #{ value: "failedToRestartPendingDelete", description: "" },
+          #{ value: "failedVMPendingDelete", description: "" },
+          #{ value: "assignedPendingDelete", description: "" },
+          #{ value: "retryDelete", description: "" },
+          #{ value: "unhealthyVm", description: "" },
+          #{ value: "unhealthyVmPendingDelete", description: "" },
+          #{ value: "pendingReimageCandidate", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $state?:
+      | "none"
+      | "new"
+      | "creatingCompute"
+      | "startingAgent"
+      | "idle"
+      | "assigned"
+      | "offline"
+      | "pendingReimage"
+      | "pendingDelete"
+      | "saved"
+      | "deletingCompute"
+      | "deleted"
+      | "lost"
+      | "reimagingCompute"
+      | "restartingAgent"
+      | "failedToStartPendingDelete"
+      | "failedToRestartPendingDelete"
+      | "failedVMPendingDelete"
+      | "assignedPendingDelete"
+      | "retryDelete"
+      | "unhealthyVm"
+      | "unhealthyVmPendingDelete"
+      | "pendingReimageCandidate",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ElasticNode[]>;
+
+  /** Update properties on a specified ElasticNode */
+  @tag("Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "nodes")
+  @extension("x-ms-vss-method", "UpdateElasticNode")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/elasticpools/{poolId}/nodes/{elasticNodeId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path poolId: int32,
+    @path elasticNodeId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ElasticNodeSettings,
+  ): ElasticNode;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Pipelines" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Pipelines;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Artifacts are collections of files produced by a pipeline. Use artifacts to share files between stages in a pipeline or between different pipelines. */
 model Artifact {
@@ -348,296 +354,306 @@ model YamlFileDetails {
   yamlFile?: string;
 }
 
-/** Get a list of pipelines. */
-@tag("Pipelines")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelines")
-@extension("x-ms-vss-method", "ListPipelines")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines")
-@get
-op Pipelines_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** A sort expression. Defaults to 'name asc' */
-  @query(#{ explode: true }) orderBy?: string,
-
-  /** The maximum number of pipelines to return */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** A continuation token from a previous request, to retrieve the next page of results */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Pipeline[]>;
-
-/** Create a pipeline. */
-@tag("Pipelines")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelines")
-@extension("x-ms-vss-method", "CreatePipeline")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines")
-@post
-op Pipelines_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Input parameters. */
-  @body body: CreatePipelineParameters,
-): Pipeline;
-
-/** Gets a pipeline, optionally at the specified version */
-@tag("Pipelines")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelines")
-@extension("x-ms-vss-method", "GetPipeline")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}")
-@get
-op Pipelines_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The pipeline ID */
-  @path pipelineId: int32,
-
-  /** The pipeline version */
-  @query(#{ explode: true }) pipelineVersion?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Pipeline;
-
-/** Queues a dry run of the pipeline and returns an object containing the final yaml. */
-@tag("Preview")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "preview")
-@extension("x-ms-vss-method", "Preview")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/preview")
-@post
-op Preview_Preview(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The pipeline ID. */
-  @path pipelineId: int32,
-
-  /** The pipeline version. */
-  @query(#{ explode: true }) pipelineVersion?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Optional additional parameters for this run. */
-  @body body: RunPipelineParameters,
-): PreviewRun;
-
-/** Gets top 10000 runs for a particular pipeline. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "ListRuns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs")
-@get
-op Runs_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The pipeline id */
-  @path pipelineId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Run[]>;
-
-/** Runs a pipeline. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "RunPipeline")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs")
-@post
-op Runs_RunPipeline(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The pipeline ID. */
-  @path pipelineId: int32,
-
-  /** The pipeline version. */
-  @query(#{ explode: true }) pipelineVersion?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Optional additional parameters for this run. */
-  @body body: RunPipelineParameters,
-): Run;
-
-/** Gets a run for a particular pipeline. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "GetRun")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}")
-@get
-op Runs_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The pipeline id */
-  @path pipelineId: int32,
-
-  /** The run id */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Run;
-
-/** Get a specific artifact from a pipeline run */
-@tag("Artifacts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "artifacts")
-@extension("x-ms-vss-method", "GetArtifact")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}/artifacts")
-@get
-op Artifacts_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the pipeline. */
-  @path pipelineId: int32,
-
-  /** ID of the run of that pipeline. */
-  @path runId: int32,
-
-  /** Name of the artifact. */
-  @query(#{ explode: true }) artifactName: string,
-
-  /** Expand options. Default is None. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GetArtifactExpandOptions",
-      values: #[
-        #{ value: "none", description: "No expansion." },
-        #{ value: "signedContent", description: "Include signed content." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "signedContent",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Artifact;
-
-/** Get a list of logs from a pipeline run. */
-@tag("Logs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "ListLogs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}/logs")
-@get
-op Logs_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the pipeline. */
-  @path pipelineId: int32,
-
-  /** ID of the run of that pipeline. */
-  @path runId: int32,
-
-  /** Expand options. Default is None. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GetLogExpandOptions",
-      values: #[#{ value: "none", description: "" }, #{ value: "signedContent", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "signedContent",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): LogCollection;
-
-/** Get a specific log from a pipeline run */
-@tag("Logs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "GetLog")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}/logs/{logId}")
-@get
-op Logs_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the pipeline. */
-  @path pipelineId: int32,
-
-  /** ID of the run of that pipeline. */
-  @path runId: int32,
-
-  /** ID of the log. */
-  @path logId: int32,
-
-  /** Expand options. Default is None. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GetLogExpandOptions",
-      values: #[#{ value: "none", description: "" }, #{ value: "signedContent", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "signedContent",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Log;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Pipelines {
+  /** Get a list of pipelines. */
+  @tag("Pipelines")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelines")
+  @extension("x-ms-vss-method", "ListPipelines")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** A sort expression. Defaults to 'name asc' */
+    @query(#{ explode: true }) orderBy?: string,
+
+    /** The maximum number of pipelines to return */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** A continuation token from a previous request, to retrieve the next page of results */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Pipeline[]>;
+
+  /** Create a pipeline. */
+  @tag("Pipelines")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelines")
+  @extension("x-ms-vss-method", "CreatePipeline")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Input parameters. */
+    @body body: CreatePipelineParameters,
+  ): Pipeline;
+
+  /** Gets a pipeline, optionally at the specified version */
+  @tag("Pipelines")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelines")
+  @extension("x-ms-vss-method", "GetPipeline")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The pipeline ID */
+    @path pipelineId: int32,
+
+    /** The pipeline version */
+    @query(#{ explode: true }) pipelineVersion?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Pipeline;
+}
+
+interface Preview {
+  /** Queues a dry run of the pipeline and returns an object containing the final yaml. */
+  @tag("Preview")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "preview")
+  @extension("x-ms-vss-method", "Preview")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/preview")
+  @post
+  Preview(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The pipeline ID. */
+    @path pipelineId: int32,
+
+    /** The pipeline version. */
+    @query(#{ explode: true }) pipelineVersion?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Optional additional parameters for this run. */
+    @body body: RunPipelineParameters,
+  ): PreviewRun;
+}
+
+interface Runs {
+  /** Gets top 10000 runs for a particular pipeline. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "ListRuns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The pipeline id */
+    @path pipelineId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Run[]>;
+
+  /** Runs a pipeline. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "RunPipeline")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs")
+  @post
+  RunPipeline(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The pipeline ID. */
+    @path pipelineId: int32,
+
+    /** The pipeline version. */
+    @query(#{ explode: true }) pipelineVersion?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Optional additional parameters for this run. */
+    @body body: RunPipelineParameters,
+  ): Run;
+
+  /** Gets a run for a particular pipeline. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "GetRun")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The pipeline id */
+    @path pipelineId: int32,
+
+    /** The run id */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Run;
+}
+
+interface Artifacts {
+  /** Get a specific artifact from a pipeline run */
+  @tag("Artifacts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "artifacts")
+  @extension("x-ms-vss-method", "GetArtifact")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}/artifacts")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the pipeline. */
+    @path pipelineId: int32,
+
+    /** ID of the run of that pipeline. */
+    @path runId: int32,
+
+    /** Name of the artifact. */
+    @query(#{ explode: true }) artifactName: string,
+
+    /** Expand options. Default is None. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GetArtifactExpandOptions",
+        values: #[
+          #{ value: "none", description: "No expansion." },
+          #{ value: "signedContent", description: "Include signed content." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "signedContent",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Artifact;
+}
+
+interface Logs {
+  /** Get a list of logs from a pipeline run. */
+  @tag("Logs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "ListLogs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}/logs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the pipeline. */
+    @path pipelineId: int32,
+
+    /** ID of the run of that pipeline. */
+    @path runId: int32,
+
+    /** Expand options. Default is None. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GetLogExpandOptions",
+        values: #[#{ value: "none", description: "" }, #{ value: "signedContent", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "signedContent",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): LogCollection;
+
+  /** Get a specific log from a pipeline run */
+  @tag("Logs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "GetLog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs/{runId}/logs/{logId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the pipeline. */
+    @path pipelineId: int32,
+
+    /** ID of the run of that pipeline. */
+    @path runId: int32,
+
+    /** ID of the log. */
+    @path logId: int32,
+
+    /** Expand options. Default is None. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GetLogExpandOptions",
+        values: #[#{ value: "none", description: "" }, #{ value: "signedContent", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "signedContent",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Log;
 }

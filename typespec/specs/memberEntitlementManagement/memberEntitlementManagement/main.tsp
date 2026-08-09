@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "MemberEntitlementManagement" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://vsaex.dev.azure.com")
 namespace MemberEntitlementManagement;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AadGraphMember {
   ...GraphMember;
@@ -918,509 +924,521 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get the group entitlements for an account. */
-@tag("Group Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groupEntitlements")
-@extension("x-ms-vss-method", "GetGroupEntitlements")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/groupentitlements")
-@get
-op GroupEntitlements_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GroupEntitlement[]>;
-
-/** Create a group entitlement with license rule, extension rule. */
-@tag("Group Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groupEntitlements")
-@extension("x-ms-vss-method", "AddGroupEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/groupentitlements")
-@post
-op GroupEntitlements_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if the rules defined in group entitlement should be created and applied to it’s members (default option) or just be tested */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "RuleOption",
-      values: #[
-        #{ value: "applyGroupRule", description: "" },
-        #{ value: "testApplyGroupRule", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  ruleOption?: "applyGroupRule" | "testApplyGroupRule",
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** GroupEntitlement object specifying License Rule, Extensions Rule for the group. Based on the rules the members of the group will be given licenses and extensions. The Group Entitlement can be used to add the group to another project level groups */
-  @body body: GroupEntitlement,
-): CreatedResponse & GroupEntitlementOperationReference;
-
-/** Delete a group entitlement. */
-@tag("Group Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groupEntitlements")
-@extension("x-ms-vss-method", "DeleteGroupEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/groupentitlements/{groupId}")
-@delete
-op GroupEntitlements_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the group to delete. */
-  @format("uuid") @path groupId: string,
-
-  /** RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if the rules defined in group entitlement should be deleted and the changes are applied to it’s members (default option) or just be tested */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "RuleOption",
-      values: #[
-        #{ value: "applyGroupRule", description: "" },
-        #{ value: "testApplyGroupRule", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  ruleOption?: "applyGroupRule" | "testApplyGroupRule",
-
-  /** Optional parameter that specifies whether the group with the given ID should be removed from all other groups */
-  @query(#{ explode: true }) removeGroupMembership?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GroupEntitlementOperationReference;
-
-/** Get a group entitlement. If the group entitlement does not exist, returns null. */
-@tag("Group Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groupEntitlements")
-@extension("x-ms-vss-method", "GetGroupEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/groupentitlements/{groupId}")
-@get
-op GroupEntitlements_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the group. */
-  @format("uuid") @path groupId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GroupEntitlement;
-
-/** Update entitlements (License Rule, Extensions Rule, Project memberships etc.) for a group. */
-@tag("Group Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groupEntitlements")
-@extension("x-ms-vss-method", "UpdateGroupEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/groupentitlements/{groupId}")
-@patch
-op GroupEntitlements_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the group. */
-  @format("uuid") @path groupId: string,
-
-  /** RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if the rules defined in group entitlement should be updated and the changes are applied to it’s members (default option) or just be tested */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "RuleOption",
-      values: #[
-        #{ value: "applyGroupRule", description: "" },
-        #{ value: "testApplyGroupRule", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  ruleOption?: "applyGroupRule" | "testApplyGroupRule",
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** JsonPatchDocument containing the operations to perform on the group. */
-  @body body: JsonPatchDocument,
-): GroupEntitlementOperationReference;
-
-/** Get direct members of a Group. */
-@tag("Members")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "members")
-@extension("x-ms-vss-method", "GetGroupMembers")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/GroupEntitlements/{groupId}/members")
-@get
-op Members_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of the Group. */
-  @format("uuid") @path groupId: string,
-
-  /** Maximum number of results to retrieve. */
-  @query(#{ explode: true }) maxResults?: int32,
-
-  /** Paging Token from the previous page fetched. If the 'pagingToken' is null, the results would be fetched from the beginning of the Members List. */
-  @query(#{ explode: true }) pagingToken?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): PagedGraphMemberList;
-
-/** Remove a member from a Group. */
-@tag("Members")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "members")
-@extension("x-ms-vss-method", "RemoveMemberFromGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/GroupEntitlements/{groupId}/members/{memberId}")
-@delete
-op Members_RemoveMemberFromGroup(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of the group. */
-  @format("uuid") @path groupId: string,
-
-  /** Id of the member to remove. */
-  @format("uuid") @path memberId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Add a member to a Group. */
-@tag("Members")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "members")
-@extension("x-ms-vss-method", "AddMemberToGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/GroupEntitlements/{groupId}/members/{memberId}")
-@put
-op Members_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of the Group. */
-  @format("uuid") @path groupId: string,
-
-  /** Id of the member to add. */
-  @format("uuid") @path memberId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-@tag("Member Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "memberEntitlements")
-@extension("x-ms-vss-method", "SearchMemberEntitlements")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/memberentitlements")
-@get
-op MemberEntitlements_SearchMemberEntitlements(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @query(#{ explode: true }) continuationToken?: string,
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "UserEntitlementProperty",
-      values: #[
-        #{ value: "license", description: "" },
-        #{ value: "extensions", description: "" },
-        #{ value: "projects", description: "" },
-        #{ value: "groupRules", description: "" },
-        #{ value: "all", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  select?: "license" | "extensions" | "projects" | "groupRules" | "all",
-  @query(#{ explode: true }) $filter?: string,
-  @query(#{ explode: true }) $orderBy?: string,
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<unknown[]>;
-
-/** Edit the entitlements (License, Extensions, Projects, Teams etc) for one or more service principals. */
-@tag("Service Principal Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipalEntitlements")
-@extension("x-ms-vss-method", "UpdateServicePrincipalEntitlements")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceprincipalentitlements")
-@patch
-op ServicePrincipalEntitlements_UpdateServicePrincipalEntitlements(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** JsonPatchDocument containing the operations to perform. */
-  @body body: JsonPatchDocument,
-): ServicePrincipalEntitlementOperationReference;
-
-/** Add a service principal, assign license and extensions and make them a member of a project group in an account. NOTE: If you are working with AAD app registration, you can find service principal of your app in enterprise applications, and make sure to use service principal's object id as originId parameter in the request body */
-@tag("Service Principal Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipalEntitlements")
-@extension("x-ms-vss-method", "AddServicePrincipalEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceprincipalentitlements")
-@post
-op ServicePrincipalEntitlements_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** ServicePrincipalEntitlement object specifying License, Extensions and Project/Team groups the service principal should be added to. */
-  @body body: ServicePrincipalEntitlement,
-): ServicePrincipalEntitlementsPostResponse;
-
-/** Delete a service principal from the account. The delete operation includes unassigning Extensions and Licenses and removing the service principal from all project memberships. The service principal would continue to have access to the account if it is member of an AAD group, that is added directly to the account. */
-@tag("Service Principal Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipalEntitlements")
-@extension("x-ms-vss-method", "DeleteServicePrincipalEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
-@delete
-op ServicePrincipalEntitlements_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the service principal. */
-  @format("uuid") @path servicePrincipalId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get Service principal Entitlement for a service principal. */
-@tag("Service Principal Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipalEntitlements")
-@extension("x-ms-vss-method", "GetServicePrincipalEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
-@get
-op ServicePrincipalEntitlements_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the service principal. */
-  @format("uuid") @path servicePrincipalId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ServicePrincipalEntitlement;
-
-/** Edit the entitlements (License, Extensions, Projects, Teams etc) for a service principal. */
-@tag("Service Principal Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipalEntitlements")
-@extension("x-ms-vss-method", "UpdateServicePrincipalEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
-@patch
-op ServicePrincipalEntitlements_UpdateServicePrincipalEntitlement(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the service principal. */
-  @format("uuid") @path servicePrincipalId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** JsonPatchDocument containing the operations to perform on the service principal. */
-  @body body: JsonPatchDocument,
-): ServicePrincipalEntitlementsPatchResponse;
-
-/** Get a paged set of user entitlements matching the filter and sort criteria built with properties that match the select input. */
-@tag("User Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "userEntitlements")
-@extension("x-ms-vss-method", "SearchUserEntitlements")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlements")
-@get
-op UserEntitlements_SearchUserEntitlements(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Continuation token for getting the next page of data set. If null is passed, gets the first page. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Comma (',') separated list of properties to select in the result entitlements. names of the properties are - 'Projects, 'Extensions' and 'Grouprules'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "UserEntitlementProperty",
-      values: #[
-        #{ value: "license", description: "" },
-        #{ value: "extensions", description: "" },
-        #{ value: "projects", description: "" },
-        #{ value: "groupRules", description: "" },
-        #{ value: "all", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  select?: "license" | "extensions" | "projects" | "groupRules" | "all",
-
-  /** Equality operators relating to searching user entitlements separated by and clauses. Valid filters include: licenseId, licenseStatus, userType, and name. licenseId: filters based on license assignment using license names. i.e. licenseId eq 'Account-Stakeholder' or licenseId eq 'Account-Express'. licenseStatus: filters based on license status. currently only supports disabled. i.e. licenseStatus eq 'Disabled'. To get disabled basic licenses, you would pass (licenseId eq 'Account-Express' and licenseStatus eq 'Disabled'). userType: filters off identity type. Supported types are member or guest i.e. userType eq 'member'. name: filters on if the user's display name or email contains given input. i.e. get all users with 'test' in email or displayname is 'name eq 'test''. A valid query could be: (licenseId eq 'Account-Stakeholder' or (licenseId eq 'Account-Express' and licenseStatus eq 'Disabled')) and name eq 'test' and userType eq 'guest'. */
-  @query(#{ explode: true }) $filter?: string,
-
-  /** PropertyName and Order (separated by a space ( )) to sort on (e.g. lastAccessed desc). Order defaults to ascending. valid properties to order by are dateCreated, lastAccessed, and name */
-  @query(#{ explode: true }) $orderBy?: string,
-
-  ...Parameters.`api-Version-preview`.`5`,
-): PagedUserEntitlementsList;
-
-/** Edit the entitlements (License, Extensions, Projects, Teams etc) for one or more users. MSA Backed organizations may face limitation when using this API. */
-@tag("User Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "userEntitlements")
-@extension("x-ms-vss-method", "UpdateUserEntitlements")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlements")
-@patch
-op UserEntitlements_UpdateUserEntitlements(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Whether to send email invites to new users or not */
-  @query(#{ explode: true }) doNotSendInviteForNewUsers?: boolean,
-
-  ...Parameters.`api-Version-preview`.`5`,
-  @header contentType: "application/json-patch+json",
-
-  /** JsonPatchDocument containing the operations to perform. */
-  @body body: JsonPatchDocument,
-): UserEntitlementOperationReference;
-
-/** Add a user, assign license and extensions and make them a member of a project group in an account. */
-@tag("User Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "userEntitlements")
-@extension("x-ms-vss-method", "AddUserEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlements")
-@post
-op UserEntitlements_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`5`,
-
-  /** UserEntitlement object specifying License, Extensions and Project/Team groups the user should be added to. */
-  @body body: UserEntitlement,
-): UserEntitlementsPostResponse;
-
-/** Delete a user from the account. The delete operation includes unassigning Extensions and Licenses and removing the user from all project memberships. The user would continue to have access to the account if she is member of an AAD group, that is added directly to the account. */
-@tag("User Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "userEntitlements")
-@extension("x-ms-vss-method", "DeleteUserEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlements/{userId}")
-@delete
-op UserEntitlements_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the user. */
-  @format("uuid") @path userId: string,
-
-  ...Parameters.`api-Version-preview`.`5`,
-): OkResponse;
-
-/** Get User Entitlement for a user. */
-@tag("User Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "userEntitlements")
-@extension("x-ms-vss-method", "GetUserEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlements/{userId}")
-@get
-op UserEntitlements_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the user. */
-  @format("uuid") @path userId: string,
-
-  ...Parameters.`api-Version-preview`.`5`,
-): UserEntitlement;
-
-/** Edit the entitlements (License, Extensions, Projects, Teams etc) for a user. MSA Backed organizations may face limitation when using this API. */
-@tag("User Entitlements")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "userEntitlements")
-@extension("x-ms-vss-method", "UpdateUserEntitlement")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlements/{userId}")
-@patch
-op UserEntitlements_UpdateUserEntitlement(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the user. */
-  @format("uuid") @path userId: string,
-
-  ...Parameters.`api-Version-preview`.`5`,
-  @header contentType: "application/json-patch+json",
-
-  /** JsonPatchDocument containing the operations to perform on the user. */
-  @body body: JsonPatchDocument,
-): UserEntitlementsPatchResponse;
-
-/** Get summary of Licenses, Extension, Projects, Groups and their assignments in the collection. */
-@tag("User Entitlement Summary")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "userEntitlementSummary")
-@extension("x-ms-vss-method", "GetUsersSummary")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/userentitlementsummary")
-@get
-op UserEntitlementSummary_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Comma (',') separated list of properties to select. Supported property names are {AccessLevels, Licenses, Projects, Groups}. */
-  @query(#{ explode: true }) select?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): UsersSummary;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `5` {
       /** Version of the API to use. This should be set to '7.2-preview.5' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface GroupEntitlements {
+  /** Get the group entitlements for an account. */
+  @tag("Group Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groupEntitlements")
+  @extension("x-ms-vss-method", "GetGroupEntitlements")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/groupentitlements")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GroupEntitlement[]>;
+
+  /** Create a group entitlement with license rule, extension rule. */
+  @tag("Group Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groupEntitlements")
+  @extension("x-ms-vss-method", "AddGroupEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/groupentitlements")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if the rules defined in group entitlement should be created and applied to it’s members (default option) or just be tested */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "RuleOption",
+        values: #[
+          #{ value: "applyGroupRule", description: "" },
+          #{ value: "testApplyGroupRule", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    ruleOption?: "applyGroupRule" | "testApplyGroupRule",
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** GroupEntitlement object specifying License Rule, Extensions Rule for the group. Based on the rules the members of the group will be given licenses and extensions. The Group Entitlement can be used to add the group to another project level groups */
+    @body body: GroupEntitlement,
+  ): CreatedResponse & GroupEntitlementOperationReference;
+
+  /** Delete a group entitlement. */
+  @tag("Group Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groupEntitlements")
+  @extension("x-ms-vss-method", "DeleteGroupEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/groupentitlements/{groupId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the group to delete. */
+    @format("uuid") @path groupId: string,
+
+    /** RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if the rules defined in group entitlement should be deleted and the changes are applied to it’s members (default option) or just be tested */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "RuleOption",
+        values: #[
+          #{ value: "applyGroupRule", description: "" },
+          #{ value: "testApplyGroupRule", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    ruleOption?: "applyGroupRule" | "testApplyGroupRule",
+
+    /** Optional parameter that specifies whether the group with the given ID should be removed from all other groups */
+    @query(#{ explode: true }) removeGroupMembership?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GroupEntitlementOperationReference;
+
+  /** Get a group entitlement. If the group entitlement does not exist, returns null. */
+  @tag("Group Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groupEntitlements")
+  @extension("x-ms-vss-method", "GetGroupEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/groupentitlements/{groupId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the group. */
+    @format("uuid") @path groupId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GroupEntitlement;
+
+  /** Update entitlements (License Rule, Extensions Rule, Project memberships etc.) for a group. */
+  @tag("Group Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groupEntitlements")
+  @extension("x-ms-vss-method", "UpdateGroupEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/groupentitlements/{groupId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the group. */
+    @format("uuid") @path groupId: string,
+
+    /** RuleOption [ApplyGroupRule/TestApplyGroupRule] - specifies if the rules defined in group entitlement should be updated and the changes are applied to it’s members (default option) or just be tested */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "RuleOption",
+        values: #[
+          #{ value: "applyGroupRule", description: "" },
+          #{ value: "testApplyGroupRule", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    ruleOption?: "applyGroupRule" | "testApplyGroupRule",
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** JsonPatchDocument containing the operations to perform on the group. */
+    @body body: JsonPatchDocument,
+  ): GroupEntitlementOperationReference;
+}
+
+interface Members {
+  /** Get direct members of a Group. */
+  @tag("Members")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "members")
+  @extension("x-ms-vss-method", "GetGroupMembers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/GroupEntitlements/{groupId}/members")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of the Group. */
+    @format("uuid") @path groupId: string,
+
+    /** Maximum number of results to retrieve. */
+    @query(#{ explode: true }) maxResults?: int32,
+
+    /** Paging Token from the previous page fetched. If the 'pagingToken' is null, the results would be fetched from the beginning of the Members List. */
+    @query(#{ explode: true }) pagingToken?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): PagedGraphMemberList;
+
+  /** Remove a member from a Group. */
+  @tag("Members")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "members")
+  @extension("x-ms-vss-method", "RemoveMemberFromGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/GroupEntitlements/{groupId}/members/{memberId}")
+  @delete
+  RemoveMemberFromGroup(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of the group. */
+    @format("uuid") @path groupId: string,
+
+    /** Id of the member to remove. */
+    @format("uuid") @path memberId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Add a member to a Group. */
+  @tag("Members")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "members")
+  @extension("x-ms-vss-method", "AddMemberToGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/GroupEntitlements/{groupId}/members/{memberId}")
+  @put
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of the Group. */
+    @format("uuid") @path groupId: string,
+
+    /** Id of the member to add. */
+    @format("uuid") @path memberId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+}
+
+interface MemberEntitlements {
+  @tag("Member Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "memberEntitlements")
+  @extension("x-ms-vss-method", "SearchMemberEntitlements")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/memberentitlements")
+  @get
+  SearchMemberEntitlements(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @query(#{ explode: true }) continuationToken?: string,
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "UserEntitlementProperty",
+        values: #[
+          #{ value: "license", description: "" },
+          #{ value: "extensions", description: "" },
+          #{ value: "projects", description: "" },
+          #{ value: "groupRules", description: "" },
+          #{ value: "all", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    select?: "license" | "extensions" | "projects" | "groupRules" | "all",
+    @query(#{ explode: true }) $filter?: string,
+    @query(#{ explode: true }) $orderBy?: string,
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<unknown[]>;
+}
+
+interface ServicePrincipalEntitlements {
+  /** Edit the entitlements (License, Extensions, Projects, Teams etc) for one or more service principals. */
+  @tag("Service Principal Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipalEntitlements")
+  @extension("x-ms-vss-method", "UpdateServicePrincipalEntitlements")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceprincipalentitlements")
+  @patch
+  UpdateServicePrincipalEntitlements(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** JsonPatchDocument containing the operations to perform. */
+    @body body: JsonPatchDocument,
+  ): ServicePrincipalEntitlementOperationReference;
+
+  /** Add a service principal, assign license and extensions and make them a member of a project group in an account. NOTE: If you are working with AAD app registration, you can find service principal of your app in enterprise applications, and make sure to use service principal's object id as originId parameter in the request body */
+  @tag("Service Principal Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipalEntitlements")
+  @extension("x-ms-vss-method", "AddServicePrincipalEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceprincipalentitlements")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** ServicePrincipalEntitlement object specifying License, Extensions and Project/Team groups the service principal should be added to. */
+    @body body: ServicePrincipalEntitlement,
+  ): ServicePrincipalEntitlementsPostResponse;
+
+  /** Delete a service principal from the account. The delete operation includes unassigning Extensions and Licenses and removing the service principal from all project memberships. The service principal would continue to have access to the account if it is member of an AAD group, that is added directly to the account. */
+  @tag("Service Principal Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipalEntitlements")
+  @extension("x-ms-vss-method", "DeleteServicePrincipalEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the service principal. */
+    @format("uuid") @path servicePrincipalId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get Service principal Entitlement for a service principal. */
+  @tag("Service Principal Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipalEntitlements")
+  @extension("x-ms-vss-method", "GetServicePrincipalEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the service principal. */
+    @format("uuid") @path servicePrincipalId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ServicePrincipalEntitlement;
+
+  /** Edit the entitlements (License, Extensions, Projects, Teams etc) for a service principal. */
+  @tag("Service Principal Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipalEntitlements")
+  @extension("x-ms-vss-method", "UpdateServicePrincipalEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
+  @patch
+  UpdateServicePrincipalEntitlement(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the service principal. */
+    @format("uuid") @path servicePrincipalId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** JsonPatchDocument containing the operations to perform on the service principal. */
+    @body body: JsonPatchDocument,
+  ): ServicePrincipalEntitlementsPatchResponse;
+}
+
+interface UserEntitlements {
+  /** Get a paged set of user entitlements matching the filter and sort criteria built with properties that match the select input. */
+  @tag("User Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "userEntitlements")
+  @extension("x-ms-vss-method", "SearchUserEntitlements")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlements")
+  @get
+  SearchUserEntitlements(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Continuation token for getting the next page of data set. If null is passed, gets the first page. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Comma (',') separated list of properties to select in the result entitlements. names of the properties are - 'Projects, 'Extensions' and 'Grouprules'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "UserEntitlementProperty",
+        values: #[
+          #{ value: "license", description: "" },
+          #{ value: "extensions", description: "" },
+          #{ value: "projects", description: "" },
+          #{ value: "groupRules", description: "" },
+          #{ value: "all", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    select?: "license" | "extensions" | "projects" | "groupRules" | "all",
+
+    /** Equality operators relating to searching user entitlements separated by and clauses. Valid filters include: licenseId, licenseStatus, userType, and name. licenseId: filters based on license assignment using license names. i.e. licenseId eq 'Account-Stakeholder' or licenseId eq 'Account-Express'. licenseStatus: filters based on license status. currently only supports disabled. i.e. licenseStatus eq 'Disabled'. To get disabled basic licenses, you would pass (licenseId eq 'Account-Express' and licenseStatus eq 'Disabled'). userType: filters off identity type. Supported types are member or guest i.e. userType eq 'member'. name: filters on if the user's display name or email contains given input. i.e. get all users with 'test' in email or displayname is 'name eq 'test''. A valid query could be: (licenseId eq 'Account-Stakeholder' or (licenseId eq 'Account-Express' and licenseStatus eq 'Disabled')) and name eq 'test' and userType eq 'guest'. */
+    @query(#{ explode: true }) $filter?: string,
+
+    /** PropertyName and Order (separated by a space ( )) to sort on (e.g. lastAccessed desc). Order defaults to ascending. valid properties to order by are dateCreated, lastAccessed, and name */
+    @query(#{ explode: true }) $orderBy?: string,
+
+    ...Parameters.`api-Version-preview`.`5`,
+  ): PagedUserEntitlementsList;
+
+  /** Edit the entitlements (License, Extensions, Projects, Teams etc) for one or more users. MSA Backed organizations may face limitation when using this API. */
+  @tag("User Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "userEntitlements")
+  @extension("x-ms-vss-method", "UpdateUserEntitlements")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlements")
+  @patch
+  UpdateUserEntitlements(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Whether to send email invites to new users or not */
+    @query(#{ explode: true }) doNotSendInviteForNewUsers?: boolean,
+
+    ...Parameters.`api-Version-preview`.`5`,
+    @header contentType: "application/json-patch+json",
+
+    /** JsonPatchDocument containing the operations to perform. */
+    @body body: JsonPatchDocument,
+  ): UserEntitlementOperationReference;
+
+  /** Add a user, assign license and extensions and make them a member of a project group in an account. */
+  @tag("User Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "userEntitlements")
+  @extension("x-ms-vss-method", "AddUserEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlements")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`5`,
+
+    /** UserEntitlement object specifying License, Extensions and Project/Team groups the user should be added to. */
+    @body body: UserEntitlement,
+  ): UserEntitlementsPostResponse;
+
+  /** Delete a user from the account. The delete operation includes unassigning Extensions and Licenses and removing the user from all project memberships. The user would continue to have access to the account if she is member of an AAD group, that is added directly to the account. */
+  @tag("User Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "userEntitlements")
+  @extension("x-ms-vss-method", "DeleteUserEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlements/{userId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the user. */
+    @format("uuid") @path userId: string,
+
+    ...Parameters.`api-Version-preview`.`5`,
+  ): OkResponse;
+
+  /** Get User Entitlement for a user. */
+  @tag("User Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "userEntitlements")
+  @extension("x-ms-vss-method", "GetUserEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlements/{userId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the user. */
+    @format("uuid") @path userId: string,
+
+    ...Parameters.`api-Version-preview`.`5`,
+  ): UserEntitlement;
+
+  /** Edit the entitlements (License, Extensions, Projects, Teams etc) for a user. MSA Backed organizations may face limitation when using this API. */
+  @tag("User Entitlements")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "userEntitlements")
+  @extension("x-ms-vss-method", "UpdateUserEntitlement")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlements/{userId}")
+  @patch
+  UpdateUserEntitlement(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the user. */
+    @format("uuid") @path userId: string,
+
+    ...Parameters.`api-Version-preview`.`5`,
+    @header contentType: "application/json-patch+json",
+
+    /** JsonPatchDocument containing the operations to perform on the user. */
+    @body body: JsonPatchDocument,
+  ): UserEntitlementsPatchResponse;
+}
+
+interface UserEntitlementSummary {
+  /** Get summary of Licenses, Extension, Projects, Groups and their assignments in the collection. */
+  @tag("User Entitlement Summary")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "userEntitlementSummary")
+  @extension("x-ms-vss-method", "GetUsersSummary")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/userentitlementsummary")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Comma (',') separated list of properties to select. Supported property names are {AccessLevels, Licenses, Projects, Groups}. */
+    @query(#{ explode: true }) select?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): UsersSummary;
 }

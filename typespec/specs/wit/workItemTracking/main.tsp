@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "WorkItemTracking" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace WorkItemTracking;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AccountMyWorkResult {
   /** True, when length of WorkItemDetails is same as the limit */
@@ -1689,2369 +1695,2433 @@ model WorkItemUpdate {
   workItemId?: int32;
 }
 
-/** Get the list of work item tracking outbound artifact link types. */
-@tag("Artifact Link Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "artifactLinkTypes")
-@extension("x-ms-vss-method", "GetWorkArtifactLinkTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/wit/artifactlinktypes")
-@get
-op ArtifactLinkTypes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WorkArtifactLink[]>;
-
-/** Get a list of all work item icons. */
-@tag("Work Item Icons")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemIcons")
-@extension("x-ms-vss-method", "GetWorkItemIcons")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/wit/workitemicons")
-@get
-op WorkItemIcons_List(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WorkItemIcon[]>;
-
-/** Get a work item icon given the friendly name and icon color. */
-@tag("Work Item Icons")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemIcons")
-@extension("x-ms-vss-method", "GetWorkItemIcon")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/wit/workitemicons/{icon}")
-@get
-op WorkItemIcons_Get(
-  /** The name of the icon */
-  @path icon: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** The 6-digit hex color for the icon */
-  @query(#{ explode: true }) color?: string,
-
-  /** The version of the icon (used only for cache invalidation) */
-  @query(#{ explode: true }) v?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header contentType: "image/svg+xml";
-      @body body: WorkItemIcon;
-    }
-  | {
-      @header contentType: "image/xaml+xml";
-      @body body: WorkItemIcon;
-    }
-  | WorkItemIcon;
-
-/** Gets the work item relation types. */
-@tag("Work Item Relation Types")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemRelationTypes")
-@extension("x-ms-vss-method", "GetRelationTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/wit/workitemrelationtypes")
-@get
-op WorkItemRelationTypes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<WorkItemRelationType[]>;
-
-/** Gets the work item relation type definition. */
-@tag("Work Item Relation Types")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemRelationTypes")
-@extension("x-ms-vss-method", "GetRelationType")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/wit/workitemrelationtypes/{relation}")
-@get
-op WorkItemRelationTypes_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The relation name */
-  @path relation: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WorkItemRelationType;
-
-/** Returns the next state on the given work item IDs. */
-@tag("Work Item Transitions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemTransitions")
-@extension("x-ms-vss-method", "GetWorkItemNextStatesOnCheckinAction")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/wit/workitemtransitions")
-@get
-op WorkItemTransitions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** list of work item ids */
-  @format("array (int32)") @query(#{ explode: true }) ids: string,
-
-  /** possible actions. Currently only supports checkin */
-  @query(#{ explode: true }) action?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WorkItemNextStateOnTransition[]>;
-
-/** Gets recent work item activities */
-@tag("Account My Work Recent Activity")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "accountMyWorkRecentActivity")
-@extension("x-ms-vss-method", "GetRecentActivityData")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/work/accountmyworkrecentactivity")
-@get
-op AccountMyWorkRecentActivity_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<AccountRecentActivityWorkItemModel2[]>;
-
-/** Gets a list of github connections */
-@tag("Github Connections")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "githubConnections")
-@extension("x-ms-vss-method", "GetGithubConnections")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/githubconnections")
-@get
-op GithubConnections_GetGithubConnections(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitHubConnectionModel[]>;
-
-/** Gets a list of repos within specified github connection. */
-@tag("Github Connections")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "githubConnections")
-@extension("x-ms-vss-method", "GetGithubConnectionRepositories")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/githubconnections/{connectionId}/repos")
-@get
-op GithubConnections_GetGithubConnectionRepositories(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @format("uuid") @path connectionId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitHubConnectionRepoModel[]>;
-
-/** Add/remove list of repos within specified github connection. */
-@tag("Github Connections")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "githubConnections")
-@extension("x-ms-vss-method", "UpdateGithubConnectionRepos")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/githubconnections/{connectionId}/reposBatch")
-@post
-op GithubConnections_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @format("uuid") @path connectionId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: GitHubConnectionReposBatchRequest,
-): Body<GitHubConnectionRepoModel[]>;
-
-/** Queries work items linked to a given list of artifact URI. */
-@tag("Artifact Uri Query")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "artifactUriQuery")
-@extension("x-ms-vss-method", "QueryWorkItemsForArtifactUris")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/artifacturiquery")
-@post
-op ArtifactUriQuery_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Defines a list of artifact URI for querying work items. */
-  @body body: ArtifactUriQuery,
-): ArtifactUriQueryResult;
-
-/** Uploads an attachment. On accounts with higher attachment upload limits (>130MB), you will need to use chunked upload. To upload an attachment in multiple chunks, you first need to [**Start a Chunked Upload**](#start_a_chunked_upload) and then follow the example from the **Upload Chunk** section. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "CreateAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/attachments")
-@post
-op Attachments_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The name of the file */
-  @query(#{ explode: true }) fileName?: string,
-
-  /** Attachment upload type: Simple or Chunked */
-  @query(#{ explode: true }) uploadType?: string,
-
-  /** Target project Area Path */
-  @query(#{ explode: true }) areaPath?: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-  @header contentType: "application/octet-stream",
-
-  /** Stream to upload */
-  @body body: string,
-): AttachmentReference;
-
-/** Permanently delete an attachment. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "DeleteAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/attachments/{id}")
-@delete
-op Attachments_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Attachment ID */
-  @format("uuid") @path id: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): DestroyedAttachment;
-
-/** Downloads an attachment. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/attachments/{id}")
-@get
-op Attachments_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Attachment ID */
-  @format("uuid") @path id: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Name of the file */
-  @query(#{ explode: true }) fileName?: string,
-
-  /** If set to <c>true</c> always download attachment */
-  @query(#{ explode: true }) download?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-):
-  | {
-      @header contentType: "application/octet-stream";
-      @body @format("Stream") body: string;
-    }
-  | {
-      @header contentType: "application/zip";
-      @body @format("Stream") body: string;
-    };
-
-/** Uploads an attachment chunk. Before performing [**Upload a Chunk**](#upload-a-chunk), make sure to have an attachment id returned in **Start a Chunked Upload** example on **Create** section. Specify the byte range of the chunk using Content-Length. For example: 'Content - Length': 'bytes 0 - 39999 / 50000' for the first 40000 bytes of a 50000 byte file. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "UploadAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/attachments/{id}")
-@put
-op Attachments_UploadChunk(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The id of the attachment */
-  @format("uuid") @path id: string,
-
-  /** starting and ending byte positions for chunked file upload, format is 'Content-Range': 'bytes 0-10000/50000' */
-  @header contentRangeHeader: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  @query(#{ explode: true }) fileName?: string,
-  ...Parameters.`api-Version-preview`.`4`,
-  @header contentType: "application/octet-stream",
-
-  /** Stream to upload */
-  @body body: string,
-): AttachmentReference;
-
-/** Gets root classification nodes under the project. */
-@tag("Classification Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "classificationNodes")
-@extension("x-ms-vss-method", "GetRootNodes")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/classificationnodes")
-@get
-op ClassificationNodes_GetRootNodes(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Depth of children to fetch. */
-  @query(#{ explode: true }) $depth?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<WorkItemClassificationNode[]>;
-
-/** Delete an existing classification node. */
-@tag("Classification Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "classificationNodes")
-@extension("x-ms-vss-method", "DeleteClassificationNode")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
-@delete
-op ClassificationNodes_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Structure group of the classification node, area or iteration. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TreeStructureGroup",
-      values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
-    }
-  )
-  @path
-  structureGroup: "areas" | "iterations",
-
-  /** Path of the classification node. */
-  @extension("x-ms-required", false) @path path: string,
-
-  /** Id of the target classification node for reclassification. */
-  @query(#{ explode: true }) $reclassifyId?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Gets the classification node for a given node path. */
-@tag("Classification Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "classificationNodes")
-@extension("x-ms-vss-method", "GetClassificationNode")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
-@get
-op ClassificationNodes_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Structure group of the classification node, area or iteration. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TreeStructureGroup",
-      values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
-    }
-  )
-  @path
-  structureGroup: "areas" | "iterations",
-
-  /** Path of the classification node. */
-  @extension("x-ms-required", false) @path path: string,
-
-  /** Depth of children to fetch. */
-  @query(#{ explode: true }) $depth?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WorkItemClassificationNode;
-
-/** Update an existing classification node. */
-@tag("Classification Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "classificationNodes")
-@extension("x-ms-vss-method", "UpdateClassificationNode")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
-@patch
-op ClassificationNodes_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Structure group of the classification node, area or iteration. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TreeStructureGroup",
-      values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
-    }
-  )
-  @path
-  structureGroup: "areas" | "iterations",
-
-  /** Path of the classification node. */
-  @extension("x-ms-required", false) @path path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Node to create or update. */
-  @body body: WorkItemClassificationNode,
-): WorkItemClassificationNode;
-
-/** Create new or update an existing classification node. */
-@tag("Classification Nodes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "classificationNodes")
-@extension("x-ms-vss-method", "CreateOrUpdateClassificationNode")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
-@post
-op ClassificationNodes_CreateOrUpdate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Structure group of the classification node, area or iteration. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TreeStructureGroup",
-      values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
-    }
-  )
-  @path
-  structureGroup: "areas" | "iterations",
-
-  /** Path of the classification node. */
-  @extension("x-ms-required", false) @path path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Node to create or update. */
-  @body body: WorkItemClassificationNode,
-): WorkItemClassificationNode;
-
-/** Returns information for all fields. The project ID/name parameter is optional. */
-@tag("Fields")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "fields")
-@extension("x-ms-vss-method", "GetWorkItemFields")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/fields")
-@get
-op Fields_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Use ExtensionFields to include extension fields, otherwise exclude them. Unless the feature flag for this parameter is enabled, extension fields are always included. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GetFieldsExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "extensionFields", description: "Adds extension fields to the response." },
-        #{ value: "includeDeleted", description: "Includes fields that have been deleted." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "extensionFields" | "includeDeleted",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WorkItemField2[]>;
-
-/** Create a new field. */
-@tag("Fields")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "fields")
-@extension("x-ms-vss-method", "CreateWorkItemField")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/fields")
-@post
-op Fields_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** New field definition */
-  @body body: WorkItemField2,
-): WorkItemField2;
-
-/** Deletes the field. To undelete a filed, see 'Update Field' API. */
-@tag("Fields")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "fields")
-@extension("x-ms-vss-method", "DeleteWorkItemField")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/fields/{fieldNameOrRefName}")
-@delete
-op Fields_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Field simple name or reference name */
-  @path fieldNameOrRefName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Gets information on a specific field. */
-@tag("Fields")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "fields")
-@extension("x-ms-vss-method", "GetWorkItemField")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/fields/{fieldNameOrRefName}")
-@get
-op Fields_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Field simple name or reference name */
-  @path fieldNameOrRefName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItemField2;
-
-/** Update a field. */
-@tag("Fields")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "fields")
-@extension("x-ms-vss-method", "UpdateWorkItemField")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/fields/{fieldNameOrRefName}")
-@patch
-op Fields_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name/reference name of the field to be updated */
-  @path fieldNameOrRefName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** Payload contains desired value of the field's properties */
-  @body body: FieldUpdate,
-): WorkItemField2;
-
-/** Migrates a project to a different process within the same OOB type. For example, you can only migrate a project from agile/custom-agile to agile/custom-agile. */
-@tag("Project Process Migration")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "projectProcessMigration")
-@extension("x-ms-vss-method", "MigrateProjectsProcess")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/projectprocessmigration")
-@post
-op ProjectProcessMigration_MigrateProjectsProcess(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ProcessIdModel,
-): ProcessMigrationResultModel;
-
-/** Gets the root queries and their children */
-@tag("Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "queries")
-@extension("x-ms-vss-method", "GetQueries")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/queries")
-@get
-op Queries_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Include the query string (wiql), clauses, query result columns, and sort options in the results. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "QueryExpand",
-      values: #[
-        #{ value: "none", description: "Expands Columns, Links and ChangeInfo" },
-        #{ value: "wiql", description: "Expands Columns, Links, ChangeInfo and WIQL text" },
-        #{
-          value: "clauses",
-          description: "Expands Columns, Links, ChangeInfo, WIQL text and clauses",
-        },
-        #{ value: "all", description: "Expands all properties" },
-        #{ value: "minimal", description: "Displays minimal properties and the WIQL text" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "wiql" | "clauses" | "all" | "minimal",
-
-  /** In the folder of queries, return child queries and folders to this depth. */
-  @query(#{ explode: true }) $depth?: int32,
-
-  /** Include deleted queries and folders */
-  @query(#{ explode: true }) $includeDeleted?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<QueryHierarchyItem[]>;
-
-/** Delete a query or a folder. This deletes any permission change on the deleted query or folder and any of its descendants if it is a folder. It is important to note that the deleted permission changes cannot be recovered upon undeleting the query or folder. */
-@tag("Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "queries")
-@extension("x-ms-vss-method", "DeleteQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/queries/{query}")
-@delete
-op Queries_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID or path of the query or folder to delete. */
-  @path query: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Retrieves an individual query and its children */
-@tag("Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "queries")
-@extension("x-ms-vss-method", "GetQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/queries/{query}")
-@get
-op Queries_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID or path of the query. */
-  @path query: string,
-
-  /** Include the query string (wiql), clauses, query result columns, and sort options in the results. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "QueryExpand",
-      values: #[
-        #{ value: "none", description: "Expands Columns, Links and ChangeInfo" },
-        #{ value: "wiql", description: "Expands Columns, Links, ChangeInfo and WIQL text" },
-        #{
-          value: "clauses",
-          description: "Expands Columns, Links, ChangeInfo, WIQL text and clauses",
-        },
-        #{ value: "all", description: "Expands all properties" },
-        #{ value: "minimal", description: "Displays minimal properties and the WIQL text" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "wiql" | "clauses" | "all" | "minimal",
-
-  /** In the folder of queries, return child queries and folders to this depth. */
-  @query(#{ explode: true }) $depth?: int32,
-
-  /** Include deleted queries and folders */
-  @query(#{ explode: true }) $includeDeleted?: boolean,
-
-  /** DateTime query clauses will be formatted using a ISO 8601 compliant format */
-  @query(#{ explode: true }) $useIsoDateFormat?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): QueryHierarchyItem;
-
-/** Update a query or a folder. This allows you to update, rename and move queries and folders. */
-@tag("Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "queries")
-@extension("x-ms-vss-method", "UpdateQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/queries/{query}")
-@patch
-op Queries_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID or path for the query to update. */
-  @path query: string,
-
-  /** Undelete the children of this folder. It is important to note that this will not bring back the permission changes that were previously applied to the descendants. */
-  @query(#{ explode: true }) $undeleteDescendants?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The query to update. */
-  @body body: QueryHierarchyItem,
-): QueryHierarchyItem;
-
-/** Creates a query, or moves a query. Learn more about Work Item Query Language (WIQL) syntax [here](https://docs.microsoft.com/en-us/vsts/collaborate/wiql-syntax?toc=/vsts/work/track/toc.json&bc=/vsts/work/track/breadcrumb/toc.json&view=vsts). */
-@tag("Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "queries")
-@extension("x-ms-vss-method", "CreateQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/queries/{query}")
-@post
-op Queries_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The parent id or path under which the query is to be created. */
-  @path query: string,
-
-  /** If you only want to validate your WIQL query without actually creating one, set it to true. Default is false. */
-  @query(#{ explode: true }) validateWiqlOnly?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The query to create. */
-  @body body: QueryHierarchyItem,
-): QueryHierarchyItem;
-
-/** Gets a list of queries by ids (Maximum 1000) */
-@tag("Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "queriesBatch")
-@extension("x-ms-vss-method", "GetQueriesBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/queriesbatch")
-@post
-op Queries_GetQueriesBatch(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: QueryBatchGetRequest,
-): Body<QueryHierarchyItem[]>;
-
-/** Gets a list of the IDs and the URLs of the deleted the work items in the Recycle Bin. */
-@tag("Recyclebin")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "recyclebin")
-@extension("x-ms-vss-method", "GetDeletedWorkItemShallowReferences")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/recyclebin")
-@get
-op Recyclebin_GetDeletedWorkItemShallowReferences(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<WorkItemDeleteShallowReference[]>;
-
-/** Destroys the specified work item permanently from the Recycle Bin. This action can not be undone. */
-@tag("Recyclebin")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "recyclebin")
-@extension("x-ms-vss-method", "DestroyWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
-@delete
-op Recyclebin_DestroyWorkItem(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the work item to be destroyed permanently */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Gets a deleted work item from Recycle Bin. */
-@tag("Recyclebin")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "recyclebin")
-@extension("x-ms-vss-method", "GetDeletedWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
-@get
-op Recyclebin_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the work item to be returned */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WorkItemDelete;
-
-/** Restores the deleted work item from Recycle Bin. */
-@tag("Recyclebin")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "recyclebin")
-@extension("x-ms-vss-method", "RestoreWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
-@patch
-op Recyclebin_RestoreWorkItem(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the work item to be restored */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Paylod with instructions to update the IsDeleted flag to false */
-  @body body: WorkItemDeleteUpdate,
-): WorkItemDelete;
-
-/** Get a batch of work item links */
-@tag("Reporting Work Item Links")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItemLinks")
-@extension("x-ms-vss-method", "GetReportingLinksByLinkType")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/reporting/workitemlinks")
-@get
-op ReportingWorkItemLinks_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** A list of types to filter the results to specific link types. Omit this parameter to get work item links of all link types. */
-  @format("array (string)") @query(#{ explode: true }) linkTypes?: string,
-
-  /** A list of types to filter the results to specific work item types. Omit this parameter to get work item links of all work item types. */
-  @format("array (string)") @query(#{ explode: true }) types?: string,
-
-  /** Specifies the continuationToken to start the batch from. Omit this parameter to get the first batch of links. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Date/time to use as a starting point for link changes. Only link changes that occurred after that date/time will be returned. Cannot be used in conjunction with 'watermark' parameter. */
-  @query(#{ explode: true }) startDateTime?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): ReportingWorkItemLinksBatch;
-
-/** Get a batch of work item revisions with the option of including deleted items */
-@tag("Reporting Work Item Revisions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemRevisions")
-@extension("x-ms-vss-method", "ReadReportingRevisionsGet")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/reporting/workitemrevisions")
-@get
-op ReportingWorkItemRevisions_ReadReportingRevisionsGet(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** A list of fields to return in work item revisions. Omit this parameter to get all reportable fields. */
-  @format("array (string)") @query(#{ explode: true }) fields?: string,
-
-  /** A list of types to filter the results to specific work item types. Omit this parameter to get work item revisions of all work item types. */
-  @format("array (string)") @query(#{ explode: true }) types?: string,
-
-  /** Specifies the watermark to start the batch from. Omit this parameter to get the first batch of revisions. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Date/time to use as a starting point for revisions, all revisions will occur after this date/time. Cannot be used in conjunction with 'watermark' parameter. */
-  @query(#{ explode: true }) startDateTime?: utcDateTime,
-
-  /** Return an identity reference instead of a string value for identity fields. */
-  @query(#{ explode: true }) includeIdentityRef?: boolean,
-
-  /** Specify if the deleted item should be returned. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** Specify if the tag objects should be returned for System.Tags field. */
-  @query(#{ explode: true }) includeTagRef?: boolean,
-
-  /** Return only the latest revisions of work items, skipping all historical revisions */
-  @query(#{ explode: true }) includeLatestOnly?: boolean,
-
-  /** Return all the fields in work item revisions, including long text fields which are not returned by default */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReportingRevisionsExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "fields", description: "Add fields to the response." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "fields",
-
-  /** Return only the those revisions of work items, where only history field was changed */
-  @query(#{ explode: true }) includeDiscussionChangesOnly?: boolean,
-
-  /** The maximum number of results to return in this batch */
-  @query(#{ explode: true }) $maxPageSize?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): ReportingWorkItemRevisionsBatch;
-
-/** Get a batch of work item revisions. This request may be used if your list of fields is large enough that it may run the URL over the length limit. */
-@tag("Reporting Work Item Revisions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemRevisions")
-@extension("x-ms-vss-method", "ReadReportingRevisionsPost")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/reporting/workitemrevisions")
-@post
-op ReportingWorkItemRevisions_ReadReportingRevisionsPost(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Specifies the watermark to start the batch from. Omit this parameter to get the first batch of revisions. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Date/time to use as a starting point for revisions, all revisions will occur after this date/time. Cannot be used in conjunction with 'watermark' parameter. */
-  @query(#{ explode: true }) startDateTime?: utcDateTime,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReportingRevisionsExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "fields", description: "Add fields to the response." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "fields",
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** An object that contains request settings: field filter, type filter, identity format */
-  @body body: ReportingWorkItemRevisionsFilter,
-): ReportingWorkItemRevisionsBatch;
-
-@tag("Work Item Revisions Discussions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemRevisionsDiscussions")
-@extension("x-ms-vss-method", "ReadReportingDiscussions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/reporting/workItemRevisions/discussions")
-@get
-op WorkItemRevisionsDiscussions_ReadReportingDiscussions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  @query(#{ explode: true }) continuationToken?: string,
-  @query(#{ explode: true }) $maxPageSize?: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): ReportingWorkItemRevisionsBatch;
-
-/** RESTful method to send mail for selected/queried work items. */
-@tag("Send Mail")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "sendMail")
-@extension("x-ms-vss-method", "SendMailAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/sendmail")
-@post
-op SendMail_SendMail(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: SendMailBody,
-): OkResponse;
-
-/** Get all the tags for the project. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "GetTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/tags")
-@get
-op Tags_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WorkItemTagDefinition[]>;
-
-/** Delete the tag for the project. Please note, that the deleted tag will be removed from all Work Items as well as Pull Requests. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "DeleteTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/tags/{tagIdOrName}")
-@delete
-op Tags_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Tag ID or tag name. */
-  @path tagIdOrName: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get the tag for the project. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "GetTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/tags/{tagIdOrName}")
-@get
-op Tags_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Tag ID or tag name. */
-  @path tagIdOrName: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): WorkItemTagDefinition;
-
-/** Update the tag for the project. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "UpdateTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/tags/{tagIdOrName}")
-@patch
-op Tags_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Tag ID or tag name. */
-  @path tagIdOrName: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: WorkItemTagDefinition,
-): WorkItemTagDefinition;
-
-/** Creates a temporary query Learn more about Work Item Query Language (WIQL) syntax [here](https://docs.microsoft.com/en-us/vsts/collaborate/wiql-syntax?toc=/vsts/work/track/toc.json&bc=/vsts/work/track/breadcrumb/toc.json&view=vsts). */
-@tag("Temp Queries")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "tempQueries")
-@extension("x-ms-vss-method", "CreateTempQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/tempqueries")
-@post
-op TempQueries_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The temporary query to create */
-  @body body: TemporaryQueryRequestModel,
-): TemporaryQueryResponseModel;
-
-/** Returns a list of work items (Maximum 200) */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItems")
-@extension("x-ms-vss-method", "GetWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitems")
-@get
-op WorkItems_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The comma-separated list of requested work item ids. (Maximum 200 ids allowed). */
-  @format("array (int32)") @query(#{ explode: true }) ids: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Comma-separated list of requested fields */
-  @format("array (string)") @query(#{ explode: true }) fields?: string,
-
-  /** AsOf UTC date time string */
-  @query(#{ explode: true }) asOf?: utcDateTime,
-
-  /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-
-  /** The flag to control error policy in a bulk get work items request. Possible options are {Fail, Omit}. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemErrorPolicy",
-      values: #[
-        #{ value: "fail", description: "Fail work error policy." },
-        #{ value: "omit", description: "Omit work error policy." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  errorPolicy?: "fail" | "omit",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WorkItem[]>;
-
-/** Returns a single work item from a template. */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItems")
-@extension("x-ms-vss-method", "GetWorkItemTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitems/\${type}")
-@get
-op WorkItems_GetWorkItemTemplate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The work item type name */
-  @path type: string,
-
-  /** Comma-separated list of requested fields */
-  @query(#{ explode: true }) fields?: string,
-
-  /** AsOf UTC date time string */
-  @query(#{ explode: true }) asOf?: utcDateTime,
-
-  /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItem;
-
-/** Creates a single work item. */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItems")
-@extension("x-ms-vss-method", "CreateWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitems/\${type}")
-@post
-op WorkItems_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The work item type of the work item to create */
-  @path type: string,
-
-  /** Indicate if you only want to validate the changes without saving the work item */
-  @query(#{ explode: true }) validateOnly?: boolean,
-
-  /** Do not enforce the work item type rules on this update */
-  @query(#{ explode: true }) bypassRules?: boolean,
-
-  /** Do not fire any notifications for this change */
-  @query(#{ explode: true }) suppressNotifications?: boolean,
-
-  /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-  @header contentType: "application/json-patch+json",
-
-  /** The JSON Patch document representing the work item */
-  @body body: JsonPatchDocument,
-): WorkItem;
-
-/** Deletes the specified work item and sends it to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. WARNING: If the destroy parameter is set to true, work items deleted by this command will NOT go to recycle-bin and there is no way to restore/recover them after deletion. It is recommended NOT to use this parameter. If you do, please use this parameter with extreme caution. */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItems")
-@extension("x-ms-vss-method", "DeleteWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitems/{id}")
-@delete
-op WorkItems_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the work item to be deleted */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Optional parameter, if set to true, the work item is deleted permanently. Please note: the destroy action is PERMANENT and cannot be undone. */
-  @query(#{ explode: true }) destroy?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItemDelete;
-
-/** Returns a single work item. */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItems")
-@extension("x-ms-vss-method", "GetWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitems/{id}")
-@get
-op WorkItems_GetWorkItem(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The work item id */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Comma-separated list of requested fields */
-  @format("array (string)") @query(#{ explode: true }) fields?: string,
-
-  /** AsOf UTC date time string */
-  @query(#{ explode: true }) asOf?: utcDateTime,
-
-  /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItem;
-
-/** Updates a single work item. */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItems")
-@extension("x-ms-vss-method", "UpdateWorkItem")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitems/{id}")
-@patch
-op WorkItems_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The id of the work item to update */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Indicate if you only want to validate the changes without saving the work item */
-  @query(#{ explode: true }) validateOnly?: boolean,
-
-  /** Do not enforce the work item type rules on this update */
-  @query(#{ explode: true }) bypassRules?: boolean,
-
-  /** Do not fire any notifications for this change */
-  @query(#{ explode: true }) suppressNotifications?: boolean,
-
-  /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-  @header contentType: "application/json-patch+json",
-
-  /** The JSON Patch document representing the update */
-  @body body: JsonPatchDocument,
-): WorkItem;
-
-/** Returns the list of fully hydrated work item revisions, paged. */
-@tag("Revisions")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetRevisions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{id}/revisions")
-@get
-op Revisions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  @query(#{ explode: true }) $top?: int32,
-  @query(#{ explode: true }) $skip?: int32,
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WorkItem[]>;
-
-/** Returns a fully hydrated work item for the requested revision */
-@tag("Revisions")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetRevision")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{id}/revisions/{revisionNumber}")
-@get
-op Revisions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path id: int32,
-  @path revisionNumber: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemExpand",
-      values: #[
-        #{ value: "none", description: "Default behavior." },
-        #{ value: "relations", description: "Relations work item expand." },
-        #{ value: "fields", description: "Fields work item expand." },
-        #{ value: "links", description: "Links work item expand." },
-        #{ value: "all", description: "Expands all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "relations" | "fields" | "links" | "all",
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItem;
-
-/** Returns the deltas between work item revisions */
-@tag("Updates")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "updates")
-@extension("x-ms-vss-method", "GetUpdates")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{id}/updates")
-@get
-op Updates_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  @query(#{ explode: true }) $top?: int32,
-  @query(#{ explode: true }) $skip?: int32,
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WorkItemUpdate[]>;
-
-/** Returns a single update for a work item */
-@tag("Updates")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "updates")
-@extension("x-ms-vss-method", "GetUpdate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{id}/updates/{updateNumber}")
-@get
-op Updates_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path id: int32,
-  @path updateNumber: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItemUpdate;
-
-/** Returns a list of work item comments by ids. */
-@tag("Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "comments")
-@extension("x-ms-vss-method", "GetCommentsBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments")
-@get
-op Comments_GetCommentsBatch(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of a work item to get comments for. */
-  @path workItemId: int32,
-
-  /** Comma-separated list of comment ids to return. */
-  @format("array (int32)") @query(#{ explode: true }) ids: string,
-
-  /** Specify if the deleted comments should be retrieved. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** Specifies the additional data retrieval options for work item comments. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CommentExpandOptions",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "reactions", description: "Include comment reactions." },
-        #{
-          value: "renderedText",
-          description: "Include the rendered text (html) in addition to MD text.",
-        },
-        #{
-          value: "renderedTextOnly",
-          description: "If specified, then ONLY rendered text (html) will be returned, w/o markdown. Supposed to be used internally from data provides for optimization purposes.",
-        },
-        #{ value: "all", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "reactions" | "renderedText" | "renderedTextOnly" | "all",
-
-  ...Parameters.`api-Version-preview`.`4`,
-): CommentList;
-
-/** Add a comment on a work item. */
-@tag("Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "comments")
-@extension("x-ms-vss-method", "AddComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments")
-@post
-op Comments_AddComment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of a work item. */
-  @path workItemId: int32,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Comment create request. */
-  @body body: CommentCreate,
-): Comment;
-
-/** Delete a comment on a work item. */
-@tag("Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "comments")
-@extension("x-ms-vss-method", "DeleteComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
-@delete
-op Comments_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of a work item. */
-  @path workItemId: int32,
-
-  @path commentId: int32,
-  ...Parameters.`api-Version-preview`.`4`,
-): OkResponse;
-
-/** Returns a work item comment. */
-@tag("Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "comments")
-@extension("x-ms-vss-method", "GetComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
-@get
-op Comments_GetComment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of a work item to get the comment. */
-  @path workItemId: int32,
-
-  /** Id of the comment to return. */
-  @path commentId: int32,
-
-  /** Specify if the deleted comment should be retrieved. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** Specifies the additional data retrieval options for work item comments. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CommentExpandOptions",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "reactions", description: "Include comment reactions." },
-        #{
-          value: "renderedText",
-          description: "Include the rendered text (html) in addition to MD text.",
-        },
-        #{
-          value: "renderedTextOnly",
-          description: "If specified, then ONLY rendered text (html) will be returned, w/o markdown. Supposed to be used internally from data provides for optimization purposes.",
-        },
-        #{ value: "all", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "reactions" | "renderedText" | "renderedTextOnly" | "all",
-
-  ...Parameters.`api-Version-preview`.`4`,
-): Comment;
-
-/** Update a comment on a work item. */
-@tag("Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "comments")
-@extension("x-ms-vss-method", "UpdateComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
-@patch
-op Comments_UpdateComment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of a work item. */
-  @path workItemId: int32,
-
-  @path commentId: int32,
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Comment update request. */
-  @body body: CommentUpdate,
-): Comment;
-
-/** Gets reactions of a comment. */
-@tag("Comments Reactions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commentsReactions")
-@extension("x-ms-vss-method", "GetCommentReactions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions")
-@get
-op CommentsReactions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** WorkItem ID */
-  @path workItemId: int32,
-
-  /** Comment ID */
-  @path commentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<CommentReaction[]>;
-
-/** Deletes an existing reaction on a comment. */
-@tag("Comments Reactions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commentsReactions")
-@extension("x-ms-vss-method", "DeleteCommentReaction")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}")
-@delete
-op CommentsReactions_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** WorkItem ID */
-  @path workItemId: int32,
-
-  /** Comment ID */
-  @path commentId: int32,
-
-  /** Type of the reaction */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CommentReactionType",
-      values: #[
-        #{ value: "like", description: "" },
-        #{ value: "dislike", description: "" },
-        #{ value: "heart", description: "" },
-        #{ value: "hooray", description: "" },
-        #{ value: "smile", description: "" },
-        #{ value: "confused", description: "" }
-      ],
-    }
-  )
-  @path
-  reactionType: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): CommentReaction;
-
-/** Adds a new reaction to a comment. */
-@tag("Comments Reactions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commentsReactions")
-@extension("x-ms-vss-method", "CreateCommentReaction")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}")
-@put
-op CommentsReactions_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** WorkItem ID */
-  @path workItemId: int32,
-
-  /** Comment ID */
-  @path commentId: int32,
-
-  /** Type of the reaction */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CommentReactionType",
-      values: #[
-        #{ value: "like", description: "" },
-        #{ value: "dislike", description: "" },
-        #{ value: "heart", description: "" },
-        #{ value: "hooray", description: "" },
-        #{ value: "smile", description: "" },
-        #{ value: "confused", description: "" }
-      ],
-    }
-  )
-  @path
-  reactionType: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): CommentReaction;
-
-/** Get users who reacted on the comment. */
-@tag("Comment Reactions Engaged Users")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commentReactionsEngagedUsers")
-@extension("x-ms-vss-method", "GetEngagedUsers")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}/users")
-@get
-op CommentReactionsEngagedUsers_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** WorkItem ID. */
-  @path workItemId: int32,
-
-  /** Comment ID. */
-  @path commentId: int32,
-
-  /** Type of the reaction. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CommentReactionType",
-      values: #[
-        #{ value: "like", description: "" },
-        #{ value: "dislike", description: "" },
-        #{ value: "heart", description: "" },
-        #{ value: "hooray", description: "" },
-        #{ value: "smile", description: "" },
-        #{ value: "confused", description: "" }
-      ],
-    }
-  )
-  @path
-  reactionType: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused",
-
-  @query(#{ explode: true }) $top?: int32,
-  @query(#{ explode: true }) $skip?: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<IdentityRef[]>;
-
-@tag("Comments Versions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commentsVersions")
-@extension("x-ms-vss-method", "GetCommentVersions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/versions")
-@get
-op CommentsVersions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path workItemId: int32,
-  @path commentId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<CommentVersion[]>;
-
-@tag("Comments Versions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commentsVersions")
-@extension("x-ms-vss-method", "GetCommentVersion")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/versions/{version}")
-@get
-op CommentsVersions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path workItemId: int32,
-  @path commentId: int32,
-  @path version: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): CommentVersion;
-
-/** Gets work items for a list of work item ids (Maximum 200) */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemsBatch")
-@extension("x-ms-vss-method", "GetWorkItemsBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemsbatch")
-@post
-op WorkItems_GetWorkItemsBatch(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: WorkItemBatchGetRequest,
-): Body<WorkItem[]>;
-
-/** Deletes specified work items and sends them to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. WARNING: If the destroy parameter is set to true, work items deleted by this command will NOT go to recycle-bin and there is no way to restore/recover them after deletion. */
-@tag("Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemsDelete")
-@extension("x-ms-vss-method", "DeleteWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemsdelete")
-@post
-op WorkItems_DeleteWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: WorkItemDeleteBatchRequest,
-): WorkItemDeleteBatch;
-
-/** Get all work item type categories. */
-@tag("Work Item Type Categories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemTypeCategories")
-@extension("x-ms-vss-method", "GetWorkItemTypeCategories")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypecategories")
-@get
-op WorkItemTypeCategories_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<WorkItemTypeCategory[]>;
-
-/** Get specific work item type category by name. */
-@tag("Work Item Type Categories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemTypeCategories")
-@extension("x-ms-vss-method", "GetWorkItemTypeCategory")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypecategories/{category}")
-@get
-op WorkItemTypeCategories_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The category name */
-  @path category: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WorkItemTypeCategory;
-
-/** Returns the list of work item types */
-@tag("Work Item Types")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemTypes")
-@extension("x-ms-vss-method", "GetWorkItemTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypes")
-@get
-op WorkItemTypes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<WorkItemType[]>;
-
-/** Returns a work item type definition. */
-@tag("Work Item Types")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workItemTypes")
-@extension("x-ms-vss-method", "GetWorkItemType")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypes/{type}")
-@get
-op WorkItemTypes_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Work item type name */
-  @path type: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WorkItemType;
-
-/** Get a list of fields for a work item type with detailed references. */
-@tag("Work Item Types Field")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItemTypesField")
-@extension("x-ms-vss-method", "GetWorkItemTypeFieldsWithReferences")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields")
-@get
-op WorkItemTypesField_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Work item type. */
-  @path type: string,
-
-  /** Expand level for the API response. Properties: to include allowedvalues, default value, isRequired etc. as a part of response; None: to skip these properties. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemTypeFieldsExpandLevel",
-      values: #[
-        #{ value: "none", description: "Includes only basic properties of the field." },
-        #{ value: "allowedValues", description: "Includes allowed values for the field." },
-        #{ value: "dependentFields", description: "Includes dependent fields of the field." },
-        #{ value: "all", description: "Includes allowed values and dependent fields of the field." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "allowedValues" | "dependentFields" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WorkItemTypeFieldWithReferences[]>;
-
-/** Get a field for a work item type with detailed references. */
-@tag("Work Item Types Field")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "workItemTypesField")
-@extension("x-ms-vss-method", "GetWorkItemTypeFieldWithReferences")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}")
-@get
-op WorkItemTypesField_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Work item type. */
-  @path type: string,
-
-  @path field: string,
-
-  /** Expand level for the API response. Properties: to include allowedvalues, default value, isRequired etc. as a part of response; None: to skip these properties. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "WorkItemTypeFieldsExpandLevel",
-      values: #[
-        #{ value: "none", description: "Includes only basic properties of the field." },
-        #{ value: "allowedValues", description: "Includes allowed values for the field." },
-        #{ value: "dependentFields", description: "Includes dependent fields of the field." },
-        #{ value: "all", description: "Includes allowed values and dependent fields of the field." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "allowedValues" | "dependentFields" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WorkItemTypeFieldWithReferences;
-
-/** Returns the state names and colors for a work item type. */
-@tag("Work Item Type States")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemTypeStates")
-@extension("x-ms-vss-method", "GetWorkItemTypeStates")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/states")
-@get
-op WorkItemTypeStates_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The state name */
-  @path type: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WorkItemStateColor[]>;
-
-/** Gets template */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "GetTemplates")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/templates")
-@get
-op Templates_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** Optional, When specified returns templates for given Work item type. */
-  @query(#{ explode: true }) workitemtypename?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WorkItemTemplateReference[]>;
-
-/** Creates a template */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "CreateTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/templates")
-@post
-op Templates_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Template contents */
-  @body body: WorkItemTemplate,
-): WorkItemTemplate;
-
-/** Deletes the template with given id */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "DeleteTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
-@delete
-op Templates_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** Template id */
-  @format("uuid") @path templateId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Gets the template with specified id */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "GetTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
-@get
-op Templates_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** Template Id */
-  @format("uuid") @path templateId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): WorkItemTemplate;
-
-/** Replace template contents */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "ReplaceTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
-@put
-op Templates_ReplaceTemplate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @path team: string,
-
-  /** Template id */
-  @format("uuid") @path templateId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Template contents to replace with */
-  @body body: WorkItemTemplate,
-): WorkItemTemplate;
-
-/** Gets the results of the query given its WIQL. */
-@tag("Wiql")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wiql")
-@extension("x-ms-vss-method", "QueryByWiql")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/wiql")
-@post
-op Wiql_QueryByWiql(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Whether or not to use time precision. */
-  @query(#{ explode: true }) timePrecision?: boolean,
-
-  /** The max number of results to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The query containing the WIQL. */
-  @body body: Wiql,
-): WorkItemQueryResult;
-
-/** Gets the results of the query given the query ID. */
-@tag("Wiql")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wiql")
-@extension("x-ms-vss-method", "QueryById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/wiql/{id}")
-@get
-op Wiql_QueryById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The query ID. */
-  @format("uuid") @path id: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Whether or not to use time precision. */
-  @query(#{ explode: true }) timePrecision?: boolean,
-
-  /** The max number of results to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WorkItemQueryResult;
-
-/** Gets the results of the query given the query ID. */
-@tag("Wiql")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wiql")
-@extension("x-ms-vss-method", "QueryById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/wit/wiql/{id}")
-@head
-op Wiql_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The query ID. */
-  @format("uuid") @path id: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Whether or not to use time precision. */
-  @query(#{ explode: true }) timePrecision?: boolean,
-
-  /** The max number of results to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<int32>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `4` {
       /** Version of the API to use. This should be set to '7.2-preview.4' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface ArtifactLinkTypes {
+  /** Get the list of work item tracking outbound artifact link types. */
+  @tag("Artifact Link Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "artifactLinkTypes")
+  @extension("x-ms-vss-method", "GetWorkArtifactLinkTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/wit/artifactlinktypes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WorkArtifactLink[]>;
+}
+
+interface WorkItemIcons {
+  /** Get a list of all work item icons. */
+  @tag("Work Item Icons")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemIcons")
+  @extension("x-ms-vss-method", "GetWorkItemIcons")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/wit/workitemicons")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WorkItemIcon[]>;
+
+  /** Get a work item icon given the friendly name and icon color. */
+  @tag("Work Item Icons")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemIcons")
+  @extension("x-ms-vss-method", "GetWorkItemIcon")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/wit/workitemicons/{icon}")
+  @get
+  Get(
+    /** The name of the icon */
+    @path icon: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** The 6-digit hex color for the icon */
+    @query(#{ explode: true }) color?: string,
+
+    /** The version of the icon (used only for cache invalidation) */
+    @query(#{ explode: true }) v?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header contentType: "image/svg+xml";
+        @body body: WorkItemIcon;
+      }
+    | {
+        @header contentType: "image/xaml+xml";
+        @body body: WorkItemIcon;
+      }
+    | WorkItemIcon;
+}
+
+interface WorkItemRelationTypes {
+  /** Gets the work item relation types. */
+  @tag("Work Item Relation Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemRelationTypes")
+  @extension("x-ms-vss-method", "GetRelationTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/wit/workitemrelationtypes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<WorkItemRelationType[]>;
+
+  /** Gets the work item relation type definition. */
+  @tag("Work Item Relation Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemRelationTypes")
+  @extension("x-ms-vss-method", "GetRelationType")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/wit/workitemrelationtypes/{relation}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The relation name */
+    @path relation: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WorkItemRelationType;
+}
+
+interface WorkItemTransitions {
+  /** Returns the next state on the given work item IDs. */
+  @tag("Work Item Transitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemTransitions")
+  @extension("x-ms-vss-method", "GetWorkItemNextStatesOnCheckinAction")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/wit/workitemtransitions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** list of work item ids */
+    @format("array (int32)") @query(#{ explode: true }) ids: string,
+
+    /** possible actions. Currently only supports checkin */
+    @query(#{ explode: true }) action?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WorkItemNextStateOnTransition[]>;
+}
+
+interface AccountMyWorkRecentActivity {
+  /** Gets recent work item activities */
+  @tag("Account My Work Recent Activity")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "accountMyWorkRecentActivity")
+  @extension("x-ms-vss-method", "GetRecentActivityData")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/work/accountmyworkrecentactivity")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<AccountRecentActivityWorkItemModel2[]>;
+}
+
+interface GithubConnections {
+  /** Gets a list of github connections */
+  @tag("Github Connections")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "githubConnections")
+  @extension("x-ms-vss-method", "GetGithubConnections")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/githubconnections")
+  @get
+  GetGithubConnections(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitHubConnectionModel[]>;
+
+  /** Gets a list of repos within specified github connection. */
+  @tag("Github Connections")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "githubConnections")
+  @extension("x-ms-vss-method", "GetGithubConnectionRepositories")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/githubconnections/{connectionId}/repos")
+  @get
+  GetGithubConnectionRepositories(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @format("uuid") @path connectionId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitHubConnectionRepoModel[]>;
+
+  /** Add/remove list of repos within specified github connection. */
+  @tag("Github Connections")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "githubConnections")
+  @extension("x-ms-vss-method", "UpdateGithubConnectionRepos")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/githubconnections/{connectionId}/reposBatch")
+  @post
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @format("uuid") @path connectionId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: GitHubConnectionReposBatchRequest,
+  ): Body<GitHubConnectionRepoModel[]>;
+}
+
+interface ArtifactUriQueryOperations {
+  /** Queries work items linked to a given list of artifact URI. */
+  @tag("Artifact Uri Query")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "artifactUriQuery")
+  @extension("x-ms-vss-method", "QueryWorkItemsForArtifactUris")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/artifacturiquery")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Defines a list of artifact URI for querying work items. */
+    @body body: ArtifactUriQuery,
+  ): ArtifactUriQueryResult;
+}
+
+interface Attachments {
+  /** Uploads an attachment. On accounts with higher attachment upload limits (>130MB), you will need to use chunked upload. To upload an attachment in multiple chunks, you first need to [**Start a Chunked Upload**](#start_a_chunked_upload) and then follow the example from the **Upload Chunk** section. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "CreateAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/attachments")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The name of the file */
+    @query(#{ explode: true }) fileName?: string,
+
+    /** Attachment upload type: Simple or Chunked */
+    @query(#{ explode: true }) uploadType?: string,
+
+    /** Target project Area Path */
+    @query(#{ explode: true }) areaPath?: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+    @header contentType: "application/octet-stream",
+
+    /** Stream to upload */
+    @body body: string,
+  ): AttachmentReference;
+
+  /** Permanently delete an attachment. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "DeleteAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/attachments/{id}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Attachment ID */
+    @format("uuid") @path id: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): DestroyedAttachment;
+
+  /** Downloads an attachment. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/attachments/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Attachment ID */
+    @format("uuid") @path id: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Name of the file */
+    @query(#{ explode: true }) fileName?: string,
+
+    /** If set to <c>true</c> always download attachment */
+    @query(#{ explode: true }) download?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ):
+    | {
+        @header contentType: "application/octet-stream";
+        @body @format("Stream") body: string;
+      }
+    | {
+        @header contentType: "application/zip";
+        @body @format("Stream") body: string;
+      };
+
+  /** Uploads an attachment chunk. Before performing [**Upload a Chunk**](#upload-a-chunk), make sure to have an attachment id returned in **Start a Chunked Upload** example on **Create** section. Specify the byte range of the chunk using Content-Length. For example: 'Content - Length': 'bytes 0 - 39999 / 50000' for the first 40000 bytes of a 50000 byte file. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "UploadAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/attachments/{id}")
+  @put
+  UploadChunk(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The id of the attachment */
+    @format("uuid") @path id: string,
+
+    /** starting and ending byte positions for chunked file upload, format is 'Content-Range': 'bytes 0-10000/50000' */
+    @header contentRangeHeader: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    @query(#{ explode: true }) fileName?: string,
+    ...Parameters.`api-Version-preview`.`4`,
+    @header contentType: "application/octet-stream",
+
+    /** Stream to upload */
+    @body body: string,
+  ): AttachmentReference;
+}
+
+interface ClassificationNodes {
+  /** Gets root classification nodes under the project. */
+  @tag("Classification Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "classificationNodes")
+  @extension("x-ms-vss-method", "GetRootNodes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/classificationnodes")
+  @get
+  GetRootNodes(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Depth of children to fetch. */
+    @query(#{ explode: true }) $depth?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<WorkItemClassificationNode[]>;
+
+  /** Delete an existing classification node. */
+  @tag("Classification Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "classificationNodes")
+  @extension("x-ms-vss-method", "DeleteClassificationNode")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Structure group of the classification node, area or iteration. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TreeStructureGroup",
+        values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
+      }
+    )
+    @path
+    structureGroup: "areas" | "iterations",
+
+    /** Path of the classification node. */
+    @extension("x-ms-required", false) @path path: string,
+
+    /** Id of the target classification node for reclassification. */
+    @query(#{ explode: true }) $reclassifyId?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Gets the classification node for a given node path. */
+  @tag("Classification Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "classificationNodes")
+  @extension("x-ms-vss-method", "GetClassificationNode")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Structure group of the classification node, area or iteration. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TreeStructureGroup",
+        values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
+      }
+    )
+    @path
+    structureGroup: "areas" | "iterations",
+
+    /** Path of the classification node. */
+    @extension("x-ms-required", false) @path path: string,
+
+    /** Depth of children to fetch. */
+    @query(#{ explode: true }) $depth?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WorkItemClassificationNode;
+
+  /** Update an existing classification node. */
+  @tag("Classification Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "classificationNodes")
+  @extension("x-ms-vss-method", "UpdateClassificationNode")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Structure group of the classification node, area or iteration. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TreeStructureGroup",
+        values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
+      }
+    )
+    @path
+    structureGroup: "areas" | "iterations",
+
+    /** Path of the classification node. */
+    @extension("x-ms-required", false) @path path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Node to create or update. */
+    @body body: WorkItemClassificationNode,
+  ): WorkItemClassificationNode;
+
+  /** Create new or update an existing classification node. */
+  @tag("Classification Nodes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "classificationNodes")
+  @extension("x-ms-vss-method", "CreateOrUpdateClassificationNode")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
+  @post
+  CreateOrUpdate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Structure group of the classification node, area or iteration. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TreeStructureGroup",
+        values: #[#{ value: "areas", description: "" }, #{ value: "iterations", description: "" }],
+      }
+    )
+    @path
+    structureGroup: "areas" | "iterations",
+
+    /** Path of the classification node. */
+    @extension("x-ms-required", false) @path path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Node to create or update. */
+    @body body: WorkItemClassificationNode,
+  ): WorkItemClassificationNode;
+}
+
+interface Fields {
+  /** Returns information for all fields. The project ID/name parameter is optional. */
+  @tag("Fields")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "fields")
+  @extension("x-ms-vss-method", "GetWorkItemFields")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/fields")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Use ExtensionFields to include extension fields, otherwise exclude them. Unless the feature flag for this parameter is enabled, extension fields are always included. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GetFieldsExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "extensionFields", description: "Adds extension fields to the response." },
+          #{ value: "includeDeleted", description: "Includes fields that have been deleted." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "extensionFields" | "includeDeleted",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WorkItemField2[]>;
+
+  /** Create a new field. */
+  @tag("Fields")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "fields")
+  @extension("x-ms-vss-method", "CreateWorkItemField")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/fields")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** New field definition */
+    @body body: WorkItemField2,
+  ): WorkItemField2;
+
+  /** Deletes the field. To undelete a filed, see 'Update Field' API. */
+  @tag("Fields")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "fields")
+  @extension("x-ms-vss-method", "DeleteWorkItemField")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/fields/{fieldNameOrRefName}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Field simple name or reference name */
+    @path fieldNameOrRefName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Gets information on a specific field. */
+  @tag("Fields")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "fields")
+  @extension("x-ms-vss-method", "GetWorkItemField")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/fields/{fieldNameOrRefName}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Field simple name or reference name */
+    @path fieldNameOrRefName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItemField2;
+
+  /** Update a field. */
+  @tag("Fields")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "fields")
+  @extension("x-ms-vss-method", "UpdateWorkItemField")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/fields/{fieldNameOrRefName}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name/reference name of the field to be updated */
+    @path fieldNameOrRefName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** Payload contains desired value of the field's properties */
+    @body body: FieldUpdate,
+  ): WorkItemField2;
+}
+
+interface ProjectProcessMigration {
+  /** Migrates a project to a different process within the same OOB type. For example, you can only migrate a project from agile/custom-agile to agile/custom-agile. */
+  @tag("Project Process Migration")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "projectProcessMigration")
+  @extension("x-ms-vss-method", "MigrateProjectsProcess")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/projectprocessmigration")
+  @post
+  MigrateProjectsProcess(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ProcessIdModel,
+  ): ProcessMigrationResultModel;
+}
+
+interface Queries {
+  /** Gets the root queries and their children */
+  @tag("Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "queries")
+  @extension("x-ms-vss-method", "GetQueries")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/queries")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Include the query string (wiql), clauses, query result columns, and sort options in the results. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "QueryExpand",
+        values: #[
+          #{ value: "none", description: "Expands Columns, Links and ChangeInfo" },
+          #{ value: "wiql", description: "Expands Columns, Links, ChangeInfo and WIQL text" },
+          #{
+            value: "clauses",
+            description: "Expands Columns, Links, ChangeInfo, WIQL text and clauses",
+          },
+          #{ value: "all", description: "Expands all properties" },
+          #{ value: "minimal", description: "Displays minimal properties and the WIQL text" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "wiql" | "clauses" | "all" | "minimal",
+
+    /** In the folder of queries, return child queries and folders to this depth. */
+    @query(#{ explode: true }) $depth?: int32,
+
+    /** Include deleted queries and folders */
+    @query(#{ explode: true }) $includeDeleted?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<QueryHierarchyItem[]>;
+
+  /** Delete a query or a folder. This deletes any permission change on the deleted query or folder and any of its descendants if it is a folder. It is important to note that the deleted permission changes cannot be recovered upon undeleting the query or folder. */
+  @tag("Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "queries")
+  @extension("x-ms-vss-method", "DeleteQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/queries/{query}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID or path of the query or folder to delete. */
+    @path query: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Retrieves an individual query and its children */
+  @tag("Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "queries")
+  @extension("x-ms-vss-method", "GetQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/queries/{query}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID or path of the query. */
+    @path query: string,
+
+    /** Include the query string (wiql), clauses, query result columns, and sort options in the results. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "QueryExpand",
+        values: #[
+          #{ value: "none", description: "Expands Columns, Links and ChangeInfo" },
+          #{ value: "wiql", description: "Expands Columns, Links, ChangeInfo and WIQL text" },
+          #{
+            value: "clauses",
+            description: "Expands Columns, Links, ChangeInfo, WIQL text and clauses",
+          },
+          #{ value: "all", description: "Expands all properties" },
+          #{ value: "minimal", description: "Displays minimal properties and the WIQL text" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "wiql" | "clauses" | "all" | "minimal",
+
+    /** In the folder of queries, return child queries and folders to this depth. */
+    @query(#{ explode: true }) $depth?: int32,
+
+    /** Include deleted queries and folders */
+    @query(#{ explode: true }) $includeDeleted?: boolean,
+
+    /** DateTime query clauses will be formatted using a ISO 8601 compliant format */
+    @query(#{ explode: true }) $useIsoDateFormat?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): QueryHierarchyItem;
+
+  /** Update a query or a folder. This allows you to update, rename and move queries and folders. */
+  @tag("Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "queries")
+  @extension("x-ms-vss-method", "UpdateQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/queries/{query}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID or path for the query to update. */
+    @path query: string,
+
+    /** Undelete the children of this folder. It is important to note that this will not bring back the permission changes that were previously applied to the descendants. */
+    @query(#{ explode: true }) $undeleteDescendants?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The query to update. */
+    @body body: QueryHierarchyItem,
+  ): QueryHierarchyItem;
+
+  /** Creates a query, or moves a query. Learn more about Work Item Query Language (WIQL) syntax [here](https://docs.microsoft.com/en-us/vsts/collaborate/wiql-syntax?toc=/vsts/work/track/toc.json&bc=/vsts/work/track/breadcrumb/toc.json&view=vsts). */
+  @tag("Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "queries")
+  @extension("x-ms-vss-method", "CreateQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/queries/{query}")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The parent id or path under which the query is to be created. */
+    @path query: string,
+
+    /** If you only want to validate your WIQL query without actually creating one, set it to true. Default is false. */
+    @query(#{ explode: true }) validateWiqlOnly?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The query to create. */
+    @body body: QueryHierarchyItem,
+  ): QueryHierarchyItem;
+
+  /** Gets a list of queries by ids (Maximum 1000) */
+  @tag("Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "queriesBatch")
+  @extension("x-ms-vss-method", "GetQueriesBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/queriesbatch")
+  @post
+  GetQueriesBatch(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: QueryBatchGetRequest,
+  ): Body<QueryHierarchyItem[]>;
+}
+
+interface Recyclebin {
+  /** Gets a list of the IDs and the URLs of the deleted the work items in the Recycle Bin. */
+  @tag("Recyclebin")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "recyclebin")
+  @extension("x-ms-vss-method", "GetDeletedWorkItemShallowReferences")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/recyclebin")
+  @get
+  GetDeletedWorkItemShallowReferences(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<WorkItemDeleteShallowReference[]>;
+
+  /** Destroys the specified work item permanently from the Recycle Bin. This action can not be undone. */
+  @tag("Recyclebin")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "recyclebin")
+  @extension("x-ms-vss-method", "DestroyWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
+  @delete
+  DestroyWorkItem(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the work item to be destroyed permanently */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Gets a deleted work item from Recycle Bin. */
+  @tag("Recyclebin")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "recyclebin")
+  @extension("x-ms-vss-method", "GetDeletedWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the work item to be returned */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WorkItemDelete;
+
+  /** Restores the deleted work item from Recycle Bin. */
+  @tag("Recyclebin")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "recyclebin")
+  @extension("x-ms-vss-method", "RestoreWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
+  @patch
+  RestoreWorkItem(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the work item to be restored */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Paylod with instructions to update the IsDeleted flag to false */
+    @body body: WorkItemDeleteUpdate,
+  ): WorkItemDelete;
+}
+
+interface ReportingWorkItemLinks {
+  /** Get a batch of work item links */
+  @tag("Reporting Work Item Links")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItemLinks")
+  @extension("x-ms-vss-method", "GetReportingLinksByLinkType")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/reporting/workitemlinks")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** A list of types to filter the results to specific link types. Omit this parameter to get work item links of all link types. */
+    @format("array (string)") @query(#{ explode: true }) linkTypes?: string,
+
+    /** A list of types to filter the results to specific work item types. Omit this parameter to get work item links of all work item types. */
+    @format("array (string)") @query(#{ explode: true }) types?: string,
+
+    /** Specifies the continuationToken to start the batch from. Omit this parameter to get the first batch of links. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Date/time to use as a starting point for link changes. Only link changes that occurred after that date/time will be returned. Cannot be used in conjunction with 'watermark' parameter. */
+    @query(#{ explode: true }) startDateTime?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): ReportingWorkItemLinksBatch;
+}
+
+interface ReportingWorkItemRevisions {
+  /** Get a batch of work item revisions with the option of including deleted items */
+  @tag("Reporting Work Item Revisions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemRevisions")
+  @extension("x-ms-vss-method", "ReadReportingRevisionsGet")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/reporting/workitemrevisions")
+  @get
+  ReadReportingRevisionsGet(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** A list of fields to return in work item revisions. Omit this parameter to get all reportable fields. */
+    @format("array (string)") @query(#{ explode: true }) fields?: string,
+
+    /** A list of types to filter the results to specific work item types. Omit this parameter to get work item revisions of all work item types. */
+    @format("array (string)") @query(#{ explode: true }) types?: string,
+
+    /** Specifies the watermark to start the batch from. Omit this parameter to get the first batch of revisions. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Date/time to use as a starting point for revisions, all revisions will occur after this date/time. Cannot be used in conjunction with 'watermark' parameter. */
+    @query(#{ explode: true }) startDateTime?: utcDateTime,
+
+    /** Return an identity reference instead of a string value for identity fields. */
+    @query(#{ explode: true }) includeIdentityRef?: boolean,
+
+    /** Specify if the deleted item should be returned. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** Specify if the tag objects should be returned for System.Tags field. */
+    @query(#{ explode: true }) includeTagRef?: boolean,
+
+    /** Return only the latest revisions of work items, skipping all historical revisions */
+    @query(#{ explode: true }) includeLatestOnly?: boolean,
+
+    /** Return all the fields in work item revisions, including long text fields which are not returned by default */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReportingRevisionsExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "fields", description: "Add fields to the response." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "fields",
+
+    /** Return only the those revisions of work items, where only history field was changed */
+    @query(#{ explode: true }) includeDiscussionChangesOnly?: boolean,
+
+    /** The maximum number of results to return in this batch */
+    @query(#{ explode: true }) $maxPageSize?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): ReportingWorkItemRevisionsBatch;
+
+  /** Get a batch of work item revisions. This request may be used if your list of fields is large enough that it may run the URL over the length limit. */
+  @tag("Reporting Work Item Revisions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemRevisions")
+  @extension("x-ms-vss-method", "ReadReportingRevisionsPost")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/reporting/workitemrevisions")
+  @post
+  ReadReportingRevisionsPost(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Specifies the watermark to start the batch from. Omit this parameter to get the first batch of revisions. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Date/time to use as a starting point for revisions, all revisions will occur after this date/time. Cannot be used in conjunction with 'watermark' parameter. */
+    @query(#{ explode: true }) startDateTime?: utcDateTime,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReportingRevisionsExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "fields", description: "Add fields to the response." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "fields",
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** An object that contains request settings: field filter, type filter, identity format */
+    @body body: ReportingWorkItemRevisionsFilter,
+  ): ReportingWorkItemRevisionsBatch;
+}
+
+interface WorkItemRevisionsDiscussions {
+  @tag("Work Item Revisions Discussions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemRevisionsDiscussions")
+  @extension("x-ms-vss-method", "ReadReportingDiscussions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/reporting/workItemRevisions/discussions")
+  @get
+  ReadReportingDiscussions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    @query(#{ explode: true }) continuationToken?: string,
+    @query(#{ explode: true }) $maxPageSize?: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ReportingWorkItemRevisionsBatch;
+}
+
+interface SendMail {
+  /** RESTful method to send mail for selected/queried work items. */
+  @tag("Send Mail")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "sendMail")
+  @extension("x-ms-vss-method", "SendMailAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/sendmail")
+  @post
+  SendMail(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: SendMailBody,
+  ): OkResponse;
+}
+
+interface Tags {
+  /** Get all the tags for the project. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "GetTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/tags")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WorkItemTagDefinition[]>;
+
+  /** Delete the tag for the project. Please note, that the deleted tag will be removed from all Work Items as well as Pull Requests. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "DeleteTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/tags/{tagIdOrName}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Tag ID or tag name. */
+    @path tagIdOrName: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get the tag for the project. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "GetTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/tags/{tagIdOrName}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Tag ID or tag name. */
+    @path tagIdOrName: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): WorkItemTagDefinition;
+
+  /** Update the tag for the project. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "UpdateTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/tags/{tagIdOrName}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Tag ID or tag name. */
+    @path tagIdOrName: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: WorkItemTagDefinition,
+  ): WorkItemTagDefinition;
+}
+
+interface TempQueries {
+  /** Creates a temporary query Learn more about Work Item Query Language (WIQL) syntax [here](https://docs.microsoft.com/en-us/vsts/collaborate/wiql-syntax?toc=/vsts/work/track/toc.json&bc=/vsts/work/track/breadcrumb/toc.json&view=vsts). */
+  @tag("Temp Queries")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "tempQueries")
+  @extension("x-ms-vss-method", "CreateTempQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/tempqueries")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The temporary query to create */
+    @body body: TemporaryQueryRequestModel,
+  ): TemporaryQueryResponseModel;
+}
+
+interface WorkItems {
+  /** Returns a list of work items (Maximum 200) */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItems")
+  @extension("x-ms-vss-method", "GetWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitems")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The comma-separated list of requested work item ids. (Maximum 200 ids allowed). */
+    @format("array (int32)") @query(#{ explode: true }) ids: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Comma-separated list of requested fields */
+    @format("array (string)") @query(#{ explode: true }) fields?: string,
+
+    /** AsOf UTC date time string */
+    @query(#{ explode: true }) asOf?: utcDateTime,
+
+    /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+
+    /** The flag to control error policy in a bulk get work items request. Possible options are {Fail, Omit}. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemErrorPolicy",
+        values: #[
+          #{ value: "fail", description: "Fail work error policy." },
+          #{ value: "omit", description: "Omit work error policy." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    errorPolicy?: "fail" | "omit",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WorkItem[]>;
+
+  /** Returns a single work item from a template. */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItems")
+  @extension("x-ms-vss-method", "GetWorkItemTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitems/\${type}")
+  @get
+  GetWorkItemTemplate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The work item type name */
+    @path type: string,
+
+    /** Comma-separated list of requested fields */
+    @query(#{ explode: true }) fields?: string,
+
+    /** AsOf UTC date time string */
+    @query(#{ explode: true }) asOf?: utcDateTime,
+
+    /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItem;
+
+  /** Creates a single work item. */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItems")
+  @extension("x-ms-vss-method", "CreateWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitems/\${type}")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The work item type of the work item to create */
+    @path type: string,
+
+    /** Indicate if you only want to validate the changes without saving the work item */
+    @query(#{ explode: true }) validateOnly?: boolean,
+
+    /** Do not enforce the work item type rules on this update */
+    @query(#{ explode: true }) bypassRules?: boolean,
+
+    /** Do not fire any notifications for this change */
+    @query(#{ explode: true }) suppressNotifications?: boolean,
+
+    /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+    @header contentType: "application/json-patch+json",
+
+    /** The JSON Patch document representing the work item */
+    @body body: JsonPatchDocument,
+  ): WorkItem;
+
+  /** Deletes the specified work item and sends it to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. WARNING: If the destroy parameter is set to true, work items deleted by this command will NOT go to recycle-bin and there is no way to restore/recover them after deletion. It is recommended NOT to use this parameter. If you do, please use this parameter with extreme caution. */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItems")
+  @extension("x-ms-vss-method", "DeleteWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitems/{id}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the work item to be deleted */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Optional parameter, if set to true, the work item is deleted permanently. Please note: the destroy action is PERMANENT and cannot be undone. */
+    @query(#{ explode: true }) destroy?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItemDelete;
+
+  /** Returns a single work item. */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItems")
+  @extension("x-ms-vss-method", "GetWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitems/{id}")
+  @get
+  GetWorkItem(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The work item id */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Comma-separated list of requested fields */
+    @format("array (string)") @query(#{ explode: true }) fields?: string,
+
+    /** AsOf UTC date time string */
+    @query(#{ explode: true }) asOf?: utcDateTime,
+
+    /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItem;
+
+  /** Updates a single work item. */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItems")
+  @extension("x-ms-vss-method", "UpdateWorkItem")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitems/{id}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The id of the work item to update */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Indicate if you only want to validate the changes without saving the work item */
+    @query(#{ explode: true }) validateOnly?: boolean,
+
+    /** Do not enforce the work item type rules on this update */
+    @query(#{ explode: true }) bypassRules?: boolean,
+
+    /** Do not fire any notifications for this change */
+    @query(#{ explode: true }) suppressNotifications?: boolean,
+
+    /** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+    @header contentType: "application/json-patch+json",
+
+    /** The JSON Patch document representing the update */
+    @body body: JsonPatchDocument,
+  ): WorkItem;
+
+  /** Gets work items for a list of work item ids (Maximum 200) */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemsBatch")
+  @extension("x-ms-vss-method", "GetWorkItemsBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemsbatch")
+  @post
+  GetWorkItemsBatch(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: WorkItemBatchGetRequest,
+  ): Body<WorkItem[]>;
+
+  /** Deletes specified work items and sends them to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. WARNING: If the destroy parameter is set to true, work items deleted by this command will NOT go to recycle-bin and there is no way to restore/recover them after deletion. */
+  @tag("Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemsDelete")
+  @extension("x-ms-vss-method", "DeleteWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemsdelete")
+  @post
+  DeleteWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: WorkItemDeleteBatchRequest,
+  ): WorkItemDeleteBatch;
+}
+
+interface Revisions {
+  /** Returns the list of fully hydrated work item revisions, paged. */
+  @tag("Revisions")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetRevisions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{id}/revisions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    @query(#{ explode: true }) $top?: int32,
+    @query(#{ explode: true }) $skip?: int32,
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WorkItem[]>;
+
+  /** Returns a fully hydrated work item for the requested revision */
+  @tag("Revisions")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetRevision")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{id}/revisions/{revisionNumber}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path id: int32,
+    @path revisionNumber: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemExpand",
+        values: #[
+          #{ value: "none", description: "Default behavior." },
+          #{ value: "relations", description: "Relations work item expand." },
+          #{ value: "fields", description: "Fields work item expand." },
+          #{ value: "links", description: "Links work item expand." },
+          #{ value: "all", description: "Expands all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "relations" | "fields" | "links" | "all",
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItem;
+}
+
+interface Updates {
+  /** Returns the deltas between work item revisions */
+  @tag("Updates")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "updates")
+  @extension("x-ms-vss-method", "GetUpdates")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{id}/updates")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    @query(#{ explode: true }) $top?: int32,
+    @query(#{ explode: true }) $skip?: int32,
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WorkItemUpdate[]>;
+
+  /** Returns a single update for a work item */
+  @tag("Updates")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "updates")
+  @extension("x-ms-vss-method", "GetUpdate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{id}/updates/{updateNumber}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path id: int32,
+    @path updateNumber: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItemUpdate;
+}
+
+interface Comments {
+  /** Returns a list of work item comments by ids. */
+  @tag("Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "comments")
+  @extension("x-ms-vss-method", "GetCommentsBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments")
+  @get
+  GetCommentsBatch(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of a work item to get comments for. */
+    @path workItemId: int32,
+
+    /** Comma-separated list of comment ids to return. */
+    @format("array (int32)") @query(#{ explode: true }) ids: string,
+
+    /** Specify if the deleted comments should be retrieved. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** Specifies the additional data retrieval options for work item comments. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CommentExpandOptions",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "reactions", description: "Include comment reactions." },
+          #{
+            value: "renderedText",
+            description: "Include the rendered text (html) in addition to MD text.",
+          },
+          #{
+            value: "renderedTextOnly",
+            description: "If specified, then ONLY rendered text (html) will be returned, w/o markdown. Supposed to be used internally from data provides for optimization purposes.",
+          },
+          #{ value: "all", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "reactions" | "renderedText" | "renderedTextOnly" | "all",
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): CommentList;
+
+  /** Add a comment on a work item. */
+  @tag("Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "comments")
+  @extension("x-ms-vss-method", "AddComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments")
+  @post
+  AddComment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of a work item. */
+    @path workItemId: int32,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Comment create request. */
+    @body body: CommentCreate,
+  ): Comment;
+
+  /** Delete a comment on a work item. */
+  @tag("Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "comments")
+  @extension("x-ms-vss-method", "DeleteComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of a work item. */
+    @path workItemId: int32,
+
+    @path commentId: int32,
+    ...Parameters.`api-Version-preview`.`4`,
+  ): OkResponse;
+
+  /** Returns a work item comment. */
+  @tag("Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "comments")
+  @extension("x-ms-vss-method", "GetComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
+  @get
+  GetComment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of a work item to get the comment. */
+    @path workItemId: int32,
+
+    /** Id of the comment to return. */
+    @path commentId: int32,
+
+    /** Specify if the deleted comment should be retrieved. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** Specifies the additional data retrieval options for work item comments. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CommentExpandOptions",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "reactions", description: "Include comment reactions." },
+          #{
+            value: "renderedText",
+            description: "Include the rendered text (html) in addition to MD text.",
+          },
+          #{
+            value: "renderedTextOnly",
+            description: "If specified, then ONLY rendered text (html) will be returned, w/o markdown. Supposed to be used internally from data provides for optimization purposes.",
+          },
+          #{ value: "all", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "reactions" | "renderedText" | "renderedTextOnly" | "all",
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): Comment;
+
+  /** Update a comment on a work item. */
+  @tag("Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "comments")
+  @extension("x-ms-vss-method", "UpdateComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
+  @patch
+  UpdateComment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of a work item. */
+    @path workItemId: int32,
+
+    @path commentId: int32,
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Comment update request. */
+    @body body: CommentUpdate,
+  ): Comment;
+}
+
+interface CommentsReactions {
+  /** Gets reactions of a comment. */
+  @tag("Comments Reactions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commentsReactions")
+  @extension("x-ms-vss-method", "GetCommentReactions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** WorkItem ID */
+    @path workItemId: int32,
+
+    /** Comment ID */
+    @path commentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<CommentReaction[]>;
+
+  /** Deletes an existing reaction on a comment. */
+  @tag("Comments Reactions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commentsReactions")
+  @extension("x-ms-vss-method", "DeleteCommentReaction")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** WorkItem ID */
+    @path workItemId: int32,
+
+    /** Comment ID */
+    @path commentId: int32,
+
+    /** Type of the reaction */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CommentReactionType",
+        values: #[
+          #{ value: "like", description: "" },
+          #{ value: "dislike", description: "" },
+          #{ value: "heart", description: "" },
+          #{ value: "hooray", description: "" },
+          #{ value: "smile", description: "" },
+          #{ value: "confused", description: "" }
+        ],
+      }
+    )
+    @path
+    reactionType: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): CommentReaction;
+
+  /** Adds a new reaction to a comment. */
+  @tag("Comments Reactions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commentsReactions")
+  @extension("x-ms-vss-method", "CreateCommentReaction")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}")
+  @put
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** WorkItem ID */
+    @path workItemId: int32,
+
+    /** Comment ID */
+    @path commentId: int32,
+
+    /** Type of the reaction */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CommentReactionType",
+        values: #[
+          #{ value: "like", description: "" },
+          #{ value: "dislike", description: "" },
+          #{ value: "heart", description: "" },
+          #{ value: "hooray", description: "" },
+          #{ value: "smile", description: "" },
+          #{ value: "confused", description: "" }
+        ],
+      }
+    )
+    @path
+    reactionType: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): CommentReaction;
+}
+
+interface CommentReactionsEngagedUsers {
+  /** Get users who reacted on the comment. */
+  @tag("Comment Reactions Engaged Users")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commentReactionsEngagedUsers")
+  @extension("x-ms-vss-method", "GetEngagedUsers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}/users")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** WorkItem ID. */
+    @path workItemId: int32,
+
+    /** Comment ID. */
+    @path commentId: int32,
+
+    /** Type of the reaction. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CommentReactionType",
+        values: #[
+          #{ value: "like", description: "" },
+          #{ value: "dislike", description: "" },
+          #{ value: "heart", description: "" },
+          #{ value: "hooray", description: "" },
+          #{ value: "smile", description: "" },
+          #{ value: "confused", description: "" }
+        ],
+      }
+    )
+    @path
+    reactionType: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused",
+
+    @query(#{ explode: true }) $top?: int32,
+    @query(#{ explode: true }) $skip?: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<IdentityRef[]>;
+}
+
+interface CommentsVersions {
+  @tag("Comments Versions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commentsVersions")
+  @extension("x-ms-vss-method", "GetCommentVersions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/versions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path workItemId: int32,
+    @path commentId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<CommentVersion[]>;
+
+  @tag("Comments Versions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commentsVersions")
+  @extension("x-ms-vss-method", "GetCommentVersion")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/versions/{version}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path workItemId: int32,
+    @path commentId: int32,
+    @path version: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): CommentVersion;
+}
+
+interface WorkItemTypeCategories {
+  /** Get all work item type categories. */
+  @tag("Work Item Type Categories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemTypeCategories")
+  @extension("x-ms-vss-method", "GetWorkItemTypeCategories")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypecategories")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<WorkItemTypeCategory[]>;
+
+  /** Get specific work item type category by name. */
+  @tag("Work Item Type Categories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemTypeCategories")
+  @extension("x-ms-vss-method", "GetWorkItemTypeCategory")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypecategories/{category}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The category name */
+    @path category: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WorkItemTypeCategory;
+}
+
+interface WorkItemTypes {
+  /** Returns the list of work item types */
+  @tag("Work Item Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemTypes")
+  @extension("x-ms-vss-method", "GetWorkItemTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<WorkItemType[]>;
+
+  /** Returns a work item type definition. */
+  @tag("Work Item Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workItemTypes")
+  @extension("x-ms-vss-method", "GetWorkItemType")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Work item type name */
+    @path type: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WorkItemType;
+}
+
+interface WorkItemTypesField {
+  /** Get a list of fields for a work item type with detailed references. */
+  @tag("Work Item Types Field")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItemTypesField")
+  @extension("x-ms-vss-method", "GetWorkItemTypeFieldsWithReferences")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Work item type. */
+    @path type: string,
+
+    /** Expand level for the API response. Properties: to include allowedvalues, default value, isRequired etc. as a part of response; None: to skip these properties. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemTypeFieldsExpandLevel",
+        values: #[
+          #{ value: "none", description: "Includes only basic properties of the field." },
+          #{ value: "allowedValues", description: "Includes allowed values for the field." },
+          #{ value: "dependentFields", description: "Includes dependent fields of the field." },
+          #{ value: "all", description: "Includes allowed values and dependent fields of the field." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "allowedValues" | "dependentFields" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WorkItemTypeFieldWithReferences[]>;
+
+  /** Get a field for a work item type with detailed references. */
+  @tag("Work Item Types Field")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "workItemTypesField")
+  @extension("x-ms-vss-method", "GetWorkItemTypeFieldWithReferences")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Work item type. */
+    @path type: string,
+
+    @path field: string,
+
+    /** Expand level for the API response. Properties: to include allowedvalues, default value, isRequired etc. as a part of response; None: to skip these properties. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "WorkItemTypeFieldsExpandLevel",
+        values: #[
+          #{ value: "none", description: "Includes only basic properties of the field." },
+          #{ value: "allowedValues", description: "Includes allowed values for the field." },
+          #{ value: "dependentFields", description: "Includes dependent fields of the field." },
+          #{ value: "all", description: "Includes allowed values and dependent fields of the field." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "allowedValues" | "dependentFields" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WorkItemTypeFieldWithReferences;
+}
+
+interface WorkItemTypeStates {
+  /** Returns the state names and colors for a work item type. */
+  @tag("Work Item Type States")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemTypeStates")
+  @extension("x-ms-vss-method", "GetWorkItemTypeStates")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/states")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The state name */
+    @path type: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WorkItemStateColor[]>;
+}
+
+interface Templates {
+  /** Gets template */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "GetTemplates")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/templates")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** Optional, When specified returns templates for given Work item type. */
+    @query(#{ explode: true }) workitemtypename?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WorkItemTemplateReference[]>;
+
+  /** Creates a template */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "CreateTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/templates")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Template contents */
+    @body body: WorkItemTemplate,
+  ): WorkItemTemplate;
+
+  /** Deletes the template with given id */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "DeleteTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** Template id */
+    @format("uuid") @path templateId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Gets the template with specified id */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "GetTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** Template Id */
+    @format("uuid") @path templateId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): WorkItemTemplate;
+
+  /** Replace template contents */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "ReplaceTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
+  @put
+  ReplaceTemplate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @path team: string,
+
+    /** Template id */
+    @format("uuid") @path templateId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Template contents to replace with */
+    @body body: WorkItemTemplate,
+  ): WorkItemTemplate;
+}
+
+interface WiqlOperations {
+  /** Gets the results of the query given its WIQL. */
+  @tag("Wiql")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wiql")
+  @extension("x-ms-vss-method", "QueryByWiql")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/wiql")
+  @post
+  QueryByWiql(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Whether or not to use time precision. */
+    @query(#{ explode: true }) timePrecision?: boolean,
+
+    /** The max number of results to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The query containing the WIQL. */
+    @body body: Wiql,
+  ): WorkItemQueryResult;
+
+  /** Gets the results of the query given the query ID. */
+  @tag("Wiql")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wiql")
+  @extension("x-ms-vss-method", "QueryById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/wiql/{id}")
+  @get
+  QueryById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The query ID. */
+    @format("uuid") @path id: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Whether or not to use time precision. */
+    @query(#{ explode: true }) timePrecision?: boolean,
+
+    /** The max number of results to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WorkItemQueryResult;
+
+  /** Gets the results of the query given the query ID. */
+  @tag("Wiql")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wiql")
+  @extension("x-ms-vss-method", "QueryById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/wit/wiql/{id}")
+  @head
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The query ID. */
+    @format("uuid") @path id: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Whether or not to use time precision. */
+    @query(#{ explode: true }) timePrecision?: boolean,
+
+    /** The max number of results to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<int32>;
 }

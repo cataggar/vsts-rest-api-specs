@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Audit" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://auditservice.dev.azure.com")
 namespace Audit;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AuditActionInfo {
   /** The action id for the event, i.e Git.CreateRepo, Project.RenameProject */
@@ -279,212 +285,220 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get all auditable actions filterable by area. */
-@tag("Actions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "actions")
-@extension("x-ms-vss-method", "GetActions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/actions")
-@get
-op Actions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Optional. Get actions scoped to area */
-  @query(#{ explode: true }) areaName?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AuditActionInfo[]>;
-
-/** Queries audit log entries */
-@tag("Audit Log")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "auditLog")
-@extension("x-ms-vss-method", "QueryLog")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/auditlog")
-@get
-op AuditLog_Query(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** Start time of download window. Optional */
-  @query(#{ explode: true }) startTime?: utcDateTime,
-
-  /** End time of download window. Optional */
-  @query(#{ explode: true }) endTime?: utcDateTime,
-
-  /** Max number of results to return. Optional */
-  @query(#{ explode: true }) batchSize?: int32,
-
-  /** Token used for returning next set of results from previous query. Optional */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Skips aggregating events and leaves them as individual entries instead. By default events are aggregated. Event types that are aggregated: AuditLog.AccessLog. */
-  @query(#{ explode: true }) skipAggregation?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): AuditLogQueryResult;
-
-/** Downloads audit log entries. */
-@tag("Download Log")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "downloadLog")
-@extension("x-ms-vss-method", "DownloadLog")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/downloadlog")
-@get
-op DownloadLog_DownloadLog(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** File format for download. Can be 'json' or 'csv'. */
-  @query(#{ explode: true }) format: string,
-
-  /** Start time of download window. Optional */
-  @query(#{ explode: true }) startTime?: utcDateTime,
-
-  /** End time of download window. Optional */
-  @query(#{ explode: true }) endTime?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** Return all Audit Streams scoped to an organization */
-@tag("Streams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "streams")
-@extension("x-ms-vss-method", "QueryAllStreams")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/streams")
-@get
-op Streams_QueryAllStreams(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AuditStream[]>;
-
-/** Create new Audit Stream */
-@tag("Streams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "streams")
-@extension("x-ms-vss-method", "CreateStream")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/streams")
-@post
-op Streams_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The number of days of previously recorded audit data that will be replayed into the stream. A value of zero will result in only new events being streamed. */
-  @query(#{ explode: true }) daysToBackfill: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Stream entry */
-  @body body: AuditStream,
-): AuditStream;
-
-/** Update existing Audit Stream */
-@tag("Streams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "streams")
-@extension("x-ms-vss-method", "UpdateStream")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/streams")
-@put
-op Streams_UpdateStream(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Stream entry */
-  @body body: AuditStream,
-): AuditStream;
-
-/** Delete Audit Stream */
-@tag("Streams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "streams")
-@extension("x-ms-vss-method", "DeleteStream")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/streams/{streamId}")
-@delete
-op Streams_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of stream entry to delete */
-  @path streamId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Return Audit Stream with id of streamId if one exists otherwise throw */
-@tag("Streams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "streams")
-@extension("x-ms-vss-method", "QueryStreamById")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/streams/{streamId}")
-@get
-op Streams_QueryStreamById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of stream entry to retrieve */
-  @path streamId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): AuditStream;
-
-/** Update existing Audit Stream status */
-@tag("Streams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "streams")
-@extension("x-ms-vss-method", "UpdateStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/audit/streams/{streamId}")
-@put
-op Streams_UpdateStatus(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of stream entry to be updated */
-  @path streamId: int32,
-
-  /** Status of the stream */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AuditStreamStatus",
-      values: #[
-        #{ value: "unknown", description: "The state has not been set, The stream is new" },
-        #{ value: "enabled", description: "The stream is enabled and can deliver events" },
-        #{ value: "disabledByUser", description: "The stream has been disabled by a user" },
-        #{ value: "disabledBySystem", description: "The stream has been disabled by the system" },
-        #{ value: "deleted", description: "The stream has been marked for deletion" },
-        #{ value: "backfilling", description: "The stream is delivering old events" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  status: "unknown" | "enabled" | "disabledByUser" | "disabledBySystem" | "deleted" | "backfilling",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): AuditStream;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Actions {
+  /** Get all auditable actions filterable by area. */
+  @tag("Actions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "actions")
+  @extension("x-ms-vss-method", "GetActions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/actions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Optional. Get actions scoped to area */
+    @query(#{ explode: true }) areaName?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AuditActionInfo[]>;
+}
+
+interface AuditLog {
+  /** Queries audit log entries */
+  @tag("Audit Log")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "auditLog")
+  @extension("x-ms-vss-method", "QueryLog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/auditlog")
+  @get
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** Start time of download window. Optional */
+    @query(#{ explode: true }) startTime?: utcDateTime,
+
+    /** End time of download window. Optional */
+    @query(#{ explode: true }) endTime?: utcDateTime,
+
+    /** Max number of results to return. Optional */
+    @query(#{ explode: true }) batchSize?: int32,
+
+    /** Token used for returning next set of results from previous query. Optional */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Skips aggregating events and leaves them as individual entries instead. By default events are aggregated. Event types that are aggregated: AuditLog.AccessLog. */
+    @query(#{ explode: true }) skipAggregation?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): AuditLogQueryResult;
+}
+
+interface DownloadLog {
+  /** Downloads audit log entries. */
+  @tag("Download Log")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "downloadLog")
+  @extension("x-ms-vss-method", "DownloadLog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/downloadlog")
+  @get
+  DownloadLog(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** File format for download. Can be 'json' or 'csv'. */
+    @query(#{ explode: true }) format: string,
+
+    /** Start time of download window. Optional */
+    @query(#{ explode: true }) startTime?: utcDateTime,
+
+    /** End time of download window. Optional */
+    @query(#{ explode: true }) endTime?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+}
+
+interface Streams {
+  /** Return all Audit Streams scoped to an organization */
+  @tag("Streams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "streams")
+  @extension("x-ms-vss-method", "QueryAllStreams")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/streams")
+  @get
+  QueryAllStreams(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AuditStream[]>;
+
+  /** Create new Audit Stream */
+  @tag("Streams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "streams")
+  @extension("x-ms-vss-method", "CreateStream")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/streams")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The number of days of previously recorded audit data that will be replayed into the stream. A value of zero will result in only new events being streamed. */
+    @query(#{ explode: true }) daysToBackfill: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Stream entry */
+    @body body: AuditStream,
+  ): AuditStream;
+
+  /** Update existing Audit Stream */
+  @tag("Streams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "streams")
+  @extension("x-ms-vss-method", "UpdateStream")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/streams")
+  @put
+  UpdateStream(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Stream entry */
+    @body body: AuditStream,
+  ): AuditStream;
+
+  /** Delete Audit Stream */
+  @tag("Streams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "streams")
+  @extension("x-ms-vss-method", "DeleteStream")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/streams/{streamId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of stream entry to delete */
+    @path streamId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Return Audit Stream with id of streamId if one exists otherwise throw */
+  @tag("Streams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "streams")
+  @extension("x-ms-vss-method", "QueryStreamById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/streams/{streamId}")
+  @get
+  QueryStreamById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of stream entry to retrieve */
+    @path streamId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): AuditStream;
+
+  /** Update existing Audit Stream status */
+  @tag("Streams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "streams")
+  @extension("x-ms-vss-method", "UpdateStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/audit/streams/{streamId}")
+  @put
+  UpdateStatus(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of stream entry to be updated */
+    @path streamId: int32,
+
+    /** Status of the stream */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AuditStreamStatus",
+        values: #[
+          #{ value: "unknown", description: "The state has not been set, The stream is new" },
+          #{ value: "enabled", description: "The stream is enabled and can deliver events" },
+          #{ value: "disabledByUser", description: "The stream has been disabled by a user" },
+          #{ value: "disabledBySystem", description: "The stream has been disabled by the system" },
+          #{ value: "deleted", description: "The stream has been marked for deletion" },
+          #{ value: "backfilling", description: "The stream is delivering old events" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    status: "unknown" | "enabled" | "disabledByUser" | "disabledBySystem" | "deleted" | "backfilling",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): AuditStream;
 }

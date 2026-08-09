@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "SecurityRoles" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace SecurityRoles;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model GraphSubjectBase {
   _links?: ReferenceLinks;
@@ -134,141 +140,145 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get role assignments for the resource */
-@tag("Roleassignments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "roleassignments")
-@extension("x-ms-vss-method", "GetRoleAssignments")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
-@get
-op Roleassignments_List(
-  /** Id of the assigned scope */
-  @path scopeId: string,
-
-  /** Id of the resource that is assigned the scope */
-  @path resourceId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<RoleAssignment[]>;
-
-@tag("Roleassignments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "roleassignments")
-@extension("x-ms-vss-method", "RemoveRoleAssignments")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
-@patch
-op Roleassignments_RemoveRoleAssignments(
-  @path scopeId: string,
-  @path resourceId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: string[],
-): OkResponse;
-
-/** Set role assignments on a resource */
-@tag("Roleassignments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "roleassignments")
-@extension("x-ms-vss-method", "SetRoleAssignments")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
-@put
-op Roleassignments_SetRoleAssignments(
-  /** Id of the assigned scope */
-  @path scopeId: string,
-
-  /** Id of the resource on which the role is to be assigned */
-  @path resourceId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  @query(#{ explode: true }) limitToCallerIdentityDomain?: boolean,
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Roles to be assigned */
-  @body body: UserRoleAssignmentRef[],
-): Body<RoleAssignment[]>;
-
-/** Remove the role assignment on a resource */
-@tag("Roleassignments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "roleassignments")
-@extension("x-ms-vss-method", "RemoveRoleAssignment")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}")
-@delete
-op Roleassignments_RemoveRoleAssignment(
-  /** Id of the assigned scope */
-  @path scopeId: string,
-
-  /** Id of the resource on which the role is to be removed */
-  @path resourceId: string,
-
-  /** Identity on which the assignment is to be removed */
-  @format("uuid") @path identityId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Set role assignment on a resource */
-@tag("Roleassignments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "roleassignments")
-@extension("x-ms-vss-method", "SetRoleAssignment")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}")
-@put
-op Roleassignments_SetRoleAssignment(
-  /** Id of the assigned scope */
-  @path scopeId: string,
-
-  /** Id of the resource on which the role is to be assigned */
-  @path resourceId: string,
-
-  @format("uuid") @path identityId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Roles to be assigned */
-  @body body: UserRoleAssignmentRef,
-): RoleAssignment;
-
-@tag("Roledefinitions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "roledefinitions")
-@extension("x-ms-vss-method", "GetRoleDefinitions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/securityroles/scopes/{scopeId}/roledefinitions")
-@get
-op Roledefinitions_List(
-  @path scopeId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<SecurityRole[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Roleassignments {
+  /** Get role assignments for the resource */
+  @tag("Roleassignments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "roleassignments")
+  @extension("x-ms-vss-method", "GetRoleAssignments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
+  @get
+  List(
+    /** Id of the assigned scope */
+    @path scopeId: string,
+
+    /** Id of the resource that is assigned the scope */
+    @path resourceId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<RoleAssignment[]>;
+
+  @tag("Roleassignments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "roleassignments")
+  @extension("x-ms-vss-method", "RemoveRoleAssignments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
+  @patch
+  RemoveRoleAssignments(
+    @path scopeId: string,
+    @path resourceId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: string[],
+  ): OkResponse;
+
+  /** Set role assignments on a resource */
+  @tag("Roleassignments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "roleassignments")
+  @extension("x-ms-vss-method", "SetRoleAssignments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
+  @put
+  SetRoleAssignments(
+    /** Id of the assigned scope */
+    @path scopeId: string,
+
+    /** Id of the resource on which the role is to be assigned */
+    @path resourceId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    @query(#{ explode: true }) limitToCallerIdentityDomain?: boolean,
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Roles to be assigned */
+    @body body: UserRoleAssignmentRef[],
+  ): Body<RoleAssignment[]>;
+
+  /** Remove the role assignment on a resource */
+  @tag("Roleassignments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "roleassignments")
+  @extension("x-ms-vss-method", "RemoveRoleAssignment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}")
+  @delete
+  RemoveRoleAssignment(
+    /** Id of the assigned scope */
+    @path scopeId: string,
+
+    /** Id of the resource on which the role is to be removed */
+    @path resourceId: string,
+
+    /** Identity on which the assignment is to be removed */
+    @format("uuid") @path identityId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Set role assignment on a resource */
+  @tag("Roleassignments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "roleassignments")
+  @extension("x-ms-vss-method", "SetRoleAssignment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}")
+  @put
+  SetRoleAssignment(
+    /** Id of the assigned scope */
+    @path scopeId: string,
+
+    /** Id of the resource on which the role is to be assigned */
+    @path resourceId: string,
+
+    @format("uuid") @path identityId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Roles to be assigned */
+    @body body: UserRoleAssignmentRef,
+  ): RoleAssignment;
+}
+
+interface Roledefinitions {
+  @tag("Roledefinitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "roledefinitions")
+  @extension("x-ms-vss-method", "GetRoleDefinitions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roledefinitions")
+  @get
+  List(
+    @path scopeId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<SecurityRole[]>;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "ServiceEndpoint" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace ServiceEndpoint;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AadOauthTokenRequest {
   refresh?: boolean;
@@ -1047,307 +1053,315 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Creates a new service endpoint */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "CreateServiceEndpoint")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/endpoints")
-@post
-op Endpoints_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Service endpoint to create */
-  @body body: ServiceEndpoint,
-): ServiceEndpoint;
-
-/** Update the service endpoints. */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "UpdateServiceEndpoints")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/endpoints")
-@put
-op Endpoints_UpdateServiceEndpoints(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Names of the service endpoints to update. */
-  @body body: ServiceEndpoint[],
-): Body<ServiceEndpoint[]>;
-
-/** Delete a service endpoint */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "DeleteServiceEndpoint")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
-@delete
-op Endpoints_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Endpoint Id of endpoint to delete */
-  @format("uuid") @path endpointId: string,
-
-  /** project Ids from which endpoint needs to be deleted */
-  @format("array (string)") @query(#{ explode: true }) projectIds: string,
-
-  /** delete the spn created by endpoint */
-  @query(#{ explode: true }) deep?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): OkResponse;
-
-/** Share service endpoint across projects */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "ShareServiceEndpoint")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
-@patch
-op Endpoints_ShareServiceEndpoint(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Endpoint Id of the endpoint to share */
-  @format("uuid") @path endpointId: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Project reference details of the target project */
-  @body body: ServiceEndpointProjectReference[],
-): OkResponse;
-
-/** Update the service endpoint */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "UpdateServiceEndpoint")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
-@put
-op Endpoints_UpdateServiceEndpoint(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Endpoint Id of the endpoint to update */
-  @format("uuid") @path endpointId: string,
-
-  /** operation type */
-  @query(#{ explode: true }) operation?: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Updated data for the endpoint */
-  @body body: ServiceEndpoint,
-): ServiceEndpoint;
-
-/** Get service endpoint types. */
-@tag("Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "types")
-@extension("x-ms-vss-method", "GetServiceEndpointTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/types")
-@get
-op Types_GetServiceEndpointTypes(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Type of service endpoint. */
-  @query(#{ explode: true }) type?: string,
-
-  /** Scheme of service endpoint. */
-  @query(#{ explode: true }) scheme?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ServiceEndpointType[]>;
-
-/** Get service endpoint types with passed types filter. */
-@tag("Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "types")
-@extension("x-ms-vss-method", "GetFilteredServiceEndpointTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/serviceendpoint/types")
-@post
-op Types_GetFilteredServiceEndpointTypes(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Filter to limit returned types */
-  @body body: string[],
-): Body<ServiceEndpointType[]>;
-
-/** Get service endpoint execution records. */
-@tag("Executionhistory")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "executionhistory")
-@extension("x-ms-vss-method", "GetServiceEndpointExecutionRecords")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/serviceendpoint/{endpointId}/executionhistory")
-@get
-op Executionhistory_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the service endpoint. */
-  @format("uuid") @path endpointId: string,
-
-  /** Number of service endpoint execution records to get. */
-  @query(#{ explode: true }) top?: int32,
-
-  /** A continuation token, returned by a previous call to this method, that can be used to return the next set of records */
-  @query(#{ explode: true }) continuationToken?: int64,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ServiceEndpointExecutionRecord[]>;
-
-/** Use ExecuteServiceEndpointRequest API Instead */
-@tag("Endpointproxy")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "endpointproxy")
-@extension("x-ms-vss-method", "QueryServiceEndpoint")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/serviceendpoint/endpointproxy")
-@post
-op Endpointproxy_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Describes the data source to fetch. */
-  @body body: DataSourceBinding,
-): Body<string[]>;
-
-/** Get the service endpoints by name. */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "GetServiceEndpointsByNames")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/serviceendpoint/endpoints")
-@get
-op Endpoints_GetServiceEndpointsByNames(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Names of the service endpoints. */
-  @format("array (string)") @query(#{ explode: true }) endpointNames: string,
-
-  /** Type of the service endpoints. */
-  @query(#{ explode: true }) type?: string,
-
-  /** Authorization schemes used for service endpoints. */
-  @format("array (string)") @query(#{ explode: true }) authSchemes?: string,
-
-  /** Owner for service endpoints. */
-  @query(#{ explode: true }) owner?: string,
-
-  /** Failed flag for service endpoints. */
-  @query(#{ explode: true }) includeFailed?: boolean,
-
-  /** Flag to include more details for service endpoints. This is for internal use only and the flag will be treated as false for all other requests */
-  @query(#{ explode: true }) includeDetails?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): Body<ServiceEndpoint[]>;
-
-/** Gets the service endpoints and patch new authorization parameters */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "GetServiceEndpointsWithRefreshedAuthentication")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/serviceendpoint/endpoints")
-@post
-op Endpoints_GetServiceEndpointsWithRefreshedAuthentication(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Ids of the service endpoints. */
-  @format("array (uuid)") @query(#{ explode: true }) endpointIds: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Scope, Validity of Token requested. */
-  @body body: RefreshAuthenticationParameters[],
-): Body<ServiceEndpoint[]>;
-
-/** Get the service endpoint details. */
-@tag("Endpoints")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "endpoints")
-@extension("x-ms-vss-method", "GetServiceEndpointDetails")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/serviceendpoint/endpoints/{endpointId}")
-@get
-op Endpoints_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the service endpoint. */
-  @format("uuid") @path endpointId: string,
-
-  /** Action filter for the service connection. It specifies the action which can be performed on the service connection. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ServiceEndpointActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" },
-        #{ value: "view", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use" | "view",
-
-  /** Flag to include confidential details of service endpoint. This is for internal use only. */
-  @query(#{ explode: true }) loadConfidentialData?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): ServiceEndpoint;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `4` {
       /** Version of the API to use. This should be set to '7.2-preview.4' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Endpoints {
+  /** Creates a new service endpoint */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "CreateServiceEndpoint")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/endpoints")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Service endpoint to create */
+    @body body: ServiceEndpoint,
+  ): ServiceEndpoint;
+
+  /** Update the service endpoints. */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "UpdateServiceEndpoints")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/endpoints")
+  @put
+  UpdateServiceEndpoints(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Names of the service endpoints to update. */
+    @body body: ServiceEndpoint[],
+  ): Body<ServiceEndpoint[]>;
+
+  /** Delete a service endpoint */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "DeleteServiceEndpoint")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Endpoint Id of endpoint to delete */
+    @format("uuid") @path endpointId: string,
+
+    /** project Ids from which endpoint needs to be deleted */
+    @format("array (string)") @query(#{ explode: true }) projectIds: string,
+
+    /** delete the spn created by endpoint */
+    @query(#{ explode: true }) deep?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): OkResponse;
+
+  /** Share service endpoint across projects */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "ShareServiceEndpoint")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
+  @patch
+  ShareServiceEndpoint(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Endpoint Id of the endpoint to share */
+    @format("uuid") @path endpointId: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Project reference details of the target project */
+    @body body: ServiceEndpointProjectReference[],
+  ): OkResponse;
+
+  /** Update the service endpoint */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "UpdateServiceEndpoint")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
+  @put
+  UpdateServiceEndpoint(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Endpoint Id of the endpoint to update */
+    @format("uuid") @path endpointId: string,
+
+    /** operation type */
+    @query(#{ explode: true }) operation?: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Updated data for the endpoint */
+    @body body: ServiceEndpoint,
+  ): ServiceEndpoint;
+
+  /** Get the service endpoints by name. */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "GetServiceEndpointsByNames")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/serviceendpoint/endpoints")
+  @get
+  GetServiceEndpointsByNames(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Names of the service endpoints. */
+    @format("array (string)") @query(#{ explode: true }) endpointNames: string,
+
+    /** Type of the service endpoints. */
+    @query(#{ explode: true }) type?: string,
+
+    /** Authorization schemes used for service endpoints. */
+    @format("array (string)") @query(#{ explode: true }) authSchemes?: string,
+
+    /** Owner for service endpoints. */
+    @query(#{ explode: true }) owner?: string,
+
+    /** Failed flag for service endpoints. */
+    @query(#{ explode: true }) includeFailed?: boolean,
+
+    /** Flag to include more details for service endpoints. This is for internal use only and the flag will be treated as false for all other requests */
+    @query(#{ explode: true }) includeDetails?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): Body<ServiceEndpoint[]>;
+
+  /** Gets the service endpoints and patch new authorization parameters */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "GetServiceEndpointsWithRefreshedAuthentication")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/serviceendpoint/endpoints")
+  @post
+  GetServiceEndpointsWithRefreshedAuthentication(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Ids of the service endpoints. */
+    @format("array (uuid)") @query(#{ explode: true }) endpointIds: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Scope, Validity of Token requested. */
+    @body body: RefreshAuthenticationParameters[],
+  ): Body<ServiceEndpoint[]>;
+
+  /** Get the service endpoint details. */
+  @tag("Endpoints")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "endpoints")
+  @extension("x-ms-vss-method", "GetServiceEndpointDetails")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/serviceendpoint/endpoints/{endpointId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the service endpoint. */
+    @format("uuid") @path endpointId: string,
+
+    /** Action filter for the service connection. It specifies the action which can be performed on the service connection. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ServiceEndpointActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" },
+          #{ value: "view", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use" | "view",
+
+    /** Flag to include confidential details of service endpoint. This is for internal use only. */
+    @query(#{ explode: true }) loadConfidentialData?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): ServiceEndpoint;
+}
+
+interface Types {
+  /** Get service endpoint types. */
+  @tag("Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "types")
+  @extension("x-ms-vss-method", "GetServiceEndpointTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/types")
+  @get
+  GetServiceEndpointTypes(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Type of service endpoint. */
+    @query(#{ explode: true }) type?: string,
+
+    /** Scheme of service endpoint. */
+    @query(#{ explode: true }) scheme?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ServiceEndpointType[]>;
+
+  /** Get service endpoint types with passed types filter. */
+  @tag("Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "types")
+  @extension("x-ms-vss-method", "GetFilteredServiceEndpointTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/serviceendpoint/types")
+  @post
+  GetFilteredServiceEndpointTypes(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Filter to limit returned types */
+    @body body: string[],
+  ): Body<ServiceEndpointType[]>;
+}
+
+interface Executionhistory {
+  /** Get service endpoint execution records. */
+  @tag("Executionhistory")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "executionhistory")
+  @extension("x-ms-vss-method", "GetServiceEndpointExecutionRecords")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/serviceendpoint/{endpointId}/executionhistory")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the service endpoint. */
+    @format("uuid") @path endpointId: string,
+
+    /** Number of service endpoint execution records to get. */
+    @query(#{ explode: true }) top?: int32,
+
+    /** A continuation token, returned by a previous call to this method, that can be used to return the next set of records */
+    @query(#{ explode: true }) continuationToken?: int64,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ServiceEndpointExecutionRecord[]>;
+}
+
+interface Endpointproxy {
+  /** Use ExecuteServiceEndpointRequest API Instead */
+  @tag("Endpointproxy")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "endpointproxy")
+  @extension("x-ms-vss-method", "QueryServiceEndpoint")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/serviceendpoint/endpointproxy")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Describes the data source to fetch. */
+    @body body: DataSourceBinding,
+  ): Body<string[]>;
 }

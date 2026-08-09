@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "ServiceHooks" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace ServiceHooks;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Defines the data contract of a consumer. */
 model Consumer {
@@ -908,458 +914,468 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get a list of available service hook consumer services. Optionally filter by consumers that support at least one event type from the specific publisher. */
-@tag("Consumers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "consumers")
-@extension("x-ms-vss-method", "ListConsumers")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/consumers")
-@get
-op Consumers_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @query(#{ explode: true }) publisherId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Consumer[]>;
-
-/** Get a specific consumer service. Optionally filter out consumer actions that do not support any event types for the specified publisher. */
-@tag("Consumers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "consumers")
-@extension("x-ms-vss-method", "GetConsumer")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/consumers/{consumerId}")
-@get
-op Consumers_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a consumer. */
-  @path consumerId: string,
-
-  @query(#{ explode: true }) publisherId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Consumer;
-
-/** Get a list of consumer actions for a specific consumer. */
-@tag("Consumers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "actions")
-@extension("x-ms-vss-method", "ListConsumerActions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/consumers/{consumerId}/actions")
-@get
-op Consumers_ListConsumerActions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a consumer. */
-  @path consumerId: string,
-
-  @query(#{ explode: true }) publisherId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ConsumerAction[]>;
-
-/** Get details about a specific consumer action. */
-@tag("Consumers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "actions")
-@extension("x-ms-vss-method", "GetConsumerAction")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/consumers/{consumerId}/actions/{consumerActionId}")
-@get
-op Consumers_GetConsumerAction(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a consumer. */
-  @path consumerId: string,
-
-  /** ID for a consumerActionId. */
-  @path consumerActionId: string,
-
-  @query(#{ explode: true }) publisherId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): ConsumerAction;
-
-/** Query for notifications. A notification includes details about the event, the request to and the response from the consumer service. */
-@tag("Notifications")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "notificationsQuery")
-@extension("x-ms-vss-method", "QueryNotifications")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/notificationsquery")
-@post
-op Notifications_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NotificationsQuery,
-): NotificationsQuery;
-
-/** Get a list of publishers. */
-@tag("Publishers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "publishers")
-@extension("x-ms-vss-method", "ListPublishers")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/publishers")
-@get
-op Publishers_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Publisher[]>;
-
-/** Get a specific service hooks publisher. */
-@tag("Publishers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "publishers")
-@extension("x-ms-vss-method", "GetPublisher")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/publishers/{publisherId}")
-@get
-op Publishers_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a publisher. */
-  @path publisherId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Publisher;
-
-/** Get the event types for a specific publisher. */
-@tag("Publishers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "eventTypes")
-@extension("x-ms-vss-method", "ListEventTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/publishers/{publisherId}/eventtypes")
-@get
-op Publishers_ListEventTypes(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a publisher. */
-  @path publisherId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<EventTypeDescriptor[]>;
-
-/** Get a specific event type. */
-@tag("Publishers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "eventTypes")
-@extension("x-ms-vss-method", "GetEventType")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/publishers/{publisherId}/eventtypes/{eventTypeId}")
-@get
-op Publishers_GetEventType(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a publisher. */
-  @path publisherId: string,
-
-  @path eventTypeId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): EventTypeDescriptor;
-
-@tag("Publishers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "publisherInputValuesQuery")
-@extension("x-ms-vss-method", "QueryInputValues")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/publishers/{publisherId}/inputValuesQuery")
-@post
-op Publishers_QueryInputValues(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path publisherId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: InputValuesQuery,
-): InputValuesQuery;
-
-/** Query for service hook publishers. */
-@tag("Publishers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "publishersQuery")
-@extension("x-ms-vss-method", "QueryPublishers")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/publishersquery")
-@post
-op Publishers_QueryPublishers(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: PublishersQuery,
-): PublishersQuery;
-
-/** Get a list of subscriptions. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "ListSubscriptions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions")
-@get
-op Subscriptions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a subscription. */
-  @query(#{ explode: true }) publisherId?: string,
-
-  /** The event type to filter on (if any). */
-  @query(#{ explode: true }) eventType?: string,
-
-  /** ID for a consumer. */
-  @query(#{ explode: true }) consumerId?: string,
-
-  /** ID for a consumerActionId. */
-  @query(#{ explode: true }) consumerActionId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Subscription[]>;
-
-/** Create a subscription. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "CreateSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions")
-@post
-op Subscriptions_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Subscription to be created. */
-  @body body: Subscription,
-): Subscription;
-
-/** Delete a specific service hooks subscription. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "DeleteSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
-@delete
-op Subscriptions_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a subscription. */
-  @format("uuid") @path subscriptionId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a specific service hooks subscription. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "GetSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
-@get
-op Subscriptions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a subscription. */
-  @format("uuid") @path subscriptionId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Subscription;
-
-/** Update a subscription. <param name='subscriptionId'>ID for a subscription that you wish to update.</param> */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "ReplaceSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
-@put
-op Subscriptions_ReplaceSubscription(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @extension("x-ms-required", false)
-  @format("uuid")
-  @path
-  subscriptionId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: Subscription,
-): Subscription;
-
-@tag("Diagnostics")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "diagnostics")
-@extension("x-ms-vss-method", "GetSubscriptionDiagnostics")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/diagnostics")
-@get
-op Diagnostics_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path subscriptionId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): SubscriptionDiagnostics;
-
-@tag("Diagnostics")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "diagnostics")
-@extension("x-ms-vss-method", "UpdateSubscriptionDiagnostics")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/diagnostics")
-@put
-op Diagnostics_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path subscriptionId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: UpdateSubscripitonDiagnosticsParameters,
-): SubscriptionDiagnostics;
-
-/** Get a list of notifications for a specific subscription. A notification includes details about the event, the request to and the response from the consumer service. */
-@tag("Notifications")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "notifications")
-@extension("x-ms-vss-method", "GetNotifications")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/notifications")
-@get
-op Notifications_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a subscription. */
-  @format("uuid") @path subscriptionId: string,
-
-  /** Maximum number of notifications to return. Default is **100**. */
-  @query(#{ explode: true }) maxResults?: int32,
-
-  /** Get only notifications with this status. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "NotificationStatus",
-      values: #[
-        #{ value: "queued", description: "The notification has been queued" },
-        #{
-          value: "processing",
-          description: "The notification has been dequeued and has begun processing.",
-        },
-        #{
-          value: "requestInProgress",
-          description: "The consumer action has processed the notification. The request is in progress.",
-        },
-        #{
-          value: "queuedForRetry",
-          description: "The notification failed and is queued for retry.",
-        },
-        #{ value: "completed", description: "The request completed" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  status?: "queued" | "processing" | "requestInProgress" | "queuedForRetry" | "completed",
-
-  /** Get only notifications with this result type. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "NotificationResult",
-      values: #[
-        #{ value: "pending", description: "The notification has not yet completed" },
-        #{ value: "succeeded", description: "The notification was sent successfully" },
-        #{
-          value: "failed",
-          description: "The notification failed to be sent successfully to the consumer",
-        },
-        #{ value: "filtered", description: "The notification was filtered by the Delivery Job" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  result?: "pending" | "succeeded" | "failed" | "filtered",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Notification[]>;
-
-/** Get a specific notification for a subscription. */
-@tag("Notifications")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "notifications")
-@extension("x-ms-vss-method", "GetNotification")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/notifications/{notificationId}")
-@get
-op Notifications_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a subscription. */
-  @format("uuid") @path subscriptionId: string,
-
-  @path notificationId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Notification;
-
-/** Query for service hook subscriptions. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptionsQuery")
-@extension("x-ms-vss-method", "CreateSubscriptionsQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/subscriptionsquery")
-@post
-op Subscriptions_CreateSubscriptionsQuery(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: SubscriptionsQuery,
-): SubscriptionsQuery;
-
-/** Sends a test notification. This is useful for verifying the configuration of an updated or new service hooks subscription. */
-@tag("Notifications")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testNotifications")
-@extension("x-ms-vss-method", "CreateTestNotification")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/hooks/testnotifications")
-@post
-op Notifications_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Only allow testing with real data in existing subscriptions. */
-  @query(#{ explode: true }) useRealData?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: Notification,
-): Notification;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Consumers {
+  /** Get a list of available service hook consumer services. Optionally filter by consumers that support at least one event type from the specific publisher. */
+  @tag("Consumers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "consumers")
+  @extension("x-ms-vss-method", "ListConsumers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/consumers")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @query(#{ explode: true }) publisherId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Consumer[]>;
+
+  /** Get a specific consumer service. Optionally filter out consumer actions that do not support any event types for the specified publisher. */
+  @tag("Consumers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "consumers")
+  @extension("x-ms-vss-method", "GetConsumer")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/consumers/{consumerId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a consumer. */
+    @path consumerId: string,
+
+    @query(#{ explode: true }) publisherId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Consumer;
+
+  /** Get a list of consumer actions for a specific consumer. */
+  @tag("Consumers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "actions")
+  @extension("x-ms-vss-method", "ListConsumerActions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/consumers/{consumerId}/actions")
+  @get
+  ListConsumerActions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a consumer. */
+    @path consumerId: string,
+
+    @query(#{ explode: true }) publisherId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ConsumerAction[]>;
+
+  /** Get details about a specific consumer action. */
+  @tag("Consumers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "actions")
+  @extension("x-ms-vss-method", "GetConsumerAction")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/consumers/{consumerId}/actions/{consumerActionId}")
+  @get
+  GetConsumerAction(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a consumer. */
+    @path consumerId: string,
+
+    /** ID for a consumerActionId. */
+    @path consumerActionId: string,
+
+    @query(#{ explode: true }) publisherId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ConsumerAction;
+}
+
+interface Notifications {
+  /** Query for notifications. A notification includes details about the event, the request to and the response from the consumer service. */
+  @tag("Notifications")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "notificationsQuery")
+  @extension("x-ms-vss-method", "QueryNotifications")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/notificationsquery")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NotificationsQuery,
+  ): NotificationsQuery;
+
+  /** Get a list of notifications for a specific subscription. A notification includes details about the event, the request to and the response from the consumer service. */
+  @tag("Notifications")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "notifications")
+  @extension("x-ms-vss-method", "GetNotifications")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/notifications")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a subscription. */
+    @format("uuid") @path subscriptionId: string,
+
+    /** Maximum number of notifications to return. Default is **100**. */
+    @query(#{ explode: true }) maxResults?: int32,
+
+    /** Get only notifications with this status. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "NotificationStatus",
+        values: #[
+          #{ value: "queued", description: "The notification has been queued" },
+          #{
+            value: "processing",
+            description: "The notification has been dequeued and has begun processing.",
+          },
+          #{
+            value: "requestInProgress",
+            description: "The consumer action has processed the notification. The request is in progress.",
+          },
+          #{
+            value: "queuedForRetry",
+            description: "The notification failed and is queued for retry.",
+          },
+          #{ value: "completed", description: "The request completed" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    status?: "queued" | "processing" | "requestInProgress" | "queuedForRetry" | "completed",
+
+    /** Get only notifications with this result type. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "NotificationResult",
+        values: #[
+          #{ value: "pending", description: "The notification has not yet completed" },
+          #{ value: "succeeded", description: "The notification was sent successfully" },
+          #{
+            value: "failed",
+            description: "The notification failed to be sent successfully to the consumer",
+          },
+          #{ value: "filtered", description: "The notification was filtered by the Delivery Job" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    result?: "pending" | "succeeded" | "failed" | "filtered",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Notification[]>;
+
+  /** Get a specific notification for a subscription. */
+  @tag("Notifications")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "notifications")
+  @extension("x-ms-vss-method", "GetNotification")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/notifications/{notificationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a subscription. */
+    @format("uuid") @path subscriptionId: string,
+
+    @path notificationId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Notification;
+
+  /** Sends a test notification. This is useful for verifying the configuration of an updated or new service hooks subscription. */
+  @tag("Notifications")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testNotifications")
+  @extension("x-ms-vss-method", "CreateTestNotification")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/testnotifications")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Only allow testing with real data in existing subscriptions. */
+    @query(#{ explode: true }) useRealData?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: Notification,
+  ): Notification;
+}
+
+interface Publishers {
+  /** Get a list of publishers. */
+  @tag("Publishers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "publishers")
+  @extension("x-ms-vss-method", "ListPublishers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/publishers")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Publisher[]>;
+
+  /** Get a specific service hooks publisher. */
+  @tag("Publishers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "publishers")
+  @extension("x-ms-vss-method", "GetPublisher")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/publishers/{publisherId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a publisher. */
+    @path publisherId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Publisher;
+
+  /** Get the event types for a specific publisher. */
+  @tag("Publishers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "eventTypes")
+  @extension("x-ms-vss-method", "ListEventTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/publishers/{publisherId}/eventtypes")
+  @get
+  ListEventTypes(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a publisher. */
+    @path publisherId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<EventTypeDescriptor[]>;
+
+  /** Get a specific event type. */
+  @tag("Publishers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "eventTypes")
+  @extension("x-ms-vss-method", "GetEventType")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/publishers/{publisherId}/eventtypes/{eventTypeId}")
+  @get
+  GetEventType(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a publisher. */
+    @path publisherId: string,
+
+    @path eventTypeId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): EventTypeDescriptor;
+
+  @tag("Publishers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "publisherInputValuesQuery")
+  @extension("x-ms-vss-method", "QueryInputValues")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/publishers/{publisherId}/inputValuesQuery")
+  @post
+  QueryInputValues(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path publisherId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: InputValuesQuery,
+  ): InputValuesQuery;
+
+  /** Query for service hook publishers. */
+  @tag("Publishers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "publishersQuery")
+  @extension("x-ms-vss-method", "QueryPublishers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/publishersquery")
+  @post
+  QueryPublishers(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: PublishersQuery,
+  ): PublishersQuery;
+}
+
+interface Subscriptions {
+  /** Get a list of subscriptions. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "ListSubscriptions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a subscription. */
+    @query(#{ explode: true }) publisherId?: string,
+
+    /** The event type to filter on (if any). */
+    @query(#{ explode: true }) eventType?: string,
+
+    /** ID for a consumer. */
+    @query(#{ explode: true }) consumerId?: string,
+
+    /** ID for a consumerActionId. */
+    @query(#{ explode: true }) consumerActionId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Subscription[]>;
+
+  /** Create a subscription. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "CreateSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Subscription to be created. */
+    @body body: Subscription,
+  ): Subscription;
+
+  /** Delete a specific service hooks subscription. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "DeleteSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a subscription. */
+    @format("uuid") @path subscriptionId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a specific service hooks subscription. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "GetSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a subscription. */
+    @format("uuid") @path subscriptionId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Subscription;
+
+  /** Update a subscription. <param name='subscriptionId'>ID for a subscription that you wish to update.</param> */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "ReplaceSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
+  @put
+  ReplaceSubscription(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @extension("x-ms-required", false)
+    @format("uuid")
+    @path
+    subscriptionId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: Subscription,
+  ): Subscription;
+
+  /** Query for service hook subscriptions. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptionsQuery")
+  @extension("x-ms-vss-method", "CreateSubscriptionsQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptionsquery")
+  @post
+  CreateSubscriptionsQuery(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: SubscriptionsQuery,
+  ): SubscriptionsQuery;
+}
+
+interface Diagnostics {
+  @tag("Diagnostics")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "diagnostics")
+  @extension("x-ms-vss-method", "GetSubscriptionDiagnostics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/diagnostics")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path subscriptionId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): SubscriptionDiagnostics;
+
+  @tag("Diagnostics")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "diagnostics")
+  @extension("x-ms-vss-method", "UpdateSubscriptionDiagnostics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}/diagnostics")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path subscriptionId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: UpdateSubscripitonDiagnosticsParameters,
+  ): SubscriptionDiagnostics;
 }

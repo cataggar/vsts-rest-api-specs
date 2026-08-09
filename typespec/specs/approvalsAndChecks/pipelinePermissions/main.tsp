@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "PipelinePermissions" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace PipelinePermissions;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model GraphSubjectBase {
   _links?: ReferenceLinks;
@@ -107,71 +113,73 @@ model ResourcePipelinePermissions {
   resource?: Resource;
 }
 
-/** Batch API to authorize/unauthorize a list of definitions for a multiple resources. */
-@tag("Pipeline Permissions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelinePermissions")
-@extension("x-ms-vss-method", "UpdatePipelinePermisionsForResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/pipelinepermissions")
-@patch
-op PipelinePermissions_UpdatePipelinePermisionsForResources(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ResourcePipelinePermissions[],
-): Body<ResourcePipelinePermissions[]>;
-
-/** Given a ResourceType and ResourceId, returns authorized definitions for that resource. */
-@tag("Pipeline Permissions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelinePermissions")
-@extension("x-ms-vss-method", "GetPipelinePermissionsForResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}")
-@get
-op PipelinePermissions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path resourceType: string,
-  @path resourceId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): ResourcePipelinePermissions;
-
-/** Authorizes/Unauthorizes a list of definitions for a given resource. */
-@tag("Pipeline Permissions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelinePermissions")
-@extension("x-ms-vss-method", "UpdatePipelinePermisionsForResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}")
-@patch
-op PipelinePermissions_UpdatePipelinePermisionsForResource(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path resourceType: string,
-  @path resourceId: string,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ResourcePipelinePermissions,
-): ResourcePipelinePermissions;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface PipelinePermissions {
+  /** Batch API to authorize/unauthorize a list of definitions for a multiple resources. */
+  @tag("Pipeline Permissions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelinePermissions")
+  @extension("x-ms-vss-method", "UpdatePipelinePermisionsForResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/pipelinepermissions")
+  @patch
+  UpdatePipelinePermisionsForResources(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ResourcePipelinePermissions[],
+  ): Body<ResourcePipelinePermissions[]>;
+
+  /** Given a ResourceType and ResourceId, returns authorized definitions for that resource. */
+  @tag("Pipeline Permissions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelinePermissions")
+  @extension("x-ms-vss-method", "GetPipelinePermissionsForResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path resourceType: string,
+    @path resourceId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ResourcePipelinePermissions;
+
+  /** Authorizes/Unauthorizes a list of definitions for a given resource. */
+  @tag("Pipeline Permissions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelinePermissions")
+  @extension("x-ms-vss-method", "UpdatePipelinePermisionsForResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}")
+  @patch
+  UpdatePipelinePermisionsForResource(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path resourceType: string,
+    @path resourceId: string,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ResourcePipelinePermissions,
+  ): ResourcePipelinePermissions;
 }

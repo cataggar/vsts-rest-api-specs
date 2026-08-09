@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Account" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://app.vssps.visualstudio.com")
 namespace Account;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model Account {
   /** Identifier for an Account */
@@ -139,30 +145,32 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get a list of accounts for a specific owner or a specific member. One of the following parameters is required: ownerId, memberId. */
-@tag("Accounts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "accounts")
-@extension("x-ms-vss-method", "GetAccounts")
-@extension("x-ms-preview", true)
-@route("/_apis/accounts")
-@get
-op Accounts_List(
-  /** ID for the owner of the accounts. */
-  @format("uuid") @query(#{ explode: true }) ownerId?: string,
-
-  /** ID for a member of the accounts. */
-  @format("uuid") @query(#{ explode: true }) memberId?: string,
-
-  @query(#{ explode: true }) properties?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Account[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Accounts {
+  /** Get a list of accounts for a specific owner or a specific member. One of the following parameters is required: ownerId, memberId. */
+  @tag("Accounts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "accounts")
+  @extension("x-ms-vss-method", "GetAccounts")
+  @extension("x-ms-preview", true)
+  @route("/_apis/accounts")
+  @get
+  List(
+    /** ID for the owner of the accounts. */
+    @format("uuid") @query(#{ explode: true }) ownerId?: string,
+
+    /** ID for a member of the accounts. */
+    @format("uuid") @query(#{ explode: true }) memberId?: string,
+
+    @query(#{ explode: true }) properties?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Account[]>;
 }

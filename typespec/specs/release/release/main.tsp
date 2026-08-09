@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Release" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://vsrm.dev.azure.com")
 namespace Release;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AgentArtifactDefinition {
   /** Gets or sets the artifact definition alias. */
@@ -3863,1287 +3869,1303 @@ model YamlSourceReference {
   name?: string;
 }
 
-/** Get a list of approvals */
-@tag("Approvals")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "approvals")
-@extension("x-ms-vss-method", "GetApprovals")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/approvals")
-@get
-op Approvals_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Approvals assigned to this user. */
-  @query(#{ explode: true }) assignedToFilter?: string,
-
-  /** Approvals with this status. Default is 'pending'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ApprovalStatus",
-      values: #[
-        #{
-          value: "undefined",
-          description: "Indicates the approval does not have the status set.",
-        },
-        #{ value: "pending", description: "Indicates the approval is pending." },
-        #{ value: "approved", description: "Indicates the approval is approved." },
-        #{ value: "rejected", description: "Indicates the approval is rejected." },
-        #{ value: "reassigned", description: "Indicates the approval is reassigned." },
-        #{ value: "canceled", description: "Indicates the approval is canceled." },
-        #{ value: "skipped", description: "Indicates the approval is skipped." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  statusFilter?:
-    | "undefined"
-    | "pending"
-    | "approved"
-    | "rejected"
-    | "reassigned"
-    | "canceled"
-    | "skipped",
-
-  /** Approvals for release id(s) mentioned in the filter. Multiple releases can be mentioned by separating them with ',' e.g. releaseIdsFilter=1,2,3,4. */
-  @format("array (int32)") @query(#{ explode: true }) releaseIdsFilter?: string,
-
-  /** Approval with this type. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ApprovalType",
-      values: #[
-        #{ value: "undefined", description: "Indicates the approval type does not set." },
-        #{
-          value: "preDeploy",
-          description: "Indicates the approvals which executed before deployment.",
-        },
-        #{
-          value: "postDeploy",
-          description: "Indicates the approvals which executed after deployment.",
-        },
-        #{ value: "all", description: "Indicates all approvals." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  typeFilter?: "undefined" | "preDeploy" | "postDeploy" | "all",
-
-  /** Number of approvals to get. Default is 50. */
-  @query(#{ explode: true }) top?: int32,
-
-  /** Gets the approvals after the continuation token provided. */
-  @query(#{ explode: true }) continuationToken?: int32,
-
-  /** Gets the results in the defined order of created approvals. Default is 'descending'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseQueryOrder",
-      values: #[
-        #{ value: "descending", description: "Return results in descending order." },
-        #{ value: "ascending", description: "Return results in ascending order." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "descending" | "ascending",
-
-  /** 'true' to include my group approvals. Default is 'false'. */
-  @query(#{ explode: true }) includeMyGroupApprovals?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<ReleaseApproval[]>;
-
-/** Update status of an approval */
-@tag("Approvals")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "approvals")
-@extension("x-ms-vss-method", "UpdateReleaseApproval")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/approvals/{approvalId}")
-@patch
-op Approvals_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the approval. */
-  @path approvalId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** ReleaseApproval object having status, approver and comments. */
-  @body body: ReleaseApproval,
-): ReleaseApproval;
-
-/** Get a list of release definitions. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "GetReleaseDefinitions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/definitions")
-@get
-op Definitions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Get release definitions with names containing searchText. */
-  @query(#{ explode: true }) searchText?: string,
-
-  /** The properties that should be expanded in the list of Release definitions. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseDefinitionExpands",
-      values: #[
-        #{ value: "none", description: "Returns top level properties of object." },
-        #{ value: "environments", description: "Include environments in return object." },
-        #{ value: "artifacts", description: "Include artifacts in return object." },
-        #{ value: "triggers", description: "Include triggers in return object." },
-        #{ value: "variables", description: "Include variables in return object." },
-        #{ value: "tags", description: "Include tags in return object." },
-        #{ value: "lastRelease", description: "Include last release in return object." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?:
-    | "none"
-    | "environments"
-    | "artifacts"
-    | "triggers"
-    | "variables"
-    | "tags"
-    | "lastRelease",
-
-  /** Release definitions with given artifactType will be returned. Values can be Build, Jenkins, GitHub, Nuget, Team Build (external), ExternalTFSBuild, Git, TFVC, ExternalTfsXamlBuild. */
-  @query(#{ explode: true }) artifactType?: string,
-
-  /** Release definitions with given artifactSourceId will be returned. e.g. For build it would be {projectGuid}:{BuildDefinitionId}, for Jenkins it would be {JenkinsConnectionId}:{JenkinsDefinitionId}, for TfsOnPrem it would be {TfsOnPremConnectionId}:{ProjectName}:{TfsOnPremDefinitionId}. For third-party artifacts e.g. TeamCity, BitBucket you may refer 'uniqueSourceIdentifier' inside vss-extension.json at https://github.com/Microsoft/vsts-rm-extensions/blob/master/Extensions. */
-  @query(#{ explode: true }) artifactSourceId?: string,
-
-  /** Number of release definitions to get. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Gets the release definitions after the continuation token provided. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Gets the results in the defined order. Default is 'IdAscending'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseDefinitionQueryOrder",
-      values: #[
-        #{
-          value: "idAscending",
-          description: "Return results based on release definition Id ascending order.",
-        },
-        #{
-          value: "idDescending",
-          description: "Return results based on release definition Id descending order.",
-        },
-        #{
-          value: "nameAscending",
-          description: "Return results based on release definition name ascending order.",
-        },
-        #{
-          value: "nameDescending",
-          description: "Return results based on release definition name descending order.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "idAscending" | "idDescending" | "nameAscending" | "nameDescending",
-
-  /** Gets the release definitions under the specified path. */
-  @query(#{ explode: true }) path?: string,
-
-  /** 'true'to gets the release definitions with exact match as specified in searchText. Default is 'false'. */
-  @query(#{ explode: true }) isExactNameMatch?: boolean,
-
-  /** A comma-delimited list of tags. Only release definitions with these tags will be returned. */
-  @format("array (string)") @query(#{ explode: true }) tagFilter?: string,
-
-  /** A comma-delimited list of extended properties to be retrieved. If set, the returned Release Definitions will contain values for the specified property Ids (if they exist). If not set, properties will not be included. Note that this will not filter out any Release Definition from results irrespective of whether it has property set or not. */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  /** A comma-delimited list of release definitions to retrieve. */
-  @format("array (string)") @query(#{ explode: true }) definitionIdFilter?: string,
-
-  /** 'true' to get release definitions that has been deleted. Default is 'false' */
-  @query(#{ explode: true }) isDeleted?: boolean,
-
-  /** 'true' to get the release definitions under the folder with name as specified in searchText. Default is 'false'. */
-  @query(#{ explode: true }) searchTextContainsFolderName?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): Body<ReleaseDefinition[]>;
-
-/** Create a release definition */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "CreateReleaseDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/definitions")
-@post
-op Definitions_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** release definition object to create. */
-  @body body: ReleaseDefinition,
-): ReleaseDefinition;
-
-/** Update a release definition. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "UpdateReleaseDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/definitions")
-@put
-op Definitions_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Skip task validation boolean flag */
-  @query(#{ explode: true }) skipTasksValidation?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** Release definition object to update. */
-  @body body: ReleaseDefinition,
-): ReleaseDefinition;
-
-/** Delete a release definition. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "DeleteReleaseDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/definitions/{definitionId}")
-@delete
-op Definitions_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release definition. */
-  @path definitionId: int32,
-
-  /** Comment for deleting a release definition. */
-  @query(#{ explode: true }) comment?: string,
-
-  /** 'true' to automatically cancel any in-progress release deployments and proceed with release definition deletion . Default is 'false'. */
-  @query(#{ explode: true }) forceDelete?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): OkResponse;
-
-/** Get a release definition. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "GetReleaseDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/definitions/{definitionId}")
-@get
-op Definitions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release definition. */
-  @path definitionId: int32,
-
-  /** A comma-delimited list of extended properties to be retrieved. If set, the returned Release Definition will contain values for the specified property Ids (if they exist). If not set, properties will not be included. */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  /** Boolean flag to include disabled definitions. */
-  @query(#{ explode: true }) includeDisabled?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): ReleaseDefinition;
-
-/** Get revision history for a release definition */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetReleaseDefinitionHistory")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/definitions/{definitionId}/revisions")
-@get
-op Definitions_GetReleaseDefinitionHistory(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the definition. */
-  @path definitionId: int32,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): Body<ReleaseDefinitionRevision[]>;
-
-/** Get release definition for a given definitionId and revision */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetDefinitionRevision")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/definitions/{definitionId}/revisions/{revision}")
-@get
-op Definitions_GetDefinitionRevision(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the definition. */
-  @path definitionId: int32,
-
-  /** Id of the revision. */
-  @path revision: int32,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): {
-  @header contentType: "text/plain";
-  @body @format("Stream") body: string;
-};
-
-/** Get a list of deployments */
-@tag("Deployments")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "deployments")
-@extension("x-ms-vss-method", "GetDeployments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/deployments")
-@get
-op Deployments_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** List the deployments for a given definition id. */
-  @query(#{ explode: true }) definitionId?: int32,
-
-  /** List the deployments for a given definition environment id. */
-  @query(#{ explode: true }) definitionEnvironmentId?: int32,
-
-  /** List the deployments for which deployments are created as identity specified. */
-  @query(#{ explode: true }) createdBy?: string,
-
-  /** List the deployments with LastModified time >= minModifiedTime. */
-  @query(#{ explode: true }) minModifiedTime?: utcDateTime,
-
-  /** List the deployments with LastModified time <= maxModifiedTime. */
-  @query(#{ explode: true }) maxModifiedTime?: utcDateTime,
-
-  /** List the deployments with given deployment status. Default is 'All'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentStatus",
-      values: #[
-        #{ value: "undefined", description: "The deployment status is undefined." },
-        #{ value: "notDeployed", description: "The deployment status is not deployed." },
-        #{ value: "inProgress", description: "The deployment status is in progress." },
-        #{ value: "succeeded", description: "The deployment status is succeeded." },
-        #{
-          value: "partiallySucceeded",
-          description: "The deployment status is partiallysucceeded.",
-        },
-        #{ value: "failed", description: "The deployment status is failed." },
-        #{ value: "all", description: "The deployment status is all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  deploymentStatus?:
-    | "undefined"
-    | "notDeployed"
-    | "inProgress"
-    | "succeeded"
-    | "partiallySucceeded"
-    | "failed"
-    | "all",
-
-  /** List the deployments with given operation status. Default is 'All'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentOperationStatus",
-      values: #[
-        #{ value: "undefined", description: "The deployment operation status is undefined." },
-        #{ value: "queued", description: "The deployment operation status is queued." },
-        #{ value: "scheduled", description: "The deployment operation status is scheduled." },
-        #{ value: "pending", description: "The deployment operation status is pending." },
-        #{ value: "approved", description: "The deployment operation status is approved." },
-        #{ value: "rejected", description: "The deployment operation status is rejected." },
-        #{ value: "deferred", description: "The deployment operation status is deferred." },
-        #{
-          value: "queuedForAgent",
-          description: "The deployment operation status is queued for agent.",
-        },
-        #{
-          value: "phaseInProgress",
-          description: "The deployment operation status is phase in progress.",
-        },
-        #{
-          value: "phaseSucceeded",
-          description: "The deployment operation status is phase succeeded.",
-        },
-        #{
-          value: "phasePartiallySucceeded",
-          description: "The deployment operation status is phase partially succeeded.",
-        },
-        #{ value: "phaseFailed", description: "The deployment operation status is phase failed." },
-        #{ value: "canceled", description: "The deployment operation status is canceled." },
-        #{
-          value: "phaseCanceled",
-          description: "The deployment operation status is phase canceled.",
-        },
-        #{
-          value: "manualInterventionPending",
-          description: "The deployment operation status is manualintervention pending.",
-        },
-        #{
-          value: "queuedForPipeline",
-          description: "The deployment operation status is queued for pipeline.",
-        },
-        #{ value: "cancelling", description: "The deployment operation status is cancelling." },
-        #{
-          value: "evaluatingGates",
-          description: "The deployment operation status is EvaluatingGates.",
-        },
-        #{ value: "gateFailed", description: "The deployment operation status is GateFailed." },
-        #{ value: "all", description: "The deployment operation status is all." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  operationStatus?:
-    | "undefined"
-    | "queued"
-    | "scheduled"
-    | "pending"
-    | "approved"
-    | "rejected"
-    | "deferred"
-    | "queuedForAgent"
-    | "phaseInProgress"
-    | "phaseSucceeded"
-    | "phasePartiallySucceeded"
-    | "phaseFailed"
-    | "canceled"
-    | "phaseCanceled"
-    | "manualInterventionPending"
-    | "queuedForPipeline"
-    | "cancelling"
-    | "evaluatingGates"
-    | "gateFailed"
-    | "all",
-
-  /** 'true' to include deployments with latest attempt only. Default is 'false'. */
-  @query(#{ explode: true }) latestAttemptsOnly?: boolean,
-
-  /** List the deployments with given query order. Default is 'Descending'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseQueryOrder",
-      values: #[
-        #{ value: "descending", description: "Return results in descending order." },
-        #{ value: "ascending", description: "Return results in ascending order." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "descending" | "ascending",
-
-  /** List the deployments with given top. Default top is '50' and Max top is '100'. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** List the deployments with deployment id >= continuationToken. */
-  @query(#{ explode: true }) continuationToken?: int32,
-
-  /** List the deployments for which deployments are requested as identity specified. */
-  @query(#{ explode: true }) createdFor?: string,
-
-  /** List the deployments with StartedOn time >= minStartedTime. */
-  @query(#{ explode: true }) minStartedTime?: utcDateTime,
-
-  /** List the deployments with StartedOn time <= maxStartedTime. */
-  @query(#{ explode: true }) maxStartedTime?: utcDateTime,
-
-  /** List the deployments that are deployed from given branch name. */
-  @query(#{ explode: true }) sourceBranch?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Deployment[]>;
-
-/** Deletes a definition folder for given folder name and path and all it's existing definitions. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "DeleteFolder")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/folders/{path}")
-@delete
-op Folders_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Path of the folder to delete. */
-  @path path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Gets folders. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "GetFolders")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/folders/{path}")
-@get
-op Folders_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Path of the folder. */
-  @extension("x-ms-required", false) @path path: string,
-
-  /** Gets the results in the defined order. Default is 'None'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "FolderPathQueryOrder",
-      values: #[
-        #{ value: "none", description: "No order." },
-        #{ value: "ascending", description: "Order by folder name and path ascending." },
-        #{ value: "descending", description: "Order by folder name and path descending." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "none" | "ascending" | "descending",
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Folder[]>;
-
-/** Updates an existing folder at given existing path. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "UpdateFolder")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/folders/{path}")
-@patch
-op Folders_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Path of the folder to update. */
-  @path path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** folder. */
-  @body body: Folder,
-): Folder;
-
-/** This method is no longer supported. Use CreateFolder with folder parameter API. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "CreateFolder")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/folders/{path}")
-@post
-op Folders_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Path of the folder. */
-  @extension("x-ms-required", false) @path path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** folder. */
-  @body body: Folder,
-): Folder;
-
-/** Updates the gate for a deployment. */
-@tag("Gates")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "gates")
-@extension("x-ms-vss-method", "UpdateGates")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/gates/{gateStepId}")
-@patch
-op Gates_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Gate step Id. */
-  @path gateStepId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Metadata to patch the Release Gates. */
-  @body body: GateUpdateMetadata,
-): ReleaseGates;
-
-/** Get a list of releases */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.9")
-@extension("x-ms-vss-resource", "releases")
-@extension("x-ms-vss-method", "GetReleases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases")
-@get
-op Releases_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Releases from this release definition Id. */
-  @query(#{ explode: true }) definitionId?: int32,
-
-  /** Id of the definition environment. Required when using environmentStatusFilter. */
-  @query(#{ explode: true }) definitionEnvironmentId?: int32,
-
-  /** Releases with names containing searchText. */
-  @query(#{ explode: true }) searchText?: string,
-
-  /** Releases created by this user. */
-  @query(#{ explode: true }) createdBy?: string,
-
-  /** Releases that have this status. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseStatus",
-      values: #[
-        #{ value: "undefined", description: "Release status not set." },
-        #{ value: "draft", description: "Release is in draft state." },
-        #{ value: "active", description: "Release status is in active." },
-        #{ value: "abandoned", description: "Release status is in abandoned." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  statusFilter?: "undefined" | "draft" | "active" | "abandoned",
-
-  /** Filters releases by environment status. Must be used with definitionEnvironmentId. Values: Undefined (0), NotStarted (1), InProgress (2), Succeeded (4), Canceled (8), Rejected (16), Queued (32), Scheduled (64), PartiallySucceeded (128). These are [Flags] values and can be combined (e.g. 4|16 = 20 for Succeeded or Rejected). Cannot be used with sourceBranchFilter. */
-  @query(#{ explode: true }) environmentStatusFilter?: int32,
-
-  /** Releases that were created after this time. */
-  @query(#{ explode: true }) minCreatedTime?: utcDateTime,
-
-  /** Releases that were created before this time. */
-  @query(#{ explode: true }) maxCreatedTime?: utcDateTime,
-
-  /** Gets the results in the defined order of created date for releases. Default is descending. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseQueryOrder",
-      values: #[
-        #{ value: "descending", description: "Return results in descending order." },
-        #{ value: "ascending", description: "Return results in ascending order." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "descending" | "ascending",
-
-  /** Number of releases to get. Default is 50. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Gets the releases after the continuation token provided. */
-  @query(#{ explode: true }) continuationToken?: int32,
-
-  /** The property that should be expanded in the list of releases. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseExpands",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "environments", description: "" },
-        #{ value: "artifacts", description: "" },
-        #{ value: "approvals", description: "" },
-        #{ value: "manualInterventions", description: "" },
-        #{ value: "variables", description: "" },
-        #{ value: "tags", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?:
-    | "none"
-    | "environments"
-    | "artifacts"
-    | "approvals"
-    | "manualInterventions"
-    | "variables"
-    | "tags",
-
-  /** Releases with given artifactTypeId will be returned. Values can be Build, Jenkins, GitHub, Nuget, Team Build (external), ExternalTFSBuild, Git, TFVC, ExternalTfsXamlBuild. */
-  @query(#{ explode: true }) artifactTypeId?: string,
-
-  /** Unique identifier of the artifact used. e.g. For build it would be {projectGuid}:{BuildDefinitionId}, for Jenkins it would be {JenkinsConnectionId}:{JenkinsDefinitionId}, for TfsOnPrem it would be {TfsOnPremConnectionId}:{ProjectName}:{TfsOnPremDefinitionId}. For third-party artifacts e.g. TeamCity, BitBucket you may refer 'uniqueSourceIdentifier' inside vss-extension.json https://github.com/Microsoft/vsts-rm-extensions/blob/master/Extensions. */
-  @query(#{ explode: true }) sourceId?: string,
-
-  /** Releases with given artifactVersionId will be returned. E.g. in case of Build artifactType, it is buildId. */
-  @query(#{ explode: true }) artifactVersionId?: string,
-
-  /** Releases with given sourceBranchFilter will be returned (Not to be used with environmentStatusFilter). */
-  @query(#{ explode: true }) sourceBranchFilter?: string,
-
-  /** Gets the soft deleted releases, if true. */
-  @query(#{ explode: true }) isDeleted?: boolean,
-
-  /** A comma-delimited list of tags. Only releases with these tags will be returned. */
-  @format("array (string)") @query(#{ explode: true }) tagFilter?: string,
-
-  /** A comma-delimited list of extended properties to be retrieved. If set, the returned Releases will contain values for the specified property Ids (if they exist). If not set, properties will not be included. Note that this will not filter out any Release from results irrespective of whether it has property set or not. */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  /** A comma-delimited list of releases Ids. Only releases with these Ids will be returned. */
-  @format("array (int32)") @query(#{ explode: true }) releaseIdFilter?: string,
-
-  /** Releases under this folder path will be returned */
-  @query(#{ explode: true }) path?: string,
-
-  ...Parameters.`api-Version-preview`.`9`,
-): Body<Release[]>;
-
-/** Create a release. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.9")
-@extension("x-ms-vss-resource", "releases")
-@extension("x-ms-vss-method", "CreateRelease")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases")
-@post
-op Releases_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`9`,
-
-  /** Metadata to create a release. */
-  @body body: ReleaseStartMetadata,
-): Release;
-
-/** Get release for a given revision number. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.9")
-@extension("x-ms-vss-resource", "releases")
-@extension("x-ms-vss-method", "GetReleaseRevision")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}")
-@get
-op Releases_GetReleaseRevision(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Definition snapshot revision number. */
-  @query(#{ explode: true }) definitionSnapshotRevision: int32,
-
-  ...Parameters.`api-Version-preview`.`9`,
-): {
-  @header contentType: "text/plain";
-  @body @format("Stream") body: string;
-};
-
-/** Update few properties of a release. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.9")
-@extension("x-ms-vss-resource", "releases")
-@extension("x-ms-vss-method", "UpdateReleaseResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}")
-@patch
-op Releases_UpdateReleaseResource(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release to update. */
-  @path releaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`9`,
-
-  /** Properties of release to update. */
-  @body body: ReleaseUpdateMetadata,
-): Release;
-
-/** Update a complete release object. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.9")
-@extension("x-ms-vss-resource", "releases")
-@extension("x-ms-vss-method", "UpdateRelease")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}")
-@put
-op Releases_UpdateRelease(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release to update. */
-  @path releaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`9`,
-
-  /** Release object for update. */
-  @body body: Release,
-): Release;
-
-/** Get a release environment. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "GetReleaseEnvironment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/releases/{releaseId}/environments/{environmentId}")
-@get
-op Releases_GetReleaseEnvironment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the release environment. */
-  @path environmentId: int32,
-
-  /** A property that should be expanded in the environment. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ReleaseEnvironmentExpands",
-      values: #[
-        #{ value: "none", description: "Return top level properties of object." },
-        #{ value: "tasks", description: "Expand environment with tasks." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "tasks",
-
-  ...Parameters.`api-Version-preview`.`8`,
-): ReleaseEnvironment;
-
-/** Update the status of a release environment */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "UpdateReleaseEnvironment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/releases/{releaseId}/environments/{environmentId}")
-@patch
-op Releases_UpdateReleaseEnvironment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of release environment. */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`8`,
-
-  /** Environment update meta data. */
-  @body body: ReleaseEnvironmentUpdateMetadata,
-): ReleaseEnvironment;
-
-/** Get the release task attachments. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetReleaseTaskAttachments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/plan/{planId}/attachments/{type}")
-@get
-op Attachments_GetReleaseTaskAttachments(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the release environment. */
-  @path environmentId: int32,
-
-  /** Attempt number of deployment. */
-  @path attemptId: int32,
-
-  /** Plan Id of the deploy phase. */
-  @format("uuid") @path planId: string,
-
-  /** Type of the attachment. */
-  @path type: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ReleaseTaskAttachment[]>;
-
-/** Get a release task attachment. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetReleaseTaskAttachmentContent")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/plan/{planId}/timelines/{timelineId}/records/{recordId}/attachments/{type}/{name}")
-@get
-op Attachments_GetReleaseTaskAttachmentContent(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the release environment. */
-  @path environmentId: int32,
-
-  /** Attempt number of deployment. */
-  @path attemptId: int32,
-
-  /** Plan Id of the deploy phase. */
-  @format("uuid") @path planId: string,
-
-  /** Timeline Id of the task. */
-  @format("uuid") @path timelineId: string,
-
-  /** Record Id of attachment. */
-  @format("uuid") @path recordId: string,
-
-  /** Type of the attachment. */
-  @path type: string,
-
-  /** Name of the attachment. */
-  @path name: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** GetTaskAttachments API is deprecated. Use GetReleaseTaskAttachments API instead. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetTaskAttachments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/timelines/{timelineId}/attachments/{type}")
-@get
-op Attachments_GetTaskAttachments(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the release environment. */
-  @path environmentId: int32,
-
-  /** Attempt number of deployment. */
-  @path attemptId: int32,
-
-  /** Timeline Id of the task. */
-  @format("uuid") @path timelineId: string,
-
-  /** Type of the attachment. */
-  @path type: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ReleaseTaskAttachment[]>;
-
-/** GetTaskAttachmentContent API is deprecated. Use GetReleaseTaskAttachmentContent API instead. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetTaskAttachmentContent")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/timelines/{timelineId}/records/{recordId}/attachments/{type}/{name}")
-@get
-op Attachments_GetTaskAttachmentContent(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the release environment. */
-  @path environmentId: int32,
-
-  /** Attempt number of deployment. */
-  @path attemptId: int32,
-
-  /** Timeline Id of the task. */
-  @format("uuid") @path timelineId: string,
-
-  /** Record Id of attachment. */
-  @format("uuid") @path recordId: string,
-
-  /** Type of the attachment. */
-  @path type: string,
-
-  /** Name of the attachment. */
-  @path name: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** Gets the task log of a release as a plain text file. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "GetTaskLog")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/deployPhases/{releaseDeployPhaseId}/tasks/{taskId}/logs")
-@get
-op Releases_GetTaskLog(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of release environment. */
-  @path environmentId: int32,
-
-  /** Release deploy phase Id. */
-  @path releaseDeployPhaseId: int32,
-
-  /** ReleaseTask Id for the log. */
-  @path taskId: int32,
-
-  /** Starting line number for logs */
-  @query(#{ explode: true }) startLine?: int64,
-
-  /** Ending line number for logs */
-  @query(#{ explode: true }) endLine?: int64,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): {
-  @header contentType: "text/plain";
-  @body @format("Stream") body: string;
-};
-
-/** Get logs for a release Id. */
-@tag("Releases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "GetLogs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/release/releases/{releaseId}/logs")
-@get
-op Releases_GetLogs(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): {
-  @header contentType: "application/zip";
-  @body @format("Stream") body: string;
-};
-
-/** List all manual interventions for a given release. */
-@tag("Manual Interventions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "manualInterventions")
-@extension("x-ms-vss-method", "GetManualInterventions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions")
-@get
-op ManualInterventions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<ManualIntervention[]>;
-
-/** Get manual intervention for a given release and manual intervention id. */
-@tag("Manual Interventions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "manualInterventions")
-@extension("x-ms-vss-method", "GetManualIntervention")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions/{manualInterventionId}")
-@get
-op ManualInterventions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the manual intervention. */
-  @path manualInterventionId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): ManualIntervention;
-
-/** Update manual intervention. */
-@tag("Manual Interventions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "manualInterventions")
-@extension("x-ms-vss-method", "UpdateManualIntervention")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions/{manualInterventionId}")
-@patch
-op ManualInterventions_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the release. */
-  @path releaseId: int32,
-
-  /** Id of the manual intervention. */
-  @path manualInterventionId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Meta data to update manual intervention. */
-  @body body: ManualInterventionUpdateMetadata,
-): ManualIntervention;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `4` {
       /** Version of the API to use. This should be set to '7.2-preview.4' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `8` {
       /** Version of the API to use. This should be set to '7.2-preview.8' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `9` {
       /** Version of the API to use. This should be set to '7.2-preview.9' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Approvals {
+  /** Get a list of approvals */
+  @tag("Approvals")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "approvals")
+  @extension("x-ms-vss-method", "GetApprovals")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/approvals")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Approvals assigned to this user. */
+    @query(#{ explode: true }) assignedToFilter?: string,
+
+    /** Approvals with this status. Default is 'pending'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ApprovalStatus",
+        values: #[
+          #{
+            value: "undefined",
+            description: "Indicates the approval does not have the status set.",
+          },
+          #{ value: "pending", description: "Indicates the approval is pending." },
+          #{ value: "approved", description: "Indicates the approval is approved." },
+          #{ value: "rejected", description: "Indicates the approval is rejected." },
+          #{ value: "reassigned", description: "Indicates the approval is reassigned." },
+          #{ value: "canceled", description: "Indicates the approval is canceled." },
+          #{ value: "skipped", description: "Indicates the approval is skipped." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    statusFilter?:
+      | "undefined"
+      | "pending"
+      | "approved"
+      | "rejected"
+      | "reassigned"
+      | "canceled"
+      | "skipped",
+
+    /** Approvals for release id(s) mentioned in the filter. Multiple releases can be mentioned by separating them with ',' e.g. releaseIdsFilter=1,2,3,4. */
+    @format("array (int32)") @query(#{ explode: true }) releaseIdsFilter?: string,
+
+    /** Approval with this type. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ApprovalType",
+        values: #[
+          #{ value: "undefined", description: "Indicates the approval type does not set." },
+          #{
+            value: "preDeploy",
+            description: "Indicates the approvals which executed before deployment.",
+          },
+          #{
+            value: "postDeploy",
+            description: "Indicates the approvals which executed after deployment.",
+          },
+          #{ value: "all", description: "Indicates all approvals." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    typeFilter?: "undefined" | "preDeploy" | "postDeploy" | "all",
+
+    /** Number of approvals to get. Default is 50. */
+    @query(#{ explode: true }) top?: int32,
+
+    /** Gets the approvals after the continuation token provided. */
+    @query(#{ explode: true }) continuationToken?: int32,
+
+    /** Gets the results in the defined order of created approvals. Default is 'descending'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseQueryOrder",
+        values: #[
+          #{ value: "descending", description: "Return results in descending order." },
+          #{ value: "ascending", description: "Return results in ascending order." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "descending" | "ascending",
+
+    /** 'true' to include my group approvals. Default is 'false'. */
+    @query(#{ explode: true }) includeMyGroupApprovals?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<ReleaseApproval[]>;
+
+  /** Update status of an approval */
+  @tag("Approvals")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "approvals")
+  @extension("x-ms-vss-method", "UpdateReleaseApproval")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/approvals/{approvalId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the approval. */
+    @path approvalId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** ReleaseApproval object having status, approver and comments. */
+    @body body: ReleaseApproval,
+  ): ReleaseApproval;
+}
+
+interface Definitions {
+  /** Get a list of release definitions. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "GetReleaseDefinitions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/definitions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Get release definitions with names containing searchText. */
+    @query(#{ explode: true }) searchText?: string,
+
+    /** The properties that should be expanded in the list of Release definitions. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseDefinitionExpands",
+        values: #[
+          #{ value: "none", description: "Returns top level properties of object." },
+          #{ value: "environments", description: "Include environments in return object." },
+          #{ value: "artifacts", description: "Include artifacts in return object." },
+          #{ value: "triggers", description: "Include triggers in return object." },
+          #{ value: "variables", description: "Include variables in return object." },
+          #{ value: "tags", description: "Include tags in return object." },
+          #{ value: "lastRelease", description: "Include last release in return object." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?:
+      | "none"
+      | "environments"
+      | "artifacts"
+      | "triggers"
+      | "variables"
+      | "tags"
+      | "lastRelease",
+
+    /** Release definitions with given artifactType will be returned. Values can be Build, Jenkins, GitHub, Nuget, Team Build (external), ExternalTFSBuild, Git, TFVC, ExternalTfsXamlBuild. */
+    @query(#{ explode: true }) artifactType?: string,
+
+    /** Release definitions with given artifactSourceId will be returned. e.g. For build it would be {projectGuid}:{BuildDefinitionId}, for Jenkins it would be {JenkinsConnectionId}:{JenkinsDefinitionId}, for TfsOnPrem it would be {TfsOnPremConnectionId}:{ProjectName}:{TfsOnPremDefinitionId}. For third-party artifacts e.g. TeamCity, BitBucket you may refer 'uniqueSourceIdentifier' inside vss-extension.json at https://github.com/Microsoft/vsts-rm-extensions/blob/master/Extensions. */
+    @query(#{ explode: true }) artifactSourceId?: string,
+
+    /** Number of release definitions to get. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Gets the release definitions after the continuation token provided. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Gets the results in the defined order. Default is 'IdAscending'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseDefinitionQueryOrder",
+        values: #[
+          #{
+            value: "idAscending",
+            description: "Return results based on release definition Id ascending order.",
+          },
+          #{
+            value: "idDescending",
+            description: "Return results based on release definition Id descending order.",
+          },
+          #{
+            value: "nameAscending",
+            description: "Return results based on release definition name ascending order.",
+          },
+          #{
+            value: "nameDescending",
+            description: "Return results based on release definition name descending order.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "idAscending" | "idDescending" | "nameAscending" | "nameDescending",
+
+    /** Gets the release definitions under the specified path. */
+    @query(#{ explode: true }) path?: string,
+
+    /** 'true'to gets the release definitions with exact match as specified in searchText. Default is 'false'. */
+    @query(#{ explode: true }) isExactNameMatch?: boolean,
+
+    /** A comma-delimited list of tags. Only release definitions with these tags will be returned. */
+    @format("array (string)") @query(#{ explode: true }) tagFilter?: string,
+
+    /** A comma-delimited list of extended properties to be retrieved. If set, the returned Release Definitions will contain values for the specified property Ids (if they exist). If not set, properties will not be included. Note that this will not filter out any Release Definition from results irrespective of whether it has property set or not. */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    /** A comma-delimited list of release definitions to retrieve. */
+    @format("array (string)") @query(#{ explode: true }) definitionIdFilter?: string,
+
+    /** 'true' to get release definitions that has been deleted. Default is 'false' */
+    @query(#{ explode: true }) isDeleted?: boolean,
+
+    /** 'true' to get the release definitions under the folder with name as specified in searchText. Default is 'false'. */
+    @query(#{ explode: true }) searchTextContainsFolderName?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): Body<ReleaseDefinition[]>;
+
+  /** Create a release definition */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "CreateReleaseDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/definitions")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** release definition object to create. */
+    @body body: ReleaseDefinition,
+  ): ReleaseDefinition;
+
+  /** Update a release definition. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "UpdateReleaseDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/definitions")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Skip task validation boolean flag */
+    @query(#{ explode: true }) skipTasksValidation?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** Release definition object to update. */
+    @body body: ReleaseDefinition,
+  ): ReleaseDefinition;
+
+  /** Delete a release definition. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "DeleteReleaseDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/definitions/{definitionId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release definition. */
+    @path definitionId: int32,
+
+    /** Comment for deleting a release definition. */
+    @query(#{ explode: true }) comment?: string,
+
+    /** 'true' to automatically cancel any in-progress release deployments and proceed with release definition deletion . Default is 'false'. */
+    @query(#{ explode: true }) forceDelete?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): OkResponse;
+
+  /** Get a release definition. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "GetReleaseDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/definitions/{definitionId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release definition. */
+    @path definitionId: int32,
+
+    /** A comma-delimited list of extended properties to be retrieved. If set, the returned Release Definition will contain values for the specified property Ids (if they exist). If not set, properties will not be included. */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    /** Boolean flag to include disabled definitions. */
+    @query(#{ explode: true }) includeDisabled?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): ReleaseDefinition;
+
+  /** Get revision history for a release definition */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetReleaseDefinitionHistory")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/definitions/{definitionId}/revisions")
+  @get
+  GetReleaseDefinitionHistory(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the definition. */
+    @path definitionId: int32,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): Body<ReleaseDefinitionRevision[]>;
+
+  /** Get release definition for a given definitionId and revision */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetDefinitionRevision")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/definitions/{definitionId}/revisions/{revision}")
+  @get
+  GetDefinitionRevision(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the definition. */
+    @path definitionId: int32,
+
+    /** Id of the revision. */
+    @path revision: int32,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): {
+    @header contentType: "text/plain";
+    @body @format("Stream") body: string;
+  };
+}
+
+interface Deployments {
+  /** Get a list of deployments */
+  @tag("Deployments")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "deployments")
+  @extension("x-ms-vss-method", "GetDeployments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/deployments")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** List the deployments for a given definition id. */
+    @query(#{ explode: true }) definitionId?: int32,
+
+    /** List the deployments for a given definition environment id. */
+    @query(#{ explode: true }) definitionEnvironmentId?: int32,
+
+    /** List the deployments for which deployments are created as identity specified. */
+    @query(#{ explode: true }) createdBy?: string,
+
+    /** List the deployments with LastModified time >= minModifiedTime. */
+    @query(#{ explode: true }) minModifiedTime?: utcDateTime,
+
+    /** List the deployments with LastModified time <= maxModifiedTime. */
+    @query(#{ explode: true }) maxModifiedTime?: utcDateTime,
+
+    /** List the deployments with given deployment status. Default is 'All'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentStatus",
+        values: #[
+          #{ value: "undefined", description: "The deployment status is undefined." },
+          #{ value: "notDeployed", description: "The deployment status is not deployed." },
+          #{ value: "inProgress", description: "The deployment status is in progress." },
+          #{ value: "succeeded", description: "The deployment status is succeeded." },
+          #{
+            value: "partiallySucceeded",
+            description: "The deployment status is partiallysucceeded.",
+          },
+          #{ value: "failed", description: "The deployment status is failed." },
+          #{ value: "all", description: "The deployment status is all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    deploymentStatus?:
+      | "undefined"
+      | "notDeployed"
+      | "inProgress"
+      | "succeeded"
+      | "partiallySucceeded"
+      | "failed"
+      | "all",
+
+    /** List the deployments with given operation status. Default is 'All'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentOperationStatus",
+        values: #[
+          #{ value: "undefined", description: "The deployment operation status is undefined." },
+          #{ value: "queued", description: "The deployment operation status is queued." },
+          #{ value: "scheduled", description: "The deployment operation status is scheduled." },
+          #{ value: "pending", description: "The deployment operation status is pending." },
+          #{ value: "approved", description: "The deployment operation status is approved." },
+          #{ value: "rejected", description: "The deployment operation status is rejected." },
+          #{ value: "deferred", description: "The deployment operation status is deferred." },
+          #{
+            value: "queuedForAgent",
+            description: "The deployment operation status is queued for agent.",
+          },
+          #{
+            value: "phaseInProgress",
+            description: "The deployment operation status is phase in progress.",
+          },
+          #{
+            value: "phaseSucceeded",
+            description: "The deployment operation status is phase succeeded.",
+          },
+          #{
+            value: "phasePartiallySucceeded",
+            description: "The deployment operation status is phase partially succeeded.",
+          },
+          #{ value: "phaseFailed", description: "The deployment operation status is phase failed." },
+          #{ value: "canceled", description: "The deployment operation status is canceled." },
+          #{
+            value: "phaseCanceled",
+            description: "The deployment operation status is phase canceled.",
+          },
+          #{
+            value: "manualInterventionPending",
+            description: "The deployment operation status is manualintervention pending.",
+          },
+          #{
+            value: "queuedForPipeline",
+            description: "The deployment operation status is queued for pipeline.",
+          },
+          #{ value: "cancelling", description: "The deployment operation status is cancelling." },
+          #{
+            value: "evaluatingGates",
+            description: "The deployment operation status is EvaluatingGates.",
+          },
+          #{ value: "gateFailed", description: "The deployment operation status is GateFailed." },
+          #{ value: "all", description: "The deployment operation status is all." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    operationStatus?:
+      | "undefined"
+      | "queued"
+      | "scheduled"
+      | "pending"
+      | "approved"
+      | "rejected"
+      | "deferred"
+      | "queuedForAgent"
+      | "phaseInProgress"
+      | "phaseSucceeded"
+      | "phasePartiallySucceeded"
+      | "phaseFailed"
+      | "canceled"
+      | "phaseCanceled"
+      | "manualInterventionPending"
+      | "queuedForPipeline"
+      | "cancelling"
+      | "evaluatingGates"
+      | "gateFailed"
+      | "all",
+
+    /** 'true' to include deployments with latest attempt only. Default is 'false'. */
+    @query(#{ explode: true }) latestAttemptsOnly?: boolean,
+
+    /** List the deployments with given query order. Default is 'Descending'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseQueryOrder",
+        values: #[
+          #{ value: "descending", description: "Return results in descending order." },
+          #{ value: "ascending", description: "Return results in ascending order." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "descending" | "ascending",
+
+    /** List the deployments with given top. Default top is '50' and Max top is '100'. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** List the deployments with deployment id >= continuationToken. */
+    @query(#{ explode: true }) continuationToken?: int32,
+
+    /** List the deployments for which deployments are requested as identity specified. */
+    @query(#{ explode: true }) createdFor?: string,
+
+    /** List the deployments with StartedOn time >= minStartedTime. */
+    @query(#{ explode: true }) minStartedTime?: utcDateTime,
+
+    /** List the deployments with StartedOn time <= maxStartedTime. */
+    @query(#{ explode: true }) maxStartedTime?: utcDateTime,
+
+    /** List the deployments that are deployed from given branch name. */
+    @query(#{ explode: true }) sourceBranch?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Deployment[]>;
+}
+
+interface Folders {
+  /** Deletes a definition folder for given folder name and path and all it's existing definitions. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "DeleteFolder")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/folders/{path}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Path of the folder to delete. */
+    @path path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Gets folders. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "GetFolders")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/folders/{path}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Path of the folder. */
+    @extension("x-ms-required", false) @path path: string,
+
+    /** Gets the results in the defined order. Default is 'None'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "FolderPathQueryOrder",
+        values: #[
+          #{ value: "none", description: "No order." },
+          #{ value: "ascending", description: "Order by folder name and path ascending." },
+          #{ value: "descending", description: "Order by folder name and path descending." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "none" | "ascending" | "descending",
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Folder[]>;
+
+  /** Updates an existing folder at given existing path. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "UpdateFolder")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/folders/{path}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Path of the folder to update. */
+    @path path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** folder. */
+    @body body: Folder,
+  ): Folder;
+
+  /** This method is no longer supported. Use CreateFolder with folder parameter API. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "CreateFolder")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/folders/{path}")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Path of the folder. */
+    @extension("x-ms-required", false) @path path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** folder. */
+    @body body: Folder,
+  ): Folder;
+}
+
+interface Gates {
+  /** Updates the gate for a deployment. */
+  @tag("Gates")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "gates")
+  @extension("x-ms-vss-method", "UpdateGates")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/gates/{gateStepId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Gate step Id. */
+    @path gateStepId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Metadata to patch the Release Gates. */
+    @body body: GateUpdateMetadata,
+  ): ReleaseGates;
+}
+
+interface Releases {
+  /** Get a list of releases */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.9")
+  @extension("x-ms-vss-resource", "releases")
+  @extension("x-ms-vss-method", "GetReleases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Releases from this release definition Id. */
+    @query(#{ explode: true }) definitionId?: int32,
+
+    /** Id of the definition environment. Required when using environmentStatusFilter. */
+    @query(#{ explode: true }) definitionEnvironmentId?: int32,
+
+    /** Releases with names containing searchText. */
+    @query(#{ explode: true }) searchText?: string,
+
+    /** Releases created by this user. */
+    @query(#{ explode: true }) createdBy?: string,
+
+    /** Releases that have this status. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseStatus",
+        values: #[
+          #{ value: "undefined", description: "Release status not set." },
+          #{ value: "draft", description: "Release is in draft state." },
+          #{ value: "active", description: "Release status is in active." },
+          #{ value: "abandoned", description: "Release status is in abandoned." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    statusFilter?: "undefined" | "draft" | "active" | "abandoned",
+
+    /** Filters releases by environment status. Must be used with definitionEnvironmentId. Values: Undefined (0), NotStarted (1), InProgress (2), Succeeded (4), Canceled (8), Rejected (16), Queued (32), Scheduled (64), PartiallySucceeded (128). These are [Flags] values and can be combined (e.g. 4|16 = 20 for Succeeded or Rejected). Cannot be used with sourceBranchFilter. */
+    @query(#{ explode: true }) environmentStatusFilter?: int32,
+
+    /** Releases that were created after this time. */
+    @query(#{ explode: true }) minCreatedTime?: utcDateTime,
+
+    /** Releases that were created before this time. */
+    @query(#{ explode: true }) maxCreatedTime?: utcDateTime,
+
+    /** Gets the results in the defined order of created date for releases. Default is descending. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseQueryOrder",
+        values: #[
+          #{ value: "descending", description: "Return results in descending order." },
+          #{ value: "ascending", description: "Return results in ascending order." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "descending" | "ascending",
+
+    /** Number of releases to get. Default is 50. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Gets the releases after the continuation token provided. */
+    @query(#{ explode: true }) continuationToken?: int32,
+
+    /** The property that should be expanded in the list of releases. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseExpands",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "environments", description: "" },
+          #{ value: "artifacts", description: "" },
+          #{ value: "approvals", description: "" },
+          #{ value: "manualInterventions", description: "" },
+          #{ value: "variables", description: "" },
+          #{ value: "tags", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?:
+      | "none"
+      | "environments"
+      | "artifacts"
+      | "approvals"
+      | "manualInterventions"
+      | "variables"
+      | "tags",
+
+    /** Releases with given artifactTypeId will be returned. Values can be Build, Jenkins, GitHub, Nuget, Team Build (external), ExternalTFSBuild, Git, TFVC, ExternalTfsXamlBuild. */
+    @query(#{ explode: true }) artifactTypeId?: string,
+
+    /** Unique identifier of the artifact used. e.g. For build it would be {projectGuid}:{BuildDefinitionId}, for Jenkins it would be {JenkinsConnectionId}:{JenkinsDefinitionId}, for TfsOnPrem it would be {TfsOnPremConnectionId}:{ProjectName}:{TfsOnPremDefinitionId}. For third-party artifacts e.g. TeamCity, BitBucket you may refer 'uniqueSourceIdentifier' inside vss-extension.json https://github.com/Microsoft/vsts-rm-extensions/blob/master/Extensions. */
+    @query(#{ explode: true }) sourceId?: string,
+
+    /** Releases with given artifactVersionId will be returned. E.g. in case of Build artifactType, it is buildId. */
+    @query(#{ explode: true }) artifactVersionId?: string,
+
+    /** Releases with given sourceBranchFilter will be returned (Not to be used with environmentStatusFilter). */
+    @query(#{ explode: true }) sourceBranchFilter?: string,
+
+    /** Gets the soft deleted releases, if true. */
+    @query(#{ explode: true }) isDeleted?: boolean,
+
+    /** A comma-delimited list of tags. Only releases with these tags will be returned. */
+    @format("array (string)") @query(#{ explode: true }) tagFilter?: string,
+
+    /** A comma-delimited list of extended properties to be retrieved. If set, the returned Releases will contain values for the specified property Ids (if they exist). If not set, properties will not be included. Note that this will not filter out any Release from results irrespective of whether it has property set or not. */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    /** A comma-delimited list of releases Ids. Only releases with these Ids will be returned. */
+    @format("array (int32)") @query(#{ explode: true }) releaseIdFilter?: string,
+
+    /** Releases under this folder path will be returned */
+    @query(#{ explode: true }) path?: string,
+
+    ...Parameters.`api-Version-preview`.`9`,
+  ): Body<Release[]>;
+
+  /** Create a release. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.9")
+  @extension("x-ms-vss-resource", "releases")
+  @extension("x-ms-vss-method", "CreateRelease")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`9`,
+
+    /** Metadata to create a release. */
+    @body body: ReleaseStartMetadata,
+  ): Release;
+
+  /** Get release for a given revision number. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.9")
+  @extension("x-ms-vss-resource", "releases")
+  @extension("x-ms-vss-method", "GetReleaseRevision")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}")
+  @get
+  GetReleaseRevision(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Definition snapshot revision number. */
+    @query(#{ explode: true }) definitionSnapshotRevision: int32,
+
+    ...Parameters.`api-Version-preview`.`9`,
+  ): {
+    @header contentType: "text/plain";
+    @body @format("Stream") body: string;
+  };
+
+  /** Update few properties of a release. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.9")
+  @extension("x-ms-vss-resource", "releases")
+  @extension("x-ms-vss-method", "UpdateReleaseResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}")
+  @patch
+  UpdateReleaseResource(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release to update. */
+    @path releaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`9`,
+
+    /** Properties of release to update. */
+    @body body: ReleaseUpdateMetadata,
+  ): Release;
+
+  /** Update a complete release object. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.9")
+  @extension("x-ms-vss-resource", "releases")
+  @extension("x-ms-vss-method", "UpdateRelease")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}")
+  @put
+  UpdateRelease(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release to update. */
+    @path releaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`9`,
+
+    /** Release object for update. */
+    @body body: Release,
+  ): Release;
+
+  /** Get a release environment. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "GetReleaseEnvironment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/environments/{environmentId}")
+  @get
+  GetReleaseEnvironment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the release environment. */
+    @path environmentId: int32,
+
+    /** A property that should be expanded in the environment. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ReleaseEnvironmentExpands",
+        values: #[
+          #{ value: "none", description: "Return top level properties of object." },
+          #{ value: "tasks", description: "Expand environment with tasks." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "tasks",
+
+    ...Parameters.`api-Version-preview`.`8`,
+  ): ReleaseEnvironment;
+
+  /** Update the status of a release environment */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "UpdateReleaseEnvironment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/environments/{environmentId}")
+  @patch
+  UpdateReleaseEnvironment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of release environment. */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`8`,
+
+    /** Environment update meta data. */
+    @body body: ReleaseEnvironmentUpdateMetadata,
+  ): ReleaseEnvironment;
+
+  /** Gets the task log of a release as a plain text file. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "GetTaskLog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/deployPhases/{releaseDeployPhaseId}/tasks/{taskId}/logs")
+  @get
+  GetTaskLog(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of release environment. */
+    @path environmentId: int32,
+
+    /** Release deploy phase Id. */
+    @path releaseDeployPhaseId: int32,
+
+    /** ReleaseTask Id for the log. */
+    @path taskId: int32,
+
+    /** Starting line number for logs */
+    @query(#{ explode: true }) startLine?: int64,
+
+    /** Ending line number for logs */
+    @query(#{ explode: true }) endLine?: int64,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): {
+    @header contentType: "text/plain";
+    @body @format("Stream") body: string;
+  };
+
+  /** Get logs for a release Id. */
+  @tag("Releases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "GetLogs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}/logs")
+  @get
+  GetLogs(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): {
+    @header contentType: "application/zip";
+    @body @format("Stream") body: string;
+  };
+}
+
+interface Attachments {
+  /** Get the release task attachments. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetReleaseTaskAttachments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/plan/{planId}/attachments/{type}")
+  @get
+  GetReleaseTaskAttachments(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the release environment. */
+    @path environmentId: int32,
+
+    /** Attempt number of deployment. */
+    @path attemptId: int32,
+
+    /** Plan Id of the deploy phase. */
+    @format("uuid") @path planId: string,
+
+    /** Type of the attachment. */
+    @path type: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ReleaseTaskAttachment[]>;
+
+  /** Get a release task attachment. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetReleaseTaskAttachmentContent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/plan/{planId}/timelines/{timelineId}/records/{recordId}/attachments/{type}/{name}")
+  @get
+  GetReleaseTaskAttachmentContent(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the release environment. */
+    @path environmentId: int32,
+
+    /** Attempt number of deployment. */
+    @path attemptId: int32,
+
+    /** Plan Id of the deploy phase. */
+    @format("uuid") @path planId: string,
+
+    /** Timeline Id of the task. */
+    @format("uuid") @path timelineId: string,
+
+    /** Record Id of attachment. */
+    @format("uuid") @path recordId: string,
+
+    /** Type of the attachment. */
+    @path type: string,
+
+    /** Name of the attachment. */
+    @path name: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+
+  /** GetTaskAttachments API is deprecated. Use GetReleaseTaskAttachments API instead. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetTaskAttachments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/timelines/{timelineId}/attachments/{type}")
+  @get
+  GetTaskAttachments(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the release environment. */
+    @path environmentId: int32,
+
+    /** Attempt number of deployment. */
+    @path attemptId: int32,
+
+    /** Timeline Id of the task. */
+    @format("uuid") @path timelineId: string,
+
+    /** Type of the attachment. */
+    @path type: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ReleaseTaskAttachment[]>;
+
+  /** GetTaskAttachmentContent API is deprecated. Use GetReleaseTaskAttachmentContent API instead. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetTaskAttachmentContent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/timelines/{timelineId}/records/{recordId}/attachments/{type}/{name}")
+  @get
+  GetTaskAttachmentContent(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the release environment. */
+    @path environmentId: int32,
+
+    /** Attempt number of deployment. */
+    @path attemptId: int32,
+
+    /** Timeline Id of the task. */
+    @format("uuid") @path timelineId: string,
+
+    /** Record Id of attachment. */
+    @format("uuid") @path recordId: string,
+
+    /** Type of the attachment. */
+    @path type: string,
+
+    /** Name of the attachment. */
+    @path name: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+}
+
+interface ManualInterventions {
+  /** List all manual interventions for a given release. */
+  @tag("Manual Interventions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "manualInterventions")
+  @extension("x-ms-vss-method", "GetManualInterventions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<ManualIntervention[]>;
+
+  /** Get manual intervention for a given release and manual intervention id. */
+  @tag("Manual Interventions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "manualInterventions")
+  @extension("x-ms-vss-method", "GetManualIntervention")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions/{manualInterventionId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the manual intervention. */
+    @path manualInterventionId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): ManualIntervention;
+
+  /** Update manual intervention. */
+  @tag("Manual Interventions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "manualInterventions")
+  @extension("x-ms-vss-method", "UpdateManualIntervention")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions/{manualInterventionId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the release. */
+    @path releaseId: int32,
+
+    /** Id of the manual intervention. */
+    @path manualInterventionId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Meta data to update manual intervention. */
+    @body body: ManualInterventionUpdateMetadata,
+  ): ManualIntervention;
 }

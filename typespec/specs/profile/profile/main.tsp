@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Profile" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://app.vssps.visualstudio.com")
 namespace Profile;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Identifies an attribute with a name and a container. */
 model AttributeDescriptor {
@@ -185,49 +191,51 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Gets a user profile. */
-@tag("Profiles")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "profiles")
-@extension("x-ms-vss-method", "GetProfile")
-@extension("x-ms-preview", true)
-@route("/_apis/profile/profiles/{id}")
-@get
-op Profiles_Get(
-  /** The ID of the target user profile within the same organization, or 'me' to get the profile of the current authenticated user. */
-  @path id: string,
-
-  /** Return public profile information such as display name, email address, country, etc. If false, the withAttributes parameter is ignored. */
-  @query(#{ explode: true }) details?: boolean,
-
-  /** If true, gets the attributes (named key-value pairs of arbitrary data) associated with the profile. The partition parameter must also have a value. */
-  @query(#{ explode: true }) withAttributes?: boolean,
-
-  /** The partition (named group) of attributes to return. */
-  @query(#{ explode: true }) partition?: string,
-
-  /** A comma-delimited list of core profile attributes to return. Valid values are Email, Avatar, DisplayName, and ContactWithOffers. */
-  @query(#{ explode: true }) coreAttributes?: string,
-
-  /** Not used in this version of the API. */
-  @query(#{ explode: true }) forceRefresh?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Profile;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Profiles {
+  /** Gets a user profile. */
+  @tag("Profiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "profiles")
+  @extension("x-ms-vss-method", "GetProfile")
+  @extension("x-ms-preview", true)
+  @route("/_apis/profile/profiles/{id}")
+  @get
+  Get(
+    /** The ID of the target user profile within the same organization, or 'me' to get the profile of the current authenticated user. */
+    @path id: string,
+
+    /** Return public profile information such as display name, email address, country, etc. If false, the withAttributes parameter is ignored. */
+    @query(#{ explode: true }) details?: boolean,
+
+    /** If true, gets the attributes (named key-value pairs of arbitrary data) associated with the profile. The partition parameter must also have a value. */
+    @query(#{ explode: true }) withAttributes?: boolean,
+
+    /** The partition (named group) of attributes to return. */
+    @query(#{ explode: true }) partition?: string,
+
+    /** A comma-delimited list of core profile attributes to return. Valid values are Email, Avatar, DisplayName, and ContactWithOffers. */
+    @query(#{ explode: true }) coreAttributes?: string,
+
+    /** Not used in this version of the API. */
+    @query(#{ explode: true }) forceRefresh?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Profile;
 }

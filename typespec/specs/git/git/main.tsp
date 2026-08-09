@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Git" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Git;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AdvSecEnablementOptions {
   /** Enforces secret scanning job for a repo where AdvSec is already enabled. */
@@ -4480,3355 +4486,3429 @@ model WebApiTagDefinition {
   url?: string;
 }
 
-/** Retrieve deleted git repositories. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deletedRepositories")
-@extension("x-ms-vss-method", "GetDeletedRepositories")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/deletedrepositories")
-@get
-op Repositories_GetDeletedRepositories(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitDeletedRepository[]>;
-
-/** Gets the refs favorites for a repo and an identity. */
-@tag("Refs Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "refsFavorites")
-@extension("x-ms-vss-method", "GetRefFavorites")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/favorites/refs")
-@get
-op RefsFavorites_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The id of the repository. */
-  @query(#{ explode: true }) repositoryId?: string,
-
-  /** The id of the identity whose favorites are to be retrieved. If null, the requesting identity is used. */
-  @query(#{ explode: true }) identityId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitRefFavorite[]>;
-
-/** Creates a ref favorite */
-@tag("Refs Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "refsFavorites")
-@extension("x-ms-vss-method", "CreateFavorite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/favorites/refs")
-@post
-op RefsFavorites_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The ref favorite to create. */
-  @body body: GitRefFavorite,
-): GitRefFavorite;
-
-/** Deletes the refs favorite specified */
-@tag("Refs Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "refsFavorites")
-@extension("x-ms-vss-method", "DeleteRefFavorite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/favorites/refs/{favoriteId}")
-@delete
-op RefsFavorites_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The Id of the ref favorite to delete. */
-  @path favoriteId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Gets the refs favorite for a favorite Id. */
-@tag("Refs Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "refsFavorites")
-@extension("x-ms-vss-method", "GetRefFavorite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/favorites/refs/{favoriteId}")
-@get
-op RefsFavorites_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The Id of the requested ref favorite. */
-  @path favoriteId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitRefFavorite;
-
-@tag("Refs Favorites For Project")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "refsFavoritesForProject")
-@extension("x-ms-vss-method", "GetRefFavoritesForProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/favorites/refsForProject")
-@get
-op RefsFavoritesForProject_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @query(#{ explode: true }) identityId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitRefFavorite[]>;
-
-/** Retrieve a list of policy configurations by a given set of scope/filtering criteria. Azure Repos uses two types of policies to protect your code: **Repository policies (push policies)** check every push to your repository. They validate things like file size limits, path restrictions, or commit requirements. When someone pushes code that violates these rules, the push gets rejected - no matter which branch they're pushing to. **Branch policies (PR policies)** protect specific branches by requiring pull requests. When you set a branch policy on `main`, for example, nobody can push directly to `main` anymore. They must create a pull request instead, which can then require reviews, builds, or other checks to pass first. ## How Policies Work with Your Project Structure Both types of policies can be defined at different levels in your project hierarchy. A policy defined at the project level affects all repositories in that project. A policy defined at the repository level affects just that repository. A branch policy can even be defined at the project level to protect all branches with the same name - like protecting all `main` branches across your entire project with one policy. ### Branch Patterns and Wildcards Branches in Git follow a folder-like structure. You might have branches like: - `refs/heads/main` - `refs/heads/releases/1.0.0` - `refs/heads/releases/2.0.0` - `refs/heads/features/new-login` You can create policies for specific branches or for groups of branches using wildcards. When you create a policy for `refs/heads/releases/*`, it protects all branches in the `releases` 'folder' - both the ones that exist now and any new release branches you create later. This pattern matching works recursively, so `refs/heads/releases/*` also covers branches like `refs/heads/releases/v1/hotfix`. This helps you set up consistent protection without creating the same policy over and over. For example, you can require two reviewers for all release branches with just one policy. ## Understanding Policy Inheritance When you query for policies, this endpoint shows you what policies are actually enforcing rules at your specified scope. This includes policies inherited from higher levels. For example, if you query for policies on a specific branch, you get: - Branch policies for that exact branch - Branch policies with wildcards that match your branch - Repository policies for that repo - Any applicable project-level policies Everything that protects that branch shows up in your results. ## How to Query for Policies The `repositoryId` and `refName` parameters let you focus on specific parts of your project. Here's what you get with different combinations: **Both `repositoryId` and `refName` specified:** - When `refName` is a specific branch name: You see all policies affecting that specific branch. This includes exact branch policies, wildcard branch policies that match, repository policies for that repo, and any project-level policies. - When `refName` is `~all`: You see every policy that affects any branch in that repository. This special value gives you the same results as if you called this API once for every single branch in the repo and then combined all the results (removing duplicates). You get all branch-specific policies, all wildcard policies, all repository policies, and all inherited project-level policies that apply to this repository. This helps you see the complete picture of what protects all your branches without making multiple API calls. **Only `repositoryId` specified:** You see policies that apply to the repository as a whole - repository policies and inherited project-level repository policies. Branch policies aren't included because they don't affect the whole repository. **Neither parameter specified:** You see only project-level repository policies. Branch policies defined at the project level aren't included, even though they exist at the project level. This happens because branch policies need a branch context to be meaningful - without specifying a repository or branch name, the API only returns policies that apply to repositories as a whole. **Only `refName` specified:** You see project-level branch policies for branches with that name (like all `main` branch policies defined at project level), plus project-level repository policies. You can add the `policyType` parameter to filter for a specific type of policy, such as 'Minimum number of reviewers' or 'File size restriction'. This parameter accepts the policy type ID and filters the results to show only that specific policy type. ## Common Scenarios - **'What protects my main branch?'** - Use `repositoryId` + `refName=refs/heads/main` - **'What protects all my release branches?'** - Use `repositoryId` + `refName=refs/heads/releases/*` - **'Show me every policy that affects any branch in this repository'** - Use `repositoryId` + `refName=~all` - **'What repository policies apply to this repo?'** - Use `repositoryId` only - **'What file size limits apply to this repository?'** - Use `repositoryId` with the `policyType` for file size restrictions - **'What project-wide repository policies do we have?'** - Don't specify `repositoryId` or `refName` - **'Which policies apply to develop branches across all repositories?'** - Use `refName=refs/heads/develop` */
-@tag("Policy Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "policyConfigurations")
-@extension("x-ms-vss-method", "GetPolicyConfigurations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/policy/configurations")
-@get
-op PolicyConfigurations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The unique identifier of a specific repository to query policies for - when provided, returns policies that apply to this repository including inherited project-level policies. */
-  @format("uuid") @query(#{ explode: true }) repositoryId?: string,
-
-  /** The branch reference to query policies for (e.g., 'refs/heads/main' for a specific branch or '~all' to get all policies affecting any branch in the repository) - determines which branch-specific policies are included in the results. */
-  @query(#{ explode: true }) refName?: string,
-
-  /** The type ID of a specific policy to filter by (e.g., 'Minimum number of reviewers' or 'File size restriction') - when specified, returns only policies of this particular type rather than all policy types. */
-  @format("uuid") @query(#{ explode: true }) policyType?: string,
-
-  /** The maximum number of policy configurations to return in a single response - useful for limiting result size when dealing with projects that have many policies. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** A token returned in the x-ms-continuationtoken response header from a previous request when not all results were returned - use this token to retrieve the next page of results in the dataset. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
-  @body body: PolicyConfiguration[];
-};
-
-/** Retrieve all pull requests matching a specified criteria. Please note that description field will be truncated up to 400 symbols in the result. */
-@tag("Pull Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "GetPullRequestsByProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/pullrequests")
-@get
-op PullRequests_GetPullRequestsByProject(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** If set, search for pull requests that were created by this identity. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.creatorId`?: string,
-
-  /** Whether to include the _links field on the shallow references */
-  @query(#{ explode: true }) `searchCriteria.includeLinks`?: boolean,
-
-  /** If set, filters pull requests that have labels matching the specified label names. */
-  @query `searchCriteria.labels`?: string[],
-
-  /** If specified, filters pull requests that created/closed before this date based on the queryTimeRangeType specified. */
-  @query(#{ explode: true }) `searchCriteria.maxTime`?: utcDateTime,
-
-  /** If specified, filters pull requests that created/closed after this date based on the queryTimeRangeType specified. */
-  @query(#{ explode: true }) `searchCriteria.minTime`?: utcDateTime,
-
-  /** The type of time range which should be used for minTime and maxTime. Defaults to Created if unset. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "PullRequestTimeRangeType",
-      values: #[
-        #{ value: "created", description: "The date when the pull request was created." },
-        #{
-          value: "closed",
-          description: "The date when the pull request was closed (completed, abandoned, or merged externally).",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `searchCriteria.queryTimeRangeType`?: "created" | "closed",
-
-  /** If set, search for pull requests whose target branch is in this repository. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.repositoryId`?: string,
-
-  /** If set, search for pull requests that have this identity as a reviewer. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.reviewerId`?: string,
-
-  /** If set, search for pull requests from this branch. */
-  @query(#{ explode: true }) `searchCriteria.sourceRefName`?: string,
-
-  /** If set, search for pull requests whose source branch is in this repository. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.sourceRepositoryId`?: string,
-
-  /** If set, search for pull requests that are in this state. Defaults to Active if unset. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "PullRequestStatus",
-      values: #[
-        #{ value: "notSet", description: "Status not set. Default state." },
-        #{ value: "active", description: "Pull request is active." },
-        #{ value: "abandoned", description: "Pull request is abandoned." },
-        #{ value: "completed", description: "Pull request is completed." },
-        #{
-          value: "all",
-          description: "Used in pull request search criteria to include all statuses.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `searchCriteria.status`?: "notSet" | "active" | "abandoned" | "completed" | "all",
-
-  /** The operator used for filtering by labels. Defaults to And if unset. When And is used, pull requests must have all specified labels. When Or is used, pull requests must have at least one of the specified labels. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TagsFilterOperator",
-      values: #[
-        #{ value: "and", description: "Pull request must have ALL specified tags." },
-        #{ value: "or", description: "Pull request must have AT LEAST ONE of the specified tags." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `searchCriteria.tagsFilterOperator`?: "and" | "or",
-
-  /** If set, search for pull requests into this branch. */
-  @query(#{ explode: true }) `searchCriteria.targetRefName`?: string,
-
-  /** If set, filters pull requests that contain the specified text in the title. */
-  @query(#{ explode: true }) `searchCriteria.title`?: string,
-
-  /** Not used. */
-  @query(#{ explode: true }) maxCommentLength?: int32,
-
-  /** The number of pull requests to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** The number of pull requests to retrieve. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitPullRequest[]>;
-
-/** Retrieve a pull request. */
-@tag("Pull Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "GetPullRequestById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/pullrequests/{pullRequestId}")
-@get
-op PullRequests_GetPullRequestById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the pull request to retrieve. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitPullRequest;
-
-/** Retrieve soft-deleted git repositories from the recycle bin. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinRepositories")
-@extension("x-ms-vss-method", "GetRecycleBinRepositories")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/recycleBin/repositories")
-@get
-op Repositories_GetRecycleBinRepositories(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitDeletedRepository[]>;
-
-/** Destroy (hard delete) a soft-deleted Git repository. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinRepositories")
-@extension("x-ms-vss-method", "DeleteRepositoryFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}")
-@delete
-op Repositories_DeleteRepositoryFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the repository. */
-  @format("uuid") @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Recover a soft-deleted Git repository. Recently deleted repositories go into a soft-delete state for a period of time before they are hard deleted and become unrecoverable. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinRepositories")
-@extension("x-ms-vss-method", "RestoreRepositoryFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}")
-@patch
-op Repositories_RestoreRepositoryFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the repository. */
-  @format("uuid") @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: GitRecycleBinRepositoryDetails,
-): GitRepository;
-
-/** Retrieve git repositories. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "GetRepositories")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories")
-@get
-op Repositories_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** [optional] True to include reference links. The default value is false. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  /** [optional] True to include all remote URLs. The default value is false. */
-  @query(#{ explode: true }) includeAllUrls?: boolean,
-
-  /** [optional] True to include hidden repositories. The default value is false. */
-  @query(#{ explode: true }) includeHidden?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitRepository[]>;
-
-/** Create a git repository in a team project. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "CreateRepository")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories")
-@post
-op Repositories_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** [optional] Specify the source refs to use while creating a fork repo */
-  @query(#{ explode: true }) sourceRef?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Specify the repo name, team project and/or parent repository. Team project information can be omitted from gitRepositoryToCreate if the request is project-scoped (i.e., includes project Id). */
-  @body body: GitRepositoryCreateOptions,
-): CreatedResponse & GitRepository;
-
-/** Delete a git repository */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "DeleteRepository")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
-@delete
-op Repositories_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the repository. */
-  @format("uuid") @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Retrieve a git repository. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "GetRepository")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
-@get
-op Repositories_GetRepository(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitRepository;
-
-/** Updates the Git repository with either a new repo name or a new default branch. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "UpdateRepository")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
-@patch
-op Repositories_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the repository. */
-  @format("uuid") @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Specify a new repo name or a new default branch of the repository */
-  @body body: GitRepository,
-): GitRepository;
-
-/** Create an annotated tag. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID). */
-@tag("Annotated Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "annotatedTags")
-@extension("x-ms-vss-method", "CreateAnnotatedTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags")
-@post
-op AnnotatedTags_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Object containing details of tag to be created. */
-  @body body: GitAnnotatedTag,
-): GitAnnotatedTag;
-
-/** Get an annotated tag. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID). */
-@tag("Annotated Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "annotatedTags")
-@extension("x-ms-vss-method", "GetAnnotatedTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}")
-@get
-op AnnotatedTags_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  /** ObjectId (Sha1Id) of tag to get. */
-  @path objectId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitAnnotatedTag;
-
-/** Gets one or more blobs in a zip file download. */
-@tag("Blobs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "blobs")
-@extension("x-ms-vss-method", "GetBlobs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/blobs")
-@post
-op Blobs_GetBlobsZip(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  @query(#{ explode: true }) filename?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Blob IDs (SHA1 hashes) to be returned in the zip file. */
-  @body body: string[],
-): {
-  @header contentType: "application/zip";
-  @body @format("Stream") body: string;
-};
-
-/** Get a single blob. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID). */
-@tag("Blobs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "blobs")
-@extension("x-ms-vss-method", "GetBlob")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/blobs/{sha1}")
-@get
-op Blobs_GetBlob(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** SHA1 hash of the file. You can get the SHA1 of a file using the 'Git/Items/Get Item' endpoint. */
-  @path sha1: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If true, prompt for a download rather than rendering in a browser. Note: this value defaults to true if $format is zip */
-  @query(#{ explode: true }) download?: boolean,
-
-  /** Provide a fileName to use for a download. */
-  @query(#{ explode: true }) fileName?: string,
-
-  /** Options: json, zip, text, octetstream. If not set, defaults to the MIME type set in the Accept header. */
-  @query(#{ explode: true }) $format?: string,
-
-  /** If true, try to resolve a blob to its LFS contents, if it's an LFS pointer file. Only compatible with octet-stream Accept headers or $format types */
-  @query(#{ explode: true }) resolveLfs?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header contentType: "application/zip";
-      @body body: GitBlobRef;
-    }
-  | {
-      @header contentType: "application/octet-stream";
-      @body body: GitBlobRef;
-    }
-  | GitBlobRef;
-
-/** Retrieve information about a cherry pick operation for a specific branch. This operation is expensive due to the underlying object structure, so this API only looks at the 1000 most recent cherry pick operations. */
-@tag("Cherry Picks")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cherryPicks")
-@extension("x-ms-vss-method", "GetCherryPickForRefName")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks")
-@get
-op CherryPicks_GetCherryPickForRefName(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  /** The GitAsyncRefOperationParameters generatedRefName used for the cherry pick operation. */
-  @query(#{ explode: true }) refName: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitCherryPick;
-
-/** Cherry pick a specific commit or commits that are associated to a pull request into a new branch. */
-@tag("Cherry Picks")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cherryPicks")
-@extension("x-ms-vss-method", "CreateCherryPick")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks")
-@post
-op CherryPicks_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: GitAsyncRefOperationParameters,
-): GitCherryPick;
-
-/** Retrieve information about a cherry pick operation by cherry pick Id. */
-@tag("Cherry Picks")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "cherryPicks")
-@extension("x-ms-vss-method", "GetCherryPick")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks/{cherryPickId}")
-@get
-op CherryPicks_GetCherryPick(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the cherry pick. */
-  @path cherryPickId: int32,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitCherryPick;
-
-/** Retrieve a list of commits associated with a particular push. */
-@tag("Commits")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "commits")
-@extension("x-ms-vss-method", "GetPushCommits")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits")
-@get
-op Commits_GetPushCommits(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
-  @path repositoryId: string,
-
-  /** The id of the push. */
-  @query(#{ explode: true }) pushId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The maximum number of commits to return ('get the top x commits'). */
-  @query(#{ explode: true }) top?: int32,
-
-  /** The number of commits to skip. */
-  @query(#{ explode: true }) skip?: int32,
-
-  /** Set to false to avoid including REST Url links for resources. Defaults to true. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitCommitRef[]>;
-
-/** Retrieve a particular commit. */
-@tag("Commits")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "commits")
-@extension("x-ms-vss-method", "GetCommit")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}")
-@get
-op Commits_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The id of the commit. */
-  @path commitId: string,
-
-  /** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The number of changes to include in the result. */
-  @query(#{ explode: true }) changeCount?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitCommit;
-
-/** Retrieve changes for a particular commit. */
-@tag("Commits")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "changes")
-@extension("x-ms-vss-method", "GetChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/changes")
-@get
-op Commits_GetChanges(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The id of the commit. */
-  @path commitId: string,
-
-  /** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The maximum number of changes to return. */
-  @query(#{ explode: true }) top?: int32,
-
-  /** The number of changes to skip. */
-  @query(#{ explode: true }) skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitCommitChanges;
-
-/** Get statuses associated with the Git commit. */
-@tag("Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "statuses")
-@extension("x-ms-vss-method", "GetStatuses")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/statuses")
-@get
-op Statuses_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the Git commit. */
-  @path commitId: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Optional. The number of statuses to retrieve. Default is 1000. */
-  @query(#{ explode: true }) top?: int32,
-
-  /** Optional. The number of statuses to ignore. Default is 0. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
-  @query(#{ explode: true }) skip?: int32,
-
-  /** The flag indicates whether to get only latest statuses grouped by `Context.Name` and `Context.Genre`. */
-  @query(#{ explode: true }) latestOnly?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitStatus[]>;
-
-/** Create Git commit status. */
-@tag("Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "statuses")
-@extension("x-ms-vss-method", "CreateCommitStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/statuses")
-@post
-op Statuses_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the Git commit. */
-  @path commitId: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Git commit status object to create. */
-  @body body: GitStatus,
-): GitStatus;
-
-/** Retrieve git commits for a project matching the search criteria */
-@tag("Commits")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "commitsBatch")
-@extension("x-ms-vss-method", "GetCommitsBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commitsbatch")
-@post
-op Commits_GetCommitsBatch(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Number of commits to skip. The value cannot exceed 3,000,000. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Maximum number of commits to return. The value cannot exceed 50,000. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** True to include additional commit status information. */
-  @query(#{ explode: true }) includeStatuses?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Search options */
-  @body body: GitQueryCommitsCriteria,
-): Body<GitCommitRef[]>;
-
-/** Find the closest common commit (the merge base) between base and target commits, and get the diff between either the base and target commits or common and target commits. */
-@tag("Diffs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "commitDiffs")
-@extension("x-ms-vss-method", "GetCommitDiffs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/diffs/commits")
-@get
-op Diffs_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If true, diff between common and target commits. If false, diff between base and target commits. */
-  @query(#{ explode: true }) diffCommonCommit?: boolean,
-
-  /** Maximum number of changes to return. Defaults to 100. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of changes to skip */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) baseVersion?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  baseVersionOptions?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  baseVersionType?: "branch" | "tag" | "commit",
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) targetVersion?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  targetVersionOptions?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  targetVersionType?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitCommitDiffs;
-
-/** Retrieve import requests for a repository. */
-@tag("Import Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "importRequests")
-@extension("x-ms-vss-method", "QueryImportRequests")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests")
-@get
-op ImportRequests_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** True to include abandoned import requests in the results. */
-  @query(#{ explode: true }) includeAbandoned?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitImportRequest[]>;
-
-/** Create an import request. */
-@tag("Import Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "importRequests")
-@extension("x-ms-vss-method", "CreateImportRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests")
-@post
-op ImportRequests_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The import request to create. */
-  @body body: GitImportRequest,
-): GitImportRequest;
-
-/** Retrieve a particular import request. */
-@tag("Import Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "importRequests")
-@extension("x-ms-vss-method", "GetImportRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests/{importRequestId}")
-@get
-op ImportRequests_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** The unique identifier for the import request. */
-  @path importRequestId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitImportRequest;
-
-/** Retry or abandon a failed import request. There can only be one active import request associated with a repository. Marking a failed import request abandoned makes it inactive. */
-@tag("Import Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "importRequests")
-@extension("x-ms-vss-method", "UpdateImportRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests/{importRequestId}")
-@patch
-op ImportRequests_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** The unique identifier for the import request to update. */
-  @path importRequestId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The updated version of the import request. Currently, the only change allowed is setting the Status to Queued or Abandoned. */
-  @body body: GitImportRequest,
-): GitImportRequest;
-
-/** Get Item Metadata and/or Content for a collection of items. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content which is always returned as a download. */
-@tag("Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "items")
-@extension("x-ms-vss-method", "GetItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/items")
-@get
-op Items_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The path scope. The default is null. */
-  @query(#{ explode: true }) scopePath?: string,
-
-  /** The recursion level of this request. The default is 'none', no recursion. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "VersionControlRecursionType",
-      values: #[
-        #{ value: "none", description: "Only return the specified item." },
-        #{ value: "oneLevel", description: "Return the specified item and its direct children." },
-        #{
-          value: "oneLevelPlusNestedEmptyFolders",
-          description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
-        },
-        #{ value: "full", description: "Return specified item and all descendants" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
-
-  /** Set to true to include content metadata. Default is false. */
-  @query(#{ explode: true }) includeContentMetadata?: boolean,
-
-  /** Set to true to include the latest changes. Default is false. */
-  @query(#{ explode: true }) latestProcessedChange?: boolean,
-
-  /** Set to true to download the response as a file. Default is false. */
-  @query(#{ explode: true }) download?: boolean,
-
-  /** Set to true to include links to items. Default is false. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  /** If specified, this overrides the HTTP Accept request header to return either 'json' or 'zip'. If $format is specified, then api-version should also be specified as a query parameter. */
-  @query(#{ explode: true }) $format?: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  /** Set to true to keep the file permissions for unix (and POSIX) systems like executables and symlinks */
-  @query(#{ explode: true }) zipForUnix?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitItem[]>;
-
-/** Retrieves a batch of items in a repo / project for a given list of paths or a long path */
-@tag("Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "itemsBatch")
-@extension("x-ms-vss-method", "GetItemsBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/itemsbatch")
-@post
-op Items_GetItemsBatch(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Request data attributes: ItemDescriptors, IncludeContentMetadata, LatestProcessedChange, IncludeLinks. ItemDescriptors: Collection of items to fetch, including path, version, and recursion level. IncludeContentMetadata: Whether to include metadata for all items LatestProcessedChange: Whether to include shallow ref to commit that last changed each item. IncludeLinks: Whether to include the _links field on the shallow references. */
-  @body body: GitItemRequestData,
-): Body<unknown[][]>;
-
-/** This API is used to find what pull requests are related to a given commit. It can be used to either find the pull request that created a particular merge commit or it can be used to find all pull requests that have ever merged a particular commit. The input is a list of queries which each contain a list of commits. For each commit that you search against, you will get back a dictionary of commit -> pull requests. */
-@tag("Pull Request Query")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestQuery")
-@extension("x-ms-vss-method", "GetPullRequestQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequestquery")
-@post
-op PullRequestQuery_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The list of queries to perform. */
-  @body body: GitPullRequestQuery,
-): GitPullRequestQuery;
-
-/** Retrieve all pull requests matching a specified criteria. Please note that description field will be truncated up to 400 symbols in the result. */
-@tag("Pull Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "GetPullRequests")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests")
-@get
-op PullRequests_GetPullRequests(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If set, search for pull requests that were created by this identity. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.creatorId`?: string,
-
-  /** Whether to include the _links field on the shallow references */
-  @query(#{ explode: true }) `searchCriteria.includeLinks`?: boolean,
-
-  /** If set, filters pull requests that have labels matching the specified label names. */
-  @query `searchCriteria.labels`?: string[],
-
-  /** If specified, filters pull requests that created/closed before this date based on the queryTimeRangeType specified. */
-  @query(#{ explode: true }) `searchCriteria.maxTime`?: utcDateTime,
-
-  /** If specified, filters pull requests that created/closed after this date based on the queryTimeRangeType specified. */
-  @query(#{ explode: true }) `searchCriteria.minTime`?: utcDateTime,
-
-  /** The type of time range which should be used for minTime and maxTime. Defaults to Created if unset. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "PullRequestTimeRangeType",
-      values: #[
-        #{ value: "created", description: "The date when the pull request was created." },
-        #{
-          value: "closed",
-          description: "The date when the pull request was closed (completed, abandoned, or merged externally).",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `searchCriteria.queryTimeRangeType`?: "created" | "closed",
-
-  /** If set, search for pull requests whose target branch is in this repository. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.repositoryId`?: string,
-
-  /** If set, search for pull requests that have this identity as a reviewer. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.reviewerId`?: string,
-
-  /** If set, search for pull requests from this branch. */
-  @query(#{ explode: true }) `searchCriteria.sourceRefName`?: string,
-
-  /** If set, search for pull requests whose source branch is in this repository. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.sourceRepositoryId`?: string,
-
-  /** If set, search for pull requests that are in this state. Defaults to Active if unset. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "PullRequestStatus",
-      values: #[
-        #{ value: "notSet", description: "Status not set. Default state." },
-        #{ value: "active", description: "Pull request is active." },
-        #{ value: "abandoned", description: "Pull request is abandoned." },
-        #{ value: "completed", description: "Pull request is completed." },
-        #{
-          value: "all",
-          description: "Used in pull request search criteria to include all statuses.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `searchCriteria.status`?: "notSet" | "active" | "abandoned" | "completed" | "all",
-
-  /** The operator used for filtering by labels. Defaults to And if unset. When And is used, pull requests must have all specified labels. When Or is used, pull requests must have at least one of the specified labels. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TagsFilterOperator",
-      values: #[
-        #{ value: "and", description: "Pull request must have ALL specified tags." },
-        #{ value: "or", description: "Pull request must have AT LEAST ONE of the specified tags." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `searchCriteria.tagsFilterOperator`?: "and" | "or",
-
-  /** If set, search for pull requests into this branch. */
-  @query(#{ explode: true }) `searchCriteria.targetRefName`?: string,
-
-  /** If set, filters pull requests that contain the specified text in the title. */
-  @query(#{ explode: true }) `searchCriteria.title`?: string,
-
-  /** Not used. */
-  @query(#{ explode: true }) maxCommentLength?: int32,
-
-  /** The number of pull requests to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** The number of pull requests to retrieve. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitPullRequest[]>;
-
-/** Create a pull request. */
-@tag("Pull Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "CreatePullRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests")
-@post
-op PullRequests_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If true, subsequent pushes to the pull request will be individually reviewable. Set this to false for large pull requests for performance reasons if this functionality is not needed. */
-  @query(#{ explode: true }) supportsIterations?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The pull request to create. */
-  @body body: GitPullRequest,
-): GitPullRequest;
-
-/** Retrieve a pull request. */
-@tag("Pull Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "GetPullRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}")
-@get
-op PullRequests_GetPullRequest(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** The ID of the pull request to retrieve. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Not used. */
-  @query(#{ explode: true }) maxCommentLength?: int32,
-
-  /** Not used. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Not used. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** If true, the pull request will be returned with the associated commits. */
-  @query(#{ explode: true }) includeCommits?: boolean,
-
-  /** If true, the pull request will be returned with the associated work item references. */
-  @query(#{ explode: true }) includeWorkItemRefs?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitPullRequest;
-
-/** Update a pull request These are the properties that can be updated with the API: - Status - Title - Description (up to 4000 characters) - CompletionOptions - MergeOptions - AutoCompleteSetBy.Id - TargetRefName (when the PR retargeting feature is enabled) Attempting to update other properties outside of this list will either cause the server to throw an `InvalidArgumentValueException`, or to silently ignore the update. */
-@tag("Pull Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "UpdatePullRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}")
-@patch
-op PullRequests_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request to update. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The pull request content that should be updated. */
-  @body body: GitPullRequest,
-): GitPullRequest;
-
-/** Get a list of files attached to a given pull request. */
-@tag("Pull Request Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestAttachments")
-@extension("x-ms-vss-method", "GetAttachments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments")
-@get
-op PullRequestAttachments_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Attachment[]>;
-
-/** Delete a pull request attachment. */
-@tag("Pull Request Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestAttachments")
-@extension("x-ms-vss-method", "DeleteAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
-@delete
-op PullRequestAttachments_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name of the attachment to delete. */
-  @path fileName: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get the file content of a pull request attachment. */
-@tag("Pull Request Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestAttachments")
-@extension("x-ms-vss-method", "GetAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
-@get
-op PullRequestAttachments_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name of the attachment. */
-  @path fileName: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header contentType: "application/octet-stream";
-      @body @format("Stream") body: string;
-    }
-  | {
-      @header contentType: "application/zip";
-      @body @format("Stream") body: string;
-    };
-
-/** Attach a new file to a pull request. */
-@tag("Pull Request Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestAttachments")
-@extension("x-ms-vss-method", "CreateAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
-@post
-op PullRequestAttachments_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name of the file. */
-  @path fileName: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/octet-stream",
-
-  /** Stream to upload */
-  @body body: string,
-): (CreatedResponse & Attachment) | (AcceptedResponse & Attachment);
-
-/** Get the commits for the specified pull request. */
-@tag("Pull Request Commits")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestCommits")
-@extension("x-ms-vss-method", "GetPullRequestCommits")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/commits")
-@get
-op PullRequestCommits_GetPullRequestCommits(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Maximum number of commits to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** The continuation token used for pagination. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitCommitRef[]>;
-
-/** Get the list of iterations for the specified pull request. */
-@tag("Pull Request Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterations")
-@extension("x-ms-vss-method", "GetPullRequestIterations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations")
-@get
-op PullRequestIterations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If true, include the commits associated with each iteration in the response. */
-  @query(#{ explode: true }) includeCommits?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitPullRequestIteration[]>;
-
-/** Get the specified iteration for a pull request. */
-@tag("Pull Request Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterations")
-@extension("x-ms-vss-method", "GetPullRequestIteration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}")
-@get
-op PullRequestIterations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration to return. */
-  @path iterationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitPullRequestIteration;
-
-/** Retrieve the changes made in a pull request between two iterations. */
-@tag("Pull Request Iteration Changes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestIterationChanges")
-@extension("x-ms-vss-method", "GetPullRequestIterationChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/changes")
-@get
-op PullRequestIterationChanges_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration. <br /> Iteration one is the head of the source branch at the time the pull request is created and subsequent iterations are created when there are pushes to the source branch. Allowed values are between 1 and the maximum iteration on this pull request. */
-  @path iterationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Optional. The number of changes to retrieve. The default value is 100 and the maximum value is 2000. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Optional. The number of changes to ignore. For example, to retrieve changes 101-150, set top 50 and skip to 100. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** ID of the pull request iteration to compare against. The default value is zero which indicates the comparison is made against the common commit between the source and target branches */
-  @query(#{ explode: true }) $compareTo?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitPullRequestIterationChanges;
-
-/** Get the commits for the specified iteration of a pull request. */
-@tag("Pull Request Commits")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestCommits")
-@extension("x-ms-vss-method", "GetPullRequestIterationCommits")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/commits")
-@get
-op PullRequestCommits_GetPullRequestIterationCommits(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the iteration from which to get the commits. */
-  @path iterationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Maximum number of commits to return. The maximum number of commits that can be returned per batch is 500. */
-  @query(#{ explode: true }) top?: int32,
-
-  /** Number of commits to skip. */
-  @query(#{ explode: true }) skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitCommitRef[]>;
-
-/** Get all the statuses associated with a pull request iteration. */
-@tag("Pull Request Iteration Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterationStatuses")
-@extension("x-ms-vss-method", "GetPullRequestIterationStatuses")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
-@get
-op PullRequestIterationStatuses_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration. */
-  @path iterationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitPullRequestStatus[]>;
-
-/** Update pull request iteration statuses collection. The only supported operation type is `remove`. This operation allows to delete multiple statuses in one call. The path of the `remove` operation should refer to the ID of the pull request status. For example `path='/1'` refers to the pull request status with ID 1. */
-@tag("Pull Request Iteration Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterationStatuses")
-@extension("x-ms-vss-method", "UpdatePullRequestIterationStatuses")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
-@patch
-op PullRequestIterationStatuses_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration. */
-  @path iterationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @header contentType: "application/json-patch+json",
-
-  /** Operations to apply to the pull request statuses in JSON Patch format. */
-  @body body: JsonPatchDocument,
-): OkResponse;
-
-/** Create a pull request status on the iteration. This operation will have the same result as Create status on pull request with specified iteration ID in the request body. The only required field for the status is `Context.Name` that uniquely identifies the status. Note that `iterationId` in the request body is optional since `iterationId` can be specified in the URL. A conflict between `iterationId` in the URL and `iterationId` in the request body will result in status code 400. */
-@tag("Pull Request Iteration Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterationStatuses")
-@extension("x-ms-vss-method", "CreatePullRequestIterationStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
-@post
-op PullRequestIterationStatuses_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration. */
-  @path iterationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Pull request status to create. */
-  @body body: GitPullRequestStatus,
-): GitPullRequestStatus;
-
-/** Delete pull request iteration status. You can remove multiple statuses in one call by using Update operation. */
-@tag("Pull Request Iteration Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterationStatuses")
-@extension("x-ms-vss-method", "DeletePullRequestIterationStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses/{statusId}")
-@delete
-op PullRequestIterationStatuses_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration. */
-  @path iterationId: int32,
-
-  /** ID of the pull request status. */
-  @path statusId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Get the specific pull request iteration status by ID. The status ID is unique within the pull request across all iterations. */
-@tag("Pull Request Iteration Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestIterationStatuses")
-@extension("x-ms-vss-method", "GetPullRequestIterationStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses/{statusId}")
-@get
-op PullRequestIterationStatuses_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request iteration. */
-  @path iterationId: int32,
-
-  /** ID of the pull request status. */
-  @path statusId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitPullRequestStatus;
-
-/** Get all the labels (tags) assigned to a pull request. */
-@tag("Pull Request Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestLabels")
-@extension("x-ms-vss-method", "GetPullRequestLabels")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels")
-@get
-op PullRequestLabels_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Project ID or project name. */
-  @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<WebApiTagDefinition[]>;
-
-/** Create a tag (if that does not exists yet) and add that as a label (tag) for a specified pull request. The only required field is the name of the new label (tag). */
-@tag("Pull Request Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestLabels")
-@extension("x-ms-vss-method", "CreatePullRequestLabel")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels")
-@post
-op PullRequestLabels_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Project ID or project name. */
-  @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Label to assign to the pull request. */
-  @body body: WebApiCreateTagRequestData,
-): WebApiTagDefinition;
-
-/** Removes a label (tag) from the set of those assigned to the pull request. The tag itself will not be deleted. */
-@tag("Pull Request Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestLabels")
-@extension("x-ms-vss-method", "DeletePullRequestLabels")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels/{labelIdOrName}")
-@delete
-op PullRequestLabels_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** The name or ID of the label requested. */
-  @path labelIdOrName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Project ID or project name. */
-  @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Retrieves a single label (tag) that has been assigned to a pull request. */
-@tag("Pull Request Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestLabels")
-@extension("x-ms-vss-method", "GetPullRequestLabel")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels/{labelIdOrName}")
-@get
-op PullRequestLabels_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** The name or ID of the label requested. */
-  @path labelIdOrName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Project ID or project name. */
-  @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): WebApiTagDefinition;
-
-/** Get external properties of the pull request. */
-@tag("Pull Request Properties")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestProperties")
-@extension("x-ms-vss-method", "GetPullRequestProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/properties")
-@get
-op PullRequestProperties_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PropertiesCollection;
-
-/** Create or update pull request external properties. The patch operation can be `add`, `replace` or `remove`. For `add` operation, the path can be empty. If the path is empty, the value must be a list of key value pairs. For `replace` operation, the path cannot be empty. If the path does not exist, the property will be added to the collection. For `remove` operation, the path cannot be empty. If the path does not exist, no action will be performed. */
-@tag("Pull Request Properties")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestProperties")
-@extension("x-ms-vss-method", "UpdatePullRequestProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/properties")
-@patch
-op PullRequestProperties_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** Properties to add, replace or remove in JSON Patch format. */
-  @body body: JsonPatchDocument,
-): PropertiesCollection;
-
-/** Retrieve the reviewers for a pull request */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "GetPullRequestReviewers")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
-@get
-op PullRequestReviewers_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<IdentityRefWithVote[]>;
-
-/** Reset the votes of multiple reviewers on a pull request. NOTE: This endpoint only supports updating votes, but does not support updating required reviewers (use policy) or display names. */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "UpdatePullRequestReviewers")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
-@patch
-op PullRequestReviewers_UpdatePullRequestReviewers(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** IDs of the reviewers whose votes will be reset to zero */
-  @body body: IdentityRefWithVote[],
-): OkResponse;
-
-/** Add reviewers to a pull request. */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "CreatePullRequestReviewers")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
-@post
-op PullRequestReviewers_CreatePullRequestReviewers(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Reviewers to add to the pull request. */
-  @body body: IdentityRef[],
-): Body<IdentityRefWithVote[]>;
-
-/** Add an unmaterialized identity to the reviewers of a pull request. */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "CreateUnmaterializedPullRequestReviewer")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
-@put
-op PullRequestReviewers_CreateUnmaterializedPullRequestReviewer(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Reviewer to add to the pull request. */
-  @body body: IdentityRefWithVote,
-): IdentityRefWithVote;
-
-/** Remove a reviewer from a pull request. */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "DeletePullRequestReviewer")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
-@delete
-op PullRequestReviewers_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the reviewer to remove. */
-  @path reviewerId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Retrieve information about a particular reviewer on a pull request */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "GetPullRequestReviewer")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
-@get
-op PullRequestReviewers_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the reviewer. */
-  @path reviewerId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): IdentityRefWithVote;
-
-/** Edit a reviewer entry. These fields are patchable: isFlagged, hasDeclined */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "UpdatePullRequestReviewer")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
-@patch
-op PullRequestReviewers_UpdatePullRequestReviewer(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the reviewer. */
-  @path reviewerId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Reviewer data.<br />If the reviewer's ID is included here, it must match the reviewerID parameter. */
-  @body body: IdentityRefWithVote,
-): IdentityRefWithVote;
-
-/** Add a reviewer to a pull request or cast a vote. */
-@tag("Pull Request Reviewers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestReviewers")
-@extension("x-ms-vss-method", "CreatePullRequestReviewer")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
-@put
-op PullRequestReviewers_CreatePullRequestReviewer(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the reviewer. */
-  @path reviewerId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Reviewer's vote.<br />If the reviewer's ID is included here, it must match the reviewerID parameter.<br />Reviewers can set their own vote with this method. When adding other reviewers, vote must be set to zero. */
-  @body body: IdentityRefWithVote,
-): IdentityRefWithVote;
-
-/** Sends an e-mail notification about a specific pull request to a set of recipients */
-@tag("Pull Request Share")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestShare")
-@extension("x-ms-vss-method", "SharePullRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/share")
-@post
-op PullRequestShare_SharePullRequest(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the git repository. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: ShareNotificationContext,
-): OkResponse;
-
-/** Get all the statuses associated with a pull request. */
-@tag("Pull Request Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestStatuses")
-@extension("x-ms-vss-method", "GetPullRequestStatuses")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
-@get
-op PullRequestStatuses_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitPullRequestStatus[]>;
-
-/** Update pull request statuses collection. The only supported operation type is `remove`. This operation allows to delete multiple statuses in one call. The path of the `remove` operation should refer to the ID of the pull request status. For example `path='/1'` refers to the pull request status with ID 1. */
-@tag("Pull Request Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestStatuses")
-@extension("x-ms-vss-method", "UpdatePullRequestStatuses")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
-@patch
-op PullRequestStatuses_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @header contentType: "application/json-patch+json",
-
-  /** Operations to apply to the pull request statuses in JSON Patch format. */
-  @body body: JsonPatchDocument,
-): OkResponse;
-
-/** Create a pull request status. The only required field for the status is `Context.Name` that uniquely identifies the status. Note that you can specify iterationId in the request body to post the status on the iteration. */
-@tag("Pull Request Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestStatuses")
-@extension("x-ms-vss-method", "CreatePullRequestStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
-@post
-op PullRequestStatuses_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Pull request status to create. */
-  @body body: GitPullRequestStatus,
-): GitPullRequestStatus;
-
-/** Delete pull request status. You can remove multiple statuses in one call by using Update operation. */
-@tag("Pull Request Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestStatuses")
-@extension("x-ms-vss-method", "DeletePullRequestStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses/{statusId}")
-@delete
-op PullRequestStatuses_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request status. */
-  @path statusId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Get the specific pull request status by ID. The status ID is unique within the pull request across all iterations. */
-@tag("Pull Request Statuses")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "pullRequestStatuses")
-@extension("x-ms-vss-method", "GetPullRequestStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses/{statusId}")
-@get
-op PullRequestStatuses_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request’s target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the pull request status. */
-  @path statusId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitPullRequestStatus;
-
-/** Retrieve all threads in a pull request. */
-@tag("Pull Request Threads")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreads")
-@extension("x-ms-vss-method", "GetThreads")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads")
-@get
-op PullRequestThreads_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If specified, thread positions will be tracked using this iteration as the right side of the diff. */
-  @query(#{ explode: true }) $iteration?: int32,
-
-  /** If specified, thread positions will be tracked using this iteration as the left side of the diff. */
-  @query(#{ explode: true }) $baseIteration?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitPullRequestCommentThread[]>;
-
-/** Create a thread in a pull request. */
-@tag("Pull Request Threads")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreads")
-@extension("x-ms-vss-method", "CreateThread")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads")
-@post
-op PullRequestThreads_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The thread to create. Thread must contain at least one comment. */
-  @body body: GitPullRequestCommentThread,
-): GitPullRequestCommentThread;
-
-/** Retrieve a thread in a pull request. */
-@tag("Pull Request Threads")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreads")
-@extension("x-ms-vss-method", "GetPullRequestThread")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}")
-@get
-op PullRequestThreads_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread. */
-  @path threadId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If specified, thread position will be tracked using this iteration as the right side of the diff. */
-  @query(#{ explode: true }) $iteration?: int32,
-
-  /** If specified, thread position will be tracked using this iteration as the left side of the diff. */
-  @query(#{ explode: true }) $baseIteration?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitPullRequestCommentThread;
-
-/** Update a thread in a pull request. */
-@tag("Pull Request Threads")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreads")
-@extension("x-ms-vss-method", "UpdateThread")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}")
-@patch
-op PullRequestThreads_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread to update. */
-  @path threadId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The thread content that should be updated. */
-  @body body: GitPullRequestCommentThread,
-): GitPullRequestCommentThread;
-
-/** Retrieve all comments associated with a specific thread in a pull request. */
-@tag("Pull Request Thread Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreadComments")
-@extension("x-ms-vss-method", "GetComments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments")
-@get
-op PullRequestThreadComments_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread. */
-  @path threadId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Comment[]>;
-
-/** Create a comment on a specific thread in a pull request (up to 500 comments can be created per thread). */
-@tag("Pull Request Thread Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreadComments")
-@extension("x-ms-vss-method", "CreateComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments")
-@post
-op PullRequestThreadComments_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread that the desired comment is in. */
-  @path threadId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The comment to create. Comments can be up to 150,000 characters. */
-  @body body: Comment,
-): Comment;
-
-/** Delete a comment associated with a specific thread in a pull request. */
-@tag("Pull Request Thread Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreadComments")
-@extension("x-ms-vss-method", "DeleteComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
-@delete
-op PullRequestThreadComments_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread that the desired comment is in. */
-  @path threadId: int32,
-
-  /** ID of the comment. */
-  @path commentId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Retrieve a comment associated with a specific thread in a pull request. */
-@tag("Pull Request Thread Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreadComments")
-@extension("x-ms-vss-method", "GetComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
-@get
-op PullRequestThreadComments_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread that the desired comment is in. */
-  @path threadId: int32,
-
-  /** ID of the comment. */
-  @path commentId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Comment;
-
-/** Update a comment associated with a specific thread in a pull request. */
-@tag("Pull Request Thread Comments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestThreadComments")
-@extension("x-ms-vss-method", "UpdateComment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
-@patch
-op PullRequestThreadComments_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** ID of the thread that the desired comment is in. */
-  @path threadId: int32,
-
-  /** ID of the comment to update. */
-  @path commentId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The comment content that should be updated. Comments can be up to 150,000 characters. */
-  @body body: Comment,
-): Comment;
-
-/** Delete a like on a comment. */
-@tag("Pull Request Comment Likes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestCommentLikes")
-@extension("x-ms-vss-method", "DeleteLike")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
-@delete
-op PullRequestCommentLikes_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** The ID of the thread that contains the comment. */
-  @path threadId: int32,
-
-  /** The ID of the comment. */
-  @path commentId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get likes for a comment. */
-@tag("Pull Request Comment Likes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestCommentLikes")
-@extension("x-ms-vss-method", "GetLikes")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
-@get
-op PullRequestCommentLikes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** The ID of the thread that contains the comment. */
-  @path threadId: int32,
-
-  /** The ID of the comment. */
-  @path commentId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<IdentityRef[]>;
-
-/** Add a like on a comment. */
-@tag("Pull Request Comment Likes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestCommentLikes")
-@extension("x-ms-vss-method", "CreateLike")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
-@post
-op PullRequestCommentLikes_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The repository ID of the pull request's target branch. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** The ID of the thread that contains the comment. */
-  @path threadId: int32,
-
-  /** The ID of the comment. */
-  @path commentId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Retrieve a list of work items associated with a pull request. */
-@tag("Pull Request Work Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequestWorkItems")
-@extension("x-ms-vss-method", "GetPullRequestWorkItemRefs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/workitems")
-@get
-op PullRequestWorkItems_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID or name of the repository. */
-  @path repositoryId: string,
-
-  /** ID of the pull request. */
-  @path pullRequestId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ResourceRef[]>;
-
-/** Retrieves pushes associated with the specified repository. */
-@tag("Pushes")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "pushes")
-@extension("x-ms-vss-method", "GetPushes")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pushes")
-@get
-op Pushes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Number of pushes to skip. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Number of pushes to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
-  @query(#{ explode: true }) `searchCriteria.fromDate`?: utcDateTime,
-
-  /** Whether to include the _links field on the shallow references */
-  @query(#{ explode: true }) `searchCriteria.includeLinks`?: boolean,
-
-  /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
-  @query(#{ explode: true }) `searchCriteria.includeRefUpdates`?: boolean,
-
-  /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
-  @format("uuid") @query(#{ explode: true }) `searchCriteria.pusherId`?: string,
-
-  /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
-  @query(#{ explode: true }) `searchCriteria.refName`?: string,
-
-  /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
-  @query(#{ explode: true }) `searchCriteria.toDate`?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<GitPush[]>;
-
-/** Push changes to the repository. */
-@tag("Pushes")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "pushes")
-@extension("x-ms-vss-method", "CreatePush")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pushes")
-@post
-op Pushes_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-  @body body: GitPush,
-): GitPush;
-
-/** Retrieves a particular push. */
-@tag("Pushes")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "pushes")
-@extension("x-ms-vss-method", "GetPush")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pushes/{pushId}")
-@get
-op Pushes_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** ID of the push. */
-  @path pushId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The number of commits to include in the result. */
-  @query(#{ explode: true }) includeCommits?: int32,
-
-  /** If true, include the list of refs that were updated by the push. */
-  @query(#{ explode: true }) includeRefUpdates?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): GitPush;
-
-/** Queries the provided repository for its refs and returns them. */
-@tag("Refs")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "refs")
-@extension("x-ms-vss-method", "GetRefs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
-@get
-op Refs_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** [optional] A filter to apply to the refs (starts with). */
-  @query(#{ explode: true }) filter?: string,
-
-  /** [optional] Specifies if referenceLinks should be included in the result. default is false. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  /** [optional] Includes up to the first 1000 commit statuses for each ref. The default value is false. */
-  @query(#{ explode: true }) includeStatuses?: boolean,
-
-  /** [optional] Includes only branches that the user owns, the branches the user favorites, and the default branch. The default value is false. Cannot be combined with the filter parameter. */
-  @query(#{ explode: true }) includeMyBranches?: boolean,
-
-  /** [optional] True to include only the tip commit status for each ref. This option requires `includeStatuses` to be true. The default value is false. */
-  @query(#{ explode: true }) latestStatusesOnly?: boolean,
-
-  /** [optional] Annotated tags will populate the PeeledObjectId property. default is false. */
-  @query(#{ explode: true }) peelTags?: boolean,
-
-  /** [optional] A filter to apply to the refs (contains). */
-  @query(#{ explode: true }) filterContains?: string,
-
-  /** [optional] Maximum number of refs to return. It cannot be bigger than 1000. If it is not provided but continuationToken is, top will default to 100. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** The continuation token used for pagination. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** [optional] Includes target branches defined by patterns in pull_request_targets.yml. */
-  @query(#{ explode: true }) includeTargetBranches?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitRef[]>;
-
-/** Lock or Unlock a branch. */
-@tag("Refs")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "refs")
-@extension("x-ms-vss-method", "UpdateRef")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
-@patch
-op Refs_UpdateRef(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** The name of the branch to lock/unlock */
-  @query(#{ explode: true }) filter: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** ID or name of the team project. Optional if specifying an ID for repository. */
-  @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The ref update action (lock/unlock) to perform */
-  @body body: GitRefUpdate,
-): GitRef;
-
-/** Creating, updating, or deleting refs(branches). Updating a ref means making it point at a different commit than it used to. You must specify both the old and new commit to avoid race conditions. */
-@tag("Refs")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "refs")
-@extension("x-ms-vss-method", "UpdateRefs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
-@post
-op Refs_UpdateRefs(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** ID or name of the team project. Optional if specifying an ID for repository. */
-  @query(#{ explode: true }) projectId?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** List of ref updates to attempt to perform */
-  @body body: GitRefUpdate[],
-): Body<GitRefUpdateResult[]>;
-
-/** Retrieve information about a revert operation for a specific branch. */
-@tag("Reverts")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "reverts")
-@extension("x-ms-vss-method", "GetRevertForRefName")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts")
-@get
-op Reverts_GetRevertForRefName(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  /** The GitAsyncRefOperationParameters generatedRefName used for the revert operation. */
-  @query(#{ explode: true }) refName: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitRevert;
-
-/** Starts the operation to create a new branch which reverts changes introduced by either a specific commit or commits that are associated to a pull request. */
-@tag("Reverts")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "reverts")
-@extension("x-ms-vss-method", "CreateRevert")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts")
-@post
-op Reverts_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: GitAsyncRefOperationParameters,
-): GitRevert;
-
-/** Retrieve information about a revert operation by revert Id. */
-@tag("Reverts")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "reverts")
-@extension("x-ms-vss-method", "GetRevert")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts/{revertId}")
-@get
-op Reverts_GetRevert(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the revert operation. */
-  @path revertId: int32,
-
-  /** ID of the repository. */
-  @path repositoryId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): GitRevert;
-
-/** Retrieve statistics about all branches within a repository. */
-@tag("Stats")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "branchStats")
-@extension("x-ms-vss-method", "GetBranches")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/stats/branches")
-@get
-op Stats_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `baseVersionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `baseVersionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `baseVersionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<GitBranchStats[]>;
-
-/** Retrieve a pull request suggestion for a particular repository or team project. */
-@tag("Suggestions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suggestions")
-@extension("x-ms-vss-method", "GetSuggestions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/suggestions")
-@get
-op Suggestions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the git repository. */
-  @path repositoryId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If true, prefer the compare branch over the default branch as target branch for pull requests. */
-  @query(#{ explode: true }) preferCompareBranch?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitSuggestion[]>;
-
-/** The Tree endpoint returns the collection of objects underneath the specified tree. Trees are folders in a Git repository. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID. */
-@tag("Trees")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "trees")
-@extension("x-ms-vss-method", "GetTree")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/trees/{sha1}")
-@get
-op Trees_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Repository Id. */
-  @path repositoryId: string,
-
-  /** SHA1 hash of the tree object. */
-  @path sha1: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Project Id. */
-  @query(#{ explode: true }) projectId?: string,
-
-  /** Search recursively. Include trees underneath this tree. Default is false. */
-  @query(#{ explode: true }) recursive?: boolean,
-
-  /** Name to use if a .zip file is returned. Default is the object ID. */
-  @query(#{ explode: true }) fileName?: string,
-
-  /** Use 'zip'. Defaults to the MIME type set in the Accept header. */
-  @query(#{ explode: true }) $format?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header contentType: "application/zip";
-      @body body: GitTreeRef;
-    }
-  | GitTreeRef;
-
-/** Find the merge bases of two commits, optionally across forks. If otherRepositoryId is not specified, the merge bases will only be calculated within the context of the local repositoryNameOrId. */
-@tag("Merge Bases")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "mergeBases")
-@extension("x-ms-vss-method", "GetMergeBases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/commits/{commitId}/mergebases")
-@get
-op MergeBases_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID or name of the local repository. */
-  @path repositoryNameOrId: string,
-
-  /** First commit, usually the tip of the target branch of the potential merge. */
-  @path commitId: string,
-
-  /** Other commit, usually the tip of the source branch of the potential merge. */
-  @query(#{ explode: true }) otherCommitId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** The collection ID where otherCommitId lives. */
-  @format("uuid") @query(#{ explode: true }) otherCollectionId?: string,
-
-  /** The repository ID where otherCommitId lives. */
-  @format("uuid") @query(#{ explode: true }) otherRepositoryId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitCommitRef[]>;
-
-/** Retrieve all forks of a repository in the collection. */
-@tag("Forks")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "forks")
-@extension("x-ms-vss-method", "GetForks")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forks/{collectionId}")
-@get
-op Forks_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryNameOrId: string,
-
-  /** Team project collection ID. */
-  @format("uuid") @path collectionId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include links. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitRepositoryRef[]>;
-
-/** Retrieve all requested fork sync operations on this repository. */
-@tag("Forks")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "forkSyncRequests")
-@extension("x-ms-vss-method", "GetForkSyncRequests")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests")
-@get
-op Forks_GetForkSyncRequests(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryNameOrId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include abandoned requests. */
-  @query(#{ explode: true }) includeAbandoned?: boolean,
-
-  /** True to include links. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GitForkSyncRequest[]>;
-
-/** Request that another repository's refs be fetched into this one. It syncs two existing forks. To create a fork, please see the <a href='https://docs.microsoft.com/en-us/rest/api/vsts/git/repositories/create?view=azure-devops-rest-5.1'> repositories endpoint</a> */
-@tag("Forks")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "forkSyncRequests")
-@extension("x-ms-vss-method", "CreateForkSyncRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests")
-@post
-op Forks_CreateForkSyncRequest(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryNameOrId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include links */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Source repository and ref mapping. */
-  @body body: GitForkSyncRequestParameters,
-): GitForkSyncRequest;
-
-/** Get a specific fork sync operation's details. */
-@tag("Forks")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "forkSyncRequests")
-@extension("x-ms-vss-method", "GetForkSyncRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests/{forkSyncOperationId}")
-@get
-op Forks_GetForkSyncRequest(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryNameOrId: string,
-
-  /** OperationId of the sync request. */
-  @path forkSyncOperationId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include links. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitForkSyncRequest;
-
-/** Request a git merge operation. Currently we support merging only 2 commits. */
-@tag("Merges")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "merges")
-@extension("x-ms-vss-method", "CreateMergeRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/merges")
-@post
-op Merges_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryNameOrId: string,
-
-  /** True to include links */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Parents commitIds and merge commit messsage. */
-  @body body: GitMergeParameters,
-): GitMerge;
-
-/** Get a specific merge operation's details. */
-@tag("Merges")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "merges")
-@extension("x-ms-vss-method", "GetMergeRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/merges/{mergeOperationId}")
-@get
-op Merges_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repositoryNameOrId: string,
-
-  /** OperationId of the merge request. */
-  @path mergeOperationId: int32,
-
-  /** True to include links */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GitMerge;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Repositories {
+  /** Retrieve deleted git repositories. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deletedRepositories")
+  @extension("x-ms-vss-method", "GetDeletedRepositories")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/deletedrepositories")
+  @get
+  GetDeletedRepositories(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitDeletedRepository[]>;
+
+  /** Retrieve soft-deleted git repositories from the recycle bin. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinRepositories")
+  @extension("x-ms-vss-method", "GetRecycleBinRepositories")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/recycleBin/repositories")
+  @get
+  GetRecycleBinRepositories(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitDeletedRepository[]>;
+
+  /** Destroy (hard delete) a soft-deleted Git repository. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinRepositories")
+  @extension("x-ms-vss-method", "DeleteRepositoryFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}")
+  @delete
+  DeleteRepositoryFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the repository. */
+    @format("uuid") @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Recover a soft-deleted Git repository. Recently deleted repositories go into a soft-delete state for a period of time before they are hard deleted and become unrecoverable. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinRepositories")
+  @extension("x-ms-vss-method", "RestoreRepositoryFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}")
+  @patch
+  RestoreRepositoryFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the repository. */
+    @format("uuid") @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: GitRecycleBinRepositoryDetails,
+  ): GitRepository;
+
+  /** Retrieve git repositories. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "GetRepositories")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** [optional] True to include reference links. The default value is false. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    /** [optional] True to include all remote URLs. The default value is false. */
+    @query(#{ explode: true }) includeAllUrls?: boolean,
+
+    /** [optional] True to include hidden repositories. The default value is false. */
+    @query(#{ explode: true }) includeHidden?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitRepository[]>;
+
+  /** Create a git repository in a team project. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "CreateRepository")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** [optional] Specify the source refs to use while creating a fork repo */
+    @query(#{ explode: true }) sourceRef?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Specify the repo name, team project and/or parent repository. Team project information can be omitted from gitRepositoryToCreate if the request is project-scoped (i.e., includes project Id). */
+    @body body: GitRepositoryCreateOptions,
+  ): CreatedResponse & GitRepository;
+
+  /** Delete a git repository */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "DeleteRepository")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the repository. */
+    @format("uuid") @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Retrieve a git repository. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "GetRepository")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
+  @get
+  GetRepository(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitRepository;
+
+  /** Updates the Git repository with either a new repo name or a new default branch. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "UpdateRepository")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the repository. */
+    @format("uuid") @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Specify a new repo name or a new default branch of the repository */
+    @body body: GitRepository,
+  ): GitRepository;
+}
+
+interface RefsFavorites {
+  /** Gets the refs favorites for a repo and an identity. */
+  @tag("Refs Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "refsFavorites")
+  @extension("x-ms-vss-method", "GetRefFavorites")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/favorites/refs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The id of the repository. */
+    @query(#{ explode: true }) repositoryId?: string,
+
+    /** The id of the identity whose favorites are to be retrieved. If null, the requesting identity is used. */
+    @query(#{ explode: true }) identityId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitRefFavorite[]>;
+
+  /** Creates a ref favorite */
+  @tag("Refs Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "refsFavorites")
+  @extension("x-ms-vss-method", "CreateFavorite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/favorites/refs")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The ref favorite to create. */
+    @body body: GitRefFavorite,
+  ): GitRefFavorite;
+
+  /** Deletes the refs favorite specified */
+  @tag("Refs Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "refsFavorites")
+  @extension("x-ms-vss-method", "DeleteRefFavorite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/favorites/refs/{favoriteId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The Id of the ref favorite to delete. */
+    @path favoriteId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Gets the refs favorite for a favorite Id. */
+  @tag("Refs Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "refsFavorites")
+  @extension("x-ms-vss-method", "GetRefFavorite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/favorites/refs/{favoriteId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The Id of the requested ref favorite. */
+    @path favoriteId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitRefFavorite;
+}
+
+interface RefsFavoritesForProject {
+  @tag("Refs Favorites For Project")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "refsFavoritesForProject")
+  @extension("x-ms-vss-method", "GetRefFavoritesForProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/favorites/refsForProject")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @query(#{ explode: true }) identityId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitRefFavorite[]>;
+}
+
+interface PolicyConfigurations {
+  /** Retrieve a list of policy configurations by a given set of scope/filtering criteria. Azure Repos uses two types of policies to protect your code: **Repository policies (push policies)** check every push to your repository. They validate things like file size limits, path restrictions, or commit requirements. When someone pushes code that violates these rules, the push gets rejected - no matter which branch they're pushing to. **Branch policies (PR policies)** protect specific branches by requiring pull requests. When you set a branch policy on `main`, for example, nobody can push directly to `main` anymore. They must create a pull request instead, which can then require reviews, builds, or other checks to pass first. ## How Policies Work with Your Project Structure Both types of policies can be defined at different levels in your project hierarchy. A policy defined at the project level affects all repositories in that project. A policy defined at the repository level affects just that repository. A branch policy can even be defined at the project level to protect all branches with the same name - like protecting all `main` branches across your entire project with one policy. ### Branch Patterns and Wildcards Branches in Git follow a folder-like structure. You might have branches like: - `refs/heads/main` - `refs/heads/releases/1.0.0` - `refs/heads/releases/2.0.0` - `refs/heads/features/new-login` You can create policies for specific branches or for groups of branches using wildcards. When you create a policy for `refs/heads/releases/*`, it protects all branches in the `releases` 'folder' - both the ones that exist now and any new release branches you create later. This pattern matching works recursively, so `refs/heads/releases/*` also covers branches like `refs/heads/releases/v1/hotfix`. This helps you set up consistent protection without creating the same policy over and over. For example, you can require two reviewers for all release branches with just one policy. ## Understanding Policy Inheritance When you query for policies, this endpoint shows you what policies are actually enforcing rules at your specified scope. This includes policies inherited from higher levels. For example, if you query for policies on a specific branch, you get: - Branch policies for that exact branch - Branch policies with wildcards that match your branch - Repository policies for that repo - Any applicable project-level policies Everything that protects that branch shows up in your results. ## How to Query for Policies The `repositoryId` and `refName` parameters let you focus on specific parts of your project. Here's what you get with different combinations: **Both `repositoryId` and `refName` specified:** - When `refName` is a specific branch name: You see all policies affecting that specific branch. This includes exact branch policies, wildcard branch policies that match, repository policies for that repo, and any project-level policies. - When `refName` is `~all`: You see every policy that affects any branch in that repository. This special value gives you the same results as if you called this API once for every single branch in the repo and then combined all the results (removing duplicates). You get all branch-specific policies, all wildcard policies, all repository policies, and all inherited project-level policies that apply to this repository. This helps you see the complete picture of what protects all your branches without making multiple API calls. **Only `repositoryId` specified:** You see policies that apply to the repository as a whole - repository policies and inherited project-level repository policies. Branch policies aren't included because they don't affect the whole repository. **Neither parameter specified:** You see only project-level repository policies. Branch policies defined at the project level aren't included, even though they exist at the project level. This happens because branch policies need a branch context to be meaningful - without specifying a repository or branch name, the API only returns policies that apply to repositories as a whole. **Only `refName` specified:** You see project-level branch policies for branches with that name (like all `main` branch policies defined at project level), plus project-level repository policies. You can add the `policyType` parameter to filter for a specific type of policy, such as 'Minimum number of reviewers' or 'File size restriction'. This parameter accepts the policy type ID and filters the results to show only that specific policy type. ## Common Scenarios - **'What protects my main branch?'** - Use `repositoryId` + `refName=refs/heads/main` - **'What protects all my release branches?'** - Use `repositoryId` + `refName=refs/heads/releases/*` - **'Show me every policy that affects any branch in this repository'** - Use `repositoryId` + `refName=~all` - **'What repository policies apply to this repo?'** - Use `repositoryId` only - **'What file size limits apply to this repository?'** - Use `repositoryId` with the `policyType` for file size restrictions - **'What project-wide repository policies do we have?'** - Don't specify `repositoryId` or `refName` - **'Which policies apply to develop branches across all repositories?'** - Use `refName=refs/heads/develop` */
+  @tag("Policy Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "policyConfigurations")
+  @extension("x-ms-vss-method", "GetPolicyConfigurations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/policy/configurations")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The unique identifier of a specific repository to query policies for - when provided, returns policies that apply to this repository including inherited project-level policies. */
+    @format("uuid") @query(#{ explode: true }) repositoryId?: string,
+
+    /** The branch reference to query policies for (e.g., 'refs/heads/main' for a specific branch or '~all' to get all policies affecting any branch in the repository) - determines which branch-specific policies are included in the results. */
+    @query(#{ explode: true }) refName?: string,
+
+    /** The type ID of a specific policy to filter by (e.g., 'Minimum number of reviewers' or 'File size restriction') - when specified, returns only policies of this particular type rather than all policy types. */
+    @format("uuid") @query(#{ explode: true }) policyType?: string,
+
+    /** The maximum number of policy configurations to return in a single response - useful for limiting result size when dealing with projects that have many policies. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** A token returned in the x-ms-continuationtoken response header from a previous request when not all results were returned - use this token to retrieve the next page of results in the dataset. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+    @body body: PolicyConfiguration[];
+  };
+}
+
+interface PullRequests {
+  /** Retrieve all pull requests matching a specified criteria. Please note that description field will be truncated up to 400 symbols in the result. */
+  @tag("Pull Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "GetPullRequestsByProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/pullrequests")
+  @get
+  GetPullRequestsByProject(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** If set, search for pull requests that were created by this identity. */
+    @format("uuid") @query(#{ name: "searchCriteria.creatorId", explode: true }) searchCriteriaCreatorId?: string,
+
+    /** Whether to include the _links field on the shallow references */
+    @query(#{ name: "searchCriteria.includeLinks", explode: true }) searchCriteriaIncludeLinks?: boolean,
+
+    /** If set, filters pull requests that have labels matching the specified label names. */
+    @query(#{ name: "searchCriteria.labels" }) searchCriteriaLabels?: string[],
+
+    /** If specified, filters pull requests that created/closed before this date based on the queryTimeRangeType specified. */
+    @query(#{ name: "searchCriteria.maxTime", explode: true }) searchCriteriaMaxTime?: utcDateTime,
+
+    /** If specified, filters pull requests that created/closed after this date based on the queryTimeRangeType specified. */
+    @query(#{ name: "searchCriteria.minTime", explode: true }) searchCriteriaMinTime?: utcDateTime,
+
+    /** The type of time range which should be used for minTime and maxTime. Defaults to Created if unset. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "PullRequestTimeRangeType",
+        values: #[
+          #{ value: "created", description: "The date when the pull request was created." },
+          #{
+            value: "closed",
+            description: "The date when the pull request was closed (completed, abandoned, or merged externally).",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `searchCriteria.queryTimeRangeType`?: "created" | "closed",
+
+    /** If set, search for pull requests whose target branch is in this repository. */
+    @format("uuid") @query(#{ name: "searchCriteria.repositoryId", explode: true }) searchCriteriaRepositoryId?: string,
+
+    /** If set, search for pull requests that have this identity as a reviewer. */
+    @format("uuid") @query(#{ name: "searchCriteria.reviewerId", explode: true }) searchCriteriaReviewerId?: string,
+
+    /** If set, search for pull requests from this branch. */
+    @query(#{ name: "searchCriteria.sourceRefName", explode: true }) searchCriteriaSourceRefName?: string,
+
+    /** If set, search for pull requests whose source branch is in this repository. */
+    @format("uuid") @query(#{ name: "searchCriteria.sourceRepositoryId", explode: true }) searchCriteriaSourceRepositoryId?: string,
+
+    /** If set, search for pull requests that are in this state. Defaults to Active if unset. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "PullRequestStatus",
+        values: #[
+          #{ value: "notSet", description: "Status not set. Default state." },
+          #{ value: "active", description: "Pull request is active." },
+          #{ value: "abandoned", description: "Pull request is abandoned." },
+          #{ value: "completed", description: "Pull request is completed." },
+          #{
+            value: "all",
+            description: "Used in pull request search criteria to include all statuses.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `searchCriteria.status`?: "notSet" | "active" | "abandoned" | "completed" | "all",
+
+    /** The operator used for filtering by labels. Defaults to And if unset. When And is used, pull requests must have all specified labels. When Or is used, pull requests must have at least one of the specified labels. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TagsFilterOperator",
+        values: #[
+          #{ value: "and", description: "Pull request must have ALL specified tags." },
+          #{ value: "or", description: "Pull request must have AT LEAST ONE of the specified tags." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `searchCriteria.tagsFilterOperator`?: "and" | "or",
+
+    /** If set, search for pull requests into this branch. */
+    @query(#{ name: "searchCriteria.targetRefName", explode: true }) searchCriteriaTargetRefName?: string,
+
+    /** If set, filters pull requests that contain the specified text in the title. */
+    @query(#{ name: "searchCriteria.title", explode: true }) searchCriteriaTitle?: string,
+
+    /** Not used. */
+    @query(#{ explode: true }) maxCommentLength?: int32,
+
+    /** The number of pull requests to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** The number of pull requests to retrieve. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitPullRequest[]>;
+
+  /** Retrieve a pull request. */
+  @tag("Pull Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "GetPullRequestById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/pullrequests/{pullRequestId}")
+  @get
+  GetPullRequestById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the pull request to retrieve. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitPullRequest;
+
+  /** Retrieve all pull requests matching a specified criteria. Please note that description field will be truncated up to 400 symbols in the result. */
+  @tag("Pull Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "GetPullRequests")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests")
+  @get
+  GetPullRequests(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If set, search for pull requests that were created by this identity. */
+    @format("uuid") @query(#{ name: "searchCriteria.creatorId", explode: true }) searchCriteriaCreatorId?: string,
+
+    /** Whether to include the _links field on the shallow references */
+    @query(#{ name: "searchCriteria.includeLinks", explode: true }) searchCriteriaIncludeLinks?: boolean,
+
+    /** If set, filters pull requests that have labels matching the specified label names. */
+    @query(#{ name: "searchCriteria.labels" }) searchCriteriaLabels?: string[],
+
+    /** If specified, filters pull requests that created/closed before this date based on the queryTimeRangeType specified. */
+    @query(#{ name: "searchCriteria.maxTime", explode: true }) searchCriteriaMaxTime?: utcDateTime,
+
+    /** If specified, filters pull requests that created/closed after this date based on the queryTimeRangeType specified. */
+    @query(#{ name: "searchCriteria.minTime", explode: true }) searchCriteriaMinTime?: utcDateTime,
+
+    /** The type of time range which should be used for minTime and maxTime. Defaults to Created if unset. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "PullRequestTimeRangeType",
+        values: #[
+          #{ value: "created", description: "The date when the pull request was created." },
+          #{
+            value: "closed",
+            description: "The date when the pull request was closed (completed, abandoned, or merged externally).",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `searchCriteria.queryTimeRangeType`?: "created" | "closed",
+
+    /** If set, search for pull requests whose target branch is in this repository. */
+    @format("uuid") @query(#{ name: "searchCriteria.repositoryId", explode: true }) searchCriteriaRepositoryId?: string,
+
+    /** If set, search for pull requests that have this identity as a reviewer. */
+    @format("uuid") @query(#{ name: "searchCriteria.reviewerId", explode: true }) searchCriteriaReviewerId?: string,
+
+    /** If set, search for pull requests from this branch. */
+    @query(#{ name: "searchCriteria.sourceRefName", explode: true }) searchCriteriaSourceRefName?: string,
+
+    /** If set, search for pull requests whose source branch is in this repository. */
+    @format("uuid") @query(#{ name: "searchCriteria.sourceRepositoryId", explode: true }) searchCriteriaSourceRepositoryId?: string,
+
+    /** If set, search for pull requests that are in this state. Defaults to Active if unset. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "PullRequestStatus",
+        values: #[
+          #{ value: "notSet", description: "Status not set. Default state." },
+          #{ value: "active", description: "Pull request is active." },
+          #{ value: "abandoned", description: "Pull request is abandoned." },
+          #{ value: "completed", description: "Pull request is completed." },
+          #{
+            value: "all",
+            description: "Used in pull request search criteria to include all statuses.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `searchCriteria.status`?: "notSet" | "active" | "abandoned" | "completed" | "all",
+
+    /** The operator used for filtering by labels. Defaults to And if unset. When And is used, pull requests must have all specified labels. When Or is used, pull requests must have at least one of the specified labels. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TagsFilterOperator",
+        values: #[
+          #{ value: "and", description: "Pull request must have ALL specified tags." },
+          #{ value: "or", description: "Pull request must have AT LEAST ONE of the specified tags." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `searchCriteria.tagsFilterOperator`?: "and" | "or",
+
+    /** If set, search for pull requests into this branch. */
+    @query(#{ name: "searchCriteria.targetRefName", explode: true }) searchCriteriaTargetRefName?: string,
+
+    /** If set, filters pull requests that contain the specified text in the title. */
+    @query(#{ name: "searchCriteria.title", explode: true }) searchCriteriaTitle?: string,
+
+    /** Not used. */
+    @query(#{ explode: true }) maxCommentLength?: int32,
+
+    /** The number of pull requests to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** The number of pull requests to retrieve. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitPullRequest[]>;
+
+  /** Create a pull request. */
+  @tag("Pull Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "CreatePullRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If true, subsequent pushes to the pull request will be individually reviewable. Set this to false for large pull requests for performance reasons if this functionality is not needed. */
+    @query(#{ explode: true }) supportsIterations?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The pull request to create. */
+    @body body: GitPullRequest,
+  ): GitPullRequest;
+
+  /** Retrieve a pull request. */
+  @tag("Pull Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "GetPullRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}")
+  @get
+  GetPullRequest(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** The ID of the pull request to retrieve. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Not used. */
+    @query(#{ explode: true }) maxCommentLength?: int32,
+
+    /** Not used. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Not used. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** If true, the pull request will be returned with the associated commits. */
+    @query(#{ explode: true }) includeCommits?: boolean,
+
+    /** If true, the pull request will be returned with the associated work item references. */
+    @query(#{ explode: true }) includeWorkItemRefs?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitPullRequest;
+
+  /** Update a pull request These are the properties that can be updated with the API: - Status - Title - Description (up to 4000 characters) - CompletionOptions - MergeOptions - AutoCompleteSetBy.Id - TargetRefName (when the PR retargeting feature is enabled) Attempting to update other properties outside of this list will either cause the server to throw an `InvalidArgumentValueException`, or to silently ignore the update. */
+  @tag("Pull Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "UpdatePullRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request to update. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The pull request content that should be updated. */
+    @body body: GitPullRequest,
+  ): GitPullRequest;
+}
+
+interface AnnotatedTags {
+  /** Create an annotated tag. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID). */
+  @tag("Annotated Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "annotatedTags")
+  @extension("x-ms-vss-method", "CreateAnnotatedTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Object containing details of tag to be created. */
+    @body body: GitAnnotatedTag,
+  ): GitAnnotatedTag;
+
+  /** Get an annotated tag. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID). */
+  @tag("Annotated Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "annotatedTags")
+  @extension("x-ms-vss-method", "GetAnnotatedTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    /** ObjectId (Sha1Id) of tag to get. */
+    @path objectId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitAnnotatedTag;
+}
+
+interface Blobs {
+  /** Gets one or more blobs in a zip file download. */
+  @tag("Blobs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "blobs")
+  @extension("x-ms-vss-method", "GetBlobs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/blobs")
+  @post
+  GetBlobsZip(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    @query(#{ explode: true }) filename?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Blob IDs (SHA1 hashes) to be returned in the zip file. */
+    @body body: string[],
+  ): {
+    @header contentType: "application/zip";
+    @body @format("Stream") body: string;
+  };
+
+  /** Get a single blob. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID). */
+  @tag("Blobs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "blobs")
+  @extension("x-ms-vss-method", "GetBlob")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/blobs/{sha1}")
+  @get
+  GetBlob(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** SHA1 hash of the file. You can get the SHA1 of a file using the 'Git/Items/Get Item' endpoint. */
+    @path sha1: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If true, prompt for a download rather than rendering in a browser. Note: this value defaults to true if $format is zip */
+    @query(#{ explode: true }) download?: boolean,
+
+    /** Provide a fileName to use for a download. */
+    @query(#{ explode: true }) fileName?: string,
+
+    /** Options: json, zip, text, octetstream. If not set, defaults to the MIME type set in the Accept header. */
+    @query(#{ explode: true }) $format?: string,
+
+    /** If true, try to resolve a blob to its LFS contents, if it's an LFS pointer file. Only compatible with octet-stream Accept headers or $format types */
+    @query(#{ explode: true }) resolveLfs?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header contentType: "application/zip";
+        @body body: GitBlobRef;
+      }
+    | {
+        @header contentType: "application/octet-stream";
+        @body body: GitBlobRef;
+      }
+    | GitBlobRef;
+}
+
+interface CherryPicks {
+  /** Retrieve information about a cherry pick operation for a specific branch. This operation is expensive due to the underlying object structure, so this API only looks at the 1000 most recent cherry pick operations. */
+  @tag("Cherry Picks")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cherryPicks")
+  @extension("x-ms-vss-method", "GetCherryPickForRefName")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks")
+  @get
+  GetCherryPickForRefName(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    /** The GitAsyncRefOperationParameters generatedRefName used for the cherry pick operation. */
+    @query(#{ explode: true }) refName: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitCherryPick;
+
+  /** Cherry pick a specific commit or commits that are associated to a pull request into a new branch. */
+  @tag("Cherry Picks")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cherryPicks")
+  @extension("x-ms-vss-method", "CreateCherryPick")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: GitAsyncRefOperationParameters,
+  ): GitCherryPick;
+
+  /** Retrieve information about a cherry pick operation by cherry pick Id. */
+  @tag("Cherry Picks")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "cherryPicks")
+  @extension("x-ms-vss-method", "GetCherryPick")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks/{cherryPickId}")
+  @get
+  GetCherryPick(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the cherry pick. */
+    @path cherryPickId: int32,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitCherryPick;
+}
+
+interface Commits {
+  /** Retrieve a list of commits associated with a particular push. */
+  @tag("Commits")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "commits")
+  @extension("x-ms-vss-method", "GetPushCommits")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits")
+  @get
+  GetPushCommits(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
+    @path repositoryId: string,
+
+    /** The id of the push. */
+    @query(#{ explode: true }) pushId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The maximum number of commits to return ('get the top x commits'). */
+    @query(#{ explode: true }) top?: int32,
+
+    /** The number of commits to skip. */
+    @query(#{ explode: true }) skip?: int32,
+
+    /** Set to false to avoid including REST Url links for resources. Defaults to true. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitCommitRef[]>;
+
+  /** Retrieve a particular commit. */
+  @tag("Commits")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "commits")
+  @extension("x-ms-vss-method", "GetCommit")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The id of the commit. */
+    @path commitId: string,
+
+    /** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The number of changes to include in the result. */
+    @query(#{ explode: true }) changeCount?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitCommit;
+
+  /** Retrieve changes for a particular commit. */
+  @tag("Commits")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "changes")
+  @extension("x-ms-vss-method", "GetChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/changes")
+  @get
+  GetChanges(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The id of the commit. */
+    @path commitId: string,
+
+    /** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The maximum number of changes to return. */
+    @query(#{ explode: true }) top?: int32,
+
+    /** The number of changes to skip. */
+    @query(#{ explode: true }) skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitCommitChanges;
+
+  /** Retrieve git commits for a project matching the search criteria */
+  @tag("Commits")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "commitsBatch")
+  @extension("x-ms-vss-method", "GetCommitsBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commitsbatch")
+  @post
+  GetCommitsBatch(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Number of commits to skip. The value cannot exceed 3,000,000. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Maximum number of commits to return. The value cannot exceed 50,000. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** True to include additional commit status information. */
+    @query(#{ explode: true }) includeStatuses?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Search options */
+    @body body: GitQueryCommitsCriteria,
+  ): Body<GitCommitRef[]>;
+}
+
+interface Statuses {
+  /** Get statuses associated with the Git commit. */
+  @tag("Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "statuses")
+  @extension("x-ms-vss-method", "GetStatuses")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/statuses")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the Git commit. */
+    @path commitId: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Optional. The number of statuses to retrieve. Default is 1000. */
+    @query(#{ explode: true }) top?: int32,
+
+    /** Optional. The number of statuses to ignore. Default is 0. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
+    @query(#{ explode: true }) skip?: int32,
+
+    /** The flag indicates whether to get only latest statuses grouped by `Context.Name` and `Context.Genre`. */
+    @query(#{ explode: true }) latestOnly?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitStatus[]>;
+
+  /** Create Git commit status. */
+  @tag("Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "statuses")
+  @extension("x-ms-vss-method", "CreateCommitStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/statuses")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the Git commit. */
+    @path commitId: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Git commit status object to create. */
+    @body body: GitStatus,
+  ): GitStatus;
+}
+
+interface Diffs {
+  /** Find the closest common commit (the merge base) between base and target commits, and get the diff between either the base and target commits or common and target commits. */
+  @tag("Diffs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "commitDiffs")
+  @extension("x-ms-vss-method", "GetCommitDiffs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/diffs/commits")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If true, diff between common and target commits. If false, diff between base and target commits. */
+    @query(#{ explode: true }) diffCommonCommit?: boolean,
+
+    /** Maximum number of changes to return. Defaults to 100. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of changes to skip */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ explode: true }) baseVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    baseVersionOptions?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    baseVersionType?: "branch" | "tag" | "commit",
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ explode: true }) targetVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    targetVersionOptions?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    targetVersionType?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitCommitDiffs;
+}
+
+interface ImportRequests {
+  /** Retrieve import requests for a repository. */
+  @tag("Import Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "importRequests")
+  @extension("x-ms-vss-method", "QueryImportRequests")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests")
+  @get
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** True to include abandoned import requests in the results. */
+    @query(#{ explode: true }) includeAbandoned?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitImportRequest[]>;
+
+  /** Create an import request. */
+  @tag("Import Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "importRequests")
+  @extension("x-ms-vss-method", "CreateImportRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The import request to create. */
+    @body body: GitImportRequest,
+  ): GitImportRequest;
+
+  /** Retrieve a particular import request. */
+  @tag("Import Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "importRequests")
+  @extension("x-ms-vss-method", "GetImportRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests/{importRequestId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** The unique identifier for the import request. */
+    @path importRequestId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitImportRequest;
+
+  /** Retry or abandon a failed import request. There can only be one active import request associated with a repository. Marking a failed import request abandoned makes it inactive. */
+  @tag("Import Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "importRequests")
+  @extension("x-ms-vss-method", "UpdateImportRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests/{importRequestId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** The unique identifier for the import request to update. */
+    @path importRequestId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The updated version of the import request. Currently, the only change allowed is setting the Status to Queued or Abandoned. */
+    @body body: GitImportRequest,
+  ): GitImportRequest;
+}
+
+interface Items {
+  /** Get Item Metadata and/or Content for a collection of items. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content which is always returned as a download. */
+  @tag("Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "items")
+  @extension("x-ms-vss-method", "GetItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/items")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The path scope. The default is null. */
+    @query(#{ explode: true }) scopePath?: string,
+
+    /** The recursion level of this request. The default is 'none', no recursion. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "VersionControlRecursionType",
+        values: #[
+          #{ value: "none", description: "Only return the specified item." },
+          #{ value: "oneLevel", description: "Return the specified item and its direct children." },
+          #{
+            value: "oneLevelPlusNestedEmptyFolders",
+            description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
+          },
+          #{ value: "full", description: "Return specified item and all descendants" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
+
+    /** Set to true to include content metadata. Default is false. */
+    @query(#{ explode: true }) includeContentMetadata?: boolean,
+
+    /** Set to true to include the latest changes. Default is false. */
+    @query(#{ explode: true }) latestProcessedChange?: boolean,
+
+    /** Set to true to download the response as a file. Default is false. */
+    @query(#{ explode: true }) download?: boolean,
+
+    /** Set to true to include links to items. Default is false. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    /** If specified, this overrides the HTTP Accept request header to return either 'json' or 'zip'. If $format is specified, then api-version should also be specified as a query parameter. */
+    @query(#{ explode: true }) $format?: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    /** Set to true to keep the file permissions for unix (and POSIX) systems like executables and symlinks */
+    @query(#{ explode: true }) zipForUnix?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitItem[]>;
+
+  /** Retrieves a batch of items in a repo / project for a given list of paths or a long path */
+  @tag("Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "itemsBatch")
+  @extension("x-ms-vss-method", "GetItemsBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/itemsbatch")
+  @post
+  GetItemsBatch(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Request data attributes: ItemDescriptors, IncludeContentMetadata, LatestProcessedChange, IncludeLinks. ItemDescriptors: Collection of items to fetch, including path, version, and recursion level. IncludeContentMetadata: Whether to include metadata for all items LatestProcessedChange: Whether to include shallow ref to commit that last changed each item. IncludeLinks: Whether to include the _links field on the shallow references. */
+    @body body: GitItemRequestData,
+  ): Body<unknown[][]>;
+}
+
+interface PullRequestQuery {
+  /** This API is used to find what pull requests are related to a given commit. It can be used to either find the pull request that created a particular merge commit or it can be used to find all pull requests that have ever merged a particular commit. The input is a list of queries which each contain a list of commits. For each commit that you search against, you will get back a dictionary of commit -> pull requests. */
+  @tag("Pull Request Query")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestQuery")
+  @extension("x-ms-vss-method", "GetPullRequestQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequestquery")
+  @post
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The list of queries to perform. */
+    @body body: GitPullRequestQuery,
+  ): GitPullRequestQuery;
+}
+
+interface PullRequestAttachments {
+  /** Get a list of files attached to a given pull request. */
+  @tag("Pull Request Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestAttachments")
+  @extension("x-ms-vss-method", "GetAttachments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Attachment[]>;
+
+  /** Delete a pull request attachment. */
+  @tag("Pull Request Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestAttachments")
+  @extension("x-ms-vss-method", "DeleteAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name of the attachment to delete. */
+    @path fileName: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get the file content of a pull request attachment. */
+  @tag("Pull Request Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestAttachments")
+  @extension("x-ms-vss-method", "GetAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name of the attachment. */
+    @path fileName: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header contentType: "application/octet-stream";
+        @body @format("Stream") body: string;
+      }
+    | {
+        @header contentType: "application/zip";
+        @body @format("Stream") body: string;
+      };
+
+  /** Attach a new file to a pull request. */
+  @tag("Pull Request Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestAttachments")
+  @extension("x-ms-vss-method", "CreateAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name of the file. */
+    @path fileName: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/octet-stream",
+
+    /** Stream to upload */
+    @body body: string,
+  ): (CreatedResponse & Attachment) | (AcceptedResponse & Attachment);
+}
+
+interface PullRequestCommits {
+  /** Get the commits for the specified pull request. */
+  @tag("Pull Request Commits")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestCommits")
+  @extension("x-ms-vss-method", "GetPullRequestCommits")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/commits")
+  @get
+  GetPullRequestCommits(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Maximum number of commits to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** The continuation token used for pagination. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitCommitRef[]>;
+
+  /** Get the commits for the specified iteration of a pull request. */
+  @tag("Pull Request Commits")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestCommits")
+  @extension("x-ms-vss-method", "GetPullRequestIterationCommits")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/commits")
+  @get
+  GetPullRequestIterationCommits(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the iteration from which to get the commits. */
+    @path iterationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Maximum number of commits to return. The maximum number of commits that can be returned per batch is 500. */
+    @query(#{ explode: true }) top?: int32,
+
+    /** Number of commits to skip. */
+    @query(#{ explode: true }) skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitCommitRef[]>;
+}
+
+interface PullRequestIterations {
+  /** Get the list of iterations for the specified pull request. */
+  @tag("Pull Request Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterations")
+  @extension("x-ms-vss-method", "GetPullRequestIterations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If true, include the commits associated with each iteration in the response. */
+    @query(#{ explode: true }) includeCommits?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitPullRequestIteration[]>;
+
+  /** Get the specified iteration for a pull request. */
+  @tag("Pull Request Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterations")
+  @extension("x-ms-vss-method", "GetPullRequestIteration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration to return. */
+    @path iterationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitPullRequestIteration;
+}
+
+interface PullRequestIterationChanges {
+  /** Retrieve the changes made in a pull request between two iterations. */
+  @tag("Pull Request Iteration Changes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestIterationChanges")
+  @extension("x-ms-vss-method", "GetPullRequestIterationChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/changes")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration. <br /> Iteration one is the head of the source branch at the time the pull request is created and subsequent iterations are created when there are pushes to the source branch. Allowed values are between 1 and the maximum iteration on this pull request. */
+    @path iterationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Optional. The number of changes to retrieve. The default value is 100 and the maximum value is 2000. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Optional. The number of changes to ignore. For example, to retrieve changes 101-150, set top 50 and skip to 100. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** ID of the pull request iteration to compare against. The default value is zero which indicates the comparison is made against the common commit between the source and target branches */
+    @query(#{ explode: true }) $compareTo?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitPullRequestIterationChanges;
+}
+
+interface PullRequestIterationStatuses {
+  /** Get all the statuses associated with a pull request iteration. */
+  @tag("Pull Request Iteration Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterationStatuses")
+  @extension("x-ms-vss-method", "GetPullRequestIterationStatuses")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration. */
+    @path iterationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitPullRequestStatus[]>;
+
+  /** Update pull request iteration statuses collection. The only supported operation type is `remove`. This operation allows to delete multiple statuses in one call. The path of the `remove` operation should refer to the ID of the pull request status. For example `path='/1'` refers to the pull request status with ID 1. */
+  @tag("Pull Request Iteration Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterationStatuses")
+  @extension("x-ms-vss-method", "UpdatePullRequestIterationStatuses")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration. */
+    @path iterationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @header contentType: "application/json-patch+json",
+
+    /** Operations to apply to the pull request statuses in JSON Patch format. */
+    @body body: JsonPatchDocument,
+  ): OkResponse;
+
+  /** Create a pull request status on the iteration. This operation will have the same result as Create status on pull request with specified iteration ID in the request body. The only required field for the status is `Context.Name` that uniquely identifies the status. Note that `iterationId` in the request body is optional since `iterationId` can be specified in the URL. A conflict between `iterationId` in the URL and `iterationId` in the request body will result in status code 400. */
+  @tag("Pull Request Iteration Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterationStatuses")
+  @extension("x-ms-vss-method", "CreatePullRequestIterationStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration. */
+    @path iterationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Pull request status to create. */
+    @body body: GitPullRequestStatus,
+  ): GitPullRequestStatus;
+
+  /** Delete pull request iteration status. You can remove multiple statuses in one call by using Update operation. */
+  @tag("Pull Request Iteration Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterationStatuses")
+  @extension("x-ms-vss-method", "DeletePullRequestIterationStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses/{statusId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration. */
+    @path iterationId: int32,
+
+    /** ID of the pull request status. */
+    @path statusId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Get the specific pull request iteration status by ID. The status ID is unique within the pull request across all iterations. */
+  @tag("Pull Request Iteration Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestIterationStatuses")
+  @extension("x-ms-vss-method", "GetPullRequestIterationStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses/{statusId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request iteration. */
+    @path iterationId: int32,
+
+    /** ID of the pull request status. */
+    @path statusId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitPullRequestStatus;
+}
+
+interface PullRequestLabels {
+  /** Get all the labels (tags) assigned to a pull request. */
+  @tag("Pull Request Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestLabels")
+  @extension("x-ms-vss-method", "GetPullRequestLabels")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Project ID or project name. */
+    @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<WebApiTagDefinition[]>;
+
+  /** Create a tag (if that does not exists yet) and add that as a label (tag) for a specified pull request. The only required field is the name of the new label (tag). */
+  @tag("Pull Request Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestLabels")
+  @extension("x-ms-vss-method", "CreatePullRequestLabel")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Project ID or project name. */
+    @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Label to assign to the pull request. */
+    @body body: WebApiCreateTagRequestData,
+  ): WebApiTagDefinition;
+
+  /** Removes a label (tag) from the set of those assigned to the pull request. The tag itself will not be deleted. */
+  @tag("Pull Request Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestLabels")
+  @extension("x-ms-vss-method", "DeletePullRequestLabels")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels/{labelIdOrName}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** The name or ID of the label requested. */
+    @path labelIdOrName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Project ID or project name. */
+    @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Retrieves a single label (tag) that has been assigned to a pull request. */
+  @tag("Pull Request Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestLabels")
+  @extension("x-ms-vss-method", "GetPullRequestLabel")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels/{labelIdOrName}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** The name or ID of the label requested. */
+    @path labelIdOrName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Project ID or project name. */
+    @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): WebApiTagDefinition;
+}
+
+interface PullRequestProperties {
+  /** Get external properties of the pull request. */
+  @tag("Pull Request Properties")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestProperties")
+  @extension("x-ms-vss-method", "GetPullRequestProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/properties")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PropertiesCollection;
+
+  /** Create or update pull request external properties. The patch operation can be `add`, `replace` or `remove`. For `add` operation, the path can be empty. If the path is empty, the value must be a list of key value pairs. For `replace` operation, the path cannot be empty. If the path does not exist, the property will be added to the collection. For `remove` operation, the path cannot be empty. If the path does not exist, no action will be performed. */
+  @tag("Pull Request Properties")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestProperties")
+  @extension("x-ms-vss-method", "UpdatePullRequestProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/properties")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** Properties to add, replace or remove in JSON Patch format. */
+    @body body: JsonPatchDocument,
+  ): PropertiesCollection;
+}
+
+interface PullRequestReviewers {
+  /** Retrieve the reviewers for a pull request */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "GetPullRequestReviewers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<IdentityRefWithVote[]>;
+
+  /** Reset the votes of multiple reviewers on a pull request. NOTE: This endpoint only supports updating votes, but does not support updating required reviewers (use policy) or display names. */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "UpdatePullRequestReviewers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
+  @patch
+  UpdatePullRequestReviewers(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** IDs of the reviewers whose votes will be reset to zero */
+    @body body: IdentityRefWithVote[],
+  ): OkResponse;
+
+  /** Add reviewers to a pull request. */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "CreatePullRequestReviewers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
+  @post
+  CreatePullRequestReviewers(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Reviewers to add to the pull request. */
+    @body body: IdentityRef[],
+  ): Body<IdentityRefWithVote[]>;
+
+  /** Add an unmaterialized identity to the reviewers of a pull request. */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "CreateUnmaterializedPullRequestReviewer")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
+  @put
+  CreateUnmaterializedPullRequestReviewer(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Reviewer to add to the pull request. */
+    @body body: IdentityRefWithVote,
+  ): IdentityRefWithVote;
+
+  /** Remove a reviewer from a pull request. */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "DeletePullRequestReviewer")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the reviewer to remove. */
+    @path reviewerId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Retrieve information about a particular reviewer on a pull request */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "GetPullRequestReviewer")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the reviewer. */
+    @path reviewerId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): IdentityRefWithVote;
+
+  /** Edit a reviewer entry. These fields are patchable: isFlagged, hasDeclined */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "UpdatePullRequestReviewer")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
+  @patch
+  UpdatePullRequestReviewer(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the reviewer. */
+    @path reviewerId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Reviewer data.<br />If the reviewer's ID is included here, it must match the reviewerID parameter. */
+    @body body: IdentityRefWithVote,
+  ): IdentityRefWithVote;
+
+  /** Add a reviewer to a pull request or cast a vote. */
+  @tag("Pull Request Reviewers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestReviewers")
+  @extension("x-ms-vss-method", "CreatePullRequestReviewer")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
+  @put
+  CreatePullRequestReviewer(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the reviewer. */
+    @path reviewerId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Reviewer's vote.<br />If the reviewer's ID is included here, it must match the reviewerID parameter.<br />Reviewers can set their own vote with this method. When adding other reviewers, vote must be set to zero. */
+    @body body: IdentityRefWithVote,
+  ): IdentityRefWithVote;
+}
+
+interface PullRequestShare {
+  /** Sends an e-mail notification about a specific pull request to a set of recipients */
+  @tag("Pull Request Share")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestShare")
+  @extension("x-ms-vss-method", "SharePullRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/share")
+  @post
+  SharePullRequest(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the git repository. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: ShareNotificationContext,
+  ): OkResponse;
+}
+
+interface PullRequestStatuses {
+  /** Get all the statuses associated with a pull request. */
+  @tag("Pull Request Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestStatuses")
+  @extension("x-ms-vss-method", "GetPullRequestStatuses")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitPullRequestStatus[]>;
+
+  /** Update pull request statuses collection. The only supported operation type is `remove`. This operation allows to delete multiple statuses in one call. The path of the `remove` operation should refer to the ID of the pull request status. For example `path='/1'` refers to the pull request status with ID 1. */
+  @tag("Pull Request Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestStatuses")
+  @extension("x-ms-vss-method", "UpdatePullRequestStatuses")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @header contentType: "application/json-patch+json",
+
+    /** Operations to apply to the pull request statuses in JSON Patch format. */
+    @body body: JsonPatchDocument,
+  ): OkResponse;
+
+  /** Create a pull request status. The only required field for the status is `Context.Name` that uniquely identifies the status. Note that you can specify iterationId in the request body to post the status on the iteration. */
+  @tag("Pull Request Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestStatuses")
+  @extension("x-ms-vss-method", "CreatePullRequestStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Pull request status to create. */
+    @body body: GitPullRequestStatus,
+  ): GitPullRequestStatus;
+
+  /** Delete pull request status. You can remove multiple statuses in one call by using Update operation. */
+  @tag("Pull Request Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestStatuses")
+  @extension("x-ms-vss-method", "DeletePullRequestStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses/{statusId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request status. */
+    @path statusId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Get the specific pull request status by ID. The status ID is unique within the pull request across all iterations. */
+  @tag("Pull Request Statuses")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "pullRequestStatuses")
+  @extension("x-ms-vss-method", "GetPullRequestStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses/{statusId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request’s target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the pull request status. */
+    @path statusId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitPullRequestStatus;
+}
+
+interface PullRequestThreads {
+  /** Retrieve all threads in a pull request. */
+  @tag("Pull Request Threads")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreads")
+  @extension("x-ms-vss-method", "GetThreads")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If specified, thread positions will be tracked using this iteration as the right side of the diff. */
+    @query(#{ explode: true }) $iteration?: int32,
+
+    /** If specified, thread positions will be tracked using this iteration as the left side of the diff. */
+    @query(#{ explode: true }) $baseIteration?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitPullRequestCommentThread[]>;
+
+  /** Create a thread in a pull request. */
+  @tag("Pull Request Threads")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreads")
+  @extension("x-ms-vss-method", "CreateThread")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The thread to create. Thread must contain at least one comment. */
+    @body body: GitPullRequestCommentThread,
+  ): GitPullRequestCommentThread;
+
+  /** Retrieve a thread in a pull request. */
+  @tag("Pull Request Threads")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreads")
+  @extension("x-ms-vss-method", "GetPullRequestThread")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread. */
+    @path threadId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If specified, thread position will be tracked using this iteration as the right side of the diff. */
+    @query(#{ explode: true }) $iteration?: int32,
+
+    /** If specified, thread position will be tracked using this iteration as the left side of the diff. */
+    @query(#{ explode: true }) $baseIteration?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitPullRequestCommentThread;
+
+  /** Update a thread in a pull request. */
+  @tag("Pull Request Threads")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreads")
+  @extension("x-ms-vss-method", "UpdateThread")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread to update. */
+    @path threadId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The thread content that should be updated. */
+    @body body: GitPullRequestCommentThread,
+  ): GitPullRequestCommentThread;
+}
+
+interface PullRequestThreadComments {
+  /** Retrieve all comments associated with a specific thread in a pull request. */
+  @tag("Pull Request Thread Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreadComments")
+  @extension("x-ms-vss-method", "GetComments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread. */
+    @path threadId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Comment[]>;
+
+  /** Create a comment on a specific thread in a pull request (up to 500 comments can be created per thread). */
+  @tag("Pull Request Thread Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreadComments")
+  @extension("x-ms-vss-method", "CreateComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread that the desired comment is in. */
+    @path threadId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The comment to create. Comments can be up to 150,000 characters. */
+    @body body: Comment,
+  ): Comment;
+
+  /** Delete a comment associated with a specific thread in a pull request. */
+  @tag("Pull Request Thread Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreadComments")
+  @extension("x-ms-vss-method", "DeleteComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread that the desired comment is in. */
+    @path threadId: int32,
+
+    /** ID of the comment. */
+    @path commentId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Retrieve a comment associated with a specific thread in a pull request. */
+  @tag("Pull Request Thread Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreadComments")
+  @extension("x-ms-vss-method", "GetComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread that the desired comment is in. */
+    @path threadId: int32,
+
+    /** ID of the comment. */
+    @path commentId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Comment;
+
+  /** Update a comment associated with a specific thread in a pull request. */
+  @tag("Pull Request Thread Comments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestThreadComments")
+  @extension("x-ms-vss-method", "UpdateComment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** ID of the thread that the desired comment is in. */
+    @path threadId: int32,
+
+    /** ID of the comment to update. */
+    @path commentId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The comment content that should be updated. Comments can be up to 150,000 characters. */
+    @body body: Comment,
+  ): Comment;
+}
+
+interface PullRequestCommentLikes {
+  /** Delete a like on a comment. */
+  @tag("Pull Request Comment Likes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestCommentLikes")
+  @extension("x-ms-vss-method", "DeleteLike")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** The ID of the thread that contains the comment. */
+    @path threadId: int32,
+
+    /** The ID of the comment. */
+    @path commentId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get likes for a comment. */
+  @tag("Pull Request Comment Likes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestCommentLikes")
+  @extension("x-ms-vss-method", "GetLikes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** The ID of the thread that contains the comment. */
+    @path threadId: int32,
+
+    /** The ID of the comment. */
+    @path commentId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<IdentityRef[]>;
+
+  /** Add a like on a comment. */
+  @tag("Pull Request Comment Likes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestCommentLikes")
+  @extension("x-ms-vss-method", "CreateLike")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The repository ID of the pull request's target branch. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** The ID of the thread that contains the comment. */
+    @path threadId: int32,
+
+    /** The ID of the comment. */
+    @path commentId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+}
+
+interface PullRequestWorkItems {
+  /** Retrieve a list of work items associated with a pull request. */
+  @tag("Pull Request Work Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequestWorkItems")
+  @extension("x-ms-vss-method", "GetPullRequestWorkItemRefs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/workitems")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID or name of the repository. */
+    @path repositoryId: string,
+
+    /** ID of the pull request. */
+    @path pullRequestId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ResourceRef[]>;
+}
+
+interface Pushes {
+  /** Retrieves pushes associated with the specified repository. */
+  @tag("Pushes")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "pushes")
+  @extension("x-ms-vss-method", "GetPushes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pushes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Number of pushes to skip. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Number of pushes to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
+    @query(#{ name: "searchCriteria.fromDate", explode: true }) searchCriteriaFromDate?: utcDateTime,
+
+    /** Whether to include the _links field on the shallow references */
+    @query(#{ name: "searchCriteria.includeLinks", explode: true }) searchCriteriaIncludeLinks?: boolean,
+
+    /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
+    @query(#{ name: "searchCriteria.includeRefUpdates", explode: true }) searchCriteriaIncludeRefUpdates?: boolean,
+
+    /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
+    @format("uuid") @query(#{ name: "searchCriteria.pusherId", explode: true }) searchCriteriaPusherId?: string,
+
+    /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
+    @query(#{ name: "searchCriteria.refName", explode: true }) searchCriteriaRefName?: string,
+
+    /** Search criteria attributes: fromDate, toDate, pusherId, refName, includeRefUpdates or includeLinks. fromDate: Start date to search from. toDate: End date to search to. pusherId: Identity of the person who submitted the push. refName: Branch name to consider. includeRefUpdates: If true, include the list of refs that were updated by the push. includeLinks: Whether to include the _links field on the shallow references. */
+    @query(#{ name: "searchCriteria.toDate", explode: true }) searchCriteriaToDate?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<GitPush[]>;
+
+  /** Push changes to the repository. */
+  @tag("Pushes")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "pushes")
+  @extension("x-ms-vss-method", "CreatePush")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pushes")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+    @body body: GitPush,
+  ): GitPush;
+
+  /** Retrieves a particular push. */
+  @tag("Pushes")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "pushes")
+  @extension("x-ms-vss-method", "GetPush")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pushes/{pushId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** ID of the push. */
+    @path pushId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The number of commits to include in the result. */
+    @query(#{ explode: true }) includeCommits?: int32,
+
+    /** If true, include the list of refs that were updated by the push. */
+    @query(#{ explode: true }) includeRefUpdates?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): GitPush;
+}
+
+interface Refs {
+  /** Queries the provided repository for its refs and returns them. */
+  @tag("Refs")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "refs")
+  @extension("x-ms-vss-method", "GetRefs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** [optional] A filter to apply to the refs (starts with). */
+    @query(#{ explode: true }) filter?: string,
+
+    /** [optional] Specifies if referenceLinks should be included in the result. default is false. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    /** [optional] Includes up to the first 1000 commit statuses for each ref. The default value is false. */
+    @query(#{ explode: true }) includeStatuses?: boolean,
+
+    /** [optional] Includes only branches that the user owns, the branches the user favorites, and the default branch. The default value is false. Cannot be combined with the filter parameter. */
+    @query(#{ explode: true }) includeMyBranches?: boolean,
+
+    /** [optional] True to include only the tip commit status for each ref. This option requires `includeStatuses` to be true. The default value is false. */
+    @query(#{ explode: true }) latestStatusesOnly?: boolean,
+
+    /** [optional] Annotated tags will populate the PeeledObjectId property. default is false. */
+    @query(#{ explode: true }) peelTags?: boolean,
+
+    /** [optional] A filter to apply to the refs (contains). */
+    @query(#{ explode: true }) filterContains?: string,
+
+    /** [optional] Maximum number of refs to return. It cannot be bigger than 1000. If it is not provided but continuationToken is, top will default to 100. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** The continuation token used for pagination. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** [optional] Includes target branches defined by patterns in pull_request_targets.yml. */
+    @query(#{ explode: true }) includeTargetBranches?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitRef[]>;
+
+  /** Lock or Unlock a branch. */
+  @tag("Refs")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "refs")
+  @extension("x-ms-vss-method", "UpdateRef")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
+  @patch
+  UpdateRef(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** The name of the branch to lock/unlock */
+    @query(#{ explode: true }) filter: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** ID or name of the team project. Optional if specifying an ID for repository. */
+    @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The ref update action (lock/unlock) to perform */
+    @body body: GitRefUpdate,
+  ): GitRef;
+
+  /** Creating, updating, or deleting refs(branches). Updating a ref means making it point at a different commit than it used to. You must specify both the old and new commit to avoid race conditions. */
+  @tag("Refs")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "refs")
+  @extension("x-ms-vss-method", "UpdateRefs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
+  @post
+  UpdateRefs(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** ID or name of the team project. Optional if specifying an ID for repository. */
+    @query(#{ explode: true }) projectId?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** List of ref updates to attempt to perform */
+    @body body: GitRefUpdate[],
+  ): Body<GitRefUpdateResult[]>;
+}
+
+interface Reverts {
+  /** Retrieve information about a revert operation for a specific branch. */
+  @tag("Reverts")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "reverts")
+  @extension("x-ms-vss-method", "GetRevertForRefName")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts")
+  @get
+  GetRevertForRefName(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    /** The GitAsyncRefOperationParameters generatedRefName used for the revert operation. */
+    @query(#{ explode: true }) refName: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitRevert;
+
+  /** Starts the operation to create a new branch which reverts changes introduced by either a specific commit or commits that are associated to a pull request. */
+  @tag("Reverts")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "reverts")
+  @extension("x-ms-vss-method", "CreateRevert")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: GitAsyncRefOperationParameters,
+  ): GitRevert;
+
+  /** Retrieve information about a revert operation by revert Id. */
+  @tag("Reverts")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "reverts")
+  @extension("x-ms-vss-method", "GetRevert")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts/{revertId}")
+  @get
+  GetRevert(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the revert operation. */
+    @path revertId: int32,
+
+    /** ID of the repository. */
+    @path repositoryId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): GitRevert;
+}
+
+interface Stats {
+  /** Retrieve statistics about all branches within a repository. */
+  @tag("Stats")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "branchStats")
+  @extension("x-ms-vss-method", "GetBranches")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/stats/branches")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "baseVersionDescriptor.version", explode: true }) baseVersionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `baseVersionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `baseVersionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<GitBranchStats[]>;
+}
+
+interface Suggestions {
+  /** Retrieve a pull request suggestion for a particular repository or team project. */
+  @tag("Suggestions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suggestions")
+  @extension("x-ms-vss-method", "GetSuggestions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/suggestions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the git repository. */
+    @path repositoryId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If true, prefer the compare branch over the default branch as target branch for pull requests. */
+    @query(#{ explode: true }) preferCompareBranch?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitSuggestion[]>;
+}
+
+interface Trees {
+  /** The Tree endpoint returns the collection of objects underneath the specified tree. Trees are folders in a Git repository. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. However, if you specify a repository by name, you must also specify the project (by name or ID. */
+  @tag("Trees")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "trees")
+  @extension("x-ms-vss-method", "GetTree")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/trees/{sha1}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Repository Id. */
+    @path repositoryId: string,
+
+    /** SHA1 hash of the tree object. */
+    @path sha1: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Project Id. */
+    @query(#{ explode: true }) projectId?: string,
+
+    /** Search recursively. Include trees underneath this tree. Default is false. */
+    @query(#{ explode: true }) recursive?: boolean,
+
+    /** Name to use if a .zip file is returned. Default is the object ID. */
+    @query(#{ explode: true }) fileName?: string,
+
+    /** Use 'zip'. Defaults to the MIME type set in the Accept header. */
+    @query(#{ explode: true }) $format?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header contentType: "application/zip";
+        @body body: GitTreeRef;
+      }
+    | GitTreeRef;
+}
+
+interface MergeBases {
+  /** Find the merge bases of two commits, optionally across forks. If otherRepositoryId is not specified, the merge bases will only be calculated within the context of the local repositoryNameOrId. */
+  @tag("Merge Bases")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "mergeBases")
+  @extension("x-ms-vss-method", "GetMergeBases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/commits/{commitId}/mergebases")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID or name of the local repository. */
+    @path repositoryNameOrId: string,
+
+    /** First commit, usually the tip of the target branch of the potential merge. */
+    @path commitId: string,
+
+    /** Other commit, usually the tip of the source branch of the potential merge. */
+    @query(#{ explode: true }) otherCommitId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** The collection ID where otherCommitId lives. */
+    @format("uuid") @query(#{ explode: true }) otherCollectionId?: string,
+
+    /** The repository ID where otherCommitId lives. */
+    @format("uuid") @query(#{ explode: true }) otherRepositoryId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitCommitRef[]>;
+}
+
+interface Forks {
+  /** Retrieve all forks of a repository in the collection. */
+  @tag("Forks")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "forks")
+  @extension("x-ms-vss-method", "GetForks")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forks/{collectionId}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryNameOrId: string,
+
+    /** Team project collection ID. */
+    @format("uuid") @path collectionId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include links. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitRepositoryRef[]>;
+
+  /** Retrieve all requested fork sync operations on this repository. */
+  @tag("Forks")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "forkSyncRequests")
+  @extension("x-ms-vss-method", "GetForkSyncRequests")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests")
+  @get
+  GetForkSyncRequests(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryNameOrId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include abandoned requests. */
+    @query(#{ explode: true }) includeAbandoned?: boolean,
+
+    /** True to include links. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GitForkSyncRequest[]>;
+
+  /** Request that another repository's refs be fetched into this one. It syncs two existing forks. To create a fork, please see the <a href='https://docs.microsoft.com/en-us/rest/api/vsts/git/repositories/create?view=azure-devops-rest-5.1'> repositories endpoint</a> */
+  @tag("Forks")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "forkSyncRequests")
+  @extension("x-ms-vss-method", "CreateForkSyncRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests")
+  @post
+  CreateForkSyncRequest(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryNameOrId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include links */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Source repository and ref mapping. */
+    @body body: GitForkSyncRequestParameters,
+  ): GitForkSyncRequest;
+
+  /** Get a specific fork sync operation's details. */
+  @tag("Forks")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "forkSyncRequests")
+  @extension("x-ms-vss-method", "GetForkSyncRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests/{forkSyncOperationId}")
+  @get
+  GetForkSyncRequest(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryNameOrId: string,
+
+    /** OperationId of the sync request. */
+    @path forkSyncOperationId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include links. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitForkSyncRequest;
+}
+
+interface Merges {
+  /** Request a git merge operation. Currently we support merging only 2 commits. */
+  @tag("Merges")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "merges")
+  @extension("x-ms-vss-method", "CreateMergeRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/merges")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryNameOrId: string,
+
+    /** True to include links */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Parents commitIds and merge commit messsage. */
+    @body body: GitMergeParameters,
+  ): GitMerge;
+
+  /** Get a specific merge operation's details. */
+  @tag("Merges")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "merges")
+  @extension("x-ms-vss-method", "GetMergeRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/merges/{mergeOperationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repositoryNameOrId: string,
+
+    /** OperationId of the merge request. */
+    @path mergeOperationId: int32,
+
+    /** True to include links */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GitMerge;
 }

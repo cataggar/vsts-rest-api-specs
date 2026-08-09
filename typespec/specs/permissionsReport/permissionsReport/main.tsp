@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "PermissionsReport" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace PermissionsReport;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Detailed report of permissions for a set of groups and users over a set of security namespaces */
 model PermissionsReport {
@@ -125,83 +131,87 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get a list of permissions reports */
-@tag("Permissions Report")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "permissionsReport")
-@extension("x-ms-vss-method", "GetPermissionsReports")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/permissionsreport")
-@get
-op PermissionsReport_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PermissionsReport[]>;
-
-/** Request a permissions report to be created asyncronously */
-@tag("Permissions Report")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "permissionsReport")
-@extension("x-ms-vss-method", "CreatePermissionsReport")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/permissionsreport")
-@post
-op PermissionsReport_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Request configuration to be included in the permissions report */
-  @body body: PermissionsReportRequest,
-): ReferenceLinks;
-
-/** Get a specific permissions report */
-@tag("Permissions Report")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "permissionsReport")
-@extension("x-ms-vss-method", "GetPermissionsReport")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/permissionsreport/{id}")
-@get
-op PermissionsReport_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID (GUID) of the permissions report */
-  @format("uuid") @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PermissionsReport;
-
-/** Download the json results of a permissions report */
-@tag("Permissions Report Download")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "permissionsReportDownload")
-@extension("x-ms-vss-method", "Download")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/permissionsreport/{id}/download")
-@get
-op PermissionsReportDownload_Download(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID (GUID) of the permissions report */
-  @format("uuid") @path id: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface PermissionsReportOperations {
+  /** Get a list of permissions reports */
+  @tag("Permissions Report")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "permissionsReport")
+  @extension("x-ms-vss-method", "GetPermissionsReports")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/permissionsreport")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PermissionsReport[]>;
+
+  /** Request a permissions report to be created asyncronously */
+  @tag("Permissions Report")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "permissionsReport")
+  @extension("x-ms-vss-method", "CreatePermissionsReport")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/permissionsreport")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Request configuration to be included in the permissions report */
+    @body body: PermissionsReportRequest,
+  ): ReferenceLinks;
+
+  /** Get a specific permissions report */
+  @tag("Permissions Report")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "permissionsReport")
+  @extension("x-ms-vss-method", "GetPermissionsReport")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/permissionsreport/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID (GUID) of the permissions report */
+    @format("uuid") @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PermissionsReport;
+}
+
+interface PermissionsReportDownload {
+  /** Download the json results of a permissions report */
+  @tag("Permissions Report Download")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "permissionsReportDownload")
+  @extension("x-ms-vss-method", "Download")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/permissionsreport/{id}/download")
+  @get
+  Download(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID (GUID) of the permissions report */
+    @format("uuid") @path id: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
 }

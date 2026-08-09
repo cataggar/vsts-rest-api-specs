@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Npm" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://pkgs.dev.azure.com")
 namespace Npm;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Data required to deprecate multiple package versions. Pass this while performing NpmBatchOperationTypes.Deprecate batch operation. */
 model BatchDeprecateData {
@@ -226,660 +232,662 @@ model ValidateCustomPublicUpstreamSourceResponse {
   validatedSuccessfully?: boolean;
 }
 
-/** Validates whether the given upstream is valid to add as a custom upstream using the given package name. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "validateUpstream")
-@extension("x-ms-vss-method", "ValidateCustomPublicUpstreamSource")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/packaging/npm/validateupstream")
-@post
-op Npm_ValidateCustomPublicUpstreamSource(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The upstream location (https URI) and package name to validate */
-  @body body: ValidateCustomPublicUpstreamSourceRequest,
-): ValidateCustomPublicUpstreamSourceResponse;
-
-/** Unpublish a scoped package version (such as \@scope/name). The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "UnpublishScopedPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
-@delete
-op Npm_UnpublishScopedPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the package (the 'scope' part of \@scope/name). */
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scope/name). */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-/** Get information about a scoped package version (such as \@scope/name). The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "GetScopedPackageInfoAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
-@get
-op Npm_GetScopedPackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the package (the 'scope' part of \@scope/name). */
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scope/name). */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-/** Update state for an npm scoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "UpdateScopedPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
-@patch
-op Npm_UpdateScopedPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scope/name). */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Updated state for the package version. */
-  @body body: PackageVersionDetails,
-): Package;
-
-/** Unpublish an unscoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "UnpublishPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
-@delete
-op Npm_UnpublishPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-/** Get information about an unscoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "GetPackageInfoAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
-@get
-op Npm_GetPackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-/** Update state for an unscoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "UpdatePackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
-@patch
-op Npm_UpdatePackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Updated state for the package version. */
-  @body body: PackageVersionDetails,
-): Package;
-
-/** Get the upstreaming behavior of the (scoped) package within the context of a feed */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "upstreaming")
-@extension("x-ms-vss-method", "GetScopedUpstreamingBehavior")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/upstreaming")
-@get
-op Npm_GetPackageUpstreamingBehavior(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or id of the feed */
-  @path feedId: string,
-
-  /** The scope of the package */
-  @path packageScope: string,
-
-  /** The name of the scoped package */
-  @path unscopedPackageName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): UpstreamingBehavior;
-
-/** Set the upstreaming behavior of a (scoped) package within the context of a feed The package does not need to necessarily exist in the feed prior to setting the behavior. This assists with packages that are not yet ingested from an upstream, yet the feed owner wants to apply a specific behavior on the first ingestion. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "upstreaming")
-@extension("x-ms-vss-method", "SetScopedUpstreamingBehavior")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/upstreaming")
-@patch
-op Npm_SetScopedUpstreamingBehavior(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or id of the feed */
-  @path feedId: string,
-
-  /** The scope of the package */
-  @path packageScope: string,
-
-  /** The name of the scoped package */
-  @path unscopedPackageName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The behavior to apply to the scoped package within the scope of the feed */
-  @body body: UpstreamingBehavior,
-): OkResponse;
-
-/** Get scoped npm package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "content")
-@extension("x-ms-vss-method", "GetContentScopedPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}/content")
-@get
-op Npm_DownloadScopedPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the npm package (the \@scope portion of \@scope/packageName). */
-  @path packageScope: string,
-
-  /** Name of the package without the scope component. */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** Get the Readme for a package version with an npm scope. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "readme")
-@extension("x-ms-vss-method", "GetReadmeScopedPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}/readme")
-@get
-op Npm_GetScopedPackageReadme(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the package (the 'scope' part of \@scopename) */
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scopename) */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "text/plain";
-  @body @format("Stream") body: string;
-};
-
-/** Get the upstreaming behavior of the (unscoped) package within the context of a feed */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "upstreaming")
-@extension("x-ms-vss-method", "GetUpstreamingBehavior")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/upstreaming")
-@get
-op Npm_GetScopedPackageUpstreamingBehavior(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or id of the feed */
-  @path feedId: string,
-
-  /** The name of the package */
-  @path packageName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): UpstreamingBehavior;
-
-/** Set the upstreaming behavior of a (scoped) package within the context of a feed The package does not need to necessarily exist in the feed prior to setting the behavior. This assists with packages that are not yet ingested from an upstream, yet the feed owner wants to apply a specific behavior on the first ingestion. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "upstreaming")
-@extension("x-ms-vss-method", "SetUpstreamingBehavior")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/upstreaming")
-@patch
-op Npm_SetUpstreamingBehavior(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or id of the feed */
-  @path feedId: string,
-
-  /** The name of the package */
-  @path packageName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The behavior to apply to the scoped package within the scope of the feed */
-  @body body: UpstreamingBehavior,
-): OkResponse;
-
-/** Get an unscoped npm package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "content")
-@extension("x-ms-vss-method", "GetContentUnscopedPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/versions/{packageVersion}/content")
-@get
-op Npm_DownloadPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** Get the Readme for a package version that has no npm scope. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "readme")
-@extension("x-ms-vss-method", "GetReadmeUnscopedPackageAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/versions/{packageVersion}/readme")
-@get
-op Npm_GetPackageReadme(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "text/plain";
-  @body @format("Stream") body: string;
-};
-
-/** Update several packages from a single feed in a single request. The updates to the packages do not happen atomically. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packagesbatch")
-@extension("x-ms-vss-method", "UpdatePackagesAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packagesbatch")
-@post
-op Npm_UpdatePackages(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Information about the packages to update, the operation to perform, and its associated data. */
-  @body body: NpmPackagesBatchRequest,
-): OkResponse;
-
-/** Delete a package version with an npm scope from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "DeleteScopedPackageVersionFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
-@delete
-op Npm_DeleteScopedPackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the package (the 'scope' part of \@scope/name). */
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scope/name). */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get information about a scoped package version in the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "GetScopedPackageVersionMetadataFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
-@get
-op Npm_GetScopedPackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the package (the 'scope' part of \@scope/name) */
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scope/name). */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): NpmPackageVersionDeletionState;
-
-/** Restore a package version with an npm scope from the recycle bin to its feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "RestoreScopedPackageVersionFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
-@patch
-op Npm_RestoreScopedPackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Scope of the package (the 'scope' part of \@scope/name). */
-  @path packageScope: string,
-
-  /** Name of the package (the 'name' part of \@scope/name). */
-  @path unscopedPackageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NpmRecycleBinPackageVersionDetails,
-): OkResponse;
-
-/** Delete a package version without an npm scope from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "DeletePackageVersionFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
-@delete
-op Npm_DeletePackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get information about an unscoped package version in the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "GetPackageVersionMetadataFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
-@get
-op Npm_GetPackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): NpmPackageVersionDeletionState;
-
-/** Restore a package version without an npm scope from the recycle bin to its feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "RestorePackageVersionFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
-@patch
-op Npm_RestorePackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Name of the package. */
-  @path packageName: string,
-
-  /** Version of the package. */
-  @path packageVersion: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NpmRecycleBinPackageVersionDetails,
-): OkResponse;
-
-/** Delete or restore several package versions from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Npm")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recyclebinpackagesbatch")
-@extension("x-ms-vss-method", "UpdateRecycleBinPackagesAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/PackagesBatch")
-@post
-op Npm_UpdateRecycleBinPackages(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Information about the packages to update, the operation to perform, and its associated data. */
-  @body body: NpmPackagesBatchRequest,
-): OkResponse;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Npm {
+  /** Validates whether the given upstream is valid to add as a custom upstream using the given package name. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "validateUpstream")
+  @extension("x-ms-vss-method", "ValidateCustomPublicUpstreamSource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/packaging/npm/validateupstream")
+  @post
+  ValidateCustomPublicUpstreamSource(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The upstream location (https URI) and package name to validate */
+    @body body: ValidateCustomPublicUpstreamSourceRequest,
+  ): ValidateCustomPublicUpstreamSourceResponse;
+
+  /** Unpublish a scoped package version (such as \@scope/name). The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "UnpublishScopedPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
+  @delete
+  UnpublishScopedPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the package (the 'scope' part of \@scope/name). */
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scope/name). */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  /** Get information about a scoped package version (such as \@scope/name). The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "GetScopedPackageInfoAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
+  @get
+  GetScopedPackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the package (the 'scope' part of \@scope/name). */
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scope/name). */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  /** Update state for an npm scoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "UpdateScopedPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
+  @patch
+  UpdateScopedPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scope/name). */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Updated state for the package version. */
+    @body body: PackageVersionDetails,
+  ): Package;
+
+  /** Unpublish an unscoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "UnpublishPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
+  @delete
+  UnpublishPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  /** Get information about an unscoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "GetPackageInfoAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
+  @get
+  GetPackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  /** Update state for an unscoped package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "UpdatePackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
+  @patch
+  UpdatePackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Updated state for the package version. */
+    @body body: PackageVersionDetails,
+  ): Package;
+
+  /** Get the upstreaming behavior of the (scoped) package within the context of a feed */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "upstreaming")
+  @extension("x-ms-vss-method", "GetScopedUpstreamingBehavior")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/upstreaming")
+  @get
+  GetPackageUpstreamingBehavior(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or id of the feed */
+    @path feedId: string,
+
+    /** The scope of the package */
+    @path packageScope: string,
+
+    /** The name of the scoped package */
+    @path unscopedPackageName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): UpstreamingBehavior;
+
+  /** Set the upstreaming behavior of a (scoped) package within the context of a feed The package does not need to necessarily exist in the feed prior to setting the behavior. This assists with packages that are not yet ingested from an upstream, yet the feed owner wants to apply a specific behavior on the first ingestion. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "upstreaming")
+  @extension("x-ms-vss-method", "SetScopedUpstreamingBehavior")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/upstreaming")
+  @patch
+  SetScopedUpstreamingBehavior(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or id of the feed */
+    @path feedId: string,
+
+    /** The scope of the package */
+    @path packageScope: string,
+
+    /** The name of the scoped package */
+    @path unscopedPackageName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The behavior to apply to the scoped package within the scope of the feed */
+    @body body: UpstreamingBehavior,
+  ): OkResponse;
+
+  /** Get scoped npm package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "content")
+  @extension("x-ms-vss-method", "GetContentScopedPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}/content")
+  @get
+  DownloadScopedPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the npm package (the \@scope portion of \@scope/packageName). */
+    @path packageScope: string,
+
+    /** Name of the package without the scope component. */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+
+  /** Get the Readme for a package version with an npm scope. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "readme")
+  @extension("x-ms-vss-method", "GetReadmeScopedPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}/readme")
+  @get
+  GetScopedPackageReadme(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the package (the 'scope' part of \@scopename) */
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scopename) */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "text/plain";
+    @body @format("Stream") body: string;
+  };
+
+  /** Get the upstreaming behavior of the (unscoped) package within the context of a feed */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "upstreaming")
+  @extension("x-ms-vss-method", "GetUpstreamingBehavior")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/upstreaming")
+  @get
+  GetScopedPackageUpstreamingBehavior(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or id of the feed */
+    @path feedId: string,
+
+    /** The name of the package */
+    @path packageName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): UpstreamingBehavior;
+
+  /** Set the upstreaming behavior of a (scoped) package within the context of a feed The package does not need to necessarily exist in the feed prior to setting the behavior. This assists with packages that are not yet ingested from an upstream, yet the feed owner wants to apply a specific behavior on the first ingestion. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "upstreaming")
+  @extension("x-ms-vss-method", "SetUpstreamingBehavior")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/upstreaming")
+  @patch
+  SetUpstreamingBehavior(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or id of the feed */
+    @path feedId: string,
+
+    /** The name of the package */
+    @path packageName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The behavior to apply to the scoped package within the scope of the feed */
+    @body body: UpstreamingBehavior,
+  ): OkResponse;
+
+  /** Get an unscoped npm package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "content")
+  @extension("x-ms-vss-method", "GetContentUnscopedPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/versions/{packageVersion}/content")
+  @get
+  DownloadPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+
+  /** Get the Readme for a package version that has no npm scope. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "readme")
+  @extension("x-ms-vss-method", "GetReadmeUnscopedPackageAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/versions/{packageVersion}/readme")
+  @get
+  GetPackageReadme(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "text/plain";
+    @body @format("Stream") body: string;
+  };
+
+  /** Update several packages from a single feed in a single request. The updates to the packages do not happen atomically. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packagesbatch")
+  @extension("x-ms-vss-method", "UpdatePackagesAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packagesbatch")
+  @post
+  UpdatePackages(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Information about the packages to update, the operation to perform, and its associated data. */
+    @body body: NpmPackagesBatchRequest,
+  ): OkResponse;
+
+  /** Delete a package version with an npm scope from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "DeleteScopedPackageVersionFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
+  @delete
+  DeleteScopedPackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the package (the 'scope' part of \@scope/name). */
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scope/name). */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get information about a scoped package version in the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "GetScopedPackageVersionMetadataFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
+  @get
+  GetScopedPackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the package (the 'scope' part of \@scope/name) */
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scope/name). */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NpmPackageVersionDeletionState;
+
+  /** Restore a package version with an npm scope from the recycle bin to its feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "RestoreScopedPackageVersionFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
+  @patch
+  RestoreScopedPackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Scope of the package (the 'scope' part of \@scope/name). */
+    @path packageScope: string,
+
+    /** Name of the package (the 'name' part of \@scope/name). */
+    @path unscopedPackageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NpmRecycleBinPackageVersionDetails,
+  ): OkResponse;
+
+  /** Delete a package version without an npm scope from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "DeletePackageVersionFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
+  @delete
+  DeletePackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get information about an unscoped package version in the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "GetPackageVersionMetadataFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
+  @get
+  GetPackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NpmPackageVersionDeletionState;
+
+  /** Restore a package version without an npm scope from the recycle bin to its feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "RestorePackageVersionFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
+  @patch
+  RestorePackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Name of the package. */
+    @path packageName: string,
+
+    /** Version of the package. */
+    @path packageVersion: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NpmRecycleBinPackageVersionDetails,
+  ): OkResponse;
+
+  /** Delete or restore several package versions from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Npm")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recyclebinpackagesbatch")
+  @extension("x-ms-vss-method", "UpdateRecycleBinPackagesAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/PackagesBatch")
+  @post
+  UpdateRecycleBinPackages(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Information about the packages to update, the operation to perform, and its associated data. */
+    @body body: NpmPackagesBatchRequest,
+  ): OkResponse;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Favorite" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Favorite;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model ArtifactProperties {}
 
@@ -171,81 +177,83 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-@tag("Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "favorites")
-@extension("x-ms-vss-method", "GetFavorites")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/favorite/favorites")
-@get
-op Favorites_GetFavorites(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @query(#{ explode: true }) artifactType?: string,
-  @query(#{ explode: true }) artifactScopeType?: string,
-  @query(#{ explode: true }) artifactScopeId?: string,
-  @query(#{ explode: true }) includeExtendedDetails?: boolean,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Favorite[]>;
-
-@tag("Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "favorites")
-@extension("x-ms-vss-method", "CreateFavorite")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/favorite/favorites")
-@post
-op Favorites_CreateFavorite(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: FavoriteCreateParameters,
-): Favorite;
-
-@tag("Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "favorites")
-@extension("x-ms-vss-method", "DeleteFavoriteById")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/favorite/favorites/{favoriteId}")
-@delete
-op Favorites_DeleteFavoriteById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @format("uuid") @path favoriteId: string,
-  @query(#{ explode: true }) artifactType: string,
-  @query(#{ explode: true }) artifactScopeType: string,
-  @query(#{ explode: true }) artifactScopeId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-@tag("Favorites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "favorites")
-@extension("x-ms-vss-method", "GetFavoriteById")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/favorite/favorites/{favoriteId}")
-@get
-op Favorites_GetFavoriteById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @format("uuid") @path favoriteId: string,
-  @query(#{ explode: true }) artifactScopeType: string,
-  @query(#{ explode: true }) artifactType: string,
-  @query(#{ explode: true }) artifactScopeId?: string,
-  @query(#{ explode: true }) includeExtendedDetails?: boolean,
-  ...Parameters.`api-Version-preview`.`1`,
-): Favorite;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Favorites {
+  @tag("Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "favorites")
+  @extension("x-ms-vss-method", "GetFavorites")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/favorite/favorites")
+  @get
+  GetFavorites(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @query(#{ explode: true }) artifactType?: string,
+    @query(#{ explode: true }) artifactScopeType?: string,
+    @query(#{ explode: true }) artifactScopeId?: string,
+    @query(#{ explode: true }) includeExtendedDetails?: boolean,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Favorite[]>;
+
+  @tag("Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "favorites")
+  @extension("x-ms-vss-method", "CreateFavorite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/favorite/favorites")
+  @post
+  CreateFavorite(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: FavoriteCreateParameters,
+  ): Favorite;
+
+  @tag("Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "favorites")
+  @extension("x-ms-vss-method", "DeleteFavoriteById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/favorite/favorites/{favoriteId}")
+  @delete
+  DeleteFavoriteById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @format("uuid") @path favoriteId: string,
+    @query(#{ explode: true }) artifactType: string,
+    @query(#{ explode: true }) artifactScopeType: string,
+    @query(#{ explode: true }) artifactScopeId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  @tag("Favorites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "favorites")
+  @extension("x-ms-vss-method", "GetFavoriteById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/favorite/favorites/{favoriteId}")
+  @get
+  GetFavoriteById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @format("uuid") @path favoriteId: string,
+    @query(#{ explode: true }) artifactScopeType: string,
+    @query(#{ explode: true }) artifactType: string,
+    @query(#{ explode: true }) artifactScopeId?: string,
+    @query(#{ explode: true }) includeExtendedDetails?: boolean,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Favorite;
 }

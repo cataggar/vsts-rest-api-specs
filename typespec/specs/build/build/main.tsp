@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Build" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Build;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Represents a queue for running builds. */
 model AgentPoolQueue {
@@ -3526,2438 +3532,2494 @@ model YamlProcess {
   yamlFilename?: string;
 }
 
-/** Gets controller, optionally filtered by name */
-@tag("Controllers")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "controllers")
-@extension("x-ms-vss-method", "GetBuildControllers")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/build/controllers")
-@get
-op Controllers_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @query(#{ explode: true }) name?: string,
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<BuildController[]>;
-
-/** Gets a controller */
-@tag("Controllers")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "controllers")
-@extension("x-ms-vss-method", "GetBuildController")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/build/controllers/{controllerId}")
-@get
-op Controllers_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path controllerId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-): BuildController;
-
-/** Gets information about build resources in the system. */
-@tag("Resource Usage")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "resourceUsage")
-@extension("x-ms-vss-method", "GetResourceUsage")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/build/resourceusage")
-@get
-op ResourceUsage_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): BuildResourceUsage;
-
-/** Returns the retention history for the project collection. This includes pipelines that have custom retention rules that may prevent the retention job from cleaning them up, runs per pipeline with retention type, files associated with pipelines owned by the collection with retention type, and the number of files per pipeline. */
-@tag("History")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "history")
-@extension("x-ms-vss-method", "GetRetentionHistory")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/build/retention/history")
-@get
-op History_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @query(#{ explode: true }) daysToLookback?: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): BuildRetentionHistory;
-
-/** This endpoint is deprecated. Please see the Build Status REST endpoint. */
-@tag("Badge")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "badge")
-@extension("x-ms-vss-method", "GetBadge")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/public/build/definitions/{project}/{definitionId}/badge")
-@get
-op Badge_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project ID or name. */
-  @format("uuid") @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The name of the branch. */
-  @query(#{ explode: true }) branchName?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<string>;
-
-@tag("Authorizedresources")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "authorizedresources")
-@extension("x-ms-vss-method", "GetProjectResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/authorizedresources")
-@get
-op Authorizedresources_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @query(#{ explode: true }) type?: string,
-  @query(#{ explode: true }) id?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<DefinitionResourceReference[]>;
-
-@tag("Authorizedresources")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "authorizedresources")
-@extension("x-ms-vss-method", "AuthorizeProjectResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/authorizedresources")
-@patch
-op Authorizedresources_AuthorizeProjectResources(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: DefinitionResourceReference[],
-): Body<DefinitionResourceReference[]>;
-
-/** Gets a list of builds. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "builds")
-@extension("x-ms-vss-method", "GetBuilds")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds")
-@get
-op Builds_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** A comma-delimited list of definition IDs. If specified, filters to builds for these definitions. */
-  @format("array (int32)") @query(#{ explode: true }) definitions?: string,
-
-  /** A comma-delimited list of queue IDs. If specified, filters to builds that ran against these queues. */
-  @format("array (int32)") @query(#{ explode: true }) queues?: string,
-
-  /** If specified, filters to builds that match this build number. Append * to do a prefix search. */
-  @query(#{ explode: true }) buildNumber?: string,
-
-  /** If specified, filters to builds that finished/started/queued after this date based on the queryOrder specified. */
-  @query(#{ explode: true }) minTime?: utcDateTime,
-
-  /** If specified, filters to builds that finished/started/queued before this date based on the queryOrder specified. */
-  @query(#{ explode: true }) maxTime?: utcDateTime,
-
-  /** If specified, filters to builds requested for the specified user. */
-  @query(#{ explode: true }) requestedFor?: string,
-
-  /** If specified, filters to builds that match this reason. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "BuildReason",
-      values: #[
-        #{ value: "none", description: "No reason. This value should not be used." },
-        #{ value: "manual", description: "The build was started manually." },
-        #{
-          value: "individualCI",
-          description: "The build was started for the trigger TriggerType.ContinuousIntegration.",
-        },
-        #{
-          value: "batchedCI",
-          description: "The build was started for the trigger TriggerType.BatchedContinuousIntegration.",
-        },
-        #{
-          value: "schedule",
-          description: "The build was started for the trigger TriggerType.Schedule.",
-        },
-        #{
-          value: "scheduleForced",
-          description: "The build was started for the trigger TriggerType.ScheduleForced.",
-        },
-        #{ value: "userCreated", description: "The build was created by a user." },
-        #{
-          value: "validateShelveset",
-          description: "The build was started manually for private validation.",
-        },
-        #{
-          value: "checkInShelveset",
-          description: "The build was started for the trigger ContinuousIntegrationType.Gated.",
-        },
-        #{
-          value: "pullRequest",
-          description: "The build was started by a pull request. Added in resource version 3.",
-        },
-        #{
-          value: "buildCompletion",
-          description: "The build was started when another build completed.",
-        },
-        #{
-          value: "resourceTrigger",
-          description: "The build was started when resources in pipeline triggered it",
-        },
-        #{
-          value: "triggered",
-          description: "The build was triggered for retention policy purposes.",
-        },
-        #{ value: "all", description: "All reasons." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  reasonFilter?:
-    | "none"
-    | "manual"
-    | "individualCI"
-    | "batchedCI"
-    | "schedule"
-    | "scheduleForced"
-    | "userCreated"
-    | "validateShelveset"
-    | "checkInShelveset"
-    | "pullRequest"
-    | "buildCompletion"
-    | "resourceTrigger"
-    | "triggered"
-    | "all",
-
-  /** If specified, filters to builds that match this status. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "BuildStatus",
-      values: #[
-        #{ value: "none", description: "No status." },
-        #{ value: "inProgress", description: "The build is currently in progress." },
-        #{ value: "completed", description: "The build has completed." },
-        #{ value: "cancelling", description: "The build is cancelling" },
-        #{ value: "postponed", description: "The build is inactive in the queue." },
-        #{ value: "abandoned", description: "The build has been abandoned." },
-        #{ value: "notStarted", description: "The build has not yet started." },
-        #{ value: "all", description: "All status." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  statusFilter?:
-    | "none"
-    | "inProgress"
-    | "completed"
-    | "cancelling"
-    | "postponed"
-    | "abandoned"
-    | "notStarted"
-    | "all",
-
-  /** If specified, filters to builds that match this result. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "BuildResult",
-      values: #[
-        #{ value: "none", description: "No result" },
-        #{ value: "succeeded", description: "The build completed successfully." },
-        #{
-          value: "partiallySucceeded",
-          description: "The build completed compilation successfully but had other errors.",
-        },
-        #{ value: "failed", description: "The build completed unsuccessfully." },
-        #{ value: "canceled", description: "The build was canceled before starting." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  resultFilter?: "none" | "succeeded" | "partiallySucceeded" | "failed" | "canceled",
-
-  /** A comma-delimited list of tags. If specified, filters to builds that have the specified tags. */
-  @format("array (string)") @query(#{ explode: true }) tagFilters?: string,
-
-  /** A comma-delimited list of properties to retrieve. */
-  @format("array (string)") @query(#{ explode: true }) properties?: string,
-
-  /** The maximum number of builds to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** A continuation token, returned by a previous call to this method, that can be used to return the next set of builds. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** The maximum number of builds to return per definition. */
-  @query(#{ explode: true }) maxBuildsPerDefinition?: int32,
-
-  /** Indicates whether to exclude, include, or only return deleted builds. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "QueryDeletedOption",
-      values: #[
-        #{ value: "excludeDeleted", description: "Include only non-deleted builds." },
-        #{ value: "includeDeleted", description: "Include deleted and non-deleted builds." },
-        #{ value: "onlyDeleted", description: "Include only deleted builds." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  deletedFilter?: "excludeDeleted" | "includeDeleted" | "onlyDeleted",
-
-  /** The order in which builds should be returned. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "BuildQueryOrder",
-      values: #[
-        #{ value: "finishTimeAscending", description: "Order by finish time ascending." },
-        #{ value: "finishTimeDescending", description: "Order by finish time descending." },
-        #{ value: "queueTimeDescending", description: "Order by queue time descending." },
-        #{ value: "queueTimeAscending", description: "Order by queue time ascending." },
-        #{ value: "startTimeDescending", description: "Order by start time descending." },
-        #{ value: "startTimeAscending", description: "Order by start time ascending." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?:
-    | "finishTimeAscending"
-    | "finishTimeDescending"
-    | "queueTimeDescending"
-    | "queueTimeAscending"
-    | "startTimeDescending"
-    | "startTimeAscending",
-
-  /** If specified, filters to builds that built branches that built this branch. */
-  @query(#{ explode: true }) branchName?: string,
-
-  /** A comma-delimited list that specifies the IDs of builds to retrieve. */
-  @format("array (int32)") @query(#{ explode: true }) buildIds?: string,
-
-  /** If specified, filters to builds that built from this repository. */
-  @query(#{ explode: true }) repositoryId?: string,
-
-  /** If specified, filters to builds that built from repositories of this type. */
-  @query(#{ explode: true }) repositoryType?: string,
-
-  ...Parameters.`api-Version-preview`.`8`,
-): Body<Build[]>;
-
-/** Updates multiple builds. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "builds")
-@extension("x-ms-vss-method", "UpdateBuilds")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds")
-@patch
-op Builds_UpdateBuilds(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`8`,
-
-  /** The builds to update. */
-  @body body: Build[],
-): Body<Build[]>;
-
-/** Queues a build */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "builds")
-@extension("x-ms-vss-method", "QueueBuild")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds")
-@post
-op Builds_Queue(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @query(#{ explode: true }) ignoreWarnings?: boolean,
-  @query(#{ explode: true }) checkInTicket?: string,
-  @query(#{ explode: true }) sourceBuildId?: int32,
-
-  /** Optional definition id to queue a build without a body. Ignored if there's a valid body */
-  @query(#{ explode: true }) definitionId?: int32,
-
-  ...Parameters.`api-Version-preview`.`8`,
-  @body body: Build,
-): Build;
-
-/** Deletes a build. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "builds")
-@extension("x-ms-vss-method", "DeleteBuild")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}")
-@delete
-op Builds_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`8`,
-): OkResponse;
-
-/** Gets a build */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "builds")
-@extension("x-ms-vss-method", "GetBuild")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}")
-@get
-op Builds_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path buildId: int32,
-  @query(#{ explode: true }) propertyFilters?: string,
-  ...Parameters.`api-Version-preview`.`8`,
-): Build;
-
-/** Updates a build. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "builds")
-@extension("x-ms-vss-method", "UpdateBuild")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}")
-@patch
-op Builds_UpdateBuild(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  @query(#{ explode: true }) retry?: boolean,
-  ...Parameters.`api-Version-preview`.`8`,
-
-  /** The build. */
-  @body body: Build,
-): Build;
-
-/** Gets a specific attachment. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/{timelineId}/{recordId}/attachments/{type}/{name}")
-@get
-op Attachments_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The ID of the timeline. */
-  @format("uuid") @path timelineId: string,
-
-  /** The ID of the timeline record. */
-  @format("uuid") @path recordId: string,
-
-  /** The type of the attachment. */
-  @path type: string,
-
-  /** The name of the attachment. */
-  @path name: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** Gets all artifacts for a build. */
-@tag("Artifacts")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "artifacts")
-@extension("x-ms-vss-method", "GetArtifacts")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/artifacts")
-@get
-op Artifacts_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`5`,
-): Body<BuildArtifact[]>;
-
-/** Associates an artifact with a build. */
-@tag("Artifacts")
-@extension("x-ms-docs-override-version", "7.2-preview.5")
-@extension("x-ms-vss-resource", "artifacts")
-@extension("x-ms-vss-method", "CreateArtifact")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/artifacts")
-@post
-op Artifacts_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`5`,
-
-  /** The artifact. */
-  @body body: BuildArtifact,
-): BuildArtifact;
-
-/** Gets the list of attachments of a specific type that are associated with a build. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetAttachments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/attachments/{type}")
-@get
-op Attachments_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The type of attachment. */
-  @path type: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Attachment[]>;
-
-/** Gets the changes associated with a build */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "changes")
-@extension("x-ms-vss-method", "GetBuildChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/changes")
-@get
-op Builds_GetBuildChanges(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path buildId: int32,
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** The maximum number of changes to return */
-  @query(#{ explode: true }) $top?: int32,
-
-  @query(#{ explode: true }) includeSourceChange?: boolean,
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Change[]>;
-
-/** Gets all retention leases that apply to a specific build. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "buildleases")
-@extension("x-ms-vss-method", "GetRetentionLeasesForBuild")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/leases")
-@get
-op Builds_GetRetentionLeasesForBuild(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<RetentionLease[]>;
-
-/** Gets the logs for a build. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "GetBuildLogs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/logs")
-@get
-op Builds_GetBuildLogs(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-):
-  | {
-      @header contentType: "application/zip";
-      @body body: BuildLog[];
-    }
-  | Body<BuildLog[]>;
-
-/** Gets an individual log file for a build. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "GetBuildLog")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/logs/{logId}")
-@get
-op Builds_GetBuildLog(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The ID of the log file. */
-  @path logId: int32,
-
-  /** The start line. */
-  @query(#{ explode: true }) startLine?: int64,
-
-  /** The end line. */
-  @query(#{ explode: true }) endLine?: int64,
-
-  ...Parameters.`api-Version-preview`.`2`,
-):
-  | {
-      @header contentType: "application/zip";
-      @body @format("Stream") body: string;
-    }
-  | Body<string>
-  | {
-      @header contentType: "text/plain";
-      @body @format("Stream") body: string;
-    };
-
-/** Gets properties for a build. */
-@tag("Properties")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "properties")
-@extension("x-ms-vss-method", "GetBuildProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/properties")
-@get
-op Properties_GetBuildProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** A comma-delimited list of properties. If specified, filters to these specific properties. */
-  @format("array (string)") @query(#{ explode: true }) filter?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PropertiesCollection;
-
-/** Updates properties for a build. */
-@tag("Properties")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "properties")
-@extension("x-ms-vss-method", "UpdateBuildProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/properties")
-@patch
-op Properties_UpdateBuildProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** A json-patch document describing the properties to update. */
-  @body body: JsonPatchDocument,
-): PropertiesCollection;
-
-/** Gets a build report. */
-@tag("Report")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "report")
-@extension("x-ms-vss-method", "GetBuildReport")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/report")
-@get
-op Report_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  @query(#{ explode: true }) type?: string,
-  ...Parameters.`api-Version-preview`.`2`,
-):
-  | {
-      @header contentType: "text/html";
-      @body body: BuildReportMetadata;
-    }
-  | BuildReportMetadata;
-
-/** Update a build stage */
-@tag("Stages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "stages")
-@extension("x-ms-vss-method", "UpdateStage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/stages/{stageRefName}")
-@patch
-op Stages_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path buildId: int32,
-  @path stageRefName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: UpdateStageParameters,
-): OkResponse;
-
-/** Gets the tags for a build. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "GetBuildTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
-@get
-op Tags_GetBuildTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Adds/Removes tags from a build. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "UpdateBuildTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
-@patch
-op Tags_UpdateBuildTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The tags to add/remove. */
-  @body body: UpdateTagParameters,
-): Body<string[]>;
-
-/** Adds tags to a build. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "AddBuildTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
-@post
-op Tags_AddBuildTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The tags to add. Request body is composed directly from listed tags. */
-  @body body: string[],
-): Body<string[]>;
-
-/** Removes a tag from a build. NOTE: This API will not work for tags with special characters. To remove tags with special characters, use the PATCH method instead (in 6.0+) */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "DeleteBuildTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/tags/{tag}")
-@delete
-op Tags_DeleteBuildTag(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The tag to remove. */
-  @path tag: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Adds a tag to a build. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "AddBuildTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/tags/{tag}")
-@put
-op Tags_AddBuildTag(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The tag to add. */
-  @path tag: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Gets details for a build */
-@tag("Timeline")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "timeline")
-@extension("x-ms-vss-method", "GetBuildTimeline")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/timeline/{timelineId}")
-@get
-op Timeline_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path buildId: int32,
-
-  @extension("x-ms-required", false)
-  @format("uuid")
-  @path
-  timelineId: string,
-
-  @query(#{ explode: true }) changeId?: int32,
-  @format("uuid") @query(#{ explode: true }) planId?: string,
-  ...Parameters.`api-Version-preview`.`3`,
-): Timeline;
-
-/** Gets the timeline for a build filtered to a specific stage. */
-@tag("Stage Timeline")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "stageTimeline")
-@extension("x-ms-vss-method", "GetBuildStageTimeline")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/Timeline/{timelineId}/stages/{stageName}")
-@get
-op StageTimeline_GetBuildStageTimeline(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The ID of the timeline. */
-  @format("uuid") @path timelineId: string,
-
-  /** The name of the stage to filter by. */
-  @path stageName: string,
-
-  /** The change ID to filter by. */
-  @query(#{ explode: true }) changeId?: int32,
-
-  /** The ID of the plan. */
-  @format("uuid") @query(#{ explode: true }) planId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Timeline;
-
-/** Gets the latest timeline for a build filtered to a specific stage. */
-@tag("Stage Timeline")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "stageTimeline")
-@extension("x-ms-vss-method", "GetBuildStageLatestTimeline")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/Timeline/stages/{stageName}")
-@get
-op StageTimeline_GetBuildStageLatestTimeline(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The name of the stage to filter by. */
-  @path stageName: string,
-
-  /** The change ID to filter by. */
-  @query(#{ explode: true }) changeId?: int32,
-
-  /** The ID of the plan. */
-  @format("uuid") @query(#{ explode: true }) planId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Timeline;
-
-/** Gets the work items associated with a build. Only work items in the same project are returned. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workitems")
-@extension("x-ms-vss-method", "GetBuildWorkItemsRefs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/workitems")
-@get
-op Builds_GetBuildWorkItemsRefs(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The maximum number of work items to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<ResourceRef[]>;
-
-/** Gets the work items associated with a build, filtered to specific commits. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workitems")
-@extension("x-ms-vss-method", "GetBuildWorkItemsRefsFromCommits")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/builds/{buildId}/workitems")
-@post
-op Builds_GetBuildWorkItemsRefsFromCommits(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the build. */
-  @path buildId: int32,
-
-  /** The maximum number of work items to return, or the number of commits to consider if no commit IDs are specified. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** A comma-delimited list of commit IDs. */
-  @body body: string[],
-): Body<ResourceRef[]>;
-
-/** Gets the changes made to the repository between two given builds. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "changes")
-@extension("x-ms-vss-method", "GetChangesBetweenBuilds")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/changes")
-@get
-op Builds_GetChangesBetweenBuilds(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the first build. */
-  @query(#{ explode: true }) fromBuildId?: int32,
-
-  /** The ID of the last build. */
-  @query(#{ explode: true }) toBuildId?: int32,
-
-  /** The maximum number of changes to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Change[]>;
-
-/** Gets a list of definitions. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "GetDefinitions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions")
-@get
-op Definitions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** If specified, filters to definitions whose names match this pattern. */
-  @query(#{ explode: true }) name?: string,
-
-  /** A repository ID. If specified, filters to definitions that use this repository. */
-  @query(#{ explode: true }) repositoryId?: string,
-
-  /** If specified, filters to definitions that have a repository of this type. */
-  @query(#{ explode: true }) repositoryType?: string,
-
-  /** Indicates the order in which definitions should be returned. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DefinitionQueryOrder",
-      values: #[
-        #{ value: "none", description: "No order" },
-        #{
-          value: "lastModifiedAscending",
-          description: "Order by created on/last modified time ascending.",
-        },
-        #{
-          value: "lastModifiedDescending",
-          description: "Order by created on/last modified time descending.",
-        },
-        #{ value: "definitionNameAscending", description: "Order by definition name ascending." },
-        #{ value: "definitionNameDescending", description: "Order by definition name descending." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?:
-    | "none"
-    | "lastModifiedAscending"
-    | "lastModifiedDescending"
-    | "definitionNameAscending"
-    | "definitionNameDescending",
-
-  /** The maximum number of definitions to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** A continuation token, returned by a previous call to this method, that can be used to return the next set of definitions. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** If specified, indicates the date from which metrics should be included. */
-  @query(#{ explode: true }) minMetricsTime?: utcDateTime,
-
-  /** A comma-delimited list that specifies the IDs of definitions to retrieve. */
-  @format("array (int32)") @query(#{ explode: true }) definitionIds?: string,
-
-  /** If specified, filters to definitions under this folder. */
-  @query(#{ explode: true }) path?: string,
-
-  /** If specified, filters to definitions that have builds after this date. */
-  @query(#{ explode: true }) builtAfter?: utcDateTime,
-
-  /** If specified, filters to definitions that do not have builds after this date. */
-  @query(#{ explode: true }) notBuiltAfter?: utcDateTime,
-
-  /** Indicates whether the full definitions should be returned. By default, shallow representations of the definitions are returned. */
-  @query(#{ explode: true }) includeAllProperties?: boolean,
-
-  /** Indicates whether to return the latest and latest completed builds for this definition. */
-  @query(#{ explode: true }) includeLatestBuilds?: boolean,
-
-  /** If specified, filters to definitions that use the specified task. */
-  @format("uuid") @query(#{ explode: true }) taskIdFilter?: string,
-
-  /** If specified, filters to definitions with the given process type. */
-  @query(#{ explode: true }) processType?: int32,
-
-  /** If specified, filters to YAML definitions that match the given filename. To use this filter includeAllProperties should be set to true */
-  @query(#{ explode: true }) yamlFilename?: string,
-
-  ...Parameters.`api-Version-preview`.`8`,
-): Body<BuildDefinitionReference[]>;
-
-/** Creates a new definition. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "CreateDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions")
-@post
-op Definitions_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @query(#{ explode: true }) definitionToCloneId?: int32,
-  @query(#{ explode: true }) definitionToCloneRevision?: int32,
-  ...Parameters.`api-Version-preview`.`8`,
-
-  /** The definition. */
-  @body body: BuildDefinition,
-): BuildDefinition;
-
-/** Deletes a definition and all associated builds. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "DeleteDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
-@delete
-op Definitions_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  ...Parameters.`api-Version-preview`.`8`,
-): OkResponse;
-
-/** Gets a definition, optionally at a specific revision. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "GetDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
-@get
-op Definitions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The revision number to retrieve. If this is not specified, the latest version will be returned. */
-  @query(#{ explode: true }) revision?: int32,
-
-  /** If specified, indicates the date from which metrics should be included. */
-  @query(#{ explode: true }) minMetricsTime?: utcDateTime,
-
-  /** A comma-delimited list of properties to include in the results. */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  @query(#{ explode: true }) includeLatestBuilds?: boolean,
-  ...Parameters.`api-Version-preview`.`8`,
-): BuildDefinition;
-
-/** Restores a deleted definition */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "RestoreDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
-@patch
-op Definitions_RestoreDefinition(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The identifier of the definition to restore. */
-  @path definitionId: int32,
-
-  /** When false, restores a deleted definition. */
-  @query(#{ explode: true }) deleted: boolean,
-
-  ...Parameters.`api-Version-preview`.`8`,
-): BuildDefinition;
-
-/** Updates an existing build definition. In order for this operation to succeed, the value of the 'Revision' property of the request body must match the existing build definition's. It is recommended that you obtain the existing build definition by using GET, modify the build definition as necessary, and then submit the modified definition with PUT. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.8")
-@extension("x-ms-vss-resource", "definitions")
-@extension("x-ms-vss-method", "UpdateDefinition")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
-@put
-op Definitions_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** Optional ID of the definition to use as the source for secrets. */
-  @query(#{ explode: true }) secretsSourceDefinitionId?: int32,
-
-  /** Optional revision of the secrets source definition. */
-  @query(#{ explode: true }) secretsSourceDefinitionRevision?: int32,
-
-  /** If true, cancels paused builds when the pipeline is being enabled from a paused or disabled state. */
-  @query(#{ explode: true }) cancelPausedBuilds?: boolean,
-
-  ...Parameters.`api-Version-preview`.`8`,
-
-  /** The new version of the definition. Its 'Revision' property must match the existing definition for the update to be accepted. */
-  @body body: BuildDefinition,
-): BuildDefinition;
-
-/** Gets build metrics for a definition. */
-@tag("Metrics")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "metrics")
-@extension("x-ms-vss-method", "GetDefinitionMetrics")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/metrics")
-@get
-op Metrics_GetDefinitionMetrics(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The date from which to calculate metrics. */
-  @query(#{ explode: true }) minMetricsTime?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BuildMetric[]>;
-
-/** Gets properties for a definition. */
-@tag("Properties")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "properties")
-@extension("x-ms-vss-method", "GetDefinitionProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/properties")
-@get
-op Properties_GetDefinitionProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** A comma-delimited list of properties. If specified, filters to these specific properties. */
-  @format("array (string)") @query(#{ explode: true }) filter?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PropertiesCollection;
-
-/** Updates properties for a definition. */
-@tag("Properties")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "properties")
-@extension("x-ms-vss-method", "UpdateDefinitionProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/properties")
-@patch
-op Properties_UpdateDefinitionProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** A json-patch document describing the properties to update. */
-  @body body: JsonPatchDocument,
-): PropertiesCollection;
-
-@tag("Resources")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "resources")
-@extension("x-ms-vss-method", "GetDefinitionResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/resources")
-@get
-op Resources_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path definitionId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<DefinitionResourceReference[]>;
-
-@tag("Resources")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "resources")
-@extension("x-ms-vss-method", "AuthorizeDefinitionResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/resources")
-@patch
-op Resources_AuthorizeDefinitionResources(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path definitionId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: DefinitionResourceReference[],
-): Body<DefinitionResourceReference[]>;
-
-/** Gets all revisions of a definition. */
-@tag("Definitions")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetDefinitionRevisions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/revisions")
-@get
-op Definitions_GetDefinitionRevisions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<BuildDefinitionRevision[]>;
-
-/** Converts a definition to YAML, optionally at a specific revision. */
-@tag("Yaml")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "yaml")
-@extension("x-ms-vss-method", "GetDefinitionYaml")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/yaml")
-@get
-op Yaml_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The revision number to retrieve. If this is not specified, the latest version will be returned. */
-  @query(#{ explode: true }) revision?: int32,
-
-  /** If specified, indicates the date from which metrics should be included. */
-  @query(#{ explode: true }) minMetricsTime?: utcDateTime,
-
-  /** A comma-delimited list of properties to include in the results. */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  @query(#{ explode: true }) includeLatestBuilds?: boolean,
-  ...Parameters.`api-Version-preview`.`1`,
-): YamlBuild;
-
-/** Gets all definition templates. */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "GetTemplates")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/templates")
-@get
-op Templates_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<BuildDefinitionTemplate[]>;
-
-/** Deletes a build definition template. */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "DeleteTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
-@delete
-op Templates_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the template. */
-  @path templateId: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Gets a specific build definition template. */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "GetTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
-@get
-op Templates_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the requested template. */
-  @path templateId: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): BuildDefinitionTemplate;
-
-/** Updates an existing build definition template. */
-@tag("Templates")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "templates")
-@extension("x-ms-vss-method", "SaveTemplate")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
-@put
-op Templates_SaveTemplate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the template. */
-  @path templateId: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The new version of the template. */
-  @body body: BuildDefinitionTemplate,
-): BuildDefinitionTemplate;
-
-/** Deletes a definition folder. Definitions and their corresponding builds will also be deleted. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "DeleteFolder")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/folders")
-@delete
-op Folders_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The full path to the folder. */
-  @query(#{ explode: true }) path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Updates an existing folder at given existing path */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "UpdateFolder")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/folders")
-@post
-op Folders_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The full path to the folder. */
-  @query(#{ explode: true }) path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The new version of the folder. */
-  @body body: Folder,
-): Folder;
-
-/** Creates a new folder. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "CreateFolder")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/folders")
-@put
-op Folders_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The full path of the folder. */
-  @query(#{ explode: true }) path: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The folder. */
-  @body body: Folder,
-): Folder;
-
-/** Gets a list of build definition folders. */
-@tag("Folders")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "folders")
-@extension("x-ms-vss-method", "GetFolders")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/folders/{path}")
-@get
-op Folders_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The path to start with. */
-  @extension("x-ms-required", false) @path path: string,
-
-  /** The order in which folders should be returned. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "FolderQueryOrder",
-      values: #[
-        #{ value: "none", description: "No order" },
-        #{ value: "folderAscending", description: "Order by folder name and path ascending." },
-        #{ value: "folderDescending", description: "Order by folder name and path descending." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "none" | "folderAscending" | "folderDescending",
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Folder[]>;
-
-/** Gets pipeline general settings. */
-@tag("General Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "generalSettings")
-@extension("x-ms-vss-method", "GetBuildGeneralSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/generalsettings")
-@get
-op GeneralSettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PipelineGeneralSettings;
-
-/** Updates pipeline general settings. */
-@tag("General Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "generalSettings")
-@extension("x-ms-vss-method", "UpdateBuildGeneralSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/generalsettings")
-@patch
-op GeneralSettings_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: PipelineGeneralSettings,
-): PipelineGeneralSettings;
-
-/** Gets the latest build for a definition, optionally scoped to a specific branch. */
-@tag("Latest")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "latest")
-@extension("x-ms-vss-method", "GetLatestBuild")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/latest/{definition}")
-@get
-op Latest_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** definition name with optional leading folder path, or the definition id */
-  @path definition: string,
-
-  /** optional parameter that indicates the specific branch to use. If not specified, the default branch is used. */
-  @query(#{ explode: true }) branchName?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Build;
-
-/** Gets build metrics for a project. */
-@tag("Metrics")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "metrics")
-@extension("x-ms-vss-method", "GetProjectMetrics")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/metrics/{metricAggregationType}")
-@get
-op Metrics_GetProjectMetrics(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The aggregation type to use (hourly, daily). */
-  @extension("x-ms-required", false) @path metricAggregationType: string,
-
-  /** The date from which to calculate metrics. */
-  @query(#{ explode: true }) minMetricsTime?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BuildMetric[]>;
-
-/** Gets all build definition options supported by the system. */
-@tag("Options")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "options")
-@extension("x-ms-vss-method", "GetBuildOptionDefinitions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/options")
-@get
-op Options_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<BuildOptionDefinition[]>;
-
-/** Gets a badge that indicates the status of the most recent build for the specified branch. */
-@tag("Badge")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "buildbadge")
-@extension("x-ms-vss-method", "GetBuildBadge")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/repos/{repoType}/badge")
-@get
-op Badge_GetBuildBadgeData(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The repository type. */
-  @path repoType: string,
-
-  /** The repository ID. */
-  @query(#{ explode: true }) repoId?: string,
-
-  /** The branch name. */
-  @query(#{ explode: true }) branchName?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<string>;
-
-/** Gets the project's retention settings. */
-@tag("Retention")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "retention")
-@extension("x-ms-vss-method", "GetRetentionSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention")
-@get
-op Retention_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ProjectRetentionSetting;
-
-/** Updates the project's retention settings. */
-@tag("Retention")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "retention")
-@extension("x-ms-vss-method", "UpdateRetentionSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention")
-@patch
-op Retention_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: UpdateProjectRetentionSettingModel,
-): ProjectRetentionSetting;
-
-/** Removes specific retention leases. */
-@tag("Leases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "leases")
-@extension("x-ms-vss-method", "DeleteRetentionLeasesById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention/leases")
-@delete
-op Leases_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @format("array (int32)") @query(#{ explode: true }) ids: string,
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Returns any leases matching the specified MinimalRetentionLeases */
-@tag("Leases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "leases")
-@extension("x-ms-vss-method", "GetRetentionLeasesByMinimalRetentionLeases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention/leases")
-@get
-op Leases_GetRetentionLeasesByMinimalRetentionLeases(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** List of JSON-serialized MinimalRetentionLeases separated by '|' */
-  @format("array (MinimalRetentionLease)") @query(#{ explode: true }) leasesToFetch: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<RetentionLease[]>;
-
-/** Adds new leases for pipeline runs. */
-@tag("Leases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "leases")
-@extension("x-ms-vss-method", "AddRetentionLeases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention/leases")
-@post
-op Leases_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: NewRetentionLease[],
-): Body<RetentionLease[]>;
-
-/** Returns the details of the retention lease given a lease id. */
-@tag("Leases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "leases")
-@extension("x-ms-vss-method", "GetRetentionLease")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention/leases/{leaseId}")
-@get
-op Leases_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path leaseId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-): RetentionLease;
-
-/** Updates the duration or pipeline protection status of a retention lease. */
-@tag("Leases")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "leases")
-@extension("x-ms-vss-method", "UpdateRetentionLease")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/retention/leases/{leaseId}")
-@patch
-op Leases_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the lease to update. */
-  @path leaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The new data for the retention lease. */
-  @body body: RetentionLeaseUpdate,
-): RetentionLease;
-
-/** Gets the build settings. */
-@tag("Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "settings")
-@extension("x-ms-vss-method", "GetBuildSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/settings")
-@get
-op Settings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): BuildSettings;
-
-/** Updates the build settings. */
-@tag("Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "settings")
-@extension("x-ms-vss-method", "UpdateBuildSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/settings")
-@patch
-op Settings_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The new settings. */
-  @body body: BuildSettings,
-): BuildSettings;
-
-/** <p>Gets the build status for a definition, optionally scoped to a specific branch, stage, job, and configuration.</p> <p>If there are more than one, then it is required to pass in a stageName value when specifying a jobName, and the same rule then applies for both if passing a configuration parameter.</p> */
-@tag("Status")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "status")
-@extension("x-ms-vss-method", "GetStatusBadge")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/status/{definition}")
-@get
-op Status_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Either the definition name with optional leading folder path, or the definition id. */
-  @path definition: string,
-
-  /** Only consider the most recent build for this branch. If not specified, the default branch is used. */
-  @query(#{ explode: true }) branchName?: string,
-
-  /** Use this stage within the pipeline to render the status. */
-  @query(#{ explode: true }) stageName?: string,
-
-  /** Use this job within a stage of the pipeline to render the status. */
-  @query(#{ explode: true }) jobName?: string,
-
-  /** Use this job configuration to render the status */
-  @query(#{ explode: true }) configuration?: string,
-
-  /** Replaces the default text on the left side of the badge. */
-  @query(#{ explode: true }) label?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<string>;
-
-/** Gets a list of all build tags in the project. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "GetTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/tags")
-@get
-op Tags_GetTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Removes a tag from builds, definitions, and from the tag store */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "DeleteTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/tags/{tag}")
-@delete
-op Tags_DeleteTag(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The tag to remove. */
-  @path tag: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Gets all the work items between two builds. */
-@tag("Builds")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "workitems")
-@extension("x-ms-vss-method", "GetWorkItemsBetweenBuilds")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/workitems")
-@get
-op Builds_GetWorkItemsBetweenBuilds(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the first build. */
-  @query(#{ explode: true }) fromBuildId: int32,
-
-  /** The ID of the last build. */
-  @query(#{ explode: true }) toBuildId: int32,
-
-  /** The maximum number of work items to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<ResourceRef[]>;
-
-/** Get a list of source providers and their capabilities. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "sourceProviders")
-@extension("x-ms-vss-method", "ListSourceProviders")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceproviders")
-@get
-op SourceProviders_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<SourceProviderAttributes[]>;
-
-/** Gets a list of branches for the given source code repository. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "branches")
-@extension("x-ms-vss-method", "ListBranches")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/branches")
-@get
-op SourceProviders_ListBranches(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  /** The vendor-specific identifier or the name of the repository to get branches. Can only be omitted for providers that do not support multiple repositories. */
-  @query(#{ explode: true }) repository?: string,
-
-  /** If supplied, the name of the branch to check for specifically. */
-  @query(#{ explode: true }) branchName?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<string[]>;
-
-/** Gets the contents of a file in the given source code repository. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "fileContents")
-@extension("x-ms-vss-method", "GetFileContents")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/filecontents")
-@get
-op SourceProviders_GetFileContents(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  /** If specified, the vendor-specific identifier or the name of the repository to get branches. Can only be omitted for providers that do not support multiple repositories. */
-  @query(#{ explode: true }) repository?: string,
-
-  /** The identifier of the commit or branch from which a file's contents are retrieved. */
-  @query(#{ explode: true }) commitOrBranch?: string,
-
-  /** The path to the file to retrieve, relative to the root of the repository. */
-  @query(#{ explode: true }) path?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "text/plain";
-  @body @format("Stream") body: string;
-};
-
-/** Gets the contents of a directory in the given source code repository. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pathContents")
-@extension("x-ms-vss-method", "GetPathContents")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/pathcontents")
-@get
-op SourceProviders_GetPathContents(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  /** If specified, the vendor-specific identifier or the name of the repository to get branches. Can only be omitted for providers that do not support multiple repositories. */
-  @query(#{ explode: true }) repository?: string,
-
-  /** The identifier of the commit or branch from which a file's contents are retrieved. */
-  @query(#{ explode: true }) commitOrBranch?: string,
-
-  /** The path contents to list, relative to the root of the repository. */
-  @query(#{ explode: true }) path?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<SourceRepositoryItem[]>;
-
-/** Gets a pull request object from source provider. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pullRequests")
-@extension("x-ms-vss-method", "GetPullRequest")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/pullrequests/{pullRequestId}")
-@get
-op SourceProviders_GetPullRequest(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** Vendor-specific id of the pull request. */
-  @path pullRequestId: string,
-
-  /** Vendor-specific identifier or the name of the repository that contains the pull request. */
-  @query(#{ explode: true }) repositoryId?: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PullRequest;
-
-/** Gets a list of source code repositories. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "ListRepositories")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/repositories")
-@get
-op SourceProviders_ListRepositories(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  /** If specified, the vendor-specific identifier or the name of a single repository to get. */
-  @query(#{ explode: true }) repository?: string,
-
-  /** 'top' for the repositories most relevant for the endpoint. If not set, all repositories are returned. Ignored if 'repository' is set. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ResultSet",
-      values: #[
-        #{ value: "all", description: "Include all repositories" },
-        #{ value: "top", description: "Include most relevant repositories for user" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  resultSet?: "all" | "top",
-
-  /** If set to true, this will limit the set of results and will return a continuation token to continue the query. */
-  @query(#{ explode: true }) pageResults?: boolean,
-
-  /** When paging results, this is a continuation token, returned by a previous call to this method, that can be used to return the next set of repositories. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): SourceRepositories;
-
-/** Gets a list of webhooks installed in the given source code repository. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "webhooks")
-@extension("x-ms-vss-method", "ListWebhooks")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/webhooks")
-@get
-op SourceProviders_ListWebhooks(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  /** If specified, the vendor-specific identifier or the name of the repository to get webhooks. Can only be omitted for providers that do not support multiple repositories. */
-  @query(#{ explode: true }) repository?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<RepositoryWebhook[]>;
-
-/** Recreates the webhooks for the specified triggers in the given source code repository. */
-@tag("Source Providers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "webhooks")
-@extension("x-ms-vss-method", "RestoreWebhooks")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/sourceProviders/{providerName}/webhooks")
-@post
-op SourceProviders_RestoreWebhooks(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name of the source provider. */
-  @path providerName: string,
-
-  /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
-  @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
-
-  /** If specified, the vendor-specific identifier or the name of the repository to get webhooks. Can only be omitted for providers that do not support multiple repositories. */
-  @query(#{ explode: true }) repository?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The types of triggers to restore webhooks for. */
-  @body body: string[],
-): OkResponse;
-
-/** Gets the tags for a definition. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "GetDefinitionTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
-@get
-op Tags_GetDefinitionTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The definition revision number. If not specified, uses the latest revision of the definition. */
-  @query(#{ explode: true }) revision?: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Adds/Removes tags from a definition. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "UpdateDefinitionTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
-@patch
-op Tags_UpdateDefinitionTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The tags to add/remove. */
-  @body body: UpdateTagParameters,
-): Body<string[]>;
-
-/** Adds multiple tags to a definition. */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "AddDefinitionTags")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
-@post
-op Tags_AddDefinitionTags(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The tags to add. */
-  @body body: string[],
-): Body<string[]>;
-
-/** Removes a tag from a definition. NOTE: This API will not work for tags with special characters. To remove tags with special characters, use the PATCH method instead (in 6.0+) */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "DeleteDefinitionTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags/{tag}")
-@delete
-op Tags_DeleteDefinitionTag(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The tag to remove. */
-  @path tag: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
-/** Adds a tag to a definition */
-@tag("Tags")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "tags")
-@extension("x-ms-vss-method", "AddDefinitionTag")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags/{tag}")
-@put
-op Tags_AddDefinitionTag(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the definition. */
-  @path definitionId: int32,
-
-  /** The tag to add. */
-  @path tag: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<string[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `5` {
       /** Version of the API to use. This should be set to '7.2-preview.5' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `8` {
       /** Version of the API to use. This should be set to '7.2-preview.8' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Controllers {
+  /** Gets controller, optionally filtered by name */
+  @tag("Controllers")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "controllers")
+  @extension("x-ms-vss-method", "GetBuildControllers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/build/controllers")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @query(#{ explode: true }) name?: string,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<BuildController[]>;
+
+  /** Gets a controller */
+  @tag("Controllers")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "controllers")
+  @extension("x-ms-vss-method", "GetBuildController")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/build/controllers/{controllerId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path controllerId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): BuildController;
+}
+
+interface ResourceUsage {
+  /** Gets information about build resources in the system. */
+  @tag("Resource Usage")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "resourceUsage")
+  @extension("x-ms-vss-method", "GetResourceUsage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/build/resourceusage")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): BuildResourceUsage;
+}
+
+interface History {
+  /** Returns the retention history for the project collection. This includes pipelines that have custom retention rules that may prevent the retention job from cleaning them up, runs per pipeline with retention type, files associated with pipelines owned by the collection with retention type, and the number of files per pipeline. */
+  @tag("History")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "history")
+  @extension("x-ms-vss-method", "GetRetentionHistory")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/build/retention/history")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @query(#{ explode: true }) daysToLookback?: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BuildRetentionHistory;
+}
+
+interface Badge {
+  /** This endpoint is deprecated. Please see the Build Status REST endpoint. */
+  @tag("Badge")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "badge")
+  @extension("x-ms-vss-method", "GetBadge")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/public/build/definitions/{project}/{definitionId}/badge")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project ID or name. */
+    @format("uuid") @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The name of the branch. */
+    @query(#{ explode: true }) branchName?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<string>;
+
+  /** Gets a badge that indicates the status of the most recent build for the specified branch. */
+  @tag("Badge")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "buildbadge")
+  @extension("x-ms-vss-method", "GetBuildBadge")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/repos/{repoType}/badge")
+  @get
+  GetBuildBadgeData(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The repository type. */
+    @path repoType: string,
+
+    /** The repository ID. */
+    @query(#{ explode: true }) repoId?: string,
+
+    /** The branch name. */
+    @query(#{ explode: true }) branchName?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<string>;
+}
+
+interface Authorizedresources {
+  @tag("Authorizedresources")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "authorizedresources")
+  @extension("x-ms-vss-method", "GetProjectResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/authorizedresources")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @query(#{ explode: true }) type?: string,
+    @query(#{ explode: true }) id?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<DefinitionResourceReference[]>;
+
+  @tag("Authorizedresources")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "authorizedresources")
+  @extension("x-ms-vss-method", "AuthorizeProjectResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/authorizedresources")
+  @patch
+  AuthorizeProjectResources(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: DefinitionResourceReference[],
+  ): Body<DefinitionResourceReference[]>;
+}
+
+interface Builds {
+  /** Gets a list of builds. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "builds")
+  @extension("x-ms-vss-method", "GetBuilds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** A comma-delimited list of definition IDs. If specified, filters to builds for these definitions. */
+    @format("array (int32)") @query(#{ explode: true }) definitions?: string,
+
+    /** A comma-delimited list of queue IDs. If specified, filters to builds that ran against these queues. */
+    @format("array (int32)") @query(#{ explode: true }) queues?: string,
+
+    /** If specified, filters to builds that match this build number. Append * to do a prefix search. */
+    @query(#{ explode: true }) buildNumber?: string,
+
+    /** If specified, filters to builds that finished/started/queued after this date based on the queryOrder specified. */
+    @query(#{ explode: true }) minTime?: utcDateTime,
+
+    /** If specified, filters to builds that finished/started/queued before this date based on the queryOrder specified. */
+    @query(#{ explode: true }) maxTime?: utcDateTime,
+
+    /** If specified, filters to builds requested for the specified user. */
+    @query(#{ explode: true }) requestedFor?: string,
+
+    /** If specified, filters to builds that match this reason. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "BuildReason",
+        values: #[
+          #{ value: "none", description: "No reason. This value should not be used." },
+          #{ value: "manual", description: "The build was started manually." },
+          #{
+            value: "individualCI",
+            description: "The build was started for the trigger TriggerType.ContinuousIntegration.",
+          },
+          #{
+            value: "batchedCI",
+            description: "The build was started for the trigger TriggerType.BatchedContinuousIntegration.",
+          },
+          #{
+            value: "schedule",
+            description: "The build was started for the trigger TriggerType.Schedule.",
+          },
+          #{
+            value: "scheduleForced",
+            description: "The build was started for the trigger TriggerType.ScheduleForced.",
+          },
+          #{ value: "userCreated", description: "The build was created by a user." },
+          #{
+            value: "validateShelveset",
+            description: "The build was started manually for private validation.",
+          },
+          #{
+            value: "checkInShelveset",
+            description: "The build was started for the trigger ContinuousIntegrationType.Gated.",
+          },
+          #{
+            value: "pullRequest",
+            description: "The build was started by a pull request. Added in resource version 3.",
+          },
+          #{
+            value: "buildCompletion",
+            description: "The build was started when another build completed.",
+          },
+          #{
+            value: "resourceTrigger",
+            description: "The build was started when resources in pipeline triggered it",
+          },
+          #{
+            value: "triggered",
+            description: "The build was triggered for retention policy purposes.",
+          },
+          #{ value: "all", description: "All reasons." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    reasonFilter?:
+      | "none"
+      | "manual"
+      | "individualCI"
+      | "batchedCI"
+      | "schedule"
+      | "scheduleForced"
+      | "userCreated"
+      | "validateShelveset"
+      | "checkInShelveset"
+      | "pullRequest"
+      | "buildCompletion"
+      | "resourceTrigger"
+      | "triggered"
+      | "all",
+
+    /** If specified, filters to builds that match this status. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "BuildStatus",
+        values: #[
+          #{ value: "none", description: "No status." },
+          #{ value: "inProgress", description: "The build is currently in progress." },
+          #{ value: "completed", description: "The build has completed." },
+          #{ value: "cancelling", description: "The build is cancelling" },
+          #{ value: "postponed", description: "The build is inactive in the queue." },
+          #{ value: "abandoned", description: "The build has been abandoned." },
+          #{ value: "notStarted", description: "The build has not yet started." },
+          #{ value: "all", description: "All status." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    statusFilter?:
+      | "none"
+      | "inProgress"
+      | "completed"
+      | "cancelling"
+      | "postponed"
+      | "abandoned"
+      | "notStarted"
+      | "all",
+
+    /** If specified, filters to builds that match this result. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "BuildResult",
+        values: #[
+          #{ value: "none", description: "No result" },
+          #{ value: "succeeded", description: "The build completed successfully." },
+          #{
+            value: "partiallySucceeded",
+            description: "The build completed compilation successfully but had other errors.",
+          },
+          #{ value: "failed", description: "The build completed unsuccessfully." },
+          #{ value: "canceled", description: "The build was canceled before starting." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    resultFilter?: "none" | "succeeded" | "partiallySucceeded" | "failed" | "canceled",
+
+    /** A comma-delimited list of tags. If specified, filters to builds that have the specified tags. */
+    @format("array (string)") @query(#{ explode: true }) tagFilters?: string,
+
+    /** A comma-delimited list of properties to retrieve. */
+    @format("array (string)") @query(#{ explode: true }) properties?: string,
+
+    /** The maximum number of builds to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** A continuation token, returned by a previous call to this method, that can be used to return the next set of builds. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** The maximum number of builds to return per definition. */
+    @query(#{ explode: true }) maxBuildsPerDefinition?: int32,
+
+    /** Indicates whether to exclude, include, or only return deleted builds. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "QueryDeletedOption",
+        values: #[
+          #{ value: "excludeDeleted", description: "Include only non-deleted builds." },
+          #{ value: "includeDeleted", description: "Include deleted and non-deleted builds." },
+          #{ value: "onlyDeleted", description: "Include only deleted builds." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    deletedFilter?: "excludeDeleted" | "includeDeleted" | "onlyDeleted",
+
+    /** The order in which builds should be returned. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "BuildQueryOrder",
+        values: #[
+          #{ value: "finishTimeAscending", description: "Order by finish time ascending." },
+          #{ value: "finishTimeDescending", description: "Order by finish time descending." },
+          #{ value: "queueTimeDescending", description: "Order by queue time descending." },
+          #{ value: "queueTimeAscending", description: "Order by queue time ascending." },
+          #{ value: "startTimeDescending", description: "Order by start time descending." },
+          #{ value: "startTimeAscending", description: "Order by start time ascending." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?:
+      | "finishTimeAscending"
+      | "finishTimeDescending"
+      | "queueTimeDescending"
+      | "queueTimeAscending"
+      | "startTimeDescending"
+      | "startTimeAscending",
+
+    /** If specified, filters to builds that built branches that built this branch. */
+    @query(#{ explode: true }) branchName?: string,
+
+    /** A comma-delimited list that specifies the IDs of builds to retrieve. */
+    @format("array (int32)") @query(#{ explode: true }) buildIds?: string,
+
+    /** If specified, filters to builds that built from this repository. */
+    @query(#{ explode: true }) repositoryId?: string,
+
+    /** If specified, filters to builds that built from repositories of this type. */
+    @query(#{ explode: true }) repositoryType?: string,
+
+    ...Parameters.`api-Version-preview`.`8`,
+  ): Body<Build[]>;
+
+  /** Updates multiple builds. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "builds")
+  @extension("x-ms-vss-method", "UpdateBuilds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds")
+  @patch
+  UpdateBuilds(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`8`,
+
+    /** The builds to update. */
+    @body body: Build[],
+  ): Body<Build[]>;
+
+  /** Queues a build */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "builds")
+  @extension("x-ms-vss-method", "QueueBuild")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds")
+  @post
+  Queue(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @query(#{ explode: true }) ignoreWarnings?: boolean,
+    @query(#{ explode: true }) checkInTicket?: string,
+    @query(#{ explode: true }) sourceBuildId?: int32,
+
+    /** Optional definition id to queue a build without a body. Ignored if there's a valid body */
+    @query(#{ explode: true }) definitionId?: int32,
+
+    ...Parameters.`api-Version-preview`.`8`,
+    @body body: Build,
+  ): Build;
+
+  /** Deletes a build. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "builds")
+  @extension("x-ms-vss-method", "DeleteBuild")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`8`,
+  ): OkResponse;
+
+  /** Gets a build */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "builds")
+  @extension("x-ms-vss-method", "GetBuild")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path buildId: int32,
+    @query(#{ explode: true }) propertyFilters?: string,
+    ...Parameters.`api-Version-preview`.`8`,
+  ): Build;
+
+  /** Updates a build. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "builds")
+  @extension("x-ms-vss-method", "UpdateBuild")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}")
+  @patch
+  UpdateBuild(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    @query(#{ explode: true }) retry?: boolean,
+    ...Parameters.`api-Version-preview`.`8`,
+
+    /** The build. */
+    @body body: Build,
+  ): Build;
+
+  /** Gets the changes associated with a build */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "changes")
+  @extension("x-ms-vss-method", "GetBuildChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/changes")
+  @get
+  GetBuildChanges(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path buildId: int32,
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** The maximum number of changes to return */
+    @query(#{ explode: true }) $top?: int32,
+
+    @query(#{ explode: true }) includeSourceChange?: boolean,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Change[]>;
+
+  /** Gets all retention leases that apply to a specific build. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "buildleases")
+  @extension("x-ms-vss-method", "GetRetentionLeasesForBuild")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/leases")
+  @get
+  GetRetentionLeasesForBuild(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<RetentionLease[]>;
+
+  /** Gets the logs for a build. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "GetBuildLogs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/logs")
+  @get
+  GetBuildLogs(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ):
+    | {
+        @header contentType: "application/zip";
+        @body body: BuildLog[];
+      }
+    | Body<BuildLog[]>;
+
+  /** Gets an individual log file for a build. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "GetBuildLog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/logs/{logId}")
+  @get
+  GetBuildLog(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The ID of the log file. */
+    @path logId: int32,
+
+    /** The start line. */
+    @query(#{ explode: true }) startLine?: int64,
+
+    /** The end line. */
+    @query(#{ explode: true }) endLine?: int64,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ):
+    | {
+        @header contentType: "application/zip";
+        @body @format("Stream") body: string;
+      }
+    | Body<string>
+    | {
+        @header contentType: "text/plain";
+        @body @format("Stream") body: string;
+      };
+
+  /** Gets the work items associated with a build. Only work items in the same project are returned. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workitems")
+  @extension("x-ms-vss-method", "GetBuildWorkItemsRefs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/workitems")
+  @get
+  GetBuildWorkItemsRefs(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The maximum number of work items to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<ResourceRef[]>;
+
+  /** Gets the work items associated with a build, filtered to specific commits. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workitems")
+  @extension("x-ms-vss-method", "GetBuildWorkItemsRefsFromCommits")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/workitems")
+  @post
+  GetBuildWorkItemsRefsFromCommits(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The maximum number of work items to return, or the number of commits to consider if no commit IDs are specified. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** A comma-delimited list of commit IDs. */
+    @body body: string[],
+  ): Body<ResourceRef[]>;
+
+  /** Gets the changes made to the repository between two given builds. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "changes")
+  @extension("x-ms-vss-method", "GetChangesBetweenBuilds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/changes")
+  @get
+  GetChangesBetweenBuilds(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the first build. */
+    @query(#{ explode: true }) fromBuildId?: int32,
+
+    /** The ID of the last build. */
+    @query(#{ explode: true }) toBuildId?: int32,
+
+    /** The maximum number of changes to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Change[]>;
+
+  /** Gets all the work items between two builds. */
+  @tag("Builds")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "workitems")
+  @extension("x-ms-vss-method", "GetWorkItemsBetweenBuilds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/workitems")
+  @get
+  GetWorkItemsBetweenBuilds(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the first build. */
+    @query(#{ explode: true }) fromBuildId: int32,
+
+    /** The ID of the last build. */
+    @query(#{ explode: true }) toBuildId: int32,
+
+    /** The maximum number of work items to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<ResourceRef[]>;
+}
+
+interface Attachments {
+  /** Gets a specific attachment. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/{timelineId}/{recordId}/attachments/{type}/{name}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The ID of the timeline. */
+    @format("uuid") @path timelineId: string,
+
+    /** The ID of the timeline record. */
+    @format("uuid") @path recordId: string,
+
+    /** The type of the attachment. */
+    @path type: string,
+
+    /** The name of the attachment. */
+    @path name: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+
+  /** Gets the list of attachments of a specific type that are associated with a build. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetAttachments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/attachments/{type}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The type of attachment. */
+    @path type: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Attachment[]>;
+}
+
+interface Artifacts {
+  /** Gets all artifacts for a build. */
+  @tag("Artifacts")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "artifacts")
+  @extension("x-ms-vss-method", "GetArtifacts")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/artifacts")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`5`,
+  ): Body<BuildArtifact[]>;
+
+  /** Associates an artifact with a build. */
+  @tag("Artifacts")
+  @extension("x-ms-docs-override-version", "7.2-preview.5")
+  @extension("x-ms-vss-resource", "artifacts")
+  @extension("x-ms-vss-method", "CreateArtifact")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/artifacts")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`5`,
+
+    /** The artifact. */
+    @body body: BuildArtifact,
+  ): BuildArtifact;
+}
+
+interface Properties {
+  /** Gets properties for a build. */
+  @tag("Properties")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "properties")
+  @extension("x-ms-vss-method", "GetBuildProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/properties")
+  @get
+  GetBuildProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** A comma-delimited list of properties. If specified, filters to these specific properties. */
+    @format("array (string)") @query(#{ explode: true }) filter?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PropertiesCollection;
+
+  /** Updates properties for a build. */
+  @tag("Properties")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "properties")
+  @extension("x-ms-vss-method", "UpdateBuildProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/properties")
+  @patch
+  UpdateBuildProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** A json-patch document describing the properties to update. */
+    @body body: JsonPatchDocument,
+  ): PropertiesCollection;
+
+  /** Gets properties for a definition. */
+  @tag("Properties")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "properties")
+  @extension("x-ms-vss-method", "GetDefinitionProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/properties")
+  @get
+  GetDefinitionProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** A comma-delimited list of properties. If specified, filters to these specific properties. */
+    @format("array (string)") @query(#{ explode: true }) filter?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PropertiesCollection;
+
+  /** Updates properties for a definition. */
+  @tag("Properties")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "properties")
+  @extension("x-ms-vss-method", "UpdateDefinitionProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/properties")
+  @patch
+  UpdateDefinitionProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** A json-patch document describing the properties to update. */
+    @body body: JsonPatchDocument,
+  ): PropertiesCollection;
+}
+
+interface Report {
+  /** Gets a build report. */
+  @tag("Report")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "report")
+  @extension("x-ms-vss-method", "GetBuildReport")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/report")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    @query(#{ explode: true }) type?: string,
+    ...Parameters.`api-Version-preview`.`2`,
+  ):
+    | {
+        @header contentType: "text/html";
+        @body body: BuildReportMetadata;
+      }
+    | BuildReportMetadata;
+}
+
+interface Stages {
+  /** Update a build stage */
+  @tag("Stages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "stages")
+  @extension("x-ms-vss-method", "UpdateStage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/stages/{stageRefName}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path buildId: int32,
+    @path stageRefName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: UpdateStageParameters,
+  ): OkResponse;
+}
+
+interface Tags {
+  /** Gets the tags for a build. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "GetBuildTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
+  @get
+  GetBuildTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Adds/Removes tags from a build. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "UpdateBuildTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
+  @patch
+  UpdateBuildTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The tags to add/remove. */
+    @body body: UpdateTagParameters,
+  ): Body<string[]>;
+
+  /** Adds tags to a build. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "AddBuildTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
+  @post
+  AddBuildTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The tags to add. Request body is composed directly from listed tags. */
+    @body body: string[],
+  ): Body<string[]>;
+
+  /** Removes a tag from a build. NOTE: This API will not work for tags with special characters. To remove tags with special characters, use the PATCH method instead (in 6.0+) */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "DeleteBuildTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags/{tag}")
+  @delete
+  DeleteBuildTag(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The tag to remove. */
+    @path tag: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Adds a tag to a build. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "AddBuildTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags/{tag}")
+  @put
+  AddBuildTag(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The tag to add. */
+    @path tag: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Gets a list of all build tags in the project. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "GetTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/tags")
+  @get
+  GetTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Removes a tag from builds, definitions, and from the tag store */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "DeleteTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/tags/{tag}")
+  @delete
+  DeleteTag(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The tag to remove. */
+    @path tag: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Gets the tags for a definition. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "GetDefinitionTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
+  @get
+  GetDefinitionTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The definition revision number. If not specified, uses the latest revision of the definition. */
+    @query(#{ explode: true }) revision?: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Adds/Removes tags from a definition. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "UpdateDefinitionTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
+  @patch
+  UpdateDefinitionTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The tags to add/remove. */
+    @body body: UpdateTagParameters,
+  ): Body<string[]>;
+
+  /** Adds multiple tags to a definition. */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "AddDefinitionTags")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
+  @post
+  AddDefinitionTags(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The tags to add. */
+    @body body: string[],
+  ): Body<string[]>;
+
+  /** Removes a tag from a definition. NOTE: This API will not work for tags with special characters. To remove tags with special characters, use the PATCH method instead (in 6.0+) */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "DeleteDefinitionTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags/{tag}")
+  @delete
+  DeleteDefinitionTag(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The tag to remove. */
+    @path tag: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+
+  /** Adds a tag to a definition */
+  @tag("Tags")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "tags")
+  @extension("x-ms-vss-method", "AddDefinitionTag")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags/{tag}")
+  @put
+  AddDefinitionTag(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The tag to add. */
+    @path tag: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<string[]>;
+}
+
+interface TimelineOperations {
+  /** Gets details for a build */
+  @tag("Timeline")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "timeline")
+  @extension("x-ms-vss-method", "GetBuildTimeline")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/timeline/{timelineId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path buildId: int32,
+
+    @extension("x-ms-required", false)
+    @format("uuid")
+    @path
+    timelineId: string,
+
+    @query(#{ explode: true }) changeId?: int32,
+    @format("uuid") @query(#{ explode: true }) planId?: string,
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Timeline;
+}
+
+interface StageTimeline {
+  /** Gets the timeline for a build filtered to a specific stage. */
+  @tag("Stage Timeline")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "stageTimeline")
+  @extension("x-ms-vss-method", "GetBuildStageTimeline")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/Timeline/{timelineId}/stages/{stageName}")
+  @get
+  GetBuildStageTimeline(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The ID of the timeline. */
+    @format("uuid") @path timelineId: string,
+
+    /** The name of the stage to filter by. */
+    @path stageName: string,
+
+    /** The change ID to filter by. */
+    @query(#{ explode: true }) changeId?: int32,
+
+    /** The ID of the plan. */
+    @format("uuid") @query(#{ explode: true }) planId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Timeline;
+
+  /** Gets the latest timeline for a build filtered to a specific stage. */
+  @tag("Stage Timeline")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "stageTimeline")
+  @extension("x-ms-vss-method", "GetBuildStageLatestTimeline")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/builds/{buildId}/Timeline/stages/{stageName}")
+  @get
+  GetBuildStageLatestTimeline(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the build. */
+    @path buildId: int32,
+
+    /** The name of the stage to filter by. */
+    @path stageName: string,
+
+    /** The change ID to filter by. */
+    @query(#{ explode: true }) changeId?: int32,
+
+    /** The ID of the plan. */
+    @format("uuid") @query(#{ explode: true }) planId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Timeline;
+}
+
+interface Definitions {
+  /** Gets a list of definitions. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "GetDefinitions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** If specified, filters to definitions whose names match this pattern. */
+    @query(#{ explode: true }) name?: string,
+
+    /** A repository ID. If specified, filters to definitions that use this repository. */
+    @query(#{ explode: true }) repositoryId?: string,
+
+    /** If specified, filters to definitions that have a repository of this type. */
+    @query(#{ explode: true }) repositoryType?: string,
+
+    /** Indicates the order in which definitions should be returned. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DefinitionQueryOrder",
+        values: #[
+          #{ value: "none", description: "No order" },
+          #{
+            value: "lastModifiedAscending",
+            description: "Order by created on/last modified time ascending.",
+          },
+          #{
+            value: "lastModifiedDescending",
+            description: "Order by created on/last modified time descending.",
+          },
+          #{ value: "definitionNameAscending", description: "Order by definition name ascending." },
+          #{ value: "definitionNameDescending", description: "Order by definition name descending." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?:
+      | "none"
+      | "lastModifiedAscending"
+      | "lastModifiedDescending"
+      | "definitionNameAscending"
+      | "definitionNameDescending",
+
+    /** The maximum number of definitions to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** A continuation token, returned by a previous call to this method, that can be used to return the next set of definitions. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** If specified, indicates the date from which metrics should be included. */
+    @query(#{ explode: true }) minMetricsTime?: utcDateTime,
+
+    /** A comma-delimited list that specifies the IDs of definitions to retrieve. */
+    @format("array (int32)") @query(#{ explode: true }) definitionIds?: string,
+
+    /** If specified, filters to definitions under this folder. */
+    @query(#{ explode: true }) path?: string,
+
+    /** If specified, filters to definitions that have builds after this date. */
+    @query(#{ explode: true }) builtAfter?: utcDateTime,
+
+    /** If specified, filters to definitions that do not have builds after this date. */
+    @query(#{ explode: true }) notBuiltAfter?: utcDateTime,
+
+    /** Indicates whether the full definitions should be returned. By default, shallow representations of the definitions are returned. */
+    @query(#{ explode: true }) includeAllProperties?: boolean,
+
+    /** Indicates whether to return the latest and latest completed builds for this definition. */
+    @query(#{ explode: true }) includeLatestBuilds?: boolean,
+
+    /** If specified, filters to definitions that use the specified task. */
+    @format("uuid") @query(#{ explode: true }) taskIdFilter?: string,
+
+    /** If specified, filters to definitions with the given process type. */
+    @query(#{ explode: true }) processType?: int32,
+
+    /** If specified, filters to YAML definitions that match the given filename. To use this filter includeAllProperties should be set to true */
+    @query(#{ explode: true }) yamlFilename?: string,
+
+    ...Parameters.`api-Version-preview`.`8`,
+  ): Body<BuildDefinitionReference[]>;
+
+  /** Creates a new definition. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "CreateDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @query(#{ explode: true }) definitionToCloneId?: int32,
+    @query(#{ explode: true }) definitionToCloneRevision?: int32,
+    ...Parameters.`api-Version-preview`.`8`,
+
+    /** The definition. */
+    @body body: BuildDefinition,
+  ): BuildDefinition;
+
+  /** Deletes a definition and all associated builds. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "DeleteDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    ...Parameters.`api-Version-preview`.`8`,
+  ): OkResponse;
+
+  /** Gets a definition, optionally at a specific revision. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "GetDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The revision number to retrieve. If this is not specified, the latest version will be returned. */
+    @query(#{ explode: true }) revision?: int32,
+
+    /** If specified, indicates the date from which metrics should be included. */
+    @query(#{ explode: true }) minMetricsTime?: utcDateTime,
+
+    /** A comma-delimited list of properties to include in the results. */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    @query(#{ explode: true }) includeLatestBuilds?: boolean,
+    ...Parameters.`api-Version-preview`.`8`,
+  ): BuildDefinition;
+
+  /** Restores a deleted definition */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "RestoreDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
+  @patch
+  RestoreDefinition(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The identifier of the definition to restore. */
+    @path definitionId: int32,
+
+    /** When false, restores a deleted definition. */
+    @query(#{ explode: true }) deleted: boolean,
+
+    ...Parameters.`api-Version-preview`.`8`,
+  ): BuildDefinition;
+
+  /** Updates an existing build definition. In order for this operation to succeed, the value of the 'Revision' property of the request body must match the existing build definition's. It is recommended that you obtain the existing build definition by using GET, modify the build definition as necessary, and then submit the modified definition with PUT. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.8")
+  @extension("x-ms-vss-resource", "definitions")
+  @extension("x-ms-vss-method", "UpdateDefinition")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** Optional ID of the definition to use as the source for secrets. */
+    @query(#{ explode: true }) secretsSourceDefinitionId?: int32,
+
+    /** Optional revision of the secrets source definition. */
+    @query(#{ explode: true }) secretsSourceDefinitionRevision?: int32,
+
+    /** If true, cancels paused builds when the pipeline is being enabled from a paused or disabled state. */
+    @query(#{ explode: true }) cancelPausedBuilds?: boolean,
+
+    ...Parameters.`api-Version-preview`.`8`,
+
+    /** The new version of the definition. Its 'Revision' property must match the existing definition for the update to be accepted. */
+    @body body: BuildDefinition,
+  ): BuildDefinition;
+
+  /** Gets all revisions of a definition. */
+  @tag("Definitions")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetDefinitionRevisions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/revisions")
+  @get
+  GetDefinitionRevisions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<BuildDefinitionRevision[]>;
+}
+
+interface Metrics {
+  /** Gets build metrics for a definition. */
+  @tag("Metrics")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "metrics")
+  @extension("x-ms-vss-method", "GetDefinitionMetrics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/metrics")
+  @get
+  GetDefinitionMetrics(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The date from which to calculate metrics. */
+    @query(#{ explode: true }) minMetricsTime?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BuildMetric[]>;
+
+  /** Gets build metrics for a project. */
+  @tag("Metrics")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "metrics")
+  @extension("x-ms-vss-method", "GetProjectMetrics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/metrics/{metricAggregationType}")
+  @get
+  GetProjectMetrics(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The aggregation type to use (hourly, daily). */
+    @extension("x-ms-required", false) @path metricAggregationType: string,
+
+    /** The date from which to calculate metrics. */
+    @query(#{ explode: true }) minMetricsTime?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BuildMetric[]>;
+}
+
+interface Resources {
+  @tag("Resources")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "resources")
+  @extension("x-ms-vss-method", "GetDefinitionResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/resources")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path definitionId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<DefinitionResourceReference[]>;
+
+  @tag("Resources")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "resources")
+  @extension("x-ms-vss-method", "AuthorizeDefinitionResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/resources")
+  @patch
+  AuthorizeDefinitionResources(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path definitionId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: DefinitionResourceReference[],
+  ): Body<DefinitionResourceReference[]>;
+}
+
+interface Yaml {
+  /** Converts a definition to YAML, optionally at a specific revision. */
+  @tag("Yaml")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "yaml")
+  @extension("x-ms-vss-method", "GetDefinitionYaml")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/yaml")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the definition. */
+    @path definitionId: int32,
+
+    /** The revision number to retrieve. If this is not specified, the latest version will be returned. */
+    @query(#{ explode: true }) revision?: int32,
+
+    /** If specified, indicates the date from which metrics should be included. */
+    @query(#{ explode: true }) minMetricsTime?: utcDateTime,
+
+    /** A comma-delimited list of properties to include in the results. */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    @query(#{ explode: true }) includeLatestBuilds?: boolean,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): YamlBuild;
+}
+
+interface Templates {
+  /** Gets all definition templates. */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "GetTemplates")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/templates")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<BuildDefinitionTemplate[]>;
+
+  /** Deletes a build definition template. */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "DeleteTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the template. */
+    @path templateId: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Gets a specific build definition template. */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "GetTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the requested template. */
+    @path templateId: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): BuildDefinitionTemplate;
+
+  /** Updates an existing build definition template. */
+  @tag("Templates")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "templates")
+  @extension("x-ms-vss-method", "SaveTemplate")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
+  @put
+  SaveTemplate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the template. */
+    @path templateId: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The new version of the template. */
+    @body body: BuildDefinitionTemplate,
+  ): BuildDefinitionTemplate;
+}
+
+interface Folders {
+  /** Deletes a definition folder. Definitions and their corresponding builds will also be deleted. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "DeleteFolder")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/folders")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The full path to the folder. */
+    @query(#{ explode: true }) path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Updates an existing folder at given existing path */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "UpdateFolder")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/folders")
+  @post
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The full path to the folder. */
+    @query(#{ explode: true }) path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The new version of the folder. */
+    @body body: Folder,
+  ): Folder;
+
+  /** Creates a new folder. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "CreateFolder")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/folders")
+  @put
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The full path of the folder. */
+    @query(#{ explode: true }) path: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The folder. */
+    @body body: Folder,
+  ): Folder;
+
+  /** Gets a list of build definition folders. */
+  @tag("Folders")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "folders")
+  @extension("x-ms-vss-method", "GetFolders")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/folders/{path}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The path to start with. */
+    @extension("x-ms-required", false) @path path: string,
+
+    /** The order in which folders should be returned. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "FolderQueryOrder",
+        values: #[
+          #{ value: "none", description: "No order" },
+          #{ value: "folderAscending", description: "Order by folder name and path ascending." },
+          #{ value: "folderDescending", description: "Order by folder name and path descending." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "none" | "folderAscending" | "folderDescending",
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Folder[]>;
+}
+
+interface GeneralSettings {
+  /** Gets pipeline general settings. */
+  @tag("General Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "generalSettings")
+  @extension("x-ms-vss-method", "GetBuildGeneralSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/generalsettings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PipelineGeneralSettings;
+
+  /** Updates pipeline general settings. */
+  @tag("General Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "generalSettings")
+  @extension("x-ms-vss-method", "UpdateBuildGeneralSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/generalsettings")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: PipelineGeneralSettings,
+  ): PipelineGeneralSettings;
+}
+
+interface Latest {
+  /** Gets the latest build for a definition, optionally scoped to a specific branch. */
+  @tag("Latest")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "latest")
+  @extension("x-ms-vss-method", "GetLatestBuild")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/latest/{definition}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** definition name with optional leading folder path, or the definition id */
+    @path definition: string,
+
+    /** optional parameter that indicates the specific branch to use. If not specified, the default branch is used. */
+    @query(#{ explode: true }) branchName?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Build;
+}
+
+interface Options {
+  /** Gets all build definition options supported by the system. */
+  @tag("Options")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "options")
+  @extension("x-ms-vss-method", "GetBuildOptionDefinitions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/options")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<BuildOptionDefinition[]>;
+}
+
+interface Retention {
+  /** Gets the project's retention settings. */
+  @tag("Retention")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "retention")
+  @extension("x-ms-vss-method", "GetRetentionSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ProjectRetentionSetting;
+
+  /** Updates the project's retention settings. */
+  @tag("Retention")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "retention")
+  @extension("x-ms-vss-method", "UpdateRetentionSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: UpdateProjectRetentionSettingModel,
+  ): ProjectRetentionSetting;
+}
+
+interface Leases {
+  /** Removes specific retention leases. */
+  @tag("Leases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "leases")
+  @extension("x-ms-vss-method", "DeleteRetentionLeasesById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention/leases")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @format("array (int32)") @query(#{ explode: true }) ids: string,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Returns any leases matching the specified MinimalRetentionLeases */
+  @tag("Leases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "leases")
+  @extension("x-ms-vss-method", "GetRetentionLeasesByMinimalRetentionLeases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention/leases")
+  @get
+  GetRetentionLeasesByMinimalRetentionLeases(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** List of JSON-serialized MinimalRetentionLeases separated by '|' */
+    @format("array (MinimalRetentionLease)") @query(#{ explode: true }) leasesToFetch: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<RetentionLease[]>;
+
+  /** Adds new leases for pipeline runs. */
+  @tag("Leases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "leases")
+  @extension("x-ms-vss-method", "AddRetentionLeases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention/leases")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: NewRetentionLease[],
+  ): Body<RetentionLease[]>;
+
+  /** Returns the details of the retention lease given a lease id. */
+  @tag("Leases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "leases")
+  @extension("x-ms-vss-method", "GetRetentionLease")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention/leases/{leaseId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path leaseId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): RetentionLease;
+
+  /** Updates the duration or pipeline protection status of a retention lease. */
+  @tag("Leases")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "leases")
+  @extension("x-ms-vss-method", "UpdateRetentionLease")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/retention/leases/{leaseId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the lease to update. */
+    @path leaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The new data for the retention lease. */
+    @body body: RetentionLeaseUpdate,
+  ): RetentionLease;
+}
+
+interface Settings {
+  /** Gets the build settings. */
+  @tag("Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "settings")
+  @extension("x-ms-vss-method", "GetBuildSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/settings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): BuildSettings;
+
+  /** Updates the build settings. */
+  @tag("Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "settings")
+  @extension("x-ms-vss-method", "UpdateBuildSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/settings")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The new settings. */
+    @body body: BuildSettings,
+  ): BuildSettings;
+}
+
+interface Status {
+  /** <p>Gets the build status for a definition, optionally scoped to a specific branch, stage, job, and configuration.</p> <p>If there are more than one, then it is required to pass in a stageName value when specifying a jobName, and the same rule then applies for both if passing a configuration parameter.</p> */
+  @tag("Status")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "status")
+  @extension("x-ms-vss-method", "GetStatusBadge")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/build/status/{definition}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Either the definition name with optional leading folder path, or the definition id. */
+    @path definition: string,
+
+    /** Only consider the most recent build for this branch. If not specified, the default branch is used. */
+    @query(#{ explode: true }) branchName?: string,
+
+    /** Use this stage within the pipeline to render the status. */
+    @query(#{ explode: true }) stageName?: string,
+
+    /** Use this job within a stage of the pipeline to render the status. */
+    @query(#{ explode: true }) jobName?: string,
+
+    /** Use this job configuration to render the status */
+    @query(#{ explode: true }) configuration?: string,
+
+    /** Replaces the default text on the left side of the badge. */
+    @query(#{ explode: true }) label?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<string>;
+}
+
+interface SourceProviders {
+  /** Get a list of source providers and their capabilities. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "sourceProviders")
+  @extension("x-ms-vss-method", "ListSourceProviders")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceproviders")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<SourceProviderAttributes[]>;
+
+  /** Gets a list of branches for the given source code repository. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "branches")
+  @extension("x-ms-vss-method", "ListBranches")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/branches")
+  @get
+  ListBranches(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    /** The vendor-specific identifier or the name of the repository to get branches. Can only be omitted for providers that do not support multiple repositories. */
+    @query(#{ explode: true }) repository?: string,
+
+    /** If supplied, the name of the branch to check for specifically. */
+    @query(#{ explode: true }) branchName?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<string[]>;
+
+  /** Gets the contents of a file in the given source code repository. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "fileContents")
+  @extension("x-ms-vss-method", "GetFileContents")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/filecontents")
+  @get
+  GetFileContents(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    /** If specified, the vendor-specific identifier or the name of the repository to get branches. Can only be omitted for providers that do not support multiple repositories. */
+    @query(#{ explode: true }) repository?: string,
+
+    /** The identifier of the commit or branch from which a file's contents are retrieved. */
+    @query(#{ explode: true }) commitOrBranch?: string,
+
+    /** The path to the file to retrieve, relative to the root of the repository. */
+    @query(#{ explode: true }) path?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "text/plain";
+    @body @format("Stream") body: string;
+  };
+
+  /** Gets the contents of a directory in the given source code repository. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pathContents")
+  @extension("x-ms-vss-method", "GetPathContents")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/pathcontents")
+  @get
+  GetPathContents(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    /** If specified, the vendor-specific identifier or the name of the repository to get branches. Can only be omitted for providers that do not support multiple repositories. */
+    @query(#{ explode: true }) repository?: string,
+
+    /** The identifier of the commit or branch from which a file's contents are retrieved. */
+    @query(#{ explode: true }) commitOrBranch?: string,
+
+    /** The path contents to list, relative to the root of the repository. */
+    @query(#{ explode: true }) path?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<SourceRepositoryItem[]>;
+
+  /** Gets a pull request object from source provider. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pullRequests")
+  @extension("x-ms-vss-method", "GetPullRequest")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/pullrequests/{pullRequestId}")
+  @get
+  GetPullRequest(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** Vendor-specific id of the pull request. */
+    @path pullRequestId: string,
+
+    /** Vendor-specific identifier or the name of the repository that contains the pull request. */
+    @query(#{ explode: true }) repositoryId?: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PullRequest;
+
+  /** Gets a list of source code repositories. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "ListRepositories")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/repositories")
+  @get
+  ListRepositories(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    /** If specified, the vendor-specific identifier or the name of a single repository to get. */
+    @query(#{ explode: true }) repository?: string,
+
+    /** 'top' for the repositories most relevant for the endpoint. If not set, all repositories are returned. Ignored if 'repository' is set. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ResultSet",
+        values: #[
+          #{ value: "all", description: "Include all repositories" },
+          #{ value: "top", description: "Include most relevant repositories for user" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    resultSet?: "all" | "top",
+
+    /** If set to true, this will limit the set of results and will return a continuation token to continue the query. */
+    @query(#{ explode: true }) pageResults?: boolean,
+
+    /** When paging results, this is a continuation token, returned by a previous call to this method, that can be used to return the next set of repositories. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): SourceRepositories;
+
+  /** Gets a list of webhooks installed in the given source code repository. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "webhooks")
+  @extension("x-ms-vss-method", "ListWebhooks")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/webhooks")
+  @get
+  ListWebhooks(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    /** If specified, the vendor-specific identifier or the name of the repository to get webhooks. Can only be omitted for providers that do not support multiple repositories. */
+    @query(#{ explode: true }) repository?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<RepositoryWebhook[]>;
+
+  /** Recreates the webhooks for the specified triggers in the given source code repository. */
+  @tag("Source Providers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "webhooks")
+  @extension("x-ms-vss-method", "RestoreWebhooks")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/webhooks")
+  @post
+  RestoreWebhooks(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name of the source provider. */
+    @path providerName: string,
+
+    /** If specified, the ID of the service endpoint to query. Can only be omitted for providers that do not use service endpoints, e.g. TFVC or TFGit. */
+    @format("uuid") @query(#{ explode: true }) serviceEndpointId?: string,
+
+    /** If specified, the vendor-specific identifier or the name of the repository to get webhooks. Can only be omitted for providers that do not support multiple repositories. */
+    @query(#{ explode: true }) repository?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The types of triggers to restore webhooks for. */
+    @body body: string[],
+  ): OkResponse;
 }

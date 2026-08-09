@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Graph" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://vssps.dev.azure.com")
 namespace Graph;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AadGraphMember {
   ...GraphMember;
@@ -539,613 +545,637 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Resolve a storage key to a descriptor */
-@tag("Descriptors")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "descriptors")
-@extension("x-ms-vss-method", "GetDescriptor")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/descriptors/{storageKey}")
-@get
-op Descriptors_Get(
-  /** Storage key of the subject (user, group, scope, etc.) to resolve */
-  @format("uuid") @path storageKey: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphDescriptorResult;
-
-/** Gets a list of all groups in the current scope (usually organization or account). The optional parameters are used to filter down the returned results. Returned results are in no guaranteed order. Since the list of groups may be large, results are returned in pages of groups. If there are more results than can be returned in a single page, the result set will contain a continuation token for retrieval of the next set of results. */
-@tag("Groups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groups")
-@extension("x-ms-vss-method", "ListGroups")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/groups")
-@get
-op Groups_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Specify a non-default scope (collection, project) to search for groups. */
-  @query(#{ explode: true }) scopeDescriptor?: string,
-
-  /** A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity */
-  @format("array (string)") @query(#{ explode: true }) subjectTypes?: string,
-
-  /** An opaque data blob that allows the next page of data to resume immediately after where the previous page ended. The only reliable way to know if there is more data left is the presence of a continuation token. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
-  @body body: GraphGroup[];
-};
-
-/** Create a new Azure DevOps group or materialize an existing AAD group. The body of the request must be a derived type of GraphGroupCreationContext: * GraphGroupVstsCreationContext - Create a new Azure DevOps group that is not backed by an external provider. * GraphGroupMailAddressCreationContext - Create a new group using the mail address as a reference to an existing group from an external AD or AAD backed provider. * GraphGroupOriginIdCreationContext - Create a new group using the OriginID as a reference to a group from an external AD or AAD backed provider. Optionally, you can add the newly created group as a member of an existing Azure DevOps group and/or specify a custom storage key for the group. */
-@tag("Groups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groups")
-@extension("x-ms-vss-method", "CreateGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/groups")
-@post
-op Groups_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A descriptor referencing the scope (collection, project) in which the group should be created. If omitted, will be created in the scope of the enclosing account or organization. Valid only for VSTS groups. */
-  @query(#{ explode: true }) scopeDescriptor?: string,
-
-  /** A comma separated list of descriptors referencing groups you want the graph group to join */
-  @format("array (string)") @query(#{ explode: true }) groupDescriptors?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The subset of the full graph group used to uniquely find the graph subject in an external provider. */
-  @body body: GraphGroupCreationContext,
-): GraphGroup;
-
-/** Removes an Azure DevOps group from all of its parent groups. The group will still be visible, but membership checks for the group, and all descendants which derive membership through it, will return false.” */
-@tag("Groups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groups")
-@extension("x-ms-vss-method", "DeleteGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/groups/{groupDescriptor}")
-@delete
-op Groups_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the group to delete. */
-  @path groupDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a group by its descriptor. The group will be returned even if it has been deleted from the account or has had all its memberships deleted. */
-@tag("Groups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groups")
-@extension("x-ms-vss-method", "GetGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/groups/{groupDescriptor}")
-@get
-op Groups_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the desired graph group. */
-  @path groupDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphGroup;
-
-/** Update the properties of an Azure DevOps group. Currently limited to only changing the description and account name. */
-@tag("Groups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "groups")
-@extension("x-ms-vss-method", "UpdateGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/groups/{groupDescriptor}")
-@patch
-op Groups_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the group to modify. */
-  @path groupDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** The JSON+Patch document containing the fields to alter. */
-  @body body: JsonPatchDocument,
-): GraphGroup;
-
-/** Get all the memberships where this descriptor is a member in the relationship. The default value for direction is 'up' meaning return all memberships where the subject is a member (e.g. all groups the subject is a member of). Alternatively, passing the direction as 'down' will return all memberships where the subject is a container (e.g. all members of the subject group). */
-@tag("Memberships")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "membershipsBatch")
-@extension("x-ms-vss-method", "ListMemberships")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/Memberships/{subjectDescriptor}")
-@get
-op Memberships_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Fetch all direct memberships of this descriptor. */
-  @path subjectDescriptor: string,
-
-  /** Defaults to Up. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GraphTraversalDirection",
-      values: #[
-        #{ value: "unknown", description: "" },
-        #{ value: "down", description: "" },
-        #{ value: "up", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  direction?: "unknown" | "down" | "up",
-
-  /** The maximum number of edges to traverse up or down the membership tree. Currently the only supported value is '1'. */
-  @query(#{ explode: true }) depth?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GraphMembership[]>;
-
-/** Deletes a membership between a container and subject. */
-@tag("Memberships")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "memberships")
-@extension("x-ms-vss-method", "RemoveMembership")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
-@delete
-op Memberships_RemoveMembership(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A descriptor to a group or user that is the child subject in the relationship. */
-  @path subjectDescriptor: string,
-
-  /** A descriptor to a group that is the container in the relationship. */
-  @path containerDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a membership relationship between a container and subject. */
-@tag("Memberships")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "memberships")
-@extension("x-ms-vss-method", "GetMembership")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
-@get
-op Memberships_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A descriptor to the child subject in the relationship. */
-  @path subjectDescriptor: string,
-
-  /** A descriptor to the container in the relationship. */
-  @path containerDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphMembership;
-
-/** Check to see if a membership relationship between a container and subject exists. */
-@tag("Memberships")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "memberships")
-@extension("x-ms-vss-method", "CheckMembershipExistence")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
-@head
-op Memberships_CheckMembershipExistence(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The group or user that is a child subject of the relationship. */
-  @path subjectDescriptor: string,
-
-  /** The group that is the container in the relationship. */
-  @path containerDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse | NotFoundResponse;
-
-/** Create a new membership between a container and subject. */
-@tag("Memberships")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "memberships")
-@extension("x-ms-vss-method", "AddMembership")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
-@put
-op Memberships_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A descriptor to a group or user that can be the child subject in the relationship. */
-  @path subjectDescriptor: string,
-
-  /** A descriptor to a group that can be the container in the relationship. */
-  @path containerDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphMembership;
-
-/** Check whether a subject is active or inactive. */
-@tag("Membership States")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "membershipStates")
-@extension("x-ms-vss-method", "GetMembershipState")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/membershipstates/{subjectDescriptor}")
-@get
-op MembershipStates_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Descriptor of the subject (user, group, scope, etc.) to check state of */
-  @path subjectDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphMembershipState;
-
-@tag("Request Access")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "requestAccess")
-@extension("x-ms-vss-method", "RequestAccess")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/requestaccess")
-@post
-op RequestAccess_RequestAccess(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: JToken,
-): OkResponse;
-
-/** Get a list of all service principals in a given scope. Since the list of service principals may be large, results are returned in pages of service principals. If there are more results than can be returned in a single page, the result set will contain a continuation token for retrieval of the next set of results. The only reliable way to know if there is no more service principals left is the lack of a continuation token. */
-@tag("Service Principals")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipals")
-@extension("x-ms-vss-method", "ListServicePrincipals")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/serviceprincipals")
-@get
-op ServicePrincipals_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** An opaque data blob that allows the next page of data to resume immediately after where the previous page ended. The only reliable way to know if there is more data left is the presence of a continuation token. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Specify a non-default scope (collection, project) to search for service principals. */
-  @query(#{ explode: true }) scopeDescriptor?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
-  @body body: GraphServicePrincipal[];
-};
-
-/** Materialize an existing AAD service principal into the ADO account. NOTE: Created service principals are not active in an account. Adding a service principal to an account is required before the service principal can be added to ADO groups or assigned an asset. The body of the request must be a derived type of GraphServicePrincipalCreationContext: * GraphServicePrincipalOriginIdCreationContext - Create a new service principal using the OriginID as a reference to an existing service principal from AAD backed provider. If the service principal to be added corresponds to a service principal that was previously deleted, then that service principal will be restored. Optionally, you can add the newly created service principal as a member of an existing ADO group and/or specify a custom storage key for the service principal. */
-@tag("Service Principals")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipals")
-@extension("x-ms-vss-method", "CreateServicePrincipal")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/serviceprincipals")
-@post
-op ServicePrincipals_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A comma separated list of descriptors of groups you want the graph service principal to join */
-  @format("array (string)") @query(#{ explode: true }) groupDescriptors?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The subset of the full graph service principal used to uniquely find the graph subject in an external provider. */
-  @body body: GraphServicePrincipalCreationContext,
-): GraphServicePrincipal;
-
-/** Disables a service principal. The service principal will still be visible, but membership checks for the service principal will return false. */
-@tag("Service Principals")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipals")
-@extension("x-ms-vss-method", "DeleteServicePrincipal")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/serviceprincipals/{servicePrincipalDescriptor}")
-@delete
-op ServicePrincipals_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the service principal to delete. */
-  @path servicePrincipalDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a service principal by its descriptor. */
-@tag("Service Principals")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "servicePrincipals")
-@extension("x-ms-vss-method", "GetServicePrincipal")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/serviceprincipals/{servicePrincipalDescriptor}")
-@get
-op ServicePrincipals_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the desired service principal. */
-  @path servicePrincipalDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphServicePrincipal;
-
-/** Resolve a descriptor to a storage key. */
-@tag("Storage Keys")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "storageKeys")
-@extension("x-ms-vss-method", "GetStorageKey")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/storagekeys/{subjectDescriptor}")
-@get
-op StorageKeys_Get(
-  @path subjectDescriptor: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphStorageKeyResult;
-
-/** Resolve descriptors to users, groups or scopes (Subjects) in a batch. */
-@tag("Subject Lookup")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subjectLookup")
-@extension("x-ms-vss-method", "LookupSubjects")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/subjectlookup")
-@post
-op SubjectLookup_LookupSubjects(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** A list of descriptors that specifies a subset of subjects to retrieve. Each descriptor uniquely identifies the subject across all instance scopes, but only at a single point in time. */
-  @body body: GraphSubjectLookup,
-): Body<Record<GraphSubject>>;
-
-/** Search for Azure Devops users, or/and groups. Results will be returned in a batch with no more than 100 graph subjects. */
-@tag("Subject Query")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subjectQuery")
-@extension("x-ms-vss-method", "QuerySubjects")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/subjectquery")
-@post
-op SubjectQuery_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The query that we'll be using to search includes the following: Query: the search term. The search will be prefix matching only. SubjectKind: 'User' or 'Group' can be specified, both or either ScopeDescriptor: Non-default scope can be specified, i.e. project scope descriptor */
-  @body body: GraphSubjectQuery,
-): Body<GraphSubject[]>;
-
-@tag("Avatars")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "avatars")
-@extension("x-ms-vss-method", "DeleteAvatar")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
-@delete
-op Avatars_Delete(
-  @path subjectDescriptor: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-@tag("Avatars")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "avatars")
-@extension("x-ms-vss-method", "GetAvatar")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
-@get
-op Avatars_Get(
-  @path subjectDescriptor: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AvatarSize",
-      values: #[
-        #{ value: "small", description: "" },
-        #{ value: "medium", description: "" },
-        #{ value: "large", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  size?: "small" | "medium" | "large",
-  @query(#{ explode: true }) format?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Avatar;
-
-@tag("Avatars")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "avatars")
-@extension("x-ms-vss-method", "SetAvatar")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
-@put
-op Avatars_SetAvatar(
-  @path subjectDescriptor: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: Avatar,
-): OkResponse;
-
-/** Get a list of all users in a given scope. Since the list of users may be large, results are returned in pages of users. If there are more results than can be returned in a single page, the result set will contain a continuation token for retrieval of the next set of results. */
-@tag("Users")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "users")
-@extension("x-ms-vss-method", "ListUsers")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/users")
-@get
-op Users_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A comma separated list of user subject subtypes to reduce the retrieved results, e.g. msa’, ‘aad’, ‘svc’ (service identity), ‘imp’ (imported identity), etc. */
-  @format("array (string)") @query(#{ explode: true }) subjectTypes?: string,
-
-  /** An opaque data blob that allows the next page of data to resume immediately after where the previous page ended. The only reliable way to know if there is more data left is the presence of a continuation token. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Specify a non-default scope (collection, project) to search for users. */
-  @query(#{ explode: true }) scopeDescriptor?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
-  @body body: GraphUser[];
-};
-
-/** Materialize an existing AAD or MSA user into the ADO account. NOTE: Created users are not active in an account unless they have been explicitly assigned a parent group at creation time or have signed in and been autolicensed through AAD group memberships. Adding a user to an account is required before the user can be added to ADO groups or assigned an asset. The body of the request must be a derived type of GraphUserCreationContext: * GraphUserMailAddressCreationContext - Create a new user using the mail address as a reference to an existing user from an external AD or AAD backed provider. * GraphUserOriginIdCreationContext - Create a new user using the OriginID as a reference to an existing user from an external AD or AAD backed provider. * GraphUserPrincipalNameCreationContext - Create a new user using the principal name as a reference to an existing user from an external AD or AAD backed provider. If the user to be added corresponds to a user that was previously deleted, then that user will be restored. Optionally, you can add the newly created user as a member of an existing ADO group and/or specify a custom storage key for the user. */
-@tag("Users")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "users")
-@extension("x-ms-vss-method", "CreateUser")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/users")
-@post
-op Users_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A comma separated list of descriptors of groups you want the graph user to join */
-  @format("array (string)") @query(#{ explode: true }) groupDescriptors?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The subset of the full graph user used to uniquely find the graph subject in an external provider. */
-  @body body: GraphUserCreationContext,
-): GraphUser;
-
-/** Disables a user. The user will still be visible, but membership checks for the user will return false. */
-@tag("Users")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "users")
-@extension("x-ms-vss-method", "DeleteUser")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/users/{userDescriptor}")
-@delete
-op Users_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the user to delete. */
-  @path userDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a user by its descriptor. */
-@tag("Users")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "users")
-@extension("x-ms-vss-method", "GetUser")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/users/{userDescriptor}")
-@get
-op Users_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the desired user. */
-  @path userDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphUser;
-
-/** Map an existing user to a different user. The body of the request must be a derived type of GraphUserUpdateContext: * GraphUserOriginIdUpdateContext - Map an existing user in an account, to an existing user from an external AD or AAD backed provider using the OriginId as a reference. */
-@tag("Users")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "users")
-@extension("x-ms-vss-method", "UpdateUser")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/users/{userDescriptor}")
-@patch
-op Users_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The descriptor of the user to update */
-  @path userDescriptor: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The subset of the full graph user used to uniquely find the graph subject in an external provider. */
-  @body body: GraphUserUpdateContext,
-): GraphUser;
-
-@tag("Provider Info")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "providerInfo")
-@extension("x-ms-vss-method", "GetProviderInfo")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/graph/Users/{userDescriptor}/providerinfo")
-@get
-op ProviderInfo_Get(
-  @path userDescriptor: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): GraphProviderInfo;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Descriptors {
+  /** Resolve a storage key to a descriptor */
+  @tag("Descriptors")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "descriptors")
+  @extension("x-ms-vss-method", "GetDescriptor")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/descriptors/{storageKey}")
+  @get
+  Get(
+    /** Storage key of the subject (user, group, scope, etc.) to resolve */
+    @format("uuid") @path storageKey: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphDescriptorResult;
+}
+
+interface Groups {
+  /** Gets a list of all groups in the current scope (usually organization or account). The optional parameters are used to filter down the returned results. Returned results are in no guaranteed order. Since the list of groups may be large, results are returned in pages of groups. If there are more results than can be returned in a single page, the result set will contain a continuation token for retrieval of the next set of results. */
+  @tag("Groups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groups")
+  @extension("x-ms-vss-method", "ListGroups")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/groups")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Specify a non-default scope (collection, project) to search for groups. */
+    @query(#{ explode: true }) scopeDescriptor?: string,
+
+    /** A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity */
+    @format("array (string)") @query(#{ explode: true }) subjectTypes?: string,
+
+    /** An opaque data blob that allows the next page of data to resume immediately after where the previous page ended. The only reliable way to know if there is more data left is the presence of a continuation token. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
+    @body body: GraphGroup[];
+  };
+
+  /** Create a new Azure DevOps group or materialize an existing AAD group. The body of the request must be a derived type of GraphGroupCreationContext: * GraphGroupVstsCreationContext - Create a new Azure DevOps group that is not backed by an external provider. * GraphGroupMailAddressCreationContext - Create a new group using the mail address as a reference to an existing group from an external AD or AAD backed provider. * GraphGroupOriginIdCreationContext - Create a new group using the OriginID as a reference to a group from an external AD or AAD backed provider. Optionally, you can add the newly created group as a member of an existing Azure DevOps group and/or specify a custom storage key for the group. */
+  @tag("Groups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groups")
+  @extension("x-ms-vss-method", "CreateGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/groups")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A descriptor referencing the scope (collection, project) in which the group should be created. If omitted, will be created in the scope of the enclosing account or organization. Valid only for VSTS groups. */
+    @query(#{ explode: true }) scopeDescriptor?: string,
+
+    /** A comma separated list of descriptors referencing groups you want the graph group to join */
+    @format("array (string)") @query(#{ explode: true }) groupDescriptors?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The subset of the full graph group used to uniquely find the graph subject in an external provider. */
+    @body body: GraphGroupCreationContext,
+  ): GraphGroup;
+
+  /** Removes an Azure DevOps group from all of its parent groups. The group will still be visible, but membership checks for the group, and all descendants which derive membership through it, will return false.” */
+  @tag("Groups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groups")
+  @extension("x-ms-vss-method", "DeleteGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/groups/{groupDescriptor}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the group to delete. */
+    @path groupDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a group by its descriptor. The group will be returned even if it has been deleted from the account or has had all its memberships deleted. */
+  @tag("Groups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groups")
+  @extension("x-ms-vss-method", "GetGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/groups/{groupDescriptor}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the desired graph group. */
+    @path groupDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphGroup;
+
+  /** Update the properties of an Azure DevOps group. Currently limited to only changing the description and account name. */
+  @tag("Groups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "groups")
+  @extension("x-ms-vss-method", "UpdateGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/groups/{groupDescriptor}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the group to modify. */
+    @path groupDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** The JSON+Patch document containing the fields to alter. */
+    @body body: JsonPatchDocument,
+  ): GraphGroup;
+}
+
+interface Memberships {
+  /** Get all the memberships where this descriptor is a member in the relationship. The default value for direction is 'up' meaning return all memberships where the subject is a member (e.g. all groups the subject is a member of). Alternatively, passing the direction as 'down' will return all memberships where the subject is a container (e.g. all members of the subject group). */
+  @tag("Memberships")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "membershipsBatch")
+  @extension("x-ms-vss-method", "ListMemberships")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/Memberships/{subjectDescriptor}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Fetch all direct memberships of this descriptor. */
+    @path subjectDescriptor: string,
+
+    /** Defaults to Up. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GraphTraversalDirection",
+        values: #[
+          #{ value: "unknown", description: "" },
+          #{ value: "down", description: "" },
+          #{ value: "up", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    direction?: "unknown" | "down" | "up",
+
+    /** The maximum number of edges to traverse up or down the membership tree. Currently the only supported value is '1'. */
+    @query(#{ explode: true }) depth?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GraphMembership[]>;
+
+  /** Deletes a membership between a container and subject. */
+  @tag("Memberships")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "memberships")
+  @extension("x-ms-vss-method", "RemoveMembership")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
+  @delete
+  RemoveMembership(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A descriptor to a group or user that is the child subject in the relationship. */
+    @path subjectDescriptor: string,
+
+    /** A descriptor to a group that is the container in the relationship. */
+    @path containerDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a membership relationship between a container and subject. */
+  @tag("Memberships")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "memberships")
+  @extension("x-ms-vss-method", "GetMembership")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A descriptor to the child subject in the relationship. */
+    @path subjectDescriptor: string,
+
+    /** A descriptor to the container in the relationship. */
+    @path containerDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphMembership;
+
+  /** Check to see if a membership relationship between a container and subject exists. */
+  @tag("Memberships")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "memberships")
+  @extension("x-ms-vss-method", "CheckMembershipExistence")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
+  @head
+  CheckMembershipExistence(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The group or user that is a child subject of the relationship. */
+    @path subjectDescriptor: string,
+
+    /** The group that is the container in the relationship. */
+    @path containerDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse | NotFoundResponse;
+
+  /** Create a new membership between a container and subject. */
+  @tag("Memberships")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "memberships")
+  @extension("x-ms-vss-method", "AddMembership")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
+  @put
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A descriptor to a group or user that can be the child subject in the relationship. */
+    @path subjectDescriptor: string,
+
+    /** A descriptor to a group that can be the container in the relationship. */
+    @path containerDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphMembership;
+}
+
+interface MembershipStates {
+  /** Check whether a subject is active or inactive. */
+  @tag("Membership States")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "membershipStates")
+  @extension("x-ms-vss-method", "GetMembershipState")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/membershipstates/{subjectDescriptor}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Descriptor of the subject (user, group, scope, etc.) to check state of */
+    @path subjectDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphMembershipState;
+}
+
+interface RequestAccess {
+  @tag("Request Access")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "requestAccess")
+  @extension("x-ms-vss-method", "RequestAccess")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/requestaccess")
+  @post
+  RequestAccess(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: JToken,
+  ): OkResponse;
+}
+
+interface ServicePrincipals {
+  /** Get a list of all service principals in a given scope. Since the list of service principals may be large, results are returned in pages of service principals. If there are more results than can be returned in a single page, the result set will contain a continuation token for retrieval of the next set of results. The only reliable way to know if there is no more service principals left is the lack of a continuation token. */
+  @tag("Service Principals")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipals")
+  @extension("x-ms-vss-method", "ListServicePrincipals")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/serviceprincipals")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** An opaque data blob that allows the next page of data to resume immediately after where the previous page ended. The only reliable way to know if there is more data left is the presence of a continuation token. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Specify a non-default scope (collection, project) to search for service principals. */
+    @query(#{ explode: true }) scopeDescriptor?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
+    @body body: GraphServicePrincipal[];
+  };
+
+  /** Materialize an existing AAD service principal into the ADO account. NOTE: Created service principals are not active in an account. Adding a service principal to an account is required before the service principal can be added to ADO groups or assigned an asset. The body of the request must be a derived type of GraphServicePrincipalCreationContext: * GraphServicePrincipalOriginIdCreationContext - Create a new service principal using the OriginID as a reference to an existing service principal from AAD backed provider. If the service principal to be added corresponds to a service principal that was previously deleted, then that service principal will be restored. Optionally, you can add the newly created service principal as a member of an existing ADO group and/or specify a custom storage key for the service principal. */
+  @tag("Service Principals")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipals")
+  @extension("x-ms-vss-method", "CreateServicePrincipal")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/serviceprincipals")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A comma separated list of descriptors of groups you want the graph service principal to join */
+    @format("array (string)") @query(#{ explode: true }) groupDescriptors?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The subset of the full graph service principal used to uniquely find the graph subject in an external provider. */
+    @body body: GraphServicePrincipalCreationContext,
+  ): GraphServicePrincipal;
+
+  /** Disables a service principal. The service principal will still be visible, but membership checks for the service principal will return false. */
+  @tag("Service Principals")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipals")
+  @extension("x-ms-vss-method", "DeleteServicePrincipal")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/serviceprincipals/{servicePrincipalDescriptor}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the service principal to delete. */
+    @path servicePrincipalDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a service principal by its descriptor. */
+  @tag("Service Principals")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "servicePrincipals")
+  @extension("x-ms-vss-method", "GetServicePrincipal")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/serviceprincipals/{servicePrincipalDescriptor}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the desired service principal. */
+    @path servicePrincipalDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphServicePrincipal;
+}
+
+interface StorageKeys {
+  /** Resolve a descriptor to a storage key. */
+  @tag("Storage Keys")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "storageKeys")
+  @extension("x-ms-vss-method", "GetStorageKey")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/storagekeys/{subjectDescriptor}")
+  @get
+  Get(
+    @path subjectDescriptor: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphStorageKeyResult;
+}
+
+interface SubjectLookup {
+  /** Resolve descriptors to users, groups or scopes (Subjects) in a batch. */
+  @tag("Subject Lookup")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subjectLookup")
+  @extension("x-ms-vss-method", "LookupSubjects")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/subjectlookup")
+  @post
+  LookupSubjects(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** A list of descriptors that specifies a subset of subjects to retrieve. Each descriptor uniquely identifies the subject across all instance scopes, but only at a single point in time. */
+    @body body: GraphSubjectLookup,
+  ): Body<Record<GraphSubject>>;
+}
+
+interface SubjectQuery {
+  /** Search for Azure Devops users, or/and groups. Results will be returned in a batch with no more than 100 graph subjects. */
+  @tag("Subject Query")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subjectQuery")
+  @extension("x-ms-vss-method", "QuerySubjects")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/subjectquery")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The query that we'll be using to search includes the following: Query: the search term. The search will be prefix matching only. SubjectKind: 'User' or 'Group' can be specified, both or either ScopeDescriptor: Non-default scope can be specified, i.e. project scope descriptor */
+    @body body: GraphSubjectQuery,
+  ): Body<GraphSubject[]>;
+}
+
+interface Avatars {
+  @tag("Avatars")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "avatars")
+  @extension("x-ms-vss-method", "DeleteAvatar")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
+  @delete
+  Delete(
+    @path subjectDescriptor: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  @tag("Avatars")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "avatars")
+  @extension("x-ms-vss-method", "GetAvatar")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
+  @get
+  Get(
+    @path subjectDescriptor: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AvatarSize",
+        values: #[
+          #{ value: "small", description: "" },
+          #{ value: "medium", description: "" },
+          #{ value: "large", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    size?: "small" | "medium" | "large",
+    @query(#{ explode: true }) format?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Avatar;
+
+  @tag("Avatars")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "avatars")
+  @extension("x-ms-vss-method", "SetAvatar")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
+  @put
+  SetAvatar(
+    @path subjectDescriptor: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: Avatar,
+  ): OkResponse;
+}
+
+interface Users {
+  /** Get a list of all users in a given scope. Since the list of users may be large, results are returned in pages of users. If there are more results than can be returned in a single page, the result set will contain a continuation token for retrieval of the next set of results. */
+  @tag("Users")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "users")
+  @extension("x-ms-vss-method", "ListUsers")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/users")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A comma separated list of user subject subtypes to reduce the retrieved results, e.g. msa’, ‘aad’, ‘svc’ (service identity), ‘imp’ (imported identity), etc. */
+    @format("array (string)") @query(#{ explode: true }) subjectTypes?: string,
+
+    /** An opaque data blob that allows the next page of data to resume immediately after where the previous page ended. The only reliable way to know if there is more data left is the presence of a continuation token. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Specify a non-default scope (collection, project) to search for users. */
+    @query(#{ explode: true }) scopeDescriptor?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
+    @body body: GraphUser[];
+  };
+
+  /** Materialize an existing AAD or MSA user into the ADO account. NOTE: Created users are not active in an account unless they have been explicitly assigned a parent group at creation time or have signed in and been autolicensed through AAD group memberships. Adding a user to an account is required before the user can be added to ADO groups or assigned an asset. The body of the request must be a derived type of GraphUserCreationContext: * GraphUserMailAddressCreationContext - Create a new user using the mail address as a reference to an existing user from an external AD or AAD backed provider. * GraphUserOriginIdCreationContext - Create a new user using the OriginID as a reference to an existing user from an external AD or AAD backed provider. * GraphUserPrincipalNameCreationContext - Create a new user using the principal name as a reference to an existing user from an external AD or AAD backed provider. If the user to be added corresponds to a user that was previously deleted, then that user will be restored. Optionally, you can add the newly created user as a member of an existing ADO group and/or specify a custom storage key for the user. */
+  @tag("Users")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "users")
+  @extension("x-ms-vss-method", "CreateUser")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/users")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A comma separated list of descriptors of groups you want the graph user to join */
+    @format("array (string)") @query(#{ explode: true }) groupDescriptors?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The subset of the full graph user used to uniquely find the graph subject in an external provider. */
+    @body body: GraphUserCreationContext,
+  ): GraphUser;
+
+  /** Disables a user. The user will still be visible, but membership checks for the user will return false. */
+  @tag("Users")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "users")
+  @extension("x-ms-vss-method", "DeleteUser")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/users/{userDescriptor}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the user to delete. */
+    @path userDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a user by its descriptor. */
+  @tag("Users")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "users")
+  @extension("x-ms-vss-method", "GetUser")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/users/{userDescriptor}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the desired user. */
+    @path userDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphUser;
+
+  /** Map an existing user to a different user. The body of the request must be a derived type of GraphUserUpdateContext: * GraphUserOriginIdUpdateContext - Map an existing user in an account, to an existing user from an external AD or AAD backed provider using the OriginId as a reference. */
+  @tag("Users")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "users")
+  @extension("x-ms-vss-method", "UpdateUser")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/users/{userDescriptor}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The descriptor of the user to update */
+    @path userDescriptor: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The subset of the full graph user used to uniquely find the graph subject in an external provider. */
+    @body body: GraphUserUpdateContext,
+  ): GraphUser;
+}
+
+interface ProviderInfo {
+  @tag("Provider Info")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "providerInfo")
+  @extension("x-ms-vss-method", "GetProviderInfo")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/graph/Users/{userDescriptor}/providerinfo")
+  @get
+  Get(
+    @path userDescriptor: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): GraphProviderInfo;
 }

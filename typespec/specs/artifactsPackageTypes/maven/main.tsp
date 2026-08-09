@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Maven" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://pkgs.dev.azure.com")
 namespace Maven;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Do not attempt to use this type to create a new BatchOperationData. This type does not contain sufficient fields to create a new batch operation data. */
 model BatchOperationData {}
@@ -345,337 +351,339 @@ model UpstreamSourceInfo {
   sourceType?: "public" | "internal";
 }
 
-/** Get the upstreaming behavior of a package within the context of a feed */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "upstreaming")
-@extension("x-ms-vss-method", "GetUpstreamingBehavior")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/upstreaming")
-@get
-op Maven_GetUpstreamingBehavior(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or id of the feed */
-  @path feed: string,
-
-  /** The group id of the package */
-  @path groupId: string,
-
-  /** The artifact id of the package */
-  @path artifactId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): UpstreamingBehavior;
-
-/** Set the upstreaming behavior of a package within the context of a feed The package does not need to necessarily exist in the feed prior to setting the behavior. This assists with packages that are not yet ingested from an upstream, yet the feed owner wants to apply a specific behavior on the first ingestion. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "upstreaming")
-@extension("x-ms-vss-method", "SetUpstreamingBehavior")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/upstreaming")
-@patch
-op Maven_SetUpstreamingBehavior(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or id of the feed */
-  @path feed: string,
-
-  @path groupId: string,
-  @path artifactId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The behavior to apply to the package within the scope of the feed */
-  @body body: UpstreamingBehavior,
-): OkResponse;
-
-/** Delete a package version from the feed and move it to the feed's recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "PackageDelete")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
-@delete
-op Maven_DeletePackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feed: string,
-
-  /** Group ID of the package. */
-  @path groupId: string,
-
-  /** Artifact ID of the package. */
-  @path artifactId: string,
-
-  /** Version of the package. */
-  @path version: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): AcceptedResponse;
-
-/** Get information about a package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "GetPackageVersion")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
-@get
-op Maven_GetPackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feed: string,
-
-  /** Group ID of the package. */
-  @path groupId: string,
-
-  /** Artifact ID of the package. */
-  @path artifactId: string,
-
-  /** Version of the package. */
-  @path version: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to show information for deleted packages. */
-  @query(#{ explode: true }) showDeleted?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-/** Update state for a package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "UpdatePackageVersion")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
-@patch
-op Maven_UpdatePackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feed: string,
-
-  /** Group ID of the package. */
-  @path groupId: string,
-
-  /** Artifact ID of the package. */
-  @path artifactId: string,
-
-  /** Version of the package. */
-  @path version: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Details to be updated. */
-  @body body: PackageVersionDetails,
-): OkResponse;
-
-/** Permanently delete a package from a feed's recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "DeletePackageVersionFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
-@delete
-op Maven_DeletePackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feed: string,
-
-  /** Group ID of the package. */
-  @path groupId: string,
-
-  /** Artifact ID of the package. */
-  @path artifactId: string,
-
-  /** Version of the package. */
-  @path version: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get information about a package version in the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "GetPackageVersionMetadataFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
-@get
-op Maven_GetPackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feed: string,
-
-  /** Group ID of the package. */
-  @path groupId: string,
-
-  /** Artifact ID of the package. */
-  @path artifactId: string,
-
-  /** Version of the package. */
-  @path version: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): MavenPackageVersionDeletionState;
-
-/** Restore a package version from the recycle bin to its associated feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "RestorePackageVersionFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
-@patch
-op Maven_RestorePackageVersionFromRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feed: string,
-
-  /** Group ID of the package. */
-  @path groupId: string,
-
-  /** Artifact ID of the package. */
-  @path artifactId: string,
-
-  /** Version of the package. */
-  @path version: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Set the 'Deleted' property to false to restore the package. */
-  @body body: MavenRecycleBinPackageVersionDetails,
-): OkResponse;
-
-/** Delete or restore several package versions from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recyclebinpackagesbatch")
-@extension("x-ms-vss-method", "UpdateRecycleBinPackagesAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/packagesBatch")
-@post
-op Maven_UpdateRecycleBinPackages(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path feed: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Information about the packages to update, the operation to perform, and its associated data. */
-  @body body: MavenPackagesBatchRequest,
-): OkResponse;
-
-/** Fulfills Maven package file download requests by either returning the URL of the requested package file or, in the case of Azure DevOps Server (OnPrem), returning the content as a stream. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "content")
-@extension("x-ms-vss-method", "DownloadPackage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/maven/{groupId}/{artifactId}/{version}/{fileName}/content")
-@get
-op Maven_DownloadPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** GroupId of the maven package */
-  @path groupId: string,
-
-  /** ArtifactId of the maven package */
-  @path artifactId: string,
-
-  /** Version of the package */
-  @path version: string,
-
-  /** File name to download */
-  @path fileName: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "application/octet-stream";
-  @body @format("Stream") body: string;
-};
-
-/** Update several packages from a single feed in a single request. The updates to the packages do not happen atomically. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Maven")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packagesBatch")
-@extension("x-ms-vss-method", "UpdatePackageVersions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/maven/packagesbatch")
-@post
-op Maven_UpdatePackageVersions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Feed which contains the packages to update. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Information about the packages to update, the operation to perform, and its associated data. */
-  @body body: MavenPackagesBatchRequest,
-): OkResponse;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Maven {
+  /** Get the upstreaming behavior of a package within the context of a feed */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "upstreaming")
+  @extension("x-ms-vss-method", "GetUpstreamingBehavior")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/upstreaming")
+  @get
+  GetUpstreamingBehavior(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or id of the feed */
+    @path feed: string,
+
+    /** The group id of the package */
+    @path groupId: string,
+
+    /** The artifact id of the package */
+    @path artifactId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): UpstreamingBehavior;
+
+  /** Set the upstreaming behavior of a package within the context of a feed The package does not need to necessarily exist in the feed prior to setting the behavior. This assists with packages that are not yet ingested from an upstream, yet the feed owner wants to apply a specific behavior on the first ingestion. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "upstreaming")
+  @extension("x-ms-vss-method", "SetUpstreamingBehavior")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/upstreaming")
+  @patch
+  SetUpstreamingBehavior(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or id of the feed */
+    @path feed: string,
+
+    @path groupId: string,
+    @path artifactId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The behavior to apply to the package within the scope of the feed */
+    @body body: UpstreamingBehavior,
+  ): OkResponse;
+
+  /** Delete a package version from the feed and move it to the feed's recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "PackageDelete")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
+  @delete
+  DeletePackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feed: string,
+
+    /** Group ID of the package. */
+    @path groupId: string,
+
+    /** Artifact ID of the package. */
+    @path artifactId: string,
+
+    /** Version of the package. */
+    @path version: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): AcceptedResponse;
+
+  /** Get information about a package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "GetPackageVersion")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
+  @get
+  GetPackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feed: string,
+
+    /** Group ID of the package. */
+    @path groupId: string,
+
+    /** Artifact ID of the package. */
+    @path artifactId: string,
+
+    /** Version of the package. */
+    @path version: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to show information for deleted packages. */
+    @query(#{ explode: true }) showDeleted?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  /** Update state for a package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "UpdatePackageVersion")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
+  @patch
+  UpdatePackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feed: string,
+
+    /** Group ID of the package. */
+    @path groupId: string,
+
+    /** Artifact ID of the package. */
+    @path artifactId: string,
+
+    /** Version of the package. */
+    @path version: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Details to be updated. */
+    @body body: PackageVersionDetails,
+  ): OkResponse;
+
+  /** Permanently delete a package from a feed's recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "DeletePackageVersionFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
+  @delete
+  DeletePackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feed: string,
+
+    /** Group ID of the package. */
+    @path groupId: string,
+
+    /** Artifact ID of the package. */
+    @path artifactId: string,
+
+    /** Version of the package. */
+    @path version: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get information about a package version in the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "GetPackageVersionMetadataFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
+  @get
+  GetPackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feed: string,
+
+    /** Group ID of the package. */
+    @path groupId: string,
+
+    /** Artifact ID of the package. */
+    @path artifactId: string,
+
+    /** Version of the package. */
+    @path version: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): MavenPackageVersionDeletionState;
+
+  /** Restore a package version from the recycle bin to its associated feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "RestorePackageVersionFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
+  @patch
+  RestorePackageVersionFromRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feed: string,
+
+    /** Group ID of the package. */
+    @path groupId: string,
+
+    /** Artifact ID of the package. */
+    @path artifactId: string,
+
+    /** Version of the package. */
+    @path version: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Set the 'Deleted' property to false to restore the package. */
+    @body body: MavenRecycleBinPackageVersionDetails,
+  ): OkResponse;
+
+  /** Delete or restore several package versions from the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recyclebinpackagesbatch")
+  @extension("x-ms-vss-method", "UpdateRecycleBinPackagesAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/packagesBatch")
+  @post
+  UpdateRecycleBinPackages(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path feed: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Information about the packages to update, the operation to perform, and its associated data. */
+    @body body: MavenPackagesBatchRequest,
+  ): OkResponse;
+
+  /** Fulfills Maven package file download requests by either returning the URL of the requested package file or, in the case of Azure DevOps Server (OnPrem), returning the content as a stream. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "content")
+  @extension("x-ms-vss-method", "DownloadPackage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/maven/{groupId}/{artifactId}/{version}/{fileName}/content")
+  @get
+  DownloadPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** GroupId of the maven package */
+    @path groupId: string,
+
+    /** ArtifactId of the maven package */
+    @path artifactId: string,
+
+    /** Version of the package */
+    @path version: string,
+
+    /** File name to download */
+    @path fileName: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "application/octet-stream";
+    @body @format("Stream") body: string;
+  };
+
+  /** Update several packages from a single feed in a single request. The updates to the packages do not happen atomically. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Maven")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packagesBatch")
+  @extension("x-ms-vss-method", "UpdatePackageVersions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/maven/packagesbatch")
+  @post
+  UpdatePackageVersions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Feed which contains the packages to update. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Information about the packages to update, the operation to perform, and its associated data. */
+    @body body: MavenPackagesBatchRequest,
+  ): OkResponse;
 }

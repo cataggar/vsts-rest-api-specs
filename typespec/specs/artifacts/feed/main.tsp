@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Feed" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://feeds.dev.azure.com")
 namespace Feed;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Feed & package info for build packages tab */
 model BuildPackage {
@@ -809,981 +815,995 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get all service-wide feed creation and administration permissions. */
-@tag("Service  Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "globalPermissions")
-@extension("x-ms-vss-method", "GetGlobalPermissions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/packaging/globalpermissions")
-@get
-op ServiceSettings_GetGlobalPermissions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Set to true to add IdentityIds to the permission objects. */
-  @query(#{ explode: true }) includeIds?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<GlobalPermission[]>;
-
-/** Set service-wide permissions that govern feed creation and administration. */
-@tag("Service  Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "globalPermissions")
-@extension("x-ms-vss-method", "SetGlobalPermissions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/packaging/globalpermissions")
-@patch
-op ServiceSettings_SetGlobalPermissions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** New permissions for the organization. */
-  @body body: GlobalPermission[],
-): Body<GlobalPermission[]>;
-
-/** Query to determine which feeds have changed since the last call, tracked through the provided continuationToken. Only changes to a feed itself are returned and impact the continuationToken, not additions or alterations to packages within the feeds. If the project parameter is present, gets all feed changes in the given project. If omitted, gets all feed changes in the organization. */
-@tag("Change  Tracking")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feedChanges")
-@extension("x-ms-vss-method", "GetFeedChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feedchanges")
-@get
-op ChangeTracking_GetFeedChanges(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** If true, get changes for all feeds including deleted feeds. The default value is false. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** A continuation token which acts as a bookmark to a previously retrieved change. This token allows the user to continue retrieving changes in batches, picking up where the previous batch left off. If specified, all the changes that occur strictly after the token will be returned. If not specified or 0, iteration will start with the first change. */
-  @query(#{ explode: true }) continuationToken?: int64,
-
-  /** Number of package changes to fetch. The default value is 1000. The maximum value is 2000. */
-  @query(#{ explode: true }) batchSize?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): FeedChangesResponse;
-
-/** Query a feed to determine its current state. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Change  Tracking")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feedChanges")
-@extension("x-ms-vss-method", "GetFeedChange")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feedchanges/{feedId}")
-@get
-op ChangeTracking_GetFeedChange(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): FeedChange;
-
-/** Query for feeds within the recycle bin. If the project parameter is present, gets all feeds in recycle bin in the given project. If omitted, gets all feeds in recycle bin in the organization. */
-@tag("Feed Recycle Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feedRecycleBin")
-@extension("x-ms-vss-method", "GetFeedsFromRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feedrecyclebin")
-@get
-op FeedRecycleBin_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Feed[]>;
-
-/** Permanently delete a feed and all of its packages. The action is irreversible and the package content will be deleted immediately. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed Recycle Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feedRecycleBin")
-@extension("x-ms-vss-method", "PermanentDeleteFeed")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feedrecyclebin/{feedId}")
-@delete
-op FeedRecycleBin_PermanentDeleteFeed(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Restores a deleted feed and all of its packages. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed Recycle Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feedRecycleBin")
-@extension("x-ms-vss-method", "RestoreDeletedFeed")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feedrecyclebin/{feedId}")
-@patch
-op FeedRecycleBin_RestoreDeletedFeed(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-  @body body: JsonPatchDocument,
-): OkResponse;
-
-/** Get all feeds in an account where you have the provided role access. If the project parameter is present, gets all feeds in the given project. If omitted, gets all feeds in the organization. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feeds")
-@extension("x-ms-vss-method", "GetFeeds")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds")
-@get
-op FeedManagement_GetFeeds(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Filter by this role, either Administrator(4), Contributor(3), or Reader(2) level permissions. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "FeedRole",
-      values: #[
-        #{ value: "custom", description: "Unsupported." },
-        #{ value: "none", description: "Unsupported." },
-        #{ value: "reader", description: "Readers can only read packages and view settings." },
-        #{
-          value: "contributor",
-          description: "Contributors can do anything to packages in the feed including adding new packages, but they may not modify feed settings.",
-        },
-        #{
-          value: "administrator",
-          description: "Administrators have total control over the feed.",
-        },
-        #{
-          value: "collaborator",
-          description: "Collaborators have the same permissions as readers, but can also ingest packages from configured upstream sources.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  feedRole?: "custom" | "none" | "reader" | "contributor" | "administrator" | "collaborator",
-
-  /** Include upstreams that have been deleted in the response. */
-  @query(#{ explode: true }) includeDeletedUpstreams?: boolean,
-
-  /** Resolve names if true */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Feed[]>;
-
-/** Create a feed, a container for various package types. Feeds can be created in a project if the project parameter is included in the request url. If the project parameter is omitted, the feed will not be associated with a project and will be created at the organization level. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feeds")
-@extension("x-ms-vss-method", "CreateFeed")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds")
-@post
-op FeedManagement_CreateFeed(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** A JSON object containing both required and optional attributes for the feed. Name is the only required value. */
-  @body body: Feed,
-): Feed;
-
-/** Remove a feed and all its packages. The feed moves to the recycle bin and is reversible. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feeds")
-@extension("x-ms-vss-method", "DeleteFeed")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
-@delete
-op FeedManagement_DeleteFeed(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get the settings for a specific feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feeds")
-@extension("x-ms-vss-method", "GetFeed")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
-@get
-op FeedManagement_GetFeed(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Include upstreams that have been deleted in the response. */
-  @query(#{ explode: true }) includeDeletedUpstreams?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Feed;
-
-/** Change the attributes of a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "feeds")
-@extension("x-ms-vss-method", "UpdateFeed")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
-@patch
-op FeedManagement_UpdateFeed(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** A JSON object containing the feed settings to be updated. */
-  @body body: FeedUpdate,
-): Feed;
-
-/** Get a batch of package changes made to a feed. The changes returned are 'most recent change' so if an Add is followed by an Update before you begin enumerating, you'll only see one change in the batch. While consuming batches using the continuation token, you may see changes to the same package version multiple times if they are happening as you enumerate. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Change  Tracking")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packageChanges")
-@extension("x-ms-vss-method", "GetPackageChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packagechanges")
-@get
-op ChangeTracking_GetPackageChanges(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** A continuation token which acts as a bookmark to a previously retrieved change. This token allows the user to continue retrieving changes in batches, picking up where the previous batch left off. If specified, all the changes that occur strictly after the token will be returned. If not specified or 0, iteration will start with the first change. */
-  @query(#{ explode: true }) continuationToken?: int64,
-
-  /** Number of package changes to fetch. The default value is 1000. The maximum value is 2000. */
-  @query(#{ explode: true }) batchSize?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PackageChangesResponse;
-
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packageMetricsBatch")
-@extension("x-ms-vss-method", "QueryPackageMetrics")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packagemetricsbatch")
-@post
-op ArtifactDetails_QueryPackageMetrics(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: PackageMetricsQuery,
-): Body<PackageMetrics[]>;
-
-/** Get details about all of the packages in the feed. Use the various filters to include or exclude information from the result set. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packages")
-@extension("x-ms-vss-method", "GetPackages")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packages")
-@get
-op ArtifactDetails_GetPackages(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** One of the supported artifact package types. */
-  @query(#{ explode: true }) protocolType?: string,
-
-  /** Filter to packages that contain the provided string. Characters in the string must conform to the package name constraints. */
-  @query(#{ explode: true }) packageNameQuery?: string,
-
-  /** [Obsolete] Used for legacy scenarios and may be removed in future versions. */
-  @query(#{ explode: true }) normalizedPackageName?: string,
-
-  /** True to return REST Urls with the response. Default is True. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  /** True to return all versions of the package in the response. Default is false (latest version only). */
-  @query(#{ explode: true }) includeAllVersions?: boolean,
-
-  /** Only applicable for NuGet packages, setting it for other package types will result in a 404. If false, delisted package versions will be returned. Use this to filter the response when includeAllVersions is set to true. Default is unset (do not return delisted packages). */
-  @query(#{ explode: true }) isListed?: boolean,
-
-  /** Changes the behavior of $top and $skip to return all versions of each package up to $top. Must be used in conjunction with includeAllVersions=true */
-  @query(#{ explode: true }) getTopPackageVersions?: boolean,
-
-  /** Only applicable for Nuget packages. Use this to filter the response when includeAllVersions is set to true. Default is True (only return packages without prerelease versioning). */
-  @query(#{ explode: true }) isRelease?: boolean,
-
-  /** Return the description for every version of each package in the response. Default is False. */
-  @query(#{ explode: true }) includeDescription?: boolean,
-
-  /** Get the top N packages (or package versions where getTopPackageVersions=true) */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Skip the first N packages (or package versions where getTopPackageVersions=true) */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Return deleted or unpublished versions of packages in the response. Default is False. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** [Obsolete] Used for legacy scenarios and may be removed in future versions. */
-  @query(#{ explode: true }) isCached?: boolean,
-
-  /** Filter results to return packages from a specific upstream. */
-  @format("uuid") @query(#{ explode: true }) directUpstreamId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Package[]>;
-
-/** Get details about a specific package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packages")
-@extension("x-ms-vss-method", "GetPackage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packages/{packageId}")
-@get
-op ArtifactDetails_GetPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** The package Id (GUID Id, not the package name). */
-  @path packageId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to return all versions of the package in the response. Default is false (latest version only). */
-  @query(#{ explode: true }) includeAllVersions?: boolean,
-
-  /** True to return REST Urls with the response. Default is True. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  /** Only applicable for NuGet packages, setting it for other package types will result in a 404. If false, delisted package versions will be returned. Use this to filter the response when includeAllVersions is set to true. Default is unset (do not return delisted packages). */
-  @query(#{ explode: true }) isListed?: boolean,
-
-  /** Only applicable for Nuget packages. Use this to filter the response when includeAllVersions is set to true. Default is True (only return packages without prerelease versioning). */
-  @query(#{ explode: true }) isRelease?: boolean,
-
-  /** Return deleted or unpublished versions of packages in the response. Default is False. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** Return the description for every version of each package in the response. Default is False. */
-  @query(#{ explode: true }) includeDescription?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versionMetricsBatch")
-@extension("x-ms-vss-method", "QueryPackageVersionMetrics")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versionmetricsbatch")
-@post
-op ArtifactDetails_QueryPackageVersionMetrics(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path feedId: string,
-  @format("uuid") @path packageId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: PackageVersionMetricsQuery,
-): Body<PackageVersionMetrics[]>;
-
-/** Get a list of package versions, optionally filtering by state. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "GetPackageVersions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions")
-@get
-op ArtifactDetails_GetPackageVersions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Id of the package (GUID Id, not name). */
-  @path packageId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include urls for each version. Default is true. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  /** Only applicable for NuGet packages. If false, delisted package versions will be returned. */
-  @query(#{ explode: true }) isListed?: boolean,
-
-  /** If set specifies whether to return only deleted or non-deleted versions of packages in the response. Default is unset (return all versions). */
-  @query(#{ explode: true }) isDeleted?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PackageVersion[]>;
-
-/** Get details about a specific package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "versions")
-@extension("x-ms-vss-method", "GetPackageVersion")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions/{packageVersionId}")
-@get
-op ArtifactDetails_GetPackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Id of the package (GUID Id, not name). */
-  @path packageId: string,
-
-  /** Id of the package version (GUID Id, not name). */
-  @path packageVersionId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include urls for each version. Default is true. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  /** Only applicable for NuGet packages. If false, delisted package versions will be returned. */
-  @query(#{ explode: true }) isListed?: boolean,
-
-  /** This does not have any effect on the requested package version, for other versions returned specifies whether to return only deleted or non-deleted versions of packages in the response. Default is unset (return all versions). */
-  @query(#{ explode: true }) isDeleted?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PackageVersion;
-
-/** Gets provenance for a package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "provenance")
-@extension("x-ms-vss-method", "GetPackageVersionProvenance")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/Versions/{packageVersionId}/provenance")
-@get
-op ArtifactDetails_GetPackageVersionProvenance(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Id of the package (GUID Id, not name). */
-  @format("uuid") @path packageId: string,
-
-  /** Id of the package version (GUID Id, not name). */
-  @format("uuid") @path packageVersionId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PackageVersionProvenance;
-
-/** Get the permissions for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "permissions")
-@extension("x-ms-vss-method", "GetFeedPermissions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/permissions")
-@get
-op FeedManagement_GetFeedPermissions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to include user Ids in the response. Default is false. */
-  @query(#{ explode: true }) includeIds?: boolean,
-
-  /** True to only return explicitly set permissions on the feed. Default is false. */
-  @query(#{ explode: true }) excludeInheritedPermissions?: boolean,
-
-  /** Filter permissions to the provided identity. */
-  @query(#{ explode: true }) identityDescriptor?: string,
-
-  /** If includeDeletedFeeds is true, then feedId must be specified by name and not by Guid. */
-  @query(#{ explode: true }) includeDeletedFeeds?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<FeedPermission[]>;
-
-/** Update the permissions on a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "permissions")
-@extension("x-ms-vss-method", "SetFeedPermissions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/permissions")
-@patch
-op FeedManagement_SetFeedPermissions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Permissions to set. */
-  @body body: FeedPermission[],
-): Body<FeedPermission[]>;
-
-/** Queues a job to remove all package versions from a feed's recycle bin */
-@tag("Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinPackages")
-@extension("x-ms-vss-method", "EmptyRecycleBin")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages")
-@delete
-op RecycleBin_EmptyRecycleBin(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OperationReference;
-
-/** Query for packages within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinPackages")
-@extension("x-ms-vss-method", "GetRecycleBinPackages")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages")
-@get
-op RecycleBin_GetRecycleBinPackages(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Type of package (e.g. NuGet, npm, ...). */
-  @query(#{ explode: true }) protocolType?: string,
-
-  /** Filter to packages matching this name. */
-  @query(#{ explode: true }) packageNameQuery?: string,
-
-  /** True to return REST Urls with the response. Default is True. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  /** Get the top N packages. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Skip the first N packages. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** True to return all versions of the package in the response. Default is false (latest version only). */
-  @query(#{ explode: true }) includeAllVersions?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Package[]>;
-
-/** Get information about a package and all its versions within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinPackages")
-@extension("x-ms-vss-method", "GetRecycleBinPackage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}")
-@get
-op RecycleBin_GetRecycleBinPackage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** The package Id (GUID Id, not the package name). */
-  @format("uuid") @path packageId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to return REST Urls with the response. Default is True. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Package;
-
-/** Get a list of package versions within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "GetRecycleBinPackageVersions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions")
-@get
-op RecycleBin_GetRecycleBinPackageVersions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** The package Id (GUID Id, not the package name). */
-  @format("uuid") @path packageId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to return REST Urls with the response. Default is True. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<RecycleBinPackageVersion[]>;
-
-/** Get information about a package version within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "recycleBinVersions")
-@extension("x-ms-vss-method", "GetRecycleBinPackageVersion")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions/{packageVersionId}")
-@get
-op RecycleBin_GetRecycleBinPackageVersion(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** The package Id (GUID Id, not the package name). */
-  @format("uuid") @path packageId: string,
-
-  /** The package version Id 9guid Id, not the version string). */
-  @format("uuid") @path packageVersionId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** True to return REST Urls with the response. Default is True. */
-  @query(#{ explode: true }) includeUrls?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): RecycleBinPackageVersion;
-
-/** Delete the retention policy for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Retention  Policies")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "retentionPolicies")
-@extension("x-ms-vss-method", "DeleteFeedRetentionPolicies")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
-@delete
-op RetentionPolicies_DeleteRetentionPolicy(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get the retention policy for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Retention  Policies")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "retentionPolicies")
-@extension("x-ms-vss-method", "GetFeedRetentionPolicies")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
-@get
-op RetentionPolicies_GetRetentionPolicy(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): FeedRetentionPolicy;
-
-/** Set the retention policy for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Retention  Policies")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "retentionPolicies")
-@extension("x-ms-vss-method", "SetFeedRetentionPolicies")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
-@put
-op RetentionPolicies_SetRetentionPolicy(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or ID of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Feed retention policy. */
-  @body body: FeedRetentionPolicy,
-): FeedRetentionPolicy;
-
-/** Get all views for a feed. The project parameter must be supplied if the feed was created in a project. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "views")
-@extension("x-ms-vss-method", "GetFeedViews")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views")
-@get
-op FeedManagement_GetFeedViews(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<FeedView[]>;
-
-/** Create a new view on the referenced feed. The project parameter must be supplied if the feed was created in a project. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "views")
-@extension("x-ms-vss-method", "CreateFeedView")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views")
-@post
-op FeedManagement_CreateFeedView(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** View to be created. */
-  @body body: FeedView,
-): FeedView;
-
-/** Delete a feed view. The project parameter must be supplied if the feed was created in a project. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "views")
-@extension("x-ms-vss-method", "DeleteFeedView")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
-@delete
-op FeedManagement_DeleteFeedView(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Name or Id of the view. */
-  @path viewId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a view by Id. The project parameter must be supplied if the feed was created in a project. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "views")
-@extension("x-ms-vss-method", "GetFeedView")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
-@get
-op FeedManagement_GetFeedView(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Name or Id of the view. */
-  @path viewId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): FeedView;
-
-/** Update a view. The project parameter must be supplied if the feed was created in a project. */
-@tag("Feed  Management")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "views")
-@extension("x-ms-vss-method", "UpdateFeedView")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
-@patch
-op FeedManagement_UpdateFeedView(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Name or Id of the view. */
-  @path viewId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** New settings to apply to the specified view. */
-  @body body: FeedView,
-): FeedView;
-
-/** Generate a SVG badge for the latest version of a package. The generated SVG is typically used as the image in an HTML link which takes users to the feed containing the package to accelerate discovery and consumption. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
-@tag("Artifact  Details")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "badge")
-@extension("x-ms-vss-method", "GetBadge")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/public/packaging/Feeds/{feedId}/Packages/{packageId}/badge")
-@get
-op ArtifactDetails_GetBadge(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name or Id of the feed. */
-  @path feedId: string,
-
-  /** Id of the package (GUID Id, not name). */
-  @format("uuid") @path packageId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): {
-  @header contentType: "image/svg+xml";
-  @body @format("Stream") body: string;
-};
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface ServiceSettings {
+  /** Get all service-wide feed creation and administration permissions. */
+  @tag("Service  Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "globalPermissions")
+  @extension("x-ms-vss-method", "GetGlobalPermissions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/packaging/globalpermissions")
+  @get
+  GetGlobalPermissions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Set to true to add IdentityIds to the permission objects. */
+    @query(#{ explode: true }) includeIds?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<GlobalPermission[]>;
+
+  /** Set service-wide permissions that govern feed creation and administration. */
+  @tag("Service  Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "globalPermissions")
+  @extension("x-ms-vss-method", "SetGlobalPermissions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/packaging/globalpermissions")
+  @patch
+  SetGlobalPermissions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** New permissions for the organization. */
+    @body body: GlobalPermission[],
+  ): Body<GlobalPermission[]>;
+}
+
+interface ChangeTracking {
+  /** Query to determine which feeds have changed since the last call, tracked through the provided continuationToken. Only changes to a feed itself are returned and impact the continuationToken, not additions or alterations to packages within the feeds. If the project parameter is present, gets all feed changes in the given project. If omitted, gets all feed changes in the organization. */
+  @tag("Change  Tracking")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feedChanges")
+  @extension("x-ms-vss-method", "GetFeedChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feedchanges")
+  @get
+  GetFeedChanges(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** If true, get changes for all feeds including deleted feeds. The default value is false. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** A continuation token which acts as a bookmark to a previously retrieved change. This token allows the user to continue retrieving changes in batches, picking up where the previous batch left off. If specified, all the changes that occur strictly after the token will be returned. If not specified or 0, iteration will start with the first change. */
+    @query(#{ explode: true }) continuationToken?: int64,
+
+    /** Number of package changes to fetch. The default value is 1000. The maximum value is 2000. */
+    @query(#{ explode: true }) batchSize?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): FeedChangesResponse;
+
+  /** Query a feed to determine its current state. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Change  Tracking")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feedChanges")
+  @extension("x-ms-vss-method", "GetFeedChange")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feedchanges/{feedId}")
+  @get
+  GetFeedChange(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): FeedChange;
+
+  /** Get a batch of package changes made to a feed. The changes returned are 'most recent change' so if an Add is followed by an Update before you begin enumerating, you'll only see one change in the batch. While consuming batches using the continuation token, you may see changes to the same package version multiple times if they are happening as you enumerate. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Change  Tracking")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packageChanges")
+  @extension("x-ms-vss-method", "GetPackageChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packagechanges")
+  @get
+  GetPackageChanges(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** A continuation token which acts as a bookmark to a previously retrieved change. This token allows the user to continue retrieving changes in batches, picking up where the previous batch left off. If specified, all the changes that occur strictly after the token will be returned. If not specified or 0, iteration will start with the first change. */
+    @query(#{ explode: true }) continuationToken?: int64,
+
+    /** Number of package changes to fetch. The default value is 1000. The maximum value is 2000. */
+    @query(#{ explode: true }) batchSize?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PackageChangesResponse;
+}
+
+interface FeedRecycleBin {
+  /** Query for feeds within the recycle bin. If the project parameter is present, gets all feeds in recycle bin in the given project. If omitted, gets all feeds in recycle bin in the organization. */
+  @tag("Feed Recycle Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feedRecycleBin")
+  @extension("x-ms-vss-method", "GetFeedsFromRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feedrecyclebin")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Feed[]>;
+
+  /** Permanently delete a feed and all of its packages. The action is irreversible and the package content will be deleted immediately. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed Recycle Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feedRecycleBin")
+  @extension("x-ms-vss-method", "PermanentDeleteFeed")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feedrecyclebin/{feedId}")
+  @delete
+  PermanentDeleteFeed(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Restores a deleted feed and all of its packages. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed Recycle Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feedRecycleBin")
+  @extension("x-ms-vss-method", "RestoreDeletedFeed")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feedrecyclebin/{feedId}")
+  @patch
+  RestoreDeletedFeed(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+    @body body: JsonPatchDocument,
+  ): OkResponse;
+}
+
+interface FeedManagement {
+  /** Get all feeds in an account where you have the provided role access. If the project parameter is present, gets all feeds in the given project. If omitted, gets all feeds in the organization. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feeds")
+  @extension("x-ms-vss-method", "GetFeeds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds")
+  @get
+  GetFeeds(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Filter by this role, either Administrator(4), Contributor(3), or Reader(2) level permissions. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "FeedRole",
+        values: #[
+          #{ value: "custom", description: "Unsupported." },
+          #{ value: "none", description: "Unsupported." },
+          #{ value: "reader", description: "Readers can only read packages and view settings." },
+          #{
+            value: "contributor",
+            description: "Contributors can do anything to packages in the feed including adding new packages, but they may not modify feed settings.",
+          },
+          #{
+            value: "administrator",
+            description: "Administrators have total control over the feed.",
+          },
+          #{
+            value: "collaborator",
+            description: "Collaborators have the same permissions as readers, but can also ingest packages from configured upstream sources.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    feedRole?: "custom" | "none" | "reader" | "contributor" | "administrator" | "collaborator",
+
+    /** Include upstreams that have been deleted in the response. */
+    @query(#{ explode: true }) includeDeletedUpstreams?: boolean,
+
+    /** Resolve names if true */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Feed[]>;
+
+  /** Create a feed, a container for various package types. Feeds can be created in a project if the project parameter is included in the request url. If the project parameter is omitted, the feed will not be associated with a project and will be created at the organization level. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feeds")
+  @extension("x-ms-vss-method", "CreateFeed")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds")
+  @post
+  CreateFeed(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** A JSON object containing both required and optional attributes for the feed. Name is the only required value. */
+    @body body: Feed,
+  ): Feed;
+
+  /** Remove a feed and all its packages. The feed moves to the recycle bin and is reversible. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feeds")
+  @extension("x-ms-vss-method", "DeleteFeed")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
+  @delete
+  DeleteFeed(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get the settings for a specific feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feeds")
+  @extension("x-ms-vss-method", "GetFeed")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
+  @get
+  GetFeed(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Include upstreams that have been deleted in the response. */
+    @query(#{ explode: true }) includeDeletedUpstreams?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Feed;
+
+  /** Change the attributes of a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "feeds")
+  @extension("x-ms-vss-method", "UpdateFeed")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
+  @patch
+  UpdateFeed(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** A JSON object containing the feed settings to be updated. */
+    @body body: FeedUpdate,
+  ): Feed;
+
+  /** Get the permissions for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "permissions")
+  @extension("x-ms-vss-method", "GetFeedPermissions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/permissions")
+  @get
+  GetFeedPermissions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include user Ids in the response. Default is false. */
+    @query(#{ explode: true }) includeIds?: boolean,
+
+    /** True to only return explicitly set permissions on the feed. Default is false. */
+    @query(#{ explode: true }) excludeInheritedPermissions?: boolean,
+
+    /** Filter permissions to the provided identity. */
+    @query(#{ explode: true }) identityDescriptor?: string,
+
+    /** If includeDeletedFeeds is true, then feedId must be specified by name and not by Guid. */
+    @query(#{ explode: true }) includeDeletedFeeds?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<FeedPermission[]>;
+
+  /** Update the permissions on a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "permissions")
+  @extension("x-ms-vss-method", "SetFeedPermissions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/permissions")
+  @patch
+  SetFeedPermissions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Permissions to set. */
+    @body body: FeedPermission[],
+  ): Body<FeedPermission[]>;
+
+  /** Get all views for a feed. The project parameter must be supplied if the feed was created in a project. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "views")
+  @extension("x-ms-vss-method", "GetFeedViews")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views")
+  @get
+  GetFeedViews(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<FeedView[]>;
+
+  /** Create a new view on the referenced feed. The project parameter must be supplied if the feed was created in a project. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "views")
+  @extension("x-ms-vss-method", "CreateFeedView")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views")
+  @post
+  CreateFeedView(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** View to be created. */
+    @body body: FeedView,
+  ): FeedView;
+
+  /** Delete a feed view. The project parameter must be supplied if the feed was created in a project. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "views")
+  @extension("x-ms-vss-method", "DeleteFeedView")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
+  @delete
+  DeleteFeedView(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Name or Id of the view. */
+    @path viewId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a view by Id. The project parameter must be supplied if the feed was created in a project. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "views")
+  @extension("x-ms-vss-method", "GetFeedView")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
+  @get
+  GetFeedView(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Name or Id of the view. */
+    @path viewId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): FeedView;
+
+  /** Update a view. The project parameter must be supplied if the feed was created in a project. */
+  @tag("Feed  Management")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "views")
+  @extension("x-ms-vss-method", "UpdateFeedView")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
+  @patch
+  UpdateFeedView(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Name or Id of the view. */
+    @path viewId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** New settings to apply to the specified view. */
+    @body body: FeedView,
+  ): FeedView;
+}
+
+interface ArtifactDetails {
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packageMetricsBatch")
+  @extension("x-ms-vss-method", "QueryPackageMetrics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packagemetricsbatch")
+  @post
+  QueryPackageMetrics(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: PackageMetricsQuery,
+  ): Body<PackageMetrics[]>;
+
+  /** Get details about all of the packages in the feed. Use the various filters to include or exclude information from the result set. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packages")
+  @extension("x-ms-vss-method", "GetPackages")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packages")
+  @get
+  GetPackages(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** One of the supported artifact package types. */
+    @query(#{ explode: true }) protocolType?: string,
+
+    /** Filter to packages that contain the provided string. Characters in the string must conform to the package name constraints. */
+    @query(#{ explode: true }) packageNameQuery?: string,
+
+    /** [Obsolete] Used for legacy scenarios and may be removed in future versions. */
+    @query(#{ explode: true }) normalizedPackageName?: string,
+
+    /** True to return REST Urls with the response. Default is True. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    /** True to return all versions of the package in the response. Default is false (latest version only). */
+    @query(#{ explode: true }) includeAllVersions?: boolean,
+
+    /** Only applicable for NuGet packages, setting it for other package types will result in a 404. If false, delisted package versions will be returned. Use this to filter the response when includeAllVersions is set to true. Default is unset (do not return delisted packages). */
+    @query(#{ explode: true }) isListed?: boolean,
+
+    /** Changes the behavior of $top and $skip to return all versions of each package up to $top. Must be used in conjunction with includeAllVersions=true */
+    @query(#{ explode: true }) getTopPackageVersions?: boolean,
+
+    /** Only applicable for Nuget packages. Use this to filter the response when includeAllVersions is set to true. Default is True (only return packages without prerelease versioning). */
+    @query(#{ explode: true }) isRelease?: boolean,
+
+    /** Return the description for every version of each package in the response. Default is False. */
+    @query(#{ explode: true }) includeDescription?: boolean,
+
+    /** Get the top N packages (or package versions where getTopPackageVersions=true) */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Skip the first N packages (or package versions where getTopPackageVersions=true) */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Return deleted or unpublished versions of packages in the response. Default is False. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** [Obsolete] Used for legacy scenarios and may be removed in future versions. */
+    @query(#{ explode: true }) isCached?: boolean,
+
+    /** Filter results to return packages from a specific upstream. */
+    @format("uuid") @query(#{ explode: true }) directUpstreamId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Package[]>;
+
+  /** Get details about a specific package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packages")
+  @extension("x-ms-vss-method", "GetPackage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packages/{packageId}")
+  @get
+  GetPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** The package Id (GUID Id, not the package name). */
+    @path packageId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to return all versions of the package in the response. Default is false (latest version only). */
+    @query(#{ explode: true }) includeAllVersions?: boolean,
+
+    /** True to return REST Urls with the response. Default is True. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    /** Only applicable for NuGet packages, setting it for other package types will result in a 404. If false, delisted package versions will be returned. Use this to filter the response when includeAllVersions is set to true. Default is unset (do not return delisted packages). */
+    @query(#{ explode: true }) isListed?: boolean,
+
+    /** Only applicable for Nuget packages. Use this to filter the response when includeAllVersions is set to true. Default is True (only return packages without prerelease versioning). */
+    @query(#{ explode: true }) isRelease?: boolean,
+
+    /** Return deleted or unpublished versions of packages in the response. Default is False. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** Return the description for every version of each package in the response. Default is False. */
+    @query(#{ explode: true }) includeDescription?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versionMetricsBatch")
+  @extension("x-ms-vss-method", "QueryPackageVersionMetrics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versionmetricsbatch")
+  @post
+  QueryPackageVersionMetrics(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path feedId: string,
+    @format("uuid") @path packageId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: PackageVersionMetricsQuery,
+  ): Body<PackageVersionMetrics[]>;
+
+  /** Get a list of package versions, optionally filtering by state. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "GetPackageVersions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions")
+  @get
+  GetPackageVersions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Id of the package (GUID Id, not name). */
+    @path packageId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include urls for each version. Default is true. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    /** Only applicable for NuGet packages. If false, delisted package versions will be returned. */
+    @query(#{ explode: true }) isListed?: boolean,
+
+    /** If set specifies whether to return only deleted or non-deleted versions of packages in the response. Default is unset (return all versions). */
+    @query(#{ explode: true }) isDeleted?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PackageVersion[]>;
+
+  /** Get details about a specific package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "versions")
+  @extension("x-ms-vss-method", "GetPackageVersion")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions/{packageVersionId}")
+  @get
+  GetPackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Id of the package (GUID Id, not name). */
+    @path packageId: string,
+
+    /** Id of the package version (GUID Id, not name). */
+    @path packageVersionId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to include urls for each version. Default is true. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    /** Only applicable for NuGet packages. If false, delisted package versions will be returned. */
+    @query(#{ explode: true }) isListed?: boolean,
+
+    /** This does not have any effect on the requested package version, for other versions returned specifies whether to return only deleted or non-deleted versions of packages in the response. Default is unset (return all versions). */
+    @query(#{ explode: true }) isDeleted?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PackageVersion;
+
+  /** Gets provenance for a package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "provenance")
+  @extension("x-ms-vss-method", "GetPackageVersionProvenance")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/Versions/{packageVersionId}/provenance")
+  @get
+  GetPackageVersionProvenance(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Id of the package (GUID Id, not name). */
+    @format("uuid") @path packageId: string,
+
+    /** Id of the package version (GUID Id, not name). */
+    @format("uuid") @path packageVersionId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PackageVersionProvenance;
+
+  /** Generate a SVG badge for the latest version of a package. The generated SVG is typically used as the image in an HTML link which takes users to the feed containing the package to accelerate discovery and consumption. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Artifact  Details")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "badge")
+  @extension("x-ms-vss-method", "GetBadge")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/public/packaging/Feeds/{feedId}/Packages/{packageId}/badge")
+  @get
+  GetBadge(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Id of the package (GUID Id, not name). */
+    @format("uuid") @path packageId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): {
+    @header contentType: "image/svg+xml";
+    @body @format("Stream") body: string;
+  };
+}
+
+interface RecycleBin {
+  /** Queues a job to remove all package versions from a feed's recycle bin */
+  @tag("Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinPackages")
+  @extension("x-ms-vss-method", "EmptyRecycleBin")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages")
+  @delete
+  EmptyRecycleBin(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OperationReference;
+
+  /** Query for packages within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinPackages")
+  @extension("x-ms-vss-method", "GetRecycleBinPackages")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages")
+  @get
+  GetRecycleBinPackages(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Type of package (e.g. NuGet, npm, ...). */
+    @query(#{ explode: true }) protocolType?: string,
+
+    /** Filter to packages matching this name. */
+    @query(#{ explode: true }) packageNameQuery?: string,
+
+    /** True to return REST Urls with the response. Default is True. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    /** Get the top N packages. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Skip the first N packages. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** True to return all versions of the package in the response. Default is false (latest version only). */
+    @query(#{ explode: true }) includeAllVersions?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Package[]>;
+
+  /** Get information about a package and all its versions within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinPackages")
+  @extension("x-ms-vss-method", "GetRecycleBinPackage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}")
+  @get
+  GetRecycleBinPackage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** The package Id (GUID Id, not the package name). */
+    @format("uuid") @path packageId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to return REST Urls with the response. Default is True. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Package;
+
+  /** Get a list of package versions within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "GetRecycleBinPackageVersions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions")
+  @get
+  GetRecycleBinPackageVersions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** The package Id (GUID Id, not the package name). */
+    @format("uuid") @path packageId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to return REST Urls with the response. Default is True. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<RecycleBinPackageVersion[]>;
+
+  /** Get information about a package version within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "recycleBinVersions")
+  @extension("x-ms-vss-method", "GetRecycleBinPackageVersion")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions/{packageVersionId}")
+  @get
+  GetRecycleBinPackageVersion(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or Id of the feed. */
+    @path feedId: string,
+
+    /** The package Id (GUID Id, not the package name). */
+    @format("uuid") @path packageId: string,
+
+    /** The package version Id 9guid Id, not the version string). */
+    @format("uuid") @path packageVersionId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** True to return REST Urls with the response. Default is True. */
+    @query(#{ explode: true }) includeUrls?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): RecycleBinPackageVersion;
+}
+
+interface RetentionPolicies {
+  /** Delete the retention policy for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Retention  Policies")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "retentionPolicies")
+  @extension("x-ms-vss-method", "DeleteFeedRetentionPolicies")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
+  @delete
+  DeleteRetentionPolicy(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get the retention policy for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Retention  Policies")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "retentionPolicies")
+  @extension("x-ms-vss-method", "GetFeedRetentionPolicies")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
+  @get
+  GetRetentionPolicy(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): FeedRetentionPolicy;
+
+  /** Set the retention policy for a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
+  @tag("Retention  Policies")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "retentionPolicies")
+  @extension("x-ms-vss-method", "SetFeedRetentionPolicies")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
+  @put
+  SetRetentionPolicy(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name or ID of the feed. */
+    @path feedId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Feed retention policy. */
+    @body body: FeedRetentionPolicy,
+  ): FeedRetentionPolicy;
 }

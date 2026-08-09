@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Core" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Core;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model CategorizedWebApiTeams {
   /** Teams that the user is a member of. */
@@ -676,463 +682,473 @@ model WebApiTeamRef {
   url?: string;
 }
 
-/** Get a list of processes. */
-@tag("Processes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "processes")
-@extension("x-ms-vss-method", "GetProcesses")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/process/processes")
-@get
-op Processes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Process[]>;
-
-/** Get a process by ID. */
-@tag("Processes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "processes")
-@extension("x-ms-vss-method", "GetProcessById")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/process/processes/{processId}")
-@get
-op Processes_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID for a process. */
-  @format("uuid") @path processId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Process;
-
-/** Get all projects in the organization that the authenticated user has access to. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "projects")
-@extension("x-ms-vss-method", "GetProjects")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects")
-@get
-op Projects_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Filter on team projects in a specific team project state (default: WellFormed). */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ProjectState",
-      values: #[
-        #{ value: "deleting", description: "Project is in the process of being deleted." },
-        #{ value: "new", description: "Project is in the process of being created." },
-        #{ value: "wellFormed", description: "Project is completely created and ready to use." },
-        #{
-          value: "createPending",
-          description: "Project has been queued for creation, but the process has not yet started.",
-        },
-        #{ value: "all", description: "All projects regardless of state except Deleted." },
-        #{ value: "unchanged", description: "Project has not been changed." },
-        #{ value: "deleted", description: "Project has been deleted." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  stateFilter?:
-    | "deleting"
-    | "new"
-    | "wellFormed"
-    | "createPending"
-    | "all"
-    | "unchanged"
-    | "deleted",
-
-  @query(#{ explode: true }) $top?: int32,
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Pointer that shows how many projects already been fetched. */
-  @query(#{ explode: true }) continuationToken?: int32,
-
-  @query(#{ explode: true }) getDefaultTeamImageUrl?: boolean,
-  ...Parameters.`api-Version-preview`.`4`,
-): Body<TeamProjectReference[]>;
-
-/** Queues a project to be created. Use the [GetOperation](../../operations/operations/get) to periodically check for create project status. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "projects")
-@extension("x-ms-vss-method", "QueueCreateProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects")
-@post
-op Projects_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** The project to create. */
-  @body body: TeamProject,
-): OperationReference;
-
-/** Queues a project to be deleted. Use the [GetOperation](../../operations/operations/get) to periodically check for delete project status. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "projects")
-@extension("x-ms-vss-method", "QueueDeleteProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}")
-@delete
-op Projects_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project id of the project to delete. */
-  @format("uuid") @path projectId: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): OperationReference;
-
-/** Get project with the specified id or name, optionally including capabilities. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "projects")
-@extension("x-ms-vss-method", "GetProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}")
-@get
-op Projects_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path projectId: string,
-
-  /** Include capabilities (such as source control) in the team project result (default: false). */
-  @query(#{ explode: true }) includeCapabilities?: boolean,
-
-  /** Search within renamed projects (that had such name in the past). */
-  @query(#{ explode: true }) includeHistory?: boolean,
-
-  ...Parameters.`api-Version-preview`.`4`,
-): TeamProject;
-
-/** Update an existing project's name, abbreviation, description, or restore a project. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.4")
-@extension("x-ms-vss-resource", "projects")
-@extension("x-ms-vss-method", "UpdateProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}")
-@patch
-op Projects_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project id of the project to update. */
-  @format("uuid") @path projectId: string,
-
-  ...Parameters.`api-Version-preview`.`4`,
-
-  /** The updates for the project. The state must be set to wellFormed to restore the project. */
-  @body body: TeamProject,
-): OperationReference;
-
-/** Removes the avatar for the project. */
-@tag("Avatar")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "avatar")
-@extension("x-ms-vss-method", "RemoveProjectAvatar")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/avatar")
-@delete
-op Avatar_RemoveProjectAvatar(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID or name of the project. */
-  @path projectId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Sets the avatar for the project. */
-@tag("Avatar")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "avatar")
-@extension("x-ms-vss-method", "SetProjectAvatar")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/avatar")
-@put
-op Avatar_SetProjectAvatar(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID or name of the project. */
-  @path projectId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The avatar blob data object to upload. */
-  @body body: ProjectAvatar,
-): OkResponse;
-
-/** Gets list of user readable teams in a project and teams user is member of (excluded from readable list). */
-@tag("Categorized Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "categorizedTeams")
-@extension("x-ms-vss-method", "GetProjectTeamsByCategory")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/categorizedteams/")
-@get
-op CategorizedTeams_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID (GUID) of the team project containing the teams to retrieve. */
-  @path projectId: string,
-
-  /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
-  @query(#{ explode: true }) $expandIdentity?: boolean,
-
-  /** Maximum number of teams to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of teams to skip. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): CategorizedWebApiTeams;
-
-/** Get a collection of team project properties. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "properties")
-@extension("x-ms-vss-method", "GetProjectProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/properties")
-@get
-op Projects_GetProjectProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The team project ID. */
-  @format("uuid") @path projectId: string,
-
-  /** A comma-delimited string of team project property names. Wildcard characters ('?' and '*') are supported. If no key is specified, all properties will be returned. */
-  @format("array (string)") @query(#{ explode: true }) keys?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<ProjectProperty[]>;
-
-/** Create, update, and delete team project properties. */
-@tag("Projects")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "properties")
-@extension("x-ms-vss-method", "SetProjectProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/properties")
-@patch
-op Projects_SetProjectProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The team project ID. */
-  @format("uuid") @path projectId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/json-patch+json",
-
-  /** A JSON Patch document that represents an array of property operations. See RFC 6902 for more details on JSON Patch. The accepted operation verbs are Add and Remove, where Add is used for both creating and updating properties. The path consists of a forward slash and a property name. */
-  @body body: JsonPatchDocument,
-): OkResponse;
-
-/** Get a list of teams. */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "teams")
-@extension("x-ms-vss-method", "GetTeams")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/teams")
-@get
-op Teams_GetTeams(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path projectId: string,
-
-  /** If true return all the teams requesting user is member, otherwise return all the teams user has read access. */
-  @query(#{ explode: true }) $mine?: boolean,
-
-  /** Maximum number of teams to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of teams to skip. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
-  @query(#{ explode: true }) $expandIdentity?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WebApiTeam[]>;
-
-/** Create a team in a team project. Possible failure scenarios Invalid project name/ID (project doesn't exist) 404 Invalid team name or description 400 Team already exists 400 Insufficient privileges 400 */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "teams")
-@extension("x-ms-vss-method", "CreateTeam")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/teams")
-@post
-op Teams_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID (GUID) of the team project in which to create the team. */
-  @path projectId: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The team data used to create the team. */
-  @body body: WebApiTeam,
-): WebApiTeam;
-
-/** Delete a team. */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "teams")
-@extension("x-ms-vss-method", "DeleteTeam")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/teams/{teamId}")
-@delete
-op Teams_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID (GUID) of the team project containing the team to delete. */
-  @path projectId: string,
-
-  /** The name or ID of the team to delete. */
-  @path teamId: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Get a specific team. */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "teams")
-@extension("x-ms-vss-method", "GetTeam")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/teams/{teamId}")
-@get
-op Teams_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID (GUID) of the team project containing the team. */
-  @path projectId: string,
-
-  /** The name or ID (GUID) of the team. */
-  @path teamId: string,
-
-  /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
-  @query(#{ explode: true }) $expandIdentity?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): WebApiTeam;
-
-/** Update a team's name and/or description. */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "teams")
-@extension("x-ms-vss-method", "UpdateTeam")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/teams/{teamId}")
-@patch
-op Teams_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID (GUID) of the team project containing the team to update. */
-  @path projectId: string,
-
-  /** The name of ID of the team to update. */
-  @path teamId: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-  @body body: WebApiTeam,
-): WebApiTeam;
-
-/** Get a list of members for a specific team. */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "members")
-@extension("x-ms-vss-method", "GetTeamMembersWithExtendedProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/projects/{projectId}/teams/{teamId}/members")
-@get
-op Teams_GetTeamMembersWithExtendedProperties(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The name or ID (GUID) of the team project the team belongs to. */
-  @path projectId: string,
-
-  /** The name or ID (GUID) of the team . */
-  @path teamId: string,
-
-  @query(#{ explode: true }) $top?: int32,
-  @query(#{ explode: true }) $skip?: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<TeamMember[]>;
-
-/** Get a list of all teams. */
-@tag("Teams")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "teams")
-@extension("x-ms-vss-method", "GetAllTeams")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/teams")
-@get
-op Teams_GetAllTeams(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** If true, then return all teams requesting user is member. Otherwise return all teams user has read access. */
-  @query(#{ explode: true }) $mine?: boolean,
-
-  /** Maximum number of teams to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of teams to skip. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
-  @query(#{ explode: true }) $expandIdentity?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<WebApiTeam[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `4` {
       /** Version of the API to use. This should be set to '7.2-preview.4' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Processes {
+  /** Get a list of processes. */
+  @tag("Processes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "processes")
+  @extension("x-ms-vss-method", "GetProcesses")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/process/processes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Process[]>;
+
+  /** Get a process by ID. */
+  @tag("Processes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "processes")
+  @extension("x-ms-vss-method", "GetProcessById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/process/processes/{processId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID for a process. */
+    @format("uuid") @path processId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Process;
+}
+
+interface Projects {
+  /** Get all projects in the organization that the authenticated user has access to. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "projects")
+  @extension("x-ms-vss-method", "GetProjects")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Filter on team projects in a specific team project state (default: WellFormed). */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ProjectState",
+        values: #[
+          #{ value: "deleting", description: "Project is in the process of being deleted." },
+          #{ value: "new", description: "Project is in the process of being created." },
+          #{ value: "wellFormed", description: "Project is completely created and ready to use." },
+          #{
+            value: "createPending",
+            description: "Project has been queued for creation, but the process has not yet started.",
+          },
+          #{ value: "all", description: "All projects regardless of state except Deleted." },
+          #{ value: "unchanged", description: "Project has not been changed." },
+          #{ value: "deleted", description: "Project has been deleted." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    stateFilter?:
+      | "deleting"
+      | "new"
+      | "wellFormed"
+      | "createPending"
+      | "all"
+      | "unchanged"
+      | "deleted",
+
+    @query(#{ explode: true }) $top?: int32,
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Pointer that shows how many projects already been fetched. */
+    @query(#{ explode: true }) continuationToken?: int32,
+
+    @query(#{ explode: true }) getDefaultTeamImageUrl?: boolean,
+    ...Parameters.`api-Version-preview`.`4`,
+  ): Body<TeamProjectReference[]>;
+
+  /** Queues a project to be created. Use the [GetOperation](../../operations/operations/get) to periodically check for create project status. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "projects")
+  @extension("x-ms-vss-method", "QueueCreateProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** The project to create. */
+    @body body: TeamProject,
+  ): OperationReference;
+
+  /** Queues a project to be deleted. Use the [GetOperation](../../operations/operations/get) to periodically check for delete project status. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "projects")
+  @extension("x-ms-vss-method", "QueueDeleteProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project id of the project to delete. */
+    @format("uuid") @path projectId: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): OperationReference;
+
+  /** Get project with the specified id or name, optionally including capabilities. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "projects")
+  @extension("x-ms-vss-method", "GetProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path projectId: string,
+
+    /** Include capabilities (such as source control) in the team project result (default: false). */
+    @query(#{ explode: true }) includeCapabilities?: boolean,
+
+    /** Search within renamed projects (that had such name in the past). */
+    @query(#{ explode: true }) includeHistory?: boolean,
+
+    ...Parameters.`api-Version-preview`.`4`,
+  ): TeamProject;
+
+  /** Update an existing project's name, abbreviation, description, or restore a project. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.4")
+  @extension("x-ms-vss-resource", "projects")
+  @extension("x-ms-vss-method", "UpdateProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project id of the project to update. */
+    @format("uuid") @path projectId: string,
+
+    ...Parameters.`api-Version-preview`.`4`,
+
+    /** The updates for the project. The state must be set to wellFormed to restore the project. */
+    @body body: TeamProject,
+  ): OperationReference;
+
+  /** Get a collection of team project properties. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "properties")
+  @extension("x-ms-vss-method", "GetProjectProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/properties")
+  @get
+  GetProjectProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The team project ID. */
+    @format("uuid") @path projectId: string,
+
+    /** A comma-delimited string of team project property names. Wildcard characters ('?' and '*') are supported. If no key is specified, all properties will be returned. */
+    @format("array (string)") @query(#{ explode: true }) keys?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<ProjectProperty[]>;
+
+  /** Create, update, and delete team project properties. */
+  @tag("Projects")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "properties")
+  @extension("x-ms-vss-method", "SetProjectProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/properties")
+  @patch
+  SetProjectProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The team project ID. */
+    @format("uuid") @path projectId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/json-patch+json",
+
+    /** A JSON Patch document that represents an array of property operations. See RFC 6902 for more details on JSON Patch. The accepted operation verbs are Add and Remove, where Add is used for both creating and updating properties. The path consists of a forward slash and a property name. */
+    @body body: JsonPatchDocument,
+  ): OkResponse;
+}
+
+interface Avatar {
+  /** Removes the avatar for the project. */
+  @tag("Avatar")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "avatar")
+  @extension("x-ms-vss-method", "RemoveProjectAvatar")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/avatar")
+  @delete
+  RemoveProjectAvatar(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID or name of the project. */
+    @path projectId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Sets the avatar for the project. */
+  @tag("Avatar")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "avatar")
+  @extension("x-ms-vss-method", "SetProjectAvatar")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/avatar")
+  @put
+  SetProjectAvatar(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID or name of the project. */
+    @path projectId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The avatar blob data object to upload. */
+    @body body: ProjectAvatar,
+  ): OkResponse;
+}
+
+interface CategorizedTeams {
+  /** Gets list of user readable teams in a project and teams user is member of (excluded from readable list). */
+  @tag("Categorized Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "categorizedTeams")
+  @extension("x-ms-vss-method", "GetProjectTeamsByCategory")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/categorizedteams/")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID (GUID) of the team project containing the teams to retrieve. */
+    @path projectId: string,
+
+    /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
+    @query(#{ explode: true }) $expandIdentity?: boolean,
+
+    /** Maximum number of teams to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of teams to skip. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): CategorizedWebApiTeams;
+}
+
+interface Teams {
+  /** Get a list of teams. */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "teams")
+  @extension("x-ms-vss-method", "GetTeams")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/teams")
+  @get
+  GetTeams(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path projectId: string,
+
+    /** If true return all the teams requesting user is member, otherwise return all the teams user has read access. */
+    @query(#{ explode: true }) $mine?: boolean,
+
+    /** Maximum number of teams to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of teams to skip. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
+    @query(#{ explode: true }) $expandIdentity?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WebApiTeam[]>;
+
+  /** Create a team in a team project. Possible failure scenarios Invalid project name/ID (project doesn't exist) 404 Invalid team name or description 400 Team already exists 400 Insufficient privileges 400 */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "teams")
+  @extension("x-ms-vss-method", "CreateTeam")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/teams")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID (GUID) of the team project in which to create the team. */
+    @path projectId: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The team data used to create the team. */
+    @body body: WebApiTeam,
+  ): WebApiTeam;
+
+  /** Delete a team. */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "teams")
+  @extension("x-ms-vss-method", "DeleteTeam")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/teams/{teamId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID (GUID) of the team project containing the team to delete. */
+    @path projectId: string,
+
+    /** The name or ID of the team to delete. */
+    @path teamId: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Get a specific team. */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "teams")
+  @extension("x-ms-vss-method", "GetTeam")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/teams/{teamId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID (GUID) of the team project containing the team. */
+    @path projectId: string,
+
+    /** The name or ID (GUID) of the team. */
+    @path teamId: string,
+
+    /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
+    @query(#{ explode: true }) $expandIdentity?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): WebApiTeam;
+
+  /** Update a team's name and/or description. */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "teams")
+  @extension("x-ms-vss-method", "UpdateTeam")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/teams/{teamId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID (GUID) of the team project containing the team to update. */
+    @path projectId: string,
+
+    /** The name of ID of the team to update. */
+    @path teamId: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+    @body body: WebApiTeam,
+  ): WebApiTeam;
+
+  /** Get a list of members for a specific team. */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "members")
+  @extension("x-ms-vss-method", "GetTeamMembersWithExtendedProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/projects/{projectId}/teams/{teamId}/members")
+  @get
+  GetTeamMembersWithExtendedProperties(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The name or ID (GUID) of the team project the team belongs to. */
+    @path projectId: string,
+
+    /** The name or ID (GUID) of the team . */
+    @path teamId: string,
+
+    @query(#{ explode: true }) $top?: int32,
+    @query(#{ explode: true }) $skip?: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<TeamMember[]>;
+
+  /** Get a list of all teams. */
+  @tag("Teams")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "teams")
+  @extension("x-ms-vss-method", "GetAllTeams")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/teams")
+  @get
+  GetAllTeams(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** If true, then return all teams requesting user is member. Otherwise return all teams user has read access. */
+    @query(#{ explode: true }) $mine?: boolean,
+
+    /** Maximum number of teams to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of teams to skip. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** A value indicating whether or not to expand Identity information in the result WebApiTeam object. */
+    @query(#{ explode: true }) $expandIdentity?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<WebApiTeam[]>;
 }

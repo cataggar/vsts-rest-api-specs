@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Environments" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Environments;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model Demand {
   name?: string;
@@ -601,405 +607,417 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get all environments. */
-@tag("Environments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "GetEnvironments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments")
-@get
-op Environments_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @query(#{ explode: true }) name?: string,
-  @query(#{ explode: true }) continuationToken?: string,
-  @query(#{ explode: true }) $top?: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<EnvironmentInstance[]>;
-
-/** Create an environment. */
-@tag("Environments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "AddEnvironment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments")
-@post
-op Environments_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Environment to create. */
-  @body body: EnvironmentCreateParameter,
-): EnvironmentInstance;
-
-/** Delete the specified environment. */
-@tag("Environments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "DeleteEnvironment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}")
-@delete
-op Environments_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the environment. */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get an environment by its ID. */
-@tag("Environments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "GetEnvironmentById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}")
-@get
-op Environments_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the environment. */
-  @path environmentId: int32,
-
-  /** Include these additional details in the returned objects. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "EnvironmentExpands",
-      values: #[
-        #{ value: "none", description: "No additional properties" },
-        #{
-          value: "resourceReferences",
-          description: "Include resource references referring to the environment.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expands?: "none" | "resourceReferences",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): EnvironmentInstance;
-
-/** Update the specified environment. */
-@tag("Environments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environments")
-@extension("x-ms-vss-method", "UpdateEnvironment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}")
-@patch
-op Environments_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the environment. */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Environment data to update. */
-  @body body: EnvironmentUpdateParameter,
-): EnvironmentInstance;
-
-/** Get environment deployment execution history */
-@tag("Environmentdeploymentrecords")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environmentdeploymentrecords")
-@extension("x-ms-vss-method", "GetEnvironmentDeploymentExecutionRecords")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/environmentdeploymentrecords")
-@get
-op Environmentdeploymentrecords_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path environmentId: int32,
-  @query(#{ explode: true }) continuationToken?: string,
-  @query(#{ explode: true }) top?: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<EnvironmentDeploymentExecutionRecord[]>;
-
-@tag("Kubernetes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "kubernetes")
-@extension("x-ms-vss-method", "UpdateKubernetesResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes")
-@patch
-op Kubernetes_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path environmentId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: KubernetesResourcePatchParameters,
-): KubernetesResource;
-
-@tag("Kubernetes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "kubernetes")
-@extension("x-ms-vss-method", "AddKubernetesResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes")
-@post
-op Kubernetes_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path environmentId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: KubernetesResourceCreateParametersExistingEndpoint,
-): KubernetesResource;
-
-@tag("Kubernetes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "kubernetes")
-@extension("x-ms-vss-method", "DeleteKubernetesResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes/{resourceId}")
-@delete
-op Kubernetes_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path environmentId: int32,
-  @path resourceId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-@tag("Kubernetes")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "kubernetes")
-@extension("x-ms-vss-method", "GetKubernetesResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes/{resourceId}")
-@get
-op Kubernetes_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path environmentId: int32,
-  @path resourceId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-): KubernetesResource;
-
-/** Get Virtual Machine Resources */
-@tag("Vmresource")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "vmresource")
-@extension("x-ms-vss-method", "GetVirtualMachineResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
-@get
-op Vmresource_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the Environment */
-  @path environmentId: int32,
-
-  /** Name of the Virtual Machine Resource */
-  @query(#{ explode: true }) name?: string,
-
-  /** Tags of the Virtual Machine Resource */
-  @format("array (string)") @query(#{ explode: true }) tags?: string,
-
-  /** Gets the Virtual Machine Resources after the continuation token provided. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Number of Virtual Machine Resources to get. Default is 1000. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<VirtualMachineResource[]>;
-
-/** Update Virtual Machine Resource */
-@tag("Vmresource")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "vmresource")
-@extension("x-ms-vss-method", "UpdateVirtualMachineResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
-@patch
-op Vmresource_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the Environment */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Properties to update Virtual Machine Resource */
-  @body body: VirtualMachineResource,
-): VirtualMachineResource;
-
-/** Add Virtual Machine Resource */
-@tag("Vmresource")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "vmresource")
-@extension("x-ms-vss-method", "AddVirtualMachineResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
-@post
-op Vmresource_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the Environment */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Properties to create Virtual Machine Resource */
-  @body body: VirtualMachineResourceCreateParameters,
-): VirtualMachineResource;
-
-/** Replace Virtual Machine Resource */
-@tag("Vmresource")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "vmresource")
-@extension("x-ms-vss-method", "ReplaceVirtualMachineResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
-@put
-op Vmresource_ReplaceVirtualMachineResource(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the Environment */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Properties to replace Virtual Machine Resource */
-  @body body: VirtualMachineResource,
-): VirtualMachineResource;
-
-/** Delete Virtual Machine Resource */
-@tag("Vmresource")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "vmresource")
-@extension("x-ms-vss-method", "DeleteVirtualMachineResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines/{resourceId}")
-@delete
-op Vmresource_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the Environment */
-  @path environmentId: int32,
-
-  /** Id of the Virtual Machine Resource */
-  @path resourceId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-@tag("Pool")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pool")
-@extension("x-ms-vss-method", "GetLinkedPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines/pool")
-@get
-op Pool_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path environmentId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskAgentPoolReference;
-
-/** GET a PAT token for creating and deleting deployment targets in an environment. */
-@tag("Environmentaccesstoken")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "environmentaccesstoken")
-@extension("x-ms-vss-method", "GenerateEnvironmentAccessToken")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/environments/environmentaccesstoken/{environmentId}")
-@post
-op Environmentaccesstoken_GenerateEnvironmentAccessToken(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the environment in which deployment targets are managed. */
-  @path environmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<string>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Environments {
+  /** Get all environments. */
+  @tag("Environments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "GetEnvironments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @query(#{ explode: true }) name?: string,
+    @query(#{ explode: true }) continuationToken?: string,
+    @query(#{ explode: true }) $top?: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<EnvironmentInstance[]>;
+
+  /** Create an environment. */
+  @tag("Environments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "AddEnvironment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Environment to create. */
+    @body body: EnvironmentCreateParameter,
+  ): EnvironmentInstance;
+
+  /** Delete the specified environment. */
+  @tag("Environments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "DeleteEnvironment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the environment. */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get an environment by its ID. */
+  @tag("Environments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "GetEnvironmentById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the environment. */
+    @path environmentId: int32,
+
+    /** Include these additional details in the returned objects. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "EnvironmentExpands",
+        values: #[
+          #{ value: "none", description: "No additional properties" },
+          #{
+            value: "resourceReferences",
+            description: "Include resource references referring to the environment.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expands?: "none" | "resourceReferences",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): EnvironmentInstance;
+
+  /** Update the specified environment. */
+  @tag("Environments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environments")
+  @extension("x-ms-vss-method", "UpdateEnvironment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the environment. */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Environment data to update. */
+    @body body: EnvironmentUpdateParameter,
+  ): EnvironmentInstance;
+}
+
+interface Environmentdeploymentrecords {
+  /** Get environment deployment execution history */
+  @tag("Environmentdeploymentrecords")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environmentdeploymentrecords")
+  @extension("x-ms-vss-method", "GetEnvironmentDeploymentExecutionRecords")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/environmentdeploymentrecords")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path environmentId: int32,
+    @query(#{ explode: true }) continuationToken?: string,
+    @query(#{ explode: true }) top?: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<EnvironmentDeploymentExecutionRecord[]>;
+}
+
+interface Kubernetes {
+  @tag("Kubernetes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "kubernetes")
+  @extension("x-ms-vss-method", "UpdateKubernetesResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path environmentId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: KubernetesResourcePatchParameters,
+  ): KubernetesResource;
+
+  @tag("Kubernetes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "kubernetes")
+  @extension("x-ms-vss-method", "AddKubernetesResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path environmentId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: KubernetesResourceCreateParametersExistingEndpoint,
+  ): KubernetesResource;
+
+  @tag("Kubernetes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "kubernetes")
+  @extension("x-ms-vss-method", "DeleteKubernetesResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes/{resourceId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path environmentId: int32,
+    @path resourceId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  @tag("Kubernetes")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "kubernetes")
+  @extension("x-ms-vss-method", "GetKubernetesResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/kubernetes/{resourceId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path environmentId: int32,
+    @path resourceId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): KubernetesResource;
+}
+
+interface Vmresource {
+  /** Get Virtual Machine Resources */
+  @tag("Vmresource")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "vmresource")
+  @extension("x-ms-vss-method", "GetVirtualMachineResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the Environment */
+    @path environmentId: int32,
+
+    /** Name of the Virtual Machine Resource */
+    @query(#{ explode: true }) name?: string,
+
+    /** Tags of the Virtual Machine Resource */
+    @format("array (string)") @query(#{ explode: true }) tags?: string,
+
+    /** Gets the Virtual Machine Resources after the continuation token provided. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Number of Virtual Machine Resources to get. Default is 1000. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<VirtualMachineResource[]>;
+
+  /** Update Virtual Machine Resource */
+  @tag("Vmresource")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "vmresource")
+  @extension("x-ms-vss-method", "UpdateVirtualMachineResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the Environment */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Properties to update Virtual Machine Resource */
+    @body body: VirtualMachineResource,
+  ): VirtualMachineResource;
+
+  /** Add Virtual Machine Resource */
+  @tag("Vmresource")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "vmresource")
+  @extension("x-ms-vss-method", "AddVirtualMachineResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the Environment */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Properties to create Virtual Machine Resource */
+    @body body: VirtualMachineResourceCreateParameters,
+  ): VirtualMachineResource;
+
+  /** Replace Virtual Machine Resource */
+  @tag("Vmresource")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "vmresource")
+  @extension("x-ms-vss-method", "ReplaceVirtualMachineResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
+  @put
+  ReplaceVirtualMachineResource(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the Environment */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Properties to replace Virtual Machine Resource */
+    @body body: VirtualMachineResource,
+  ): VirtualMachineResource;
+
+  /** Delete Virtual Machine Resource */
+  @tag("Vmresource")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "vmresource")
+  @extension("x-ms-vss-method", "DeleteVirtualMachineResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines/{resourceId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the Environment */
+    @path environmentId: int32,
+
+    /** Id of the Virtual Machine Resource */
+    @path resourceId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+}
+
+interface Pool {
+  @tag("Pool")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pool")
+  @extension("x-ms-vss-method", "GetLinkedPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines/pool")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path environmentId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskAgentPoolReference;
+}
+
+interface Environmentaccesstoken {
+  /** GET a PAT token for creating and deleting deployment targets in an environment. */
+  @tag("Environmentaccesstoken")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "environmentaccesstoken")
+  @extension("x-ms-vss-method", "GenerateEnvironmentAccessToken")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/environments/environmentaccesstoken/{environmentId}")
+  @post
+  GenerateEnvironmentAccessToken(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the environment in which deployment targets are managed. */
+    @path environmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<string>;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Wiki" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Wiki;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Comment on an artifact like Work Item or Wiki, etc. */
 model Comment {
@@ -632,765 +638,777 @@ model WikiV2 {
   versions?: GitVersionDescriptor[];
 }
 
-/** Gets all wikis in a project or collection. */
-@tag("Wikis")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wikis")
-@extension("x-ms-vss-method", "GetAllWikis")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis")
-@get
-op Wikis_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<WikiV2[]>;
-
-/** Creates the wiki resource. */
-@tag("Wikis")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wikis")
-@extension("x-ms-vss-method", "CreateWiki")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis")
-@post
-op Wikis_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Parameters for the wiki creation. */
-  @body body: WikiCreateParametersV2,
-): CreatedResponse & WikiV2;
-
-/** Deletes the wiki corresponding to the wiki ID or wiki name provided. */
-@tag("Wikis")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wikis")
-@extension("x-ms-vss-method", "DeleteWiki")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}")
-@delete
-op Wikis_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WikiV2;
-
-/** Gets the wiki corresponding to the wiki ID or wiki name provided. */
-@tag("Wikis")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wikis")
-@extension("x-ms-vss-method", "GetWiki")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}")
-@get
-op Wikis_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): WikiV2;
-
-/** Updates the wiki corresponding to the wiki ID or wiki name provided using the update parameters. */
-@tag("Wikis")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "wikis")
-@extension("x-ms-vss-method", "UpdateWiki")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}")
-@patch
-op Wikis_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Update parameters. */
-  @body body: WikiUpdateParameters,
-): WikiV2;
-
-/** Creates an attachment in the wiki. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "CreateAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/attachments")
-@put
-op Attachments_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki attachment name. */
-  @query(#{ explode: true }) name: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/octet-stream",
-
-  /** Stream to upload */
-  @body body: string,
-): {
-  @statusCode statusCode: 201;
-  @header ETag?: string;
-  @body body: WikiAttachment;
-};
-
-/** Creates a page move operation that updates the path and order of the page as provided in the parameters. */
-@tag("Page Moves")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pageMoves")
-@extension("x-ms-vss-method", "CreatePageMove")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagemoves")
-@post
-op PageMoves_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Comment that is to be associated with this page move. */
-  @query(#{ explode: true }) comment?: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Page more operation parameters. */
-  @body body: WikiPageMoveParameters,
-): {
-  @statusCode statusCode: 201;
-  @header ETag?: string;
-  @body body: WikiPageMove;
-};
-
-/** Deletes a wiki page. */
-@tag("Pages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pages")
-@extension("x-ms-vss-method", "DeletePage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
-@delete
-op Pages_DeletePage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page path. */
-  @query(#{ explode: true }) path: string,
-
-  /** Comment to be associated with this page delete. */
-  @query(#{ explode: true }) comment?: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @body body: WikiPage;
-    };
-
-/** Gets metadata or content of the wiki page for the provided path. Content negotiation is done based on the `Accept` header sent in the request. */
-@tag("Pages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pages")
-@extension("x-ms-vss-method", "GetPage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
-@get
-op Pages_GetPage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page path. */
-  @query(#{ explode: true }) path?: string,
-
-  /** Recursion level for subpages retrieval. Defaults to `None` (Optional). */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "VersionControlRecursionType",
-      values: #[
-        #{ value: "none", description: "Only return the specified item." },
-        #{ value: "oneLevel", description: "Return the specified item and its direct children." },
-        #{
-          value: "oneLevelPlusNestedEmptyFolders",
-          description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
-        },
-        #{ value: "full", description: "Return specified item and all descendants" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  /** True to include the content of the page in the response for Json content type. Defaults to false (Optional) */
-  @query(#{ explode: true }) includeContent?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header ETag?: string;
-      @header contentType: "application/zip";
-      @body body: WikiPage;
-    }
-  | {
-      @header ETag?: string;
-      @header contentType: "text/plain";
-      @body body: WikiPage;
-    }
-  | {
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @header contentType: "application/zip";
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @header contentType: "text/plain";
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @body body: WikiPage;
-    };
-
-/** Creates or edits a wiki page. */
-@tag("Pages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pages")
-@extension("x-ms-vss-method", "CreateOrUpdatePage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
-@put
-op Pages_CreateOrUpdate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page path. */
-  @query(#{ explode: true }) path: string,
-
-  /** Version of the page on which the change is to be made. Mandatory for `Edit` scenario. To be populated in the If-Match header of the request. */
-  @header Version: string,
-
-  /** Comment to be associated with the page operation. */
-  @query(#{ explode: true }) comment?: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Wiki create or update operation parameters. */
-  @body body: WikiPageCreateOrUpdateParameters,
-):
-  | {
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 201;
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @body body: WikiPage;
-    };
-
-/** Deletes a wiki page. */
-@tag("Pages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pages")
-@extension("x-ms-vss-method", "DeletePageById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
-@delete
-op Pages_DeletePageById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page ID. */
-  @path id: int32,
-
-  /** Comment to be associated with this page delete. */
-  @query(#{ explode: true }) comment?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @body body: WikiPage;
-    };
-
-/** Gets metadata or content of the wiki page for the provided page id. Content negotiation is done based on the `Accept` header sent in the request. */
-@tag("Pages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pages")
-@extension("x-ms-vss-method", "GetPageById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
-@get
-op Pages_GetPageById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name.. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page ID. */
-  @path id: int32,
-
-  /** Recursion level for subpages retrieval. Defaults to `None` (Optional). */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "VersionControlRecursionType",
-      values: #[
-        #{ value: "none", description: "Only return the specified item." },
-        #{ value: "oneLevel", description: "Return the specified item and its direct children." },
-        #{
-          value: "oneLevelPlusNestedEmptyFolders",
-          description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
-        },
-        #{ value: "full", description: "Return specified item and all descendants" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
-
-  /** True to include the content of the page in the response for Json content type. Defaults to false (Optional) */
-  @query(#{ explode: true }) includeContent?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header ETag?: string;
-      @header contentType: "application/zip";
-      @body body: WikiPage;
-    }
-  | {
-      @header ETag?: string;
-      @header contentType: "text/plain";
-      @body body: WikiPage;
-    }
-  | {
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @header contentType: "application/zip";
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @header contentType: "text/plain";
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @body body: WikiPage;
-    };
-
-/** Edits a wiki page. */
-@tag("Pages")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pages")
-@extension("x-ms-vss-method", "UpdatePageById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
-@patch
-op Pages_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page ID. */
-  @path id: int32,
-
-  /** Version of the page on which the change is to be made. Mandatory for `Edit` scenario. To be populated in the If-Match header of the request. */
-  @header Version: string,
-
-  /** Comment to be associated with the page operation. */
-  @query(#{ explode: true }) comment?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Wiki update operation parameters. */
-  @body body: WikiPageCreateOrUpdateParameters,
-):
-  | {
-      @header ETag?: string;
-      @body body: WikiPage;
-    }
-  | {
-      @statusCode statusCode: 404;
-      @header ETag?: string;
-      @body body: WikiPage;
-    };
-
-/** Returns page detail corresponding to Page ID. */
-@tag("Page Stats")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pageStats")
-@extension("x-ms-vss-method", "GetPageData")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{pageId}/stats")
-@get
-op PageStats_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Wiki page ID. */
-  @path pageId: int32,
-
-  /** last N days from the current day for which page views is to be returned. It's inclusive of current day. */
-  @query(#{ explode: true }) pageViewsForDays?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): WikiPageDetail;
-
-/** Returns pageable list of Wiki Pages */
-@tag("Pages Batch")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pagesBatch")
-@extension("x-ms-vss-method", "GetPagesBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagesbatch")
-@post
-op PagesBatch_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Wiki ID or wiki name. */
-  @path wikiIdentifier: string,
-
-  /** Version string identifier (name of tag/branch, SHA1 of commit) */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  /** Version options - Specify additional modifiers to version (e.g Previous) */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionOptions",
-      values: #[
-        #{ value: "none", description: "Not specified" },
-        #{
-          value: "previousChange",
-          description: "Commit that changed item prior to the current version",
-        },
-        #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
-
-  /** Version type (branch, tag, or commit). Determines how Id is interpreted */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "GitVersionType",
-      values: #[
-        #{ value: "branch", description: "Interpret the version as a branch name" },
-        #{ value: "tag", description: "Interpret the version as a tag name" },
-        #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Wiki batch page request. */
-  @body body: WikiPagesBatchRequest,
-): Body<WikiPageDetail[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Wikis {
+  /** Gets all wikis in a project or collection. */
+  @tag("Wikis")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wikis")
+  @extension("x-ms-vss-method", "GetAllWikis")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<WikiV2[]>;
+
+  /** Creates the wiki resource. */
+  @tag("Wikis")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wikis")
+  @extension("x-ms-vss-method", "CreateWiki")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Parameters for the wiki creation. */
+    @body body: WikiCreateParametersV2,
+  ): CreatedResponse & WikiV2;
+
+  /** Deletes the wiki corresponding to the wiki ID or wiki name provided. */
+  @tag("Wikis")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wikis")
+  @extension("x-ms-vss-method", "DeleteWiki")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WikiV2;
+
+  /** Gets the wiki corresponding to the wiki ID or wiki name provided. */
+  @tag("Wikis")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wikis")
+  @extension("x-ms-vss-method", "GetWiki")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): WikiV2;
+
+  /** Updates the wiki corresponding to the wiki ID or wiki name provided using the update parameters. */
+  @tag("Wikis")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "wikis")
+  @extension("x-ms-vss-method", "UpdateWiki")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Update parameters. */
+    @body body: WikiUpdateParameters,
+  ): WikiV2;
+}
+
+interface Attachments {
+  /** Creates an attachment in the wiki. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "CreateAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/attachments")
+  @put
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki attachment name. */
+    @query(#{ explode: true }) name: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/octet-stream",
+
+    /** Stream to upload */
+    @body body: string,
+  ): {
+    @statusCode statusCode: 201;
+    @header ETag?: string;
+    @body body: WikiAttachment;
+  };
+}
+
+interface PageMoves {
+  /** Creates a page move operation that updates the path and order of the page as provided in the parameters. */
+  @tag("Page Moves")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pageMoves")
+  @extension("x-ms-vss-method", "CreatePageMove")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagemoves")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Comment that is to be associated with this page move. */
+    @query(#{ explode: true }) comment?: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Page more operation parameters. */
+    @body body: WikiPageMoveParameters,
+  ): {
+    @statusCode statusCode: 201;
+    @header ETag?: string;
+    @body body: WikiPageMove;
+  };
+}
+
+interface Pages {
+  /** Deletes a wiki page. */
+  @tag("Pages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pages")
+  @extension("x-ms-vss-method", "DeletePage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
+  @delete
+  DeletePage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page path. */
+    @query(#{ explode: true }) path: string,
+
+    /** Comment to be associated with this page delete. */
+    @query(#{ explode: true }) comment?: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @body body: WikiPage;
+      };
+
+  /** Gets metadata or content of the wiki page for the provided path. Content negotiation is done based on the `Accept` header sent in the request. */
+  @tag("Pages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pages")
+  @extension("x-ms-vss-method", "GetPage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
+  @get
+  GetPage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page path. */
+    @query(#{ explode: true }) path?: string,
+
+    /** Recursion level for subpages retrieval. Defaults to `None` (Optional). */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "VersionControlRecursionType",
+        values: #[
+          #{ value: "none", description: "Only return the specified item." },
+          #{ value: "oneLevel", description: "Return the specified item and its direct children." },
+          #{
+            value: "oneLevelPlusNestedEmptyFolders",
+            description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
+          },
+          #{ value: "full", description: "Return specified item and all descendants" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    /** True to include the content of the page in the response for Json content type. Defaults to false (Optional) */
+    @query(#{ explode: true }) includeContent?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header ETag?: string;
+        @header contentType: "application/zip";
+        @body body: WikiPage;
+      }
+    | {
+        @header ETag?: string;
+        @header contentType: "text/plain";
+        @body body: WikiPage;
+      }
+    | {
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @header contentType: "application/zip";
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @header contentType: "text/plain";
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @body body: WikiPage;
+      };
+
+  /** Creates or edits a wiki page. */
+  @tag("Pages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pages")
+  @extension("x-ms-vss-method", "CreateOrUpdatePage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
+  @put
+  CreateOrUpdate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page path. */
+    @query(#{ explode: true }) path: string,
+
+    /** Version of the page on which the change is to be made. Mandatory for `Edit` scenario. To be populated in the If-Match header of the request. */
+    @header Version: string,
+
+    /** Comment to be associated with the page operation. */
+    @query(#{ explode: true }) comment?: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Wiki create or update operation parameters. */
+    @body body: WikiPageCreateOrUpdateParameters,
+  ):
+    | {
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 201;
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @body body: WikiPage;
+      };
+
+  /** Deletes a wiki page. */
+  @tag("Pages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pages")
+  @extension("x-ms-vss-method", "DeletePageById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
+  @delete
+  DeletePageById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page ID. */
+    @path id: int32,
+
+    /** Comment to be associated with this page delete. */
+    @query(#{ explode: true }) comment?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @body body: WikiPage;
+      };
+
+  /** Gets metadata or content of the wiki page for the provided page id. Content negotiation is done based on the `Accept` header sent in the request. */
+  @tag("Pages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pages")
+  @extension("x-ms-vss-method", "GetPageById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
+  @get
+  GetPageById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name.. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page ID. */
+    @path id: int32,
+
+    /** Recursion level for subpages retrieval. Defaults to `None` (Optional). */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "VersionControlRecursionType",
+        values: #[
+          #{ value: "none", description: "Only return the specified item." },
+          #{ value: "oneLevel", description: "Return the specified item and its direct children." },
+          #{
+            value: "oneLevelPlusNestedEmptyFolders",
+            description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
+          },
+          #{ value: "full", description: "Return specified item and all descendants" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
+
+    /** True to include the content of the page in the response for Json content type. Defaults to false (Optional) */
+    @query(#{ explode: true }) includeContent?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header ETag?: string;
+        @header contentType: "application/zip";
+        @body body: WikiPage;
+      }
+    | {
+        @header ETag?: string;
+        @header contentType: "text/plain";
+        @body body: WikiPage;
+      }
+    | {
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @header contentType: "application/zip";
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @header contentType: "text/plain";
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @body body: WikiPage;
+      };
+
+  /** Edits a wiki page. */
+  @tag("Pages")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pages")
+  @extension("x-ms-vss-method", "UpdatePageById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page ID. */
+    @path id: int32,
+
+    /** Version of the page on which the change is to be made. Mandatory for `Edit` scenario. To be populated in the If-Match header of the request. */
+    @header Version: string,
+
+    /** Comment to be associated with the page operation. */
+    @query(#{ explode: true }) comment?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Wiki update operation parameters. */
+    @body body: WikiPageCreateOrUpdateParameters,
+  ):
+    | {
+        @header ETag?: string;
+        @body body: WikiPage;
+      }
+    | {
+        @statusCode statusCode: 404;
+        @header ETag?: string;
+        @body body: WikiPage;
+      };
+}
+
+interface PageStats {
+  /** Returns page detail corresponding to Page ID. */
+  @tag("Page Stats")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pageStats")
+  @extension("x-ms-vss-method", "GetPageData")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{pageId}/stats")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Wiki page ID. */
+    @path pageId: int32,
+
+    /** last N days from the current day for which page views is to be returned. It's inclusive of current day. */
+    @query(#{ explode: true }) pageViewsForDays?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): WikiPageDetail;
+}
+
+interface PagesBatch {
+  /** Returns pageable list of Wiki Pages */
+  @tag("Pages Batch")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pagesBatch")
+  @extension("x-ms-vss-method", "GetPagesBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagesbatch")
+  @post
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Wiki ID or wiki name. */
+    @path wikiIdentifier: string,
+
+    /** Version string identifier (name of tag/branch, SHA1 of commit) */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    /** Version options - Specify additional modifiers to version (e.g Previous) */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionOptions",
+        values: #[
+          #{ value: "none", description: "Not specified" },
+          #{
+            value: "previousChange",
+            description: "Commit that changed item prior to the current version",
+          },
+          #{ value: "firstParent", description: "First parent of commit (HEAD^)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOptions`?: "none" | "previousChange" | "firstParent",
+
+    /** Version type (branch, tag, or commit). Determines how Id is interpreted */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "GitVersionType",
+        values: #[
+          #{ value: "branch", description: "Interpret the version as a branch name" },
+          #{ value: "tag", description: "Interpret the version as a tag name" },
+          #{ value: "commit", description: "Interpret the version as a commit ID (SHA1)" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?: "branch" | "tag" | "commit",
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Wiki batch page request. */
+    @body body: WikiPagesBatchRequest,
+  ): Body<WikiPageDetail[]>;
 }

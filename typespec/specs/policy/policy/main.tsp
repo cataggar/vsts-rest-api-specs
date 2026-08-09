@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Policy" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Policy;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model GraphSubjectBase {
   _links?: ReferenceLinks;
@@ -197,290 +203,298 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get a list of policy configurations in a project. The 'scope' parameter for this API should not be used, except for legacy compatability reasons. It returns specifically scoped policies and does not support heirarchical nesting. Instead, use the /_apis/git/policy/configurations API, which provides first class scope filtering support. The optional `policyType` parameter can be used to filter the set of policies returned from this method. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "GetPolicyConfigurations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations")
-@get
-op Configurations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** [Provided for legacy reasons] The scope on which a subset of policies is defined. */
-  @query(#{ explode: true }) scope?: string,
-
-  /** Maximum number of policies to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** The continuation token used for pagination. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Filter returned policies to only this type */
-  @format("uuid") @query(#{ explode: true }) policyType?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PolicyConfiguration[]>;
-
-/** Create a policy configuration of a given policy type. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "CreatePolicyConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations")
-@post
-op Configurations_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The policy configuration to create. */
-  @body body: PolicyConfiguration,
-): PolicyConfiguration;
-
-/** Delete a policy configuration by its ID. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "DeletePolicyConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations/{configurationId}")
-@delete
-op Configurations_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the policy configuration to delete. */
-  @path configurationId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): NoContentResponse;
-
-/** Get a policy configuration by its ID. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "GetPolicyConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations/{configurationId}")
-@get
-op Configurations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the policy configuration */
-  @path configurationId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PolicyConfiguration;
-
-/** Update a policy configuration by its ID. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "UpdatePolicyConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations/{configurationId}")
-@put
-op Configurations_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the existing policy configuration to be updated. */
-  @path configurationId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The policy configuration to update. */
-  @body body: PolicyConfiguration,
-): PolicyConfiguration;
-
-/** Retrieve all revisions for a given policy. */
-@tag("Revisions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetPolicyConfigurationRevisions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations/{configurationId}/revisions")
-@get
-op Revisions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The policy configuration ID. */
-  @path configurationId: int32,
-
-  /** The number of revisions to retrieve. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** The number of revisions to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PolicyConfiguration[]>;
-
-/** Retrieve a specific revision of a given policy by ID. */
-@tag("Revisions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "revisions")
-@extension("x-ms-vss-method", "GetPolicyConfigurationRevision")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/configurations/{configurationId}/revisions/{revisionId}")
-@get
-op Revisions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The policy configuration ID. */
-  @path configurationId: int32,
-
-  /** The revision ID. */
-  @path revisionId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PolicyConfiguration;
-
-/** Retrieves a list of all the policy evaluation statuses for a specific pull request. Evaluations are retrieved using an artifact ID which uniquely identifies the pull request. To generate an artifact ID for a pull request, use this template: ``` vstfs:///CodeReview/CodeReviewId/{projectId}/{pullRequestId} ``` */
-@tag("Evaluations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "evaluations")
-@extension("x-ms-vss-method", "GetPolicyEvaluations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/evaluations")
-@get
-op Evaluations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** A string which uniquely identifies the target of a policy evaluation. */
-  @query(#{ explode: true }) artifactId: string,
-
-  /** Some policies might determine that they do not apply to a specific pull request. Setting this parameter to true will return evaluation records even for policies which don't apply to this pull request. */
-  @query(#{ explode: true }) includeNotApplicable?: boolean,
-
-  /** The number of policy evaluation records to retrieve. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** The number of policy evaluation records to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PolicyEvaluationRecord[]>;
-
-/** Gets the present evaluation state of a policy. Each policy which applies to a pull request will have an evaluation state which is specific to that policy running in the context of that pull request. Each evaluation is uniquely identified via a Guid. You can find all the policy evaluations for a specific pull request using the List operation of this controller. */
-@tag("Evaluations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "evaluations")
-@extension("x-ms-vss-method", "GetPolicyEvaluation")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/evaluations/{evaluationId}")
-@get
-op Evaluations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the policy evaluation to be retrieved. */
-  @format("uuid") @path evaluationId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PolicyEvaluationRecord;
-
-/** Requeue the policy evaluation. Some policies define a 'requeue' action which performs some policy-specific operation. You can trigger this operation by updating an existing policy evaluation and setting the PolicyEvaluationRecord.Status field to Queued. Although any policy evaluation can be requeued, at present only build policies perform any action in response. Requeueing a build policy will queue a new build to run (cancelling any existing build which is running). */
-@tag("Evaluations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "evaluations")
-@extension("x-ms-vss-method", "RequeuePolicyEvaluation")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/evaluations/{evaluationId}")
-@patch
-op Evaluations_RequeuePolicyEvaluation(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the policy evaluation to be retrieved. */
-  @format("uuid") @path evaluationId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PolicyEvaluationRecord;
-
-/** Retrieve all available policy types. */
-@tag("Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "types")
-@extension("x-ms-vss-method", "GetPolicyTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/types")
-@get
-op Types_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<PolicyType[]>;
-
-/** Retrieve a specific policy type by ID. */
-@tag("Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "types")
-@extension("x-ms-vss-method", "GetPolicyType")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/policy/types/{typeId}")
-@get
-op Types_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The policy ID. */
-  @format("uuid") @path typeId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PolicyType;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Configurations {
+  /** Get a list of policy configurations in a project. The 'scope' parameter for this API should not be used, except for legacy compatability reasons. It returns specifically scoped policies and does not support heirarchical nesting. Instead, use the /_apis/git/policy/configurations API, which provides first class scope filtering support. The optional `policyType` parameter can be used to filter the set of policies returned from this method. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "GetPolicyConfigurations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** [Provided for legacy reasons] The scope on which a subset of policies is defined. */
+    @query(#{ explode: true }) scope?: string,
+
+    /** Maximum number of policies to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** The continuation token used for pagination. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Filter returned policies to only this type */
+    @format("uuid") @query(#{ explode: true }) policyType?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PolicyConfiguration[]>;
+
+  /** Create a policy configuration of a given policy type. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "CreatePolicyConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The policy configuration to create. */
+    @body body: PolicyConfiguration,
+  ): PolicyConfiguration;
+
+  /** Delete a policy configuration by its ID. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "DeletePolicyConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations/{configurationId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the policy configuration to delete. */
+    @path configurationId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NoContentResponse;
+
+  /** Get a policy configuration by its ID. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "GetPolicyConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations/{configurationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the policy configuration */
+    @path configurationId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PolicyConfiguration;
+
+  /** Update a policy configuration by its ID. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "UpdatePolicyConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations/{configurationId}")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the existing policy configuration to be updated. */
+    @path configurationId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The policy configuration to update. */
+    @body body: PolicyConfiguration,
+  ): PolicyConfiguration;
+}
+
+interface Revisions {
+  /** Retrieve all revisions for a given policy. */
+  @tag("Revisions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetPolicyConfigurationRevisions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations/{configurationId}/revisions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The policy configuration ID. */
+    @path configurationId: int32,
+
+    /** The number of revisions to retrieve. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** The number of revisions to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PolicyConfiguration[]>;
+
+  /** Retrieve a specific revision of a given policy by ID. */
+  @tag("Revisions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "revisions")
+  @extension("x-ms-vss-method", "GetPolicyConfigurationRevision")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/configurations/{configurationId}/revisions/{revisionId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The policy configuration ID. */
+    @path configurationId: int32,
+
+    /** The revision ID. */
+    @path revisionId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PolicyConfiguration;
+}
+
+interface Evaluations {
+  /** Retrieves a list of all the policy evaluation statuses for a specific pull request. Evaluations are retrieved using an artifact ID which uniquely identifies the pull request. To generate an artifact ID for a pull request, use this template: ``` vstfs:///CodeReview/CodeReviewId/{projectId}/{pullRequestId} ``` */
+  @tag("Evaluations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "evaluations")
+  @extension("x-ms-vss-method", "GetPolicyEvaluations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/evaluations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** A string which uniquely identifies the target of a policy evaluation. */
+    @query(#{ explode: true }) artifactId: string,
+
+    /** Some policies might determine that they do not apply to a specific pull request. Setting this parameter to true will return evaluation records even for policies which don't apply to this pull request. */
+    @query(#{ explode: true }) includeNotApplicable?: boolean,
+
+    /** The number of policy evaluation records to retrieve. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** The number of policy evaluation records to ignore. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PolicyEvaluationRecord[]>;
+
+  /** Gets the present evaluation state of a policy. Each policy which applies to a pull request will have an evaluation state which is specific to that policy running in the context of that pull request. Each evaluation is uniquely identified via a Guid. You can find all the policy evaluations for a specific pull request using the List operation of this controller. */
+  @tag("Evaluations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "evaluations")
+  @extension("x-ms-vss-method", "GetPolicyEvaluation")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/evaluations/{evaluationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the policy evaluation to be retrieved. */
+    @format("uuid") @path evaluationId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PolicyEvaluationRecord;
+
+  /** Requeue the policy evaluation. Some policies define a 'requeue' action which performs some policy-specific operation. You can trigger this operation by updating an existing policy evaluation and setting the PolicyEvaluationRecord.Status field to Queued. Although any policy evaluation can be requeued, at present only build policies perform any action in response. Requeueing a build policy will queue a new build to run (cancelling any existing build which is running). */
+  @tag("Evaluations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "evaluations")
+  @extension("x-ms-vss-method", "RequeuePolicyEvaluation")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/evaluations/{evaluationId}")
+  @patch
+  RequeuePolicyEvaluation(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the policy evaluation to be retrieved. */
+    @format("uuid") @path evaluationId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PolicyEvaluationRecord;
+}
+
+interface Types {
+  /** Retrieve all available policy types. */
+  @tag("Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "types")
+  @extension("x-ms-vss-method", "GetPolicyTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/types")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<PolicyType[]>;
+
+  /** Retrieve a specific policy type by ID. */
+  @tag("Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "types")
+  @extension("x-ms-vss-method", "GetPolicyType")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/policy/types/{typeId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The policy ID. */
+    @format("uuid") @path typeId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PolicyType;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Reporting" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://advsec.dev.azure.com")
 namespace Reporting;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Represents an advanced filter configuration for the Reporting dashboard. */
 model AdvancedFilter {
@@ -648,339 +654,343 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Gets all advanced filters for the organization. */
-@tag("Filters Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "filtersSettings")
-@extension("x-ms-vss-method", "ListAdvancedFilters")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/filtersSettings/alertsbatch")
-@get
-op FiltersSettings_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Whether to include soft-deleted filters. */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** Optional filter to search filters by name (case-insensitive, partial match). */
-  @query(#{ explode: true }) keywords?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AdvancedFilter[]>;
-
-/** Creates a new advanced filter for the organization. */
-@tag("Filters Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "filtersSettings")
-@extension("x-ms-vss-method", "CreateAdvancedFilter")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/filtersSettings/alertsbatch")
-@post
-op FiltersSettings_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The advanced filter to create. */
-  @body body: AdvancedFilterCreate,
-): AdvancedFilter;
-
-/** Deletes an advanced filter. */
-@tag("Filters Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "filtersSettings")
-@extension("x-ms-vss-method", "DeleteAdvancedFilter")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
-@delete
-op FiltersSettings_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the advanced filter to delete. */
-  @format("uuid") @path filterId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Gets a specific advanced filter by its ID. */
-@tag("Filters Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "filtersSettings")
-@extension("x-ms-vss-method", "GetAdvancedFilter")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
-@get
-op FiltersSettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the advanced filter to retrieve. */
-  @format("uuid") @path filterId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): AdvancedFilter;
-
-/** Updates an advanced filter. Only the name can be updated. */
-@tag("Filters Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "filtersSettings")
-@extension("x-ms-vss-method", "UpdateAdvancedFilter")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
-@patch
-op FiltersSettings_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The ID of the advanced filter to update. */
-  @format("uuid") @path filterId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The update data containing the new name. */
-  @body body: AdvancedFilterUpdate,
-): OkResponse;
-
-/** Get Alert summary by severity for the org */
-@tag("Summary Dashboard")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "summaryDashboard")
-@extension("x-ms-vss-method", "GetAlertSummaryForOrg")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/summary/alerts")
-@get
-op SummaryDashboard_GetAlertSummaryForOrg(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** If provided, only return summary data for alerts of this type. Otherwise, return summary data for alerts of all types. */
-  @query `criteria.alertTypes`?: string[],
-
-  /** If provided, only return repos whose titles match this pattern. */
-  @query(#{ explode: true }) `criteria.keywords`?: string,
-
-  /** If provided, summary data will be scoped to this time period. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TimePeriod",
-      values: #[
-        #{ value: "undefined", description: "" },
-        #{ value: "last24Hours", description: "" },
-        #{ value: "last7Days", description: "" },
-        #{ value: "last14Days", description: "" },
-        #{ value: "last30Days", description: "" },
-        #{ value: "last90Days", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `criteria.period`?:
-    | "undefined"
-    | "last24Hours"
-    | "last7Days"
-    | "last14Days"
-    | "last30Days"
-    | "last90Days",
-
-  /** If provided, only return summary data for these projects Otherwise, return summary data for all projects. */
-  @query `criteria.projects`?: string[],
-
-  /** If provided, only return summary data for alerts at these severities. <br />Otherwise, return summary data for alerts at any severity. */
-  @query `criteria.severities`?: string[],
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OrgAlertSummary;
-
-/** Get Combined Alerts for the org */
-@tag("Summary Dashboard")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "summaryDashboard")
-@extension("x-ms-vss-method", "GetCombinedAlertsForOrg")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/summary/alertsbatch")
-@get
-op SummaryDashboard_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** If provided, only return alerts of the specified alert type. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AlertType",
-      values: #[
-        #{ value: "unknown", description: "The code has an unspecified vulnerability type" },
-        #{
-          value: "dependency",
-          description: "The code uses a dependency with a known vulnerability.",
-        },
-        #{
-          value: "secret",
-          description: "The code contains a secret that has now been compromised and must be revoked.",
-        },
-        #{
-          value: "code",
-          description: "The code contains a weakness determined by static analysis.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `criteria.alertType`?: "unknown" | "dependency" | "secret" | "code",
-
-  /** If provided, only return alerts with the specified validity status. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AlertValidityStatus",
-      values: #[
-        #{
-          value: "none",
-          description: "When there are no validation fingerprints attached to the alert.",
-        },
-        #{
-          value: "unknown",
-          description: "When the validations for validation fingerprints associated to the alert have not been conclusive.",
-        },
-        #{
-          value: "active",
-          description: "When at least one validation fingerprint associated to the alert is exploitable.",
-        },
-        #{
-          value: "inactive",
-          description: "When all validation fingerprints associated to the alert are not exploitable.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `criteria.alertValidityStatus`?: "none" | "unknown" | "active" | "inactive",
-
-  /** If provided, only return dependency alerts for the specified package names. */
-  @query `criteria.componentNames`?: string[],
-
-  /** If provided, only return dependency alerts for the specified ecosystems (e.g., NuGet, Npm, Maven). */
-  @query `criteria.componentTypes`?: string[],
-
-  /** If provided, only return alerts with one of the specified dismissal types (closure reasons). Applicable only when filtering for closed/dismissed alerts. */
-  @query `criteria.dismissalTypes`?: string[],
-
-  /** If provided, only return alerts fixed on or before this date. */
-  @query(#{ explode: true }) `criteria.fixedDateEnd`?: utcDateTime,
-
-  /** If provided, only return alerts fixed on or after this date. */
-  @query(#{ explode: true }) `criteria.fixedDateStart`?: utcDateTime,
-
-  /** If provided, only return alerts introduced on or before this date. */
-  @query(#{ explode: true }) `criteria.introducedDateEnd`?: utcDateTime,
-
-  /** If provided, only return alerts introduced on or after this date. */
-  @query(#{ explode: true }) `criteria.introducedDateStart`?: utcDateTime,
-
-  /** If provided, only return alerts whose titles match this pattern. */
-  @query(#{ explode: true }) `criteria.keywords`?: string,
-
-  /** If provided, only return alerts for projects whose names are in this list. */
-  @query `criteria.projects`?: string[],
-
-  /** If provided, only return alerts for repositories whose names are in this list. */
-  @query `criteria.repositories`?: string[],
-
-  /** If provided, only return alerts for repositories whose IDs (GitRepositoryId) are in this list. */
-  @query `criteria.repositoryIds`?: string[],
-
-  /** If provided, only return code scanning alerts or secret alerts matching the specified rule names. */
-  @query `criteria.ruleNames`?: string[],
-
-  /** If provided, only return secret alerts matching the specified secret types (rule friendly name or opaque ID). */
-  @query `criteria.secretTypes`?: string[],
-
-  /** If provided, only return alerts with the specified severities. Otherwise, return alerts at any severity. */
-  @query `criteria.severities`?: string[],
-
-  /** If provided, return alerts that are active or inactive based on this value. <br />Otherwise, return alerts in any state. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DashboardAlertState",
-      values: #[
-        #{
-          value: "open",
-          description: "Alert has been detected in the code and corresponds to 'Active' state.",
-        },
-        #{
-          value: "closed",
-          description: "Alert corresponds to 'Unknown', 'Dismissed', 'Fixed' or 'AutoDismissed' states.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `criteria.state`?: "open" | "closed",
-
-  /** If provided, only return code scanning alerts detected by the specified tools. */
-  @query `criteria.toolNames`?: string[],
-
-  /** The maximum number of alerts to return */
-  @query(#{ explode: true }) top?: int32,
-
-  /** If there are more alerts than can be returned, a continuation token is placed in the 'x-ms-continuationtoken' header. Use that token here to get the next page of alerts */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<DashboardAlert[]>;
-
-/** Get Enablement summary for the org */
-@tag("Summary Dashboard")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "summaryDashboard")
-@extension("x-ms-vss-method", "GetEnablementSummaryForOrg")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/reporting/summary/enablement")
-@get
-op SummaryDashboard_GetEnablementSummaryForOrg(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** If provided, only return repos whose titles match this pattern. */
-  @query(#{ explode: true }) `criteria.keywords`?: string,
-
-  /** If provided, only return summary data for these projects. Otherwise, return summary data for all projects. */
-  @query `criteria.projects`?: string[],
-
-  /** True if any tool is enabled for the repository, false if any tool is disabled. */
-  @query(#{ explode: true }) `criteria.states.anyTool`?: boolean,
-
-  /** True if code scanning alerts are enabled for the repository, false if disabled. */
-  @query(#{ explode: true }) `criteria.states.codeAlerts`?: boolean,
-
-  /** True if code scanning pull request alerts are enabled for the repository, false if disabled. */
-  @query(#{ explode: true }) `criteria.states.codePRAlerts`?: boolean,
-
-  /** True if dependency alerts are enabled for the repository, false if disabled. */
-  @query(#{ explode: true }) `criteria.states.dependencyAlerts`?: boolean,
-
-  /** True if dependency pull request alerts are enabled for the repository, false if disabled. */
-  @query(#{ explode: true }) `criteria.states.dependencyPRAlerts`?: boolean,
-
-  /** True if pushes containing secrets will be blocked, false if they will not. */
-  @query(#{ explode: true }) `criteria.states.pushProtection`?: boolean,
-
-  /** True if secret scanning is enabled for the repository, false if disabled. */
-  @query(#{ explode: true }) `criteria.states.secretAlerts`?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OrgEnablementSummary;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface FiltersSettings {
+  /** Gets all advanced filters for the organization. */
+  @tag("Filters Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "filtersSettings")
+  @extension("x-ms-vss-method", "ListAdvancedFilters")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Whether to include soft-deleted filters. */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** Optional filter to search filters by name (case-insensitive, partial match). */
+    @query(#{ explode: true }) keywords?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AdvancedFilter[]>;
+
+  /** Creates a new advanced filter for the organization. */
+  @tag("Filters Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "filtersSettings")
+  @extension("x-ms-vss-method", "CreateAdvancedFilter")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The advanced filter to create. */
+    @body body: AdvancedFilterCreate,
+  ): AdvancedFilter;
+
+  /** Deletes an advanced filter. */
+  @tag("Filters Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "filtersSettings")
+  @extension("x-ms-vss-method", "DeleteAdvancedFilter")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the advanced filter to delete. */
+    @format("uuid") @path filterId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Gets a specific advanced filter by its ID. */
+  @tag("Filters Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "filtersSettings")
+  @extension("x-ms-vss-method", "GetAdvancedFilter")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the advanced filter to retrieve. */
+    @format("uuid") @path filterId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): AdvancedFilter;
+
+  /** Updates an advanced filter. Only the name can be updated. */
+  @tag("Filters Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "filtersSettings")
+  @extension("x-ms-vss-method", "UpdateAdvancedFilter")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The ID of the advanced filter to update. */
+    @format("uuid") @path filterId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The update data containing the new name. */
+    @body body: AdvancedFilterUpdate,
+  ): OkResponse;
+}
+
+interface SummaryDashboard {
+  /** Get Alert summary by severity for the org */
+  @tag("Summary Dashboard")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "summaryDashboard")
+  @extension("x-ms-vss-method", "GetAlertSummaryForOrg")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/summary/alerts")
+  @get
+  GetAlertSummaryForOrg(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** If provided, only return summary data for alerts of this type. Otherwise, return summary data for alerts of all types. */
+    @query(#{ name: "criteria.alertTypes" }) criteriaAlertTypes?: string[],
+
+    /** If provided, only return repos whose titles match this pattern. */
+    @query(#{ name: "criteria.keywords", explode: true }) criteriaKeywords?: string,
+
+    /** If provided, summary data will be scoped to this time period. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TimePeriod",
+        values: #[
+          #{ value: "undefined", description: "" },
+          #{ value: "last24Hours", description: "" },
+          #{ value: "last7Days", description: "" },
+          #{ value: "last14Days", description: "" },
+          #{ value: "last30Days", description: "" },
+          #{ value: "last90Days", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `criteria.period`?:
+      | "undefined"
+      | "last24Hours"
+      | "last7Days"
+      | "last14Days"
+      | "last30Days"
+      | "last90Days",
+
+    /** If provided, only return summary data for these projects Otherwise, return summary data for all projects. */
+    @query(#{ name: "criteria.projects" }) criteriaProjects?: string[],
+
+    /** If provided, only return summary data for alerts at these severities. <br />Otherwise, return summary data for alerts at any severity. */
+    @query(#{ name: "criteria.severities" }) criteriaSeverities?: string[],
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OrgAlertSummary;
+
+  /** Get Combined Alerts for the org */
+  @tag("Summary Dashboard")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "summaryDashboard")
+  @extension("x-ms-vss-method", "GetCombinedAlertsForOrg")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/summary/alertsbatch")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** If provided, only return alerts of the specified alert type. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AlertType",
+        values: #[
+          #{ value: "unknown", description: "The code has an unspecified vulnerability type" },
+          #{
+            value: "dependency",
+            description: "The code uses a dependency with a known vulnerability.",
+          },
+          #{
+            value: "secret",
+            description: "The code contains a secret that has now been compromised and must be revoked.",
+          },
+          #{
+            value: "code",
+            description: "The code contains a weakness determined by static analysis.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `criteria.alertType`?: "unknown" | "dependency" | "secret" | "code",
+
+    /** If provided, only return alerts with the specified validity status. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AlertValidityStatus",
+        values: #[
+          #{
+            value: "none",
+            description: "When there are no validation fingerprints attached to the alert.",
+          },
+          #{
+            value: "unknown",
+            description: "When the validations for validation fingerprints associated to the alert have not been conclusive.",
+          },
+          #{
+            value: "active",
+            description: "When at least one validation fingerprint associated to the alert is exploitable.",
+          },
+          #{
+            value: "inactive",
+            description: "When all validation fingerprints associated to the alert are not exploitable.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `criteria.alertValidityStatus`?: "none" | "unknown" | "active" | "inactive",
+
+    /** If provided, only return dependency alerts for the specified package names. */
+    @query(#{ name: "criteria.componentNames" }) criteriaComponentNames?: string[],
+
+    /** If provided, only return dependency alerts for the specified ecosystems (e.g., NuGet, Npm, Maven). */
+    @query(#{ name: "criteria.componentTypes" }) criteriaComponentTypes?: string[],
+
+    /** If provided, only return alerts with one of the specified dismissal types (closure reasons). Applicable only when filtering for closed/dismissed alerts. */
+    @query(#{ name: "criteria.dismissalTypes" }) criteriaDismissalTypes?: string[],
+
+    /** If provided, only return alerts fixed on or before this date. */
+    @query(#{ name: "criteria.fixedDateEnd", explode: true }) criteriaFixedDateEnd?: utcDateTime,
+
+    /** If provided, only return alerts fixed on or after this date. */
+    @query(#{ name: "criteria.fixedDateStart", explode: true }) criteriaFixedDateStart?: utcDateTime,
+
+    /** If provided, only return alerts introduced on or before this date. */
+    @query(#{ name: "criteria.introducedDateEnd", explode: true }) criteriaIntroducedDateEnd?: utcDateTime,
+
+    /** If provided, only return alerts introduced on or after this date. */
+    @query(#{ name: "criteria.introducedDateStart", explode: true }) criteriaIntroducedDateStart?: utcDateTime,
+
+    /** If provided, only return alerts whose titles match this pattern. */
+    @query(#{ name: "criteria.keywords", explode: true }) criteriaKeywords?: string,
+
+    /** If provided, only return alerts for projects whose names are in this list. */
+    @query(#{ name: "criteria.projects" }) criteriaProjects?: string[],
+
+    /** If provided, only return alerts for repositories whose names are in this list. */
+    @query(#{ name: "criteria.repositories" }) criteriaRepositories?: string[],
+
+    /** If provided, only return alerts for repositories whose IDs (GitRepositoryId) are in this list. */
+    @query(#{ name: "criteria.repositoryIds" }) criteriaRepositoryIds?: string[],
+
+    /** If provided, only return code scanning alerts or secret alerts matching the specified rule names. */
+    @query(#{ name: "criteria.ruleNames" }) criteriaRuleNames?: string[],
+
+    /** If provided, only return secret alerts matching the specified secret types (rule friendly name or opaque ID). */
+    @query(#{ name: "criteria.secretTypes" }) criteriaSecretTypes?: string[],
+
+    /** If provided, only return alerts with the specified severities. Otherwise, return alerts at any severity. */
+    @query(#{ name: "criteria.severities" }) criteriaSeverities?: string[],
+
+    /** If provided, return alerts that are active or inactive based on this value. <br />Otherwise, return alerts in any state. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DashboardAlertState",
+        values: #[
+          #{
+            value: "open",
+            description: "Alert has been detected in the code and corresponds to 'Active' state.",
+          },
+          #{
+            value: "closed",
+            description: "Alert corresponds to 'Unknown', 'Dismissed', 'Fixed' or 'AutoDismissed' states.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `criteria.state`?: "open" | "closed",
+
+    /** If provided, only return code scanning alerts detected by the specified tools. */
+    @query(#{ name: "criteria.toolNames" }) criteriaToolNames?: string[],
+
+    /** The maximum number of alerts to return */
+    @query(#{ explode: true }) top?: int32,
+
+    /** If there are more alerts than can be returned, a continuation token is placed in the 'x-ms-continuationtoken' header. Use that token here to get the next page of alerts */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<DashboardAlert[]>;
+
+  /** Get Enablement summary for the org */
+  @tag("Summary Dashboard")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "summaryDashboard")
+  @extension("x-ms-vss-method", "GetEnablementSummaryForOrg")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/reporting/summary/enablement")
+  @get
+  GetEnablementSummaryForOrg(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** If provided, only return repos whose titles match this pattern. */
+    @query(#{ name: "criteria.keywords", explode: true }) criteriaKeywords?: string,
+
+    /** If provided, only return summary data for these projects. Otherwise, return summary data for all projects. */
+    @query(#{ name: "criteria.projects" }) criteriaProjects?: string[],
+
+    /** True if any tool is enabled for the repository, false if any tool is disabled. */
+    @query(#{ name: "criteria.states.anyTool", explode: true }) criteriaStatesAnyTool?: boolean,
+
+    /** True if code scanning alerts are enabled for the repository, false if disabled. */
+    @query(#{ name: "criteria.states.codeAlerts", explode: true }) criteriaStatesCodeAlerts?: boolean,
+
+    /** True if code scanning pull request alerts are enabled for the repository, false if disabled. */
+    @query(#{ name: "criteria.states.codePRAlerts", explode: true }) criteriaStatesCodePRAlerts?: boolean,
+
+    /** True if dependency alerts are enabled for the repository, false if disabled. */
+    @query(#{ name: "criteria.states.dependencyAlerts", explode: true }) criteriaStatesDependencyAlerts?: boolean,
+
+    /** True if dependency pull request alerts are enabled for the repository, false if disabled. */
+    @query(#{ name: "criteria.states.dependencyPRAlerts", explode: true }) criteriaStatesDependencyPRAlerts?: boolean,
+
+    /** True if pushes containing secrets will be blocked, false if they will not. */
+    @query(#{ name: "criteria.states.pushProtection", explode: true }) criteriaStatesPushProtection?: boolean,
+
+    /** True if secret scanning is enabled for the repository, false if disabled. */
+    @query(#{ name: "criteria.states.secretAlerts", explode: true }) criteriaStatesSecretAlerts?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OrgEnablementSummary;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Search" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://almsearch.dev.azure.com")
 namespace Search;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Defines the Board result that matched a Board search request. */
 model BoardResult {
@@ -783,134 +789,146 @@ model WorkItemSearchResponse {
   results?: WorkItemResult[];
 }
 
-/** Provides a set of results for the search text. */
-@tag("Package Search Results")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "packageSearchResults")
-@extension("x-ms-vss-method", "FetchPackageSearchResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/search/packagesearchresults")
-@post
-op PackageSearchResults_FetchPackageSearchResults(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The Package Search Request. */
-  @body body: PackageSearchRequest,
-): {
-  @header ActivityId?: string;
-  @body body: PackageSearchResponseContent;
-};
-
-/** Provides a set of results for the search text. */
-@tag("Code Search Results")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "codeSearchResults")
-@extension("x-ms-vss-method", "FetchCodeSearchResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/search/codesearchresults")
-@post
-op CodeSearchResults_FetchCodeSearchResults(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The Code Search Request. */
-  @body body: CodeSearchRequest,
-): CodeSearchResponse;
-
-/** Provides status of Repository. */
-@tag("Repositories")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "repositories")
-@extension("x-ms-vss-method", "GetRepositoryStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/search/status/repositories/{repository}")
-@get
-op Repositories_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Repository ID or repository name. */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): RepositoryStatusResponse;
-
-/** Provides status of TFVC Repository. */
-@tag("Tfvc")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "tfvc")
-@extension("x-ms-vss-method", "GetTfvcRepositoryStatus")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/search/status/tfvc")
-@get
-op Tfvc_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TfvcRepositoryStatusResponse;
-
-/** Provides a set of results for the search request. */
-@tag("Wiki Search Results")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "wikiSearchResults")
-@extension("x-ms-vss-method", "FetchWikiSearchResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/search/wikisearchresults")
-@post
-op WikiSearchResults_FetchWikiSearchResults(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The Wiki Search Request. */
-  @body body: WikiSearchRequest,
-): WikiSearchResponse;
-
-/** Provides a set of results for the search text. */
-@tag("Work Item Search Results")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "workItemSearchResults")
-@extension("x-ms-vss-method", "FetchWorkItemSearchResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/search/workitemsearchresults")
-@post
-op WorkItemSearchResults_FetchWorkItemSearchResults(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The Work Item Search Request. */
-  @body body: WorkItemSearchRequest,
-): WorkItemSearchResponse;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface PackageSearchResults {
+  /** Provides a set of results for the search text. */
+  @tag("Package Search Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "packageSearchResults")
+  @extension("x-ms-vss-method", "FetchPackageSearchResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/search/packagesearchresults")
+  @post
+  FetchPackageSearchResults(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The Package Search Request. */
+    @body body: PackageSearchRequest,
+  ): {
+    @header ActivityId?: string;
+    @body body: PackageSearchResponseContent;
+  };
+}
+
+interface CodeSearchResults {
+  /** Provides a set of results for the search text. */
+  @tag("Code Search Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "codeSearchResults")
+  @extension("x-ms-vss-method", "FetchCodeSearchResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/search/codesearchresults")
+  @post
+  FetchCodeSearchResults(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The Code Search Request. */
+    @body body: CodeSearchRequest,
+  ): CodeSearchResponse;
+}
+
+interface Repositories {
+  /** Provides status of Repository. */
+  @tag("Repositories")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "repositories")
+  @extension("x-ms-vss-method", "GetRepositoryStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/search/status/repositories/{repository}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Repository ID or repository name. */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): RepositoryStatusResponse;
+}
+
+interface Tfvc {
+  /** Provides status of TFVC Repository. */
+  @tag("Tfvc")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "tfvc")
+  @extension("x-ms-vss-method", "GetTfvcRepositoryStatus")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/search/status/tfvc")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TfvcRepositoryStatusResponse;
+}
+
+interface WikiSearchResults {
+  /** Provides a set of results for the search request. */
+  @tag("Wiki Search Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "wikiSearchResults")
+  @extension("x-ms-vss-method", "FetchWikiSearchResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/search/wikisearchresults")
+  @post
+  FetchWikiSearchResults(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The Wiki Search Request. */
+    @body body: WikiSearchRequest,
+  ): WikiSearchResponse;
+}
+
+interface WorkItemSearchResults {
+  /** Provides a set of results for the search text. */
+  @tag("Work Item Search Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "workItemSearchResults")
+  @extension("x-ms-vss-method", "FetchWorkItemSearchResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/search/workitemsearchresults")
+  @post
+  FetchWorkItemSearchResults(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The Work Item Search Request. */
+    @body body: WorkItemSearchRequest,
+  ): WorkItemSearchResponse;
 }

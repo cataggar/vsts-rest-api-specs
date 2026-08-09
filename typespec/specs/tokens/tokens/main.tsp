@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Tokens" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://vssps.dev.azure.com")
 namespace Tokens;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AccessTokenResult {
   accessToken?: JsonWebToken;
@@ -332,79 +338,81 @@ model SessionToken {
   validTo?: utcDateTime;
 }
 
-/** Revokes a personal access token (PAT) by authorizationId. */
-@tag("Pats")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pats")
-@extension("x-ms-vss-method", "Revoke")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tokens/pats")
-@delete
-op Pats_Revoke(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The authorizationId identifying a single, unique personal access token (PAT) */
-  @format("uuid") @query(#{ explode: true }) authorizationId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Gets a single personal access token (PAT). */
-@tag("Pats")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pats")
-@extension("x-ms-vss-method", "GetPat")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tokens/pats")
-@get
-op Pats_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The authorizationId identifying a single, unique personal access token (PAT) */
-  @format("uuid") @query(#{ explode: true }) authorizationId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): PatTokenResult;
-
-/** Creates a new personal access token (PAT) for the requesting user. */
-@tag("Pats")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pats")
-@extension("x-ms-vss-method", "CreatePat")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tokens/pats")
-@post
-op Pats_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: PatTokenCreateRequest,
-): PatTokenResult;
-
-/** Updates an existing personal access token (PAT) with the new parameters. To update a token, it must be valid (has not been revoked). */
-@tag("Pats")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pats")
-@extension("x-ms-vss-method", "UpdatePat")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tokens/pats")
-@put
-op Pats_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: PatTokenUpdateRequest,
-): PatTokenResult;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Pats {
+  /** Revokes a personal access token (PAT) by authorizationId. */
+  @tag("Pats")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pats")
+  @extension("x-ms-vss-method", "Revoke")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tokens/pats")
+  @delete
+  Revoke(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The authorizationId identifying a single, unique personal access token (PAT) */
+    @format("uuid") @query(#{ explode: true }) authorizationId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Gets a single personal access token (PAT). */
+  @tag("Pats")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pats")
+  @extension("x-ms-vss-method", "GetPat")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tokens/pats")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The authorizationId identifying a single, unique personal access token (PAT) */
+    @format("uuid") @query(#{ explode: true }) authorizationId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): PatTokenResult;
+
+  /** Creates a new personal access token (PAT) for the requesting user. */
+  @tag("Pats")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pats")
+  @extension("x-ms-vss-method", "CreatePat")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tokens/pats")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: PatTokenCreateRequest,
+  ): PatTokenResult;
+
+  /** Updates an existing personal access token (PAT) with the new parameters. To update a token, it must be valid (has not been revoked). */
+  @tag("Pats")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pats")
+  @extension("x-ms-vss-method", "UpdatePat")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tokens/pats")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: PatTokenUpdateRequest,
+  ): PatTokenResult;
 }

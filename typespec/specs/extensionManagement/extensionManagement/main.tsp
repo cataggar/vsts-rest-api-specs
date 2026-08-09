@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "ExtensionManagement" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://extmgmt.dev.azure.com")
 namespace ExtensionManagement;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AcquisitionOperation {
   /** State of the AcquisitionOperation for the current user */
@@ -1280,125 +1286,127 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** List the installed extensions in the account / project collection. */
-@tag("Installed Extensions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "installedExtensions")
-@extension("x-ms-vss-method", "GetInstalledExtensions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/extensionmanagement/installedextensions")
-@get
-op InstalledExtensions_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** If true (the default), include disabled extensions in the results. */
-  @query(#{ explode: true }) includeDisabledExtensions?: boolean,
-
-  /** If true, include installed extensions with errors. */
-  @query(#{ explode: true }) includeErrors?: boolean,
-
-  /** Determines which files are returned in the files array. Provide the wildcard '*' to return all files, or a colon separated list to retrieve files with specific asset types. */
-  @format("array (string)") @query(#{ explode: true }) assetTypes?: string,
-
-  @query(#{ explode: true }) includeInstallationIssues?: boolean,
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<InstalledExtension[]>;
-
-/** Update an installed extension. Typically this API is used to enable or disable an extension. */
-@tag("Installed Extensions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "installedExtensions")
-@extension("x-ms-vss-method", "UpdateInstalledExtension")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/extensionmanagement/installedextensions")
-@patch
-op InstalledExtensions_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: InstalledExtension,
-): InstalledExtension;
-
-/** Uninstall the specified extension from the account / project collection. */
-@tag("Installed Extensions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "installedExtensionsByName")
-@extension("x-ms-vss-method", "UninstallExtensionByName")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}")
-@delete
-op InstalledExtensions_UninstallExtensionByName(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name of the publisher. Example: 'fabrikam'. */
-  @path publisherName: string,
-
-  /** Name of the extension. Example: 'ops-tools'. */
-  @path extensionName: string,
-
-  @query(#{ explode: true }) reason?: string,
-  @query(#{ explode: true }) reasonCode?: string,
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Get an installed extension by its publisher and extension name. */
-@tag("Installed Extensions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "installedExtensionsByName")
-@extension("x-ms-vss-method", "GetInstalledExtensionByName")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}")
-@get
-op InstalledExtensions_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name of the publisher. Example: 'fabrikam'. */
-  @path publisherName: string,
-
-  /** Name of the extension. Example: 'ops-tools'. */
-  @path extensionName: string,
-
-  /** Determines which files are returned in the files array. Provide the wildcard '*' to return all files, or a colon separated list to retrieve files with specific asset types. */
-  @format("array (string)") @query(#{ explode: true }) assetTypes?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): InstalledExtension;
-
-/** Install the specified extension into the account / project collection. */
-@tag("Installed Extensions")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "installedExtensionsByName")
-@extension("x-ms-vss-method", "InstallExtensionByName")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}/{version}")
-@post
-op InstalledExtensions_InstallExtensionByName(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Name of the publisher. Example: 'fabrikam'. */
-  @path publisherName: string,
-
-  /** Name of the extension. Example: 'ops-tools'. */
-  @path extensionName: string,
-
-  @extension("x-ms-required", false) @path version: string,
-  ...Parameters.`api-Version-preview`.`2`,
-): InstalledExtension;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface InstalledExtensions {
+  /** List the installed extensions in the account / project collection. */
+  @tag("Installed Extensions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "installedExtensions")
+  @extension("x-ms-vss-method", "GetInstalledExtensions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/extensionmanagement/installedextensions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** If true (the default), include disabled extensions in the results. */
+    @query(#{ explode: true }) includeDisabledExtensions?: boolean,
+
+    /** If true, include installed extensions with errors. */
+    @query(#{ explode: true }) includeErrors?: boolean,
+
+    /** Determines which files are returned in the files array. Provide the wildcard '*' to return all files, or a colon separated list to retrieve files with specific asset types. */
+    @format("array (string)") @query(#{ explode: true }) assetTypes?: string,
+
+    @query(#{ explode: true }) includeInstallationIssues?: boolean,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<InstalledExtension[]>;
+
+  /** Update an installed extension. Typically this API is used to enable or disable an extension. */
+  @tag("Installed Extensions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "installedExtensions")
+  @extension("x-ms-vss-method", "UpdateInstalledExtension")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/extensionmanagement/installedextensions")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: InstalledExtension,
+  ): InstalledExtension;
+
+  /** Uninstall the specified extension from the account / project collection. */
+  @tag("Installed Extensions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "installedExtensionsByName")
+  @extension("x-ms-vss-method", "UninstallExtensionByName")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}")
+  @delete
+  UninstallExtensionByName(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name of the publisher. Example: 'fabrikam'. */
+    @path publisherName: string,
+
+    /** Name of the extension. Example: 'ops-tools'. */
+    @path extensionName: string,
+
+    @query(#{ explode: true }) reason?: string,
+    @query(#{ explode: true }) reasonCode?: string,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Get an installed extension by its publisher and extension name. */
+  @tag("Installed Extensions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "installedExtensionsByName")
+  @extension("x-ms-vss-method", "GetInstalledExtensionByName")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name of the publisher. Example: 'fabrikam'. */
+    @path publisherName: string,
+
+    /** Name of the extension. Example: 'ops-tools'. */
+    @path extensionName: string,
+
+    /** Determines which files are returned in the files array. Provide the wildcard '*' to return all files, or a colon separated list to retrieve files with specific asset types. */
+    @format("array (string)") @query(#{ explode: true }) assetTypes?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): InstalledExtension;
+
+  /** Install the specified extension into the account / project collection. */
+  @tag("Installed Extensions")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "installedExtensionsByName")
+  @extension("x-ms-vss-method", "InstallExtensionByName")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}/{version}")
+  @post
+  InstallExtensionByName(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Name of the publisher. Example: 'fabrikam'. */
+    @path publisherName: string,
+
+    /** Name of the extension. Example: 'ops-tools'. */
+    @path extensionName: string,
+
+    @extension("x-ms-required", false) @path version: string,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): InstalledExtension;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Task" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Task;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Per-Job projection on a DynamicPipelinePlanStatus. The LogId is the join key for the per-log endpoint and matches the addressing pattern Build uses for its run logs. Issues are not surfaced here — fetch the per-log endpoint to get task-level errors for a specific log. */
 model DynamicPipelineJob {
@@ -629,172 +635,182 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Triggers a pipeline run of pipelines which have a webhook resource defined with specified WebHook Name property of the WebHook service connection. */
-@tag("Webhooks")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "webhooks")
-@extension("x-ms-vss-method", "ReceiveExternalEvent")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/public/distributedtask/webhooks/{webHookId}")
-@post
-op Webhooks_ReceiveExternalEvent(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The WebHook Name property of the WebHook service connection */
-  @path webHookId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Send a pipeline job event to be processed by the execution plan. */
-@tag("Events")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "events")
-@extension("x-ms-vss-method", "PostEvent")
-@extension("x-ms-preview", true)
-@route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/events")
-@post
-op Events_PostEvent(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project GUID to scope the request */
-  @format("uuid") @path scopeIdentifier: string,
-
-  /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
-  @path hubName: string,
-
-  /** The ID of the plan. */
-  @format("uuid") @path planId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The event data to be processed by the plan. */
-  @body body: JobEvent,
-): OkResponse;
-
-@tag("Oidctoken")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "oidctoken")
-@extension("x-ms-vss-method", "CreateOidcToken")
-@extension("x-ms-preview", true)
-@route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/jobs/{jobId}/oidctoken")
-@post
-op Oidctoken_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project GUID to scope the request */
-  @format("uuid") @path scopeIdentifier: string,
-
-  /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
-  @path hubName: string,
-
-  @format("uuid") @path planId: string,
-  @format("uuid") @path jobId: string,
-  @format("uuid") @query(#{ explode: true }) serviceConnectionId?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: Record<string>,
-): TaskHubOidcToken;
-
-/** Create a log and connect it to a pipeline run's execution plan. */
-@tag("Logs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "CreateLog")
-@extension("x-ms-preview", true)
-@route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/logs")
-@post
-op Logs_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project GUID to scope the request */
-  @format("uuid") @path scopeIdentifier: string,
-
-  /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
-  @path hubName: string,
-
-  /** The ID of the plan. */
-  @format("uuid") @path planId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** An object that contains information about log's path. */
-  @body body: TaskLog,
-): TaskLog;
-
-/** Append a log to a task's log. The log should be sent in the body of the request as a TaskLog object stream. */
-@tag("Logs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "logs")
-@extension("x-ms-vss-method", "AppendLogContent")
-@extension("x-ms-preview", true)
-@route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/logs/{logId}")
-@post
-op Logs_AppendLogContent(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project GUID to scope the request */
-  @format("uuid") @path scopeIdentifier: string,
-
-  /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
-  @path hubName: string,
-
-  /** The ID of the plan. */
-  @format("uuid") @path planId: string,
-
-  /** The ID of the log. */
-  @path logId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @header contentType: "application/octet-stream",
-
-  /** Stream to upload */
-  @body body: string,
-): TaskLog;
-
-/** Update timeline records if they already exist, otherwise create new ones for the same timeline. */
-@tag("Records")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "records")
-@extension("x-ms-vss-method", "UpdateRecords")
-@extension("x-ms-preview", true)
-@route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/timelines/{timelineId}/records")
-@patch
-op Records_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The project GUID to scope the request */
-  @format("uuid") @path scopeIdentifier: string,
-
-  /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
-  @path hubName: string,
-
-  /** The ID of the plan. */
-  @format("uuid") @path planId: string,
-
-  /** The ID of the timeline. */
-  @format("uuid") @path timelineId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** The array of timeline records to be updated. */
-  @body body: VssJsonCollectionWrapper,
-): Body<TimelineRecord[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Webhooks {
+  /** Triggers a pipeline run of pipelines which have a webhook resource defined with specified WebHook Name property of the WebHook service connection. */
+  @tag("Webhooks")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "webhooks")
+  @extension("x-ms-vss-method", "ReceiveExternalEvent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/public/distributedtask/webhooks/{webHookId}")
+  @post
+  ReceiveExternalEvent(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The WebHook Name property of the WebHook service connection */
+    @path webHookId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+}
+
+interface Events {
+  /** Send a pipeline job event to be processed by the execution plan. */
+  @tag("Events")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "events")
+  @extension("x-ms-vss-method", "PostEvent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/events")
+  @post
+  PostEvent(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project GUID to scope the request */
+    @format("uuid") @path scopeIdentifier: string,
+
+    /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
+    @path hubName: string,
+
+    /** The ID of the plan. */
+    @format("uuid") @path planId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The event data to be processed by the plan. */
+    @body body: JobEvent,
+  ): OkResponse;
+}
+
+interface Oidctoken {
+  @tag("Oidctoken")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "oidctoken")
+  @extension("x-ms-vss-method", "CreateOidcToken")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/jobs/{jobId}/oidctoken")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project GUID to scope the request */
+    @format("uuid") @path scopeIdentifier: string,
+
+    /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
+    @path hubName: string,
+
+    @format("uuid") @path planId: string,
+    @format("uuid") @path jobId: string,
+    @format("uuid") @query(#{ explode: true }) serviceConnectionId?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: Record<string>,
+  ): TaskHubOidcToken;
+}
+
+interface Logs {
+  /** Create a log and connect it to a pipeline run's execution plan. */
+  @tag("Logs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "CreateLog")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/logs")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project GUID to scope the request */
+    @format("uuid") @path scopeIdentifier: string,
+
+    /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
+    @path hubName: string,
+
+    /** The ID of the plan. */
+    @format("uuid") @path planId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** An object that contains information about log's path. */
+    @body body: TaskLog,
+  ): TaskLog;
+
+  /** Append a log to a task's log. The log should be sent in the body of the request as a TaskLog object stream. */
+  @tag("Logs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "logs")
+  @extension("x-ms-vss-method", "AppendLogContent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/logs/{logId}")
+  @post
+  AppendLogContent(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project GUID to scope the request */
+    @format("uuid") @path scopeIdentifier: string,
+
+    /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
+    @path hubName: string,
+
+    /** The ID of the plan. */
+    @format("uuid") @path planId: string,
+
+    /** The ID of the log. */
+    @path logId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @header contentType: "application/octet-stream",
+
+    /** Stream to upload */
+    @body body: string,
+  ): TaskLog;
+}
+
+interface Records {
+  /** Update timeline records if they already exist, otherwise create new ones for the same timeline. */
+  @tag("Records")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "records")
+  @extension("x-ms-vss-method", "UpdateRecords")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/timelines/{timelineId}/records")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The project GUID to scope the request */
+    @format("uuid") @path scopeIdentifier: string,
+
+    /** The name of the server hub. Common examples: 'build', 'rm', 'checks' */
+    @path hubName: string,
+
+    /** The ID of the plan. */
+    @format("uuid") @path planId: string,
+
+    /** The ID of the timeline. */
+    @format("uuid") @path timelineId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** The array of timeline records to be updated. */
+    @body body: VssJsonCollectionWrapper,
+  ): Body<TimelineRecord[]>;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Status" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://status.dev.azure.com")
 namespace Status;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model EnterpriseStatus {
   ...Status;
@@ -304,29 +310,31 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Queries status information for the service all-up, or scoped to a particular service and/or geography */
-@tag("Health")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "health")
-@extension("x-ms-vss-method", "GetServiceStatus")
-@extension("x-ms-preview", true)
-@route("/_apis/status/health")
-@get
-op Health_Get(
-  /** A comma-separated list of services for which to get status information for. Supported values: Artifacts, Boards, Core services, Other services, Pipelines, Repos, Test Plans. */
-  @format("array (string)") @query(#{ explode: true }) services?: string,
-
-  /** A comma-separated list of geographies for which to get status information for. Supported values: APAC, AU, BR, CA, EU, IN, UK, US. */
-  @format("array (string)") @query(#{ explode: true }) geographies?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ServiceStatus;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Health {
+  /** Queries status information for the service all-up, or scoped to a particular service and/or geography */
+  @tag("Health")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "health")
+  @extension("x-ms-vss-method", "GetServiceStatus")
+  @extension("x-ms-preview", true)
+  @route("/_apis/status/health")
+  @get
+  Get(
+    /** A comma-separated list of services for which to get status information for. Supported values: Artifacts, Boards, Core services, Other services, Pipelines, Repos, Test Plans. */
+    @format("array (string)") @query(#{ explode: true }) services?: string,
+
+    /** A comma-separated list of geographies for which to get status information for. Supported values: APAC, AU, BR, CA, EU, IN, UK, US. */
+    @format("array (string)") @query(#{ explode: true }) geographies?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ServiceStatus;
 }

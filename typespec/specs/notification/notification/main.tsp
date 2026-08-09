@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Notification" })
 @info(#{
   version: "7.2-preview",
@@ -31,6 +33,10 @@ using OpenAPI;
   }
 )
 namespace Notification;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model ActorFilter {
   ...RoleBasedFilter;
@@ -1656,389 +1662,401 @@ model VssNotificationEvent {
   sourceEventCreatedTime?: utcDateTime;
 }
 
-/** Get a list of diagnostic logs for this service. */
-@tag("Diagnostic Logs")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "diagnosticLogs")
-@extension("x-ms-vss-method", "ListLogs")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/diagnosticlogs/{source}/entries/{entryId}")
-@get
-op DiagnosticLogs_List(
-  /** ID specifying which type of logs to check diagnostics for. */
-  @format("uuid") @path source: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** The ID of the specific log to query for. */
-  @extension("x-ms-required", false)
-  @format("uuid")
-  @path
-  entryId: string,
-
-  /** Start time for the time range to query in. */
-  @query(#{ explode: true }) startTime?: utcDateTime,
-
-  /** End time for the time range to query in. */
-  @query(#{ explode: true }) endTime?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<INotificationDiagnosticLog[]>;
-
-/** List available event types for this service. Optionally filter by only event types for the specified publisher. */
-@tag("Event Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "eventTypes")
-@extension("x-ms-vss-method", "ListEventTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/eventtypes")
-@get
-op EventTypes_List(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** Limit to event types for this publisher */
-  @query(#{ explode: true }) publisherId?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<NotificationEventType[]>;
-
-/** Get a specific event type. */
-@tag("Event Types")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "eventTypes")
-@extension("x-ms-vss-method", "GetEventType")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/eventtypes/{eventType}")
-@get
-op EventTypes_Get(
-  /** The ID of the event type. */
-  @path eventType: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): NotificationEventType;
-
-@tag("Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "settings")
-@extension("x-ms-vss-method", "GetSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/settings")
-@get
-op Settings_Get(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): NotificationAdminSettings;
-
-@tag("Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "settings")
-@extension("x-ms-vss-method", "UpdateSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/settings")
-@patch
-op Settings_Update(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NotificationAdminSettingsUpdateParameters,
-): NotificationAdminSettings;
-
-/** Get delivery preferences of a notifications subscriber. */
-@tag("Subscribers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscribers")
-@extension("x-ms-vss-method", "GetSubscriber")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscribers/{subscriberId}")
-@get
-op Subscribers_Get(
-  /** ID of the user or group. */
-  @format("uuid") @path subscriberId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): NotificationSubscriber;
-
-/** Update delivery preferences of a notifications subscriber. */
-@tag("Subscribers")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscribers")
-@extension("x-ms-vss-method", "UpdateSubscriber")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscribers/{subscriberId}")
-@patch
-op Subscribers_Update(
-  /** ID of the user or group. */
-  @format("uuid") @path subscriberId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NotificationSubscriberUpdateParameters,
-): NotificationSubscriber;
-
-/** Query for subscriptions. A subscription is returned if it matches one or more of the specified conditions. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptionQuery")
-@extension("x-ms-vss-method", "QuerySubscriptions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptionquery")
-@post
-op Subscriptions_Query(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: SubscriptionQuery,
-): Body<NotificationSubscription[]>;
-
-/** Get a list of notification subscriptions, either by subscription IDs or by all subscriptions for a given user or group. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "ListSubscriptions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions")
-@get
-op Subscriptions_List(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** User or Group ID */
-  @format("uuid") @query(#{ explode: true }) targetId?: string,
-
-  /** List of subscription IDs */
-  @format("array (string)") @query(#{ explode: true }) ids?: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SubscriptionQueryFlags",
-      values: #[
-        #{ value: "none", description: "" },
-        #{
-          value: "includeInvalidSubscriptions",
-          description: "Include subscriptions with invalid subscribers.",
-        },
-        #{
-          value: "includeDeletedSubscriptions",
-          description: "Include subscriptions marked for deletion.",
-        },
-        #{
-          value: "includeFilterDetails",
-          description: "Include the full filter details with each subscription.",
-        },
-        #{
-          value: "alwaysReturnBasicInformation",
-          description: "For a subscription the caller does not have permission to view, return basic (non-confidential) information.",
-        },
-        #{ value: "includeSystemSubscriptions", description: "Include system subscriptions." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryFlags?:
-    | "none"
-    | "includeInvalidSubscriptions"
-    | "includeDeletedSubscriptions"
-    | "includeFilterDetails"
-    | "alwaysReturnBasicInformation"
-    | "includeSystemSubscriptions",
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<NotificationSubscription[]>;
-
-/** Create a new subscription. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "CreateSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions")
-@post
-op Subscriptions_Create(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NotificationSubscriptionCreateParameters,
-): NotificationSubscription;
-
-/** Delete a subscription. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "DeleteSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions/{subscriptionId}")
-@delete
-op Subscriptions_Delete(
-  @path subscriptionId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a notification subscription by its ID. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "GetSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions/{subscriptionId}")
-@get
-op Subscriptions_Get(
-  @path subscriptionId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SubscriptionQueryFlags",
-      values: #[
-        #{ value: "none", description: "" },
-        #{
-          value: "includeInvalidSubscriptions",
-          description: "Include subscriptions with invalid subscribers.",
-        },
-        #{
-          value: "includeDeletedSubscriptions",
-          description: "Include subscriptions marked for deletion.",
-        },
-        #{
-          value: "includeFilterDetails",
-          description: "Include the full filter details with each subscription.",
-        },
-        #{
-          value: "alwaysReturnBasicInformation",
-          description: "For a subscription the caller does not have permission to view, return basic (non-confidential) information.",
-        },
-        #{ value: "includeSystemSubscriptions", description: "Include system subscriptions." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryFlags?:
-    | "none"
-    | "includeInvalidSubscriptions"
-    | "includeDeletedSubscriptions"
-    | "includeFilterDetails"
-    | "alwaysReturnBasicInformation"
-    | "includeSystemSubscriptions",
-  ...Parameters.`api-Version-preview`.`1`,
-): NotificationSubscription;
-
-/** Update an existing subscription. Depending on the type of subscription and permissions, the caller can update the description, filter settings, channel (delivery) settings and more. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptions")
-@extension("x-ms-vss-method", "UpdateSubscription")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions/{subscriptionId}")
-@patch
-op Subscriptions_Update(
-  @path subscriptionId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: NotificationSubscriptionUpdateParameters,
-): NotificationSubscription;
-
-/** Get the diagnostics settings for a subscription. */
-@tag("Diagnostics")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "diagnostics")
-@extension("x-ms-vss-method", "GetSubscriptionDiagnostics")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions/{subscriptionId}/diagnostics")
-@get
-op Diagnostics_Get(
-  /** The id of the notifications subscription. */
-  @path subscriptionId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): SubscriptionDiagnostics;
-
-/** Update the diagnostics settings for a subscription. */
-@tag("Diagnostics")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "diagnostics")
-@extension("x-ms-vss-method", "UpdateSubscriptionDiagnostics")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptions/{subscriptionId}/diagnostics")
-@put
-op Diagnostics_Update(
-  /** The id of the notifications subscription. */
-  @path subscriptionId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: UpdateSubscripitonDiagnosticsParameters,
-): SubscriptionDiagnostics;
-
-/** Update the specified user's settings for the specified subscription. This API is typically used to opt in or out of a shared subscription. User settings can only be applied to shared subscriptions, like team subscriptions or default subscriptions. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "userSettings")
-@extension("x-ms-vss-method", "UpdateSubscriptionUserSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/Subscriptions/{subscriptionId}/usersettings/{userId}")
-@put
-op Subscriptions_UpdateSubscriptionUserSettings(
-  @path subscriptionId: string,
-
-  /** ID of the user */
-  @format("uuid") @path userId: string,
-
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: SubscriptionUserSettings,
-): SubscriptionUserSettings;
-
-/** Get available subscription templates. */
-@tag("Subscriptions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "subscriptionTemplates")
-@extension("x-ms-vss-method", "GetSubscriptionTemplates")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/notification/subscriptiontemplates")
-@get
-op Subscriptions_GetSubscriptionTemplates(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<NotificationSubscriptionTemplate[]>;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface DiagnosticLogs {
+  /** Get a list of diagnostic logs for this service. */
+  @tag("Diagnostic Logs")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "diagnosticLogs")
+  @extension("x-ms-vss-method", "ListLogs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/diagnosticlogs/{source}/entries/{entryId}")
+  @get
+  List(
+    /** ID specifying which type of logs to check diagnostics for. */
+    @format("uuid") @path source: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** The ID of the specific log to query for. */
+    @extension("x-ms-required", false)
+    @format("uuid")
+    @path
+    entryId: string,
+
+    /** Start time for the time range to query in. */
+    @query(#{ explode: true }) startTime?: utcDateTime,
+
+    /** End time for the time range to query in. */
+    @query(#{ explode: true }) endTime?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<INotificationDiagnosticLog[]>;
+}
+
+interface EventTypes {
+  /** List available event types for this service. Optionally filter by only event types for the specified publisher. */
+  @tag("Event Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "eventTypes")
+  @extension("x-ms-vss-method", "ListEventTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/eventtypes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** Limit to event types for this publisher */
+    @query(#{ explode: true }) publisherId?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<NotificationEventType[]>;
+
+  /** Get a specific event type. */
+  @tag("Event Types")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "eventTypes")
+  @extension("x-ms-vss-method", "GetEventType")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/eventtypes/{eventType}")
+  @get
+  Get(
+    /** The ID of the event type. */
+    @path eventType: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NotificationEventType;
+}
+
+interface Settings {
+  @tag("Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "settings")
+  @extension("x-ms-vss-method", "GetSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/settings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NotificationAdminSettings;
+
+  @tag("Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "settings")
+  @extension("x-ms-vss-method", "UpdateSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/settings")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NotificationAdminSettingsUpdateParameters,
+  ): NotificationAdminSettings;
+}
+
+interface Subscribers {
+  /** Get delivery preferences of a notifications subscriber. */
+  @tag("Subscribers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscribers")
+  @extension("x-ms-vss-method", "GetSubscriber")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscribers/{subscriberId}")
+  @get
+  Get(
+    /** ID of the user or group. */
+    @format("uuid") @path subscriberId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NotificationSubscriber;
+
+  /** Update delivery preferences of a notifications subscriber. */
+  @tag("Subscribers")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscribers")
+  @extension("x-ms-vss-method", "UpdateSubscriber")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscribers/{subscriberId}")
+  @patch
+  Update(
+    /** ID of the user or group. */
+    @format("uuid") @path subscriberId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NotificationSubscriberUpdateParameters,
+  ): NotificationSubscriber;
+}
+
+interface Subscriptions {
+  /** Query for subscriptions. A subscription is returned if it matches one or more of the specified conditions. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptionQuery")
+  @extension("x-ms-vss-method", "QuerySubscriptions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptionquery")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: SubscriptionQuery,
+  ): Body<NotificationSubscription[]>;
+
+  /** Get a list of notification subscriptions, either by subscription IDs or by all subscriptions for a given user or group. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "ListSubscriptions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** User or Group ID */
+    @format("uuid") @query(#{ explode: true }) targetId?: string,
+
+    /** List of subscription IDs */
+    @format("array (string)") @query(#{ explode: true }) ids?: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SubscriptionQueryFlags",
+        values: #[
+          #{ value: "none", description: "" },
+          #{
+            value: "includeInvalidSubscriptions",
+            description: "Include subscriptions with invalid subscribers.",
+          },
+          #{
+            value: "includeDeletedSubscriptions",
+            description: "Include subscriptions marked for deletion.",
+          },
+          #{
+            value: "includeFilterDetails",
+            description: "Include the full filter details with each subscription.",
+          },
+          #{
+            value: "alwaysReturnBasicInformation",
+            description: "For a subscription the caller does not have permission to view, return basic (non-confidential) information.",
+          },
+          #{ value: "includeSystemSubscriptions", description: "Include system subscriptions." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryFlags?:
+      | "none"
+      | "includeInvalidSubscriptions"
+      | "includeDeletedSubscriptions"
+      | "includeFilterDetails"
+      | "alwaysReturnBasicInformation"
+      | "includeSystemSubscriptions",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<NotificationSubscription[]>;
+
+  /** Create a new subscription. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "CreateSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NotificationSubscriptionCreateParameters,
+  ): NotificationSubscription;
+
+  /** Delete a subscription. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "DeleteSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions/{subscriptionId}")
+  @delete
+  Delete(
+    @path subscriptionId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a notification subscription by its ID. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "GetSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions/{subscriptionId}")
+  @get
+  Get(
+    @path subscriptionId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SubscriptionQueryFlags",
+        values: #[
+          #{ value: "none", description: "" },
+          #{
+            value: "includeInvalidSubscriptions",
+            description: "Include subscriptions with invalid subscribers.",
+          },
+          #{
+            value: "includeDeletedSubscriptions",
+            description: "Include subscriptions marked for deletion.",
+          },
+          #{
+            value: "includeFilterDetails",
+            description: "Include the full filter details with each subscription.",
+          },
+          #{
+            value: "alwaysReturnBasicInformation",
+            description: "For a subscription the caller does not have permission to view, return basic (non-confidential) information.",
+          },
+          #{ value: "includeSystemSubscriptions", description: "Include system subscriptions." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryFlags?:
+      | "none"
+      | "includeInvalidSubscriptions"
+      | "includeDeletedSubscriptions"
+      | "includeFilterDetails"
+      | "alwaysReturnBasicInformation"
+      | "includeSystemSubscriptions",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): NotificationSubscription;
+
+  /** Update an existing subscription. Depending on the type of subscription and permissions, the caller can update the description, filter settings, channel (delivery) settings and more. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptions")
+  @extension("x-ms-vss-method", "UpdateSubscription")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions/{subscriptionId}")
+  @patch
+  Update(
+    @path subscriptionId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: NotificationSubscriptionUpdateParameters,
+  ): NotificationSubscription;
+
+  /** Update the specified user's settings for the specified subscription. This API is typically used to opt in or out of a shared subscription. User settings can only be applied to shared subscriptions, like team subscriptions or default subscriptions. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "userSettings")
+  @extension("x-ms-vss-method", "UpdateSubscriptionUserSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/Subscriptions/{subscriptionId}/usersettings/{userId}")
+  @put
+  UpdateSubscriptionUserSettings(
+    @path subscriptionId: string,
+
+    /** ID of the user */
+    @format("uuid") @path userId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: SubscriptionUserSettings,
+  ): SubscriptionUserSettings;
+
+  /** Get available subscription templates. */
+  @tag("Subscriptions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "subscriptionTemplates")
+  @extension("x-ms-vss-method", "GetSubscriptionTemplates")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptiontemplates")
+  @get
+  GetSubscriptionTemplates(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<NotificationSubscriptionTemplate[]>;
+}
+
+interface Diagnostics {
+  /** Get the diagnostics settings for a subscription. */
+  @tag("Diagnostics")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "diagnostics")
+  @extension("x-ms-vss-method", "GetSubscriptionDiagnostics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions/{subscriptionId}/diagnostics")
+  @get
+  Get(
+    /** The id of the notifications subscription. */
+    @path subscriptionId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): SubscriptionDiagnostics;
+
+  /** Update the diagnostics settings for a subscription. */
+  @tag("Diagnostics")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "diagnostics")
+  @extension("x-ms-vss-method", "UpdateSubscriptionDiagnostics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/notification/subscriptions/{subscriptionId}/diagnostics")
+  @put
+  Update(
+    /** The id of the notifications subscription. */
+    @path subscriptionId: string,
+
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: UpdateSubscripitonDiagnosticsParameters,
+  ): SubscriptionDiagnostics;
 }

@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "TestPlan" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace TestPlan;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 /** Actual Test Result Settings for a Test Plan */
 model ActualTestResultSettings {
@@ -1560,1127 +1566,1153 @@ model YamlReleaseReference {
   stagesToSkip?: string;
 }
 
-/** Find the list of all test suites in which a given test case is present. This is helpful if you need to find out which test suites are using a test case, when you need to make changes to a test case. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "GetSuitesByTestCaseId")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/testplan/suites")
-@get
-op TestSuites_GetSuitesByTestCaseId(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the test case for which suites need to be fetched. */
-  @query(#{ explode: true }) testCaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestSuite[]>;
-
-/** Delete a test configuration by its ID. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "DeleteTestConfguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/configurations")
-@delete
-op Configurations_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test configuration to delete. */
-  @query(#{ explode: true }) testConfiguartionId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a list of test configurations. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "GetTestConfigurations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/configurations")
-@get
-op Configurations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** If the list of configurations returned is not complete, a continuation token to query next batch of configurations is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test configurations. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestConfiguration[]>;
-
-/** Update a test configuration by its ID. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "UpdateTestConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/configurations")
-@patch
-op Configurations_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test configuration to update. */
-  @query(#{ explode: true }) testConfiguartionId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** TestConfigurationCreateUpdateParameters */
-  @body body: TestConfigurationCreateUpdateParameters,
-): TestConfiguration;
-
-/** Create a test configuration. */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "CreateTestConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/configurations")
-@post
-op Configurations_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** TestConfigurationCreateUpdateParameters */
-  @body body: TestConfigurationCreateUpdateParameters,
-): TestConfiguration;
-
-/** Get a test configuration */
-@tag("Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "GetTestConfigurationById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/configurations/{testConfigurationId}")
-@get
-op Configurations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test configuration to get. */
-  @path testConfigurationId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TestConfiguration;
-
-/** Get a list of test plans */
-@tag("Test  Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "GetTestPlans")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/plans")
-@get
-op TestPlans_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Filter for test plan by owner ID or name */
-  @query(#{ explode: true }) owner?: string,
-
-  /** If the list of plans returned is not complete, a continuation token to query next batch of plans is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test plans. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Get all properties of the test plan */
-  @query(#{ explode: true }) includePlanDetails?: boolean,
-
-  /** Get just the active plans */
-  @query(#{ explode: true }) filterActivePlans?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestPlan[]>;
-
-/** Create a test plan. */
-@tag("Test  Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "CreateTestPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/plans")
-@post
-op TestPlans_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** A testPlanCreateParams object.TestPlanCreateParams */
-  @body body: TestPlanCreateParams,
-): TestPlan;
-
-/** Delete a test plan. */
-@tag("Test  Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "DeleteTestPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/plans/{planId}")
-@delete
-op TestPlans_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan to be deleted. */
-  @path planId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a test plan by Id. */
-@tag("Test  Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "GetTestPlanById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/plans/{planId}")
-@get
-op TestPlans_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan to get. */
-  @path planId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TestPlan;
-
-/** Update a test plan. */
-@tag("Test  Plans")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "plans")
-@extension("x-ms-vss-method", "UpdateTestPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/plans/{planId}")
-@patch
-op TestPlans_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan to be updated. */
-  @path planId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** A testPlanUpdateParams object.TestPlanUpdateParams */
-  @body body: TestPlanUpdateParams,
-): TestPlan;
-
-/** Get test suites for plan. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "GetTestSuitesForPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites")
-@get
-op TestSuites_GetTestSuitesForPlan(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan for which suites are requested. */
-  @path planId: int32,
-
-  /** Include the children suites and testers details. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SuiteExpand",
-      values: #[
-        #{ value: "none", description: "Dont include any of the expansions in output." },
-        #{ value: "children", description: "Include children in response." },
-        #{ value: "defaultTesters", description: "Include default testers in response." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expand?: "none" | "children" | "defaultTesters",
-
-  /** If the list of suites returned is not complete, a continuation token to query next batch of suites is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test suites. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** If the suites returned should be in a tree structure. */
-  @query(#{ explode: true }) asTreeView?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestSuite[]>;
-
-/** Create test suite. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "CreateTestSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites")
-@post
-op TestSuites_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suites. */
-  @path planId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Parameters for suite creation */
-  @body body: TestSuiteCreateParams,
-): TestSuite;
-
-/** Delete test suite. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "DeleteTestSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
-@delete
-op TestSuites_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suite. */
-  @path planId: int32,
-
-  /** ID of the test suite to delete. */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get test suite by suite id. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "GetTestSuiteById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
-@get
-op TestSuites_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suites. */
-  @path planId: int32,
-
-  /** ID of the suite to get. */
-  @path suiteId: int32,
-
-  /** Include the children suites and testers details */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SuiteExpand",
-      values: #[
-        #{ value: "none", description: "Dont include any of the expansions in output." },
-        #{ value: "children", description: "Include children in response." },
-        #{ value: "defaultTesters", description: "Include default testers in response." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expand?: "none" | "children" | "defaultTesters",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TestSuite;
-
-/** Update test suite. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "UpdateTestSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
-@patch
-op TestSuites_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suites. */
-  @path planId: int32,
-
-  /** ID of the parent suite. */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Parameters for suite updation */
-  @body body: TestSuiteUpdateParams,
-): TestSuite;
-
-/** Removes test cases from a suite based on the list of test case Ids provided. This API can be used to remove a larger number of test cases. */
-@tag("Suite Test Case")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suiteTestCase")
-@extension("x-ms-vss-method", "RemoveTestCasesListFromSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
-@delete
-op SuiteTestCase_RemoveTestCasesListFromSuite(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan from which test cases are to be removed. */
-  @path planId: int32,
-
-  /** ID of the test suite from which test cases are to be removed. */
-  @path suiteId: int32,
-
-  /** Comma separated string of Test Case Ids to be removed. */
-  @query(#{ explode: true }) testIds: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Get Test Case List return those test cases which have all the configuration Ids as mentioned in the optional parameter. If configuration Ids is null, it return all the test cases */
-@tag("Suite Test Case")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suiteTestCase")
-@extension("x-ms-vss-method", "GetTestCaseList")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
-@get
-op SuiteTestCase_GetTestCaseList(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan for which test cases are requested. */
-  @path planId: int32,
-
-  /** ID of the test suite for which test cases are requested. */
-  @path suiteId: int32,
-
-  /** Test Case Ids to be fetched. */
-  @query(#{ explode: true }) testIds?: string,
-
-  /** Fetch Test Cases which contains all the configuration Ids specified. */
-  @query(#{ explode: true }) configurationIds?: string,
-
-  /** Get the list of witFields. */
-  @query(#{ explode: true }) witFields?: string,
-
-  /** If the list of test cases returned is not complete, a continuation token to query next batch of test cases is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test cases. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** If set to true, returns all identity fields, like AssignedTo, ActivatedBy etc., as IdentityRef objects. If set to false, these fields are returned as unique names in string format. This is false by default. */
-  @query(#{ explode: true }) returnIdentityRef?: boolean,
-
-  /** If set to false, will get a smaller payload containing only basic details about the suite test case object */
-  @query(#{ explode: true }) expand?: boolean,
-
-  /** Flag to exclude various values from payload. For example to remove point assignments pass exclude = 1. To remove extra information (links, test plan , test suite) pass exclude = 2. To remove both extra information and point assignments pass exclude = 3 (1 + 2). */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ExcludeFlags",
-      values: #[
-        #{ value: "none", description: "To exclude nothing" },
-        #{
-          value: "pointAssignments",
-          description: "To exclude point assignments, pass exclude = 1",
-        },
-        #{
-          value: "extraInformation",
-          description: "To exclude extra information (links, test plan, test suite), pass exclude = 2",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  excludeFlags?: "none" | "pointAssignments" | "extraInformation",
-
-  @query(#{ explode: true }) isRecursive?: boolean,
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<TestCase[]>;
-
-/** Update the configurations for test cases */
-@tag("Suite Test Case")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suiteTestCase")
-@extension("x-ms-vss-method", "UpdateSuiteTestCases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
-@patch
-op SuiteTestCase_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan to which test cases are to be updated. */
-  @path planId: int32,
-
-  /** ID of the test suite to which test cases are to be updated. */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** A SuiteTestCaseCreateUpdateParameters object. */
-  @body body: SuiteTestCaseCreateUpdateParameters[],
-): Body<TestCase[]>;
-
-/** Add test cases to a suite with specified configurations */
-@tag("Suite Test Case")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suiteTestCase")
-@extension("x-ms-vss-method", "AddTestCasesToSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
-@post
-op SuiteTestCase_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan to which test cases are to be added. */
-  @path planId: int32,
-
-  /** ID of the test suite to which test cases are to be added. */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** SuiteTestCaseCreateUpdateParameters object. */
-  @body body: SuiteTestCaseCreateUpdateParameters[],
-): Body<TestCase[]>;
-
-/** Get a particular Test Case from a Suite. */
-@tag("Suite Test Case")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suiteTestCase")
-@extension("x-ms-vss-method", "GetTestCase")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase/{testCaseId}")
-@get
-op SuiteTestCase_GetTestCase(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan for which test cases are requested. */
-  @path planId: int32,
-
-  /** ID of the test suite for which test cases are requested. */
-  @path suiteId: int32,
-
-  /** Test Case Id to be fetched. */
-  @path testCaseId: string,
-
-  /** Get the list of witFields. */
-  @query(#{ explode: true }) witFields?: string,
-
-  /** If set to true, returns all identity fields, like AssignedTo, ActivatedBy etc., as IdentityRef objects. If set to false, these fields are returned as unique names in string format. This is false by default. */
-  @query(#{ explode: true }) returnIdentityRef?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<TestCase[]>;
-
-/** Get a particular Test Point from a suite. */
-@tag("Test Point")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testPoint")
-@extension("x-ms-vss-method", "GetPoints")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestPoint")
-@get
-op TestPoint_GetPoints(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan for which test points are requested. */
-  @path planId: int32,
-
-  /** ID of the test suite for which test points are requested. */
-  @path suiteId: int32,
-
-  /** ID of test point to be fetched. */
-  @query(#{ explode: true }) pointId: string,
-
-  /** If set to true, returns the AssignedTo field in TestCaseReference as IdentityRef object. */
-  @query(#{ explode: true }) returnIdentityRef?: boolean,
-
-  /** If set to false, will get a smaller payload containing only basic details about the test point object */
-  @query(#{ explode: true }) includePointDetails?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<TestPoint[]>;
-
-/** Update Test Points. This is used to Reset test point to active, update the outcome of a test point or update the tester of a test point */
-@tag("Test Point")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testPoint")
-@extension("x-ms-vss-method", "UpdateTestPoints")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestPoint")
-@patch
-op TestPoint_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan for which test points are requested. */
-  @path planId: int32,
-
-  /** ID of the test suite for which test points are requested. */
-  @path suiteId: int32,
-
-  /** If set to false, will get a smaller payload containing only basic details about the test point object */
-  @query(#{ explode: true }) includePointDetails?: boolean,
-
-  /** If set to true, returns the AssignedTo field in TestCaseReference as IdentityRef object. */
-  @query(#{ explode: true }) returnIdentityRef?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** A TestPointUpdateParams Object. */
-  @body body: TestPointUpdateParams[],
-): Body<TestPoint[]>;
-
-/** Clone test plan */
-@tag("Test Plan Clone")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testPlanClone")
-@extension("x-ms-vss-method", "CloneTestPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/CloneOperation")
-@post
-op TestPlanClone_CloneTestPlan(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Clones all the associated test cases as well */
-  @query(#{ explode: true }) deepClone?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Plan Clone Request Body detail TestPlanCloneRequest */
-  @body body: CloneTestPlanParams,
-): CloneTestPlanOperationInformation;
-
-/** Get clone information. */
-@tag("Test Plan Clone")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testPlanClone")
-@extension("x-ms-vss-method", "GetCloneInformation")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Plans/CloneOperation/{cloneOperationId}")
-@get
-op TestPlanClone_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Operation ID returned when we queue a clone operation */
-  @path cloneOperationId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): CloneTestPlanOperationInformation;
-
-/** Get a list of deleted test plans */
-@tag("Test  Plan  Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testPlan")
-@extension("x-ms-vss-method", "GetDeletedTestPlans")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/recycleBin/testplan")
-@get
-op TestPlanRecycleBin_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** If the list of plans returned is not complete, a continuation token to query next batch of plans is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test plans. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestPlan[]>;
-
-/** Restores the deleted test plan */
-@tag("Test  Plan  Recycle  Bin")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testPlan")
-@extension("x-ms-vss-method", "RestoreDeletedTestPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/recycleBin/testplan/{planId}")
-@patch
-op TestPlanRecycleBin_RestoreDeletedTestPlan(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the test plan to restore */
-  @path planId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The model containing the restore information */
-  @body body: TestPlanAndSuiteRestoreModel,
-): OkResponse;
-
-/** Get Deleted Test Suites for a Test Plan. */
-@tag("Test  Suite  Recycle  Bin  Operations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testSuite")
-@extension("x-ms-vss-method", "GetDeletedTestSuitesForPlan")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/recycleBin/TestPlan/{planId}/testsuite")
-@get
-op TestSuiteRecycleBinOperations_GetDeletedTestSuitesForPlan(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan for which suites are requested. */
-  @path planId: int32,
-
-  /** Include the children suites and testers details. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SuiteExpand",
-      values: #[
-        #{ value: "none", description: "Dont include any of the expansions in output." },
-        #{ value: "children", description: "Include children in response." },
-        #{ value: "defaultTesters", description: "Include default testers in response." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expand?: "none" | "children" | "defaultTesters",
-
-  /** If the list of suites returned is not complete, a continuation token to query next batch of suites is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test suites. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** If the suites returned should be in a tree structure. */
-  @query(#{ explode: true }) asTreeView?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestSuite[]>;
-
-/** Get Deleted Test Suites within a Project. */
-@tag("Test  Suite  Recycle  Bin  Operations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testSuite")
-@extension("x-ms-vss-method", "GetDeletedTestSuitesForProject")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/recycleBin/testsuite")
-@get
-op TestSuiteRecycleBinOperations_GetDeletedTestSuitesForProject(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Include the children suites and testers details. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SuiteExpand",
-      values: #[
-        #{ value: "none", description: "Dont include any of the expansions in output." },
-        #{ value: "children", description: "Include children in response." },
-        #{ value: "defaultTesters", description: "Include default testers in response." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expand?: "none" | "children" | "defaultTesters",
-
-  /** If the list of suites returned is not complete, a continuation token to query next batch of suites is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test suites. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** If the suites returned should be in a tree structure. */
-  @query(#{ explode: true }) asTreeView?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestSuite[]>;
-
-/** Restores the deleted test suite */
-@tag("Test  Suite  Recycle  Bin  Operations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testSuite")
-@extension("x-ms-vss-method", "RestoreDeletedTestSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/recycleBin/testsuite/{suiteId}")
-@patch
-op TestSuiteRecycleBinOperations_RestoreDeletedTestSuite(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the test suite to restore */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The model containing the restore information */
-  @body body: TestPlanAndSuiteRestoreModel,
-): OkResponse;
-
-/** Get a list of test suite entries in the test suite. */
-@tag("Test  Suite  Entry")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suiteEntry")
-@extension("x-ms-vss-method", "GetSuiteEntries")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/suiteentry/{suiteId}")
-@get
-op TestSuiteEntry_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the parent suite. */
-  @path suiteId: int32,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SuiteEntryTypes",
-      values: #[
-        #{ value: "testCase", description: "Test Case" },
-        #{ value: "suite", description: "Child Suite" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  suiteEntryType?: "testCase" | "suite",
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<SuiteEntry[]>;
-
-/** Reorder test suite entries in the test suite. */
-@tag("Test  Suite  Entry")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "suiteEntry")
-@extension("x-ms-vss-method", "ReorderSuiteEntries")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/suiteentry/{suiteId}")
-@patch
-op TestSuiteEntry_ReorderSuiteEntries(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the parent test suite. */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** List of SuiteEntry to reorder. */
-  @body body: SuiteEntryUpdateParams[],
-): Body<SuiteEntry[]>;
-
-/** Clone test suite */
-@tag("Test Suite Clone")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testSuiteClone")
-@extension("x-ms-vss-method", "CloneTestSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Suites/CloneOperation")
-@post
-op TestSuiteClone_CloneTestSuite(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Clones all the associated test cases as well */
-  @query(#{ explode: true }) deepClone?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Suite Clone Request Body detail TestSuiteCloneRequest */
-  @body body: CloneTestSuiteParams,
-): CloneTestSuiteOperationInformation;
-
-/** Get clone information. */
-@tag("Test Suite Clone")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testSuiteClone")
-@extension("x-ms-vss-method", "GetSuiteCloneInformation")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/Suites/CloneOperation/{cloneOperationId}")
-@get
-op TestSuiteClone_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Operation ID returned when we queue a clone operation */
-  @path cloneOperationId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): CloneTestSuiteOperationInformation;
-
-/** Delete a test case. */
-@tag("Test Cases")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testCases")
-@extension("x-ms-vss-method", "DeleteTestCase")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/testcases/{testCaseId}")
-@delete
-op TestCases_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of test case to be deleted. */
-  @path testCaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-@tag("Test Case Clone")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testCaseClone")
-@extension("x-ms-vss-method", "CloneTestCase")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/TestCases/CloneTestCaseOperation")
-@post
-op TestCaseClone_CloneTestCase(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: CloneTestCaseParams,
-): CloneTestCaseOperationInformation;
-
-/** Get clone information. */
-@tag("Test Case Clone")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testCaseClone")
-@extension("x-ms-vss-method", "GetTestCaseCloneInformation")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/TestCases/CloneTestCaseOperation/{cloneOperationId}")
-@get
-op TestCaseClone_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Operation ID returned when we queue a clone operation */
-  @path cloneOperationId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): CloneTestCaseOperationInformation;
-
-/** Get a list of test variables. */
-@tag("Variables")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "variables")
-@extension("x-ms-vss-method", "GetTestVariables")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/variables")
-@get
-op Variables_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** If the list of variables returned is not complete, a continuation token to query next batch of variables is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test variables. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestVariable[]>;
-
-/** Create a test variable. */
-@tag("Variables")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "variables")
-@extension("x-ms-vss-method", "CreateTestVariable")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/variables")
-@post
-op Variables_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** TestVariableCreateUpdateParameters */
-  @body body: TestVariableCreateUpdateParameters,
-): TestVariable;
-
-/** Delete a test variable by its ID. */
-@tag("Variables")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "variables")
-@extension("x-ms-vss-method", "DeleteTestVariable")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/variables/{testVariableId}")
-@delete
-op Variables_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test variable to delete. */
-  @path testVariableId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a test variable by its ID. */
-@tag("Variables")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "variables")
-@extension("x-ms-vss-method", "GetTestVariableById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/variables/{testVariableId}")
-@get
-op Variables_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test variable to get. */
-  @path testVariableId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TestVariable;
-
-/** Update a test variable by its ID. */
-@tag("Variables")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "variables")
-@extension("x-ms-vss-method", "UpdateTestVariable")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/testplan/variables/{testVariableId}")
-@patch
-op Variables_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test variable to update. */
-  @path testVariableId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** TestVariableCreateUpdateParameters */
-  @body body: TestVariableCreateUpdateParameters,
-): TestVariable;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface TestSuites {
+  /** Find the list of all test suites in which a given test case is present. This is helpful if you need to find out which test suites are using a test case, when you need to make changes to a test case. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "GetSuitesByTestCaseId")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/testplan/suites")
+  @get
+  GetSuitesByTestCaseId(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the test case for which suites need to be fetched. */
+    @query(#{ explode: true }) testCaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestSuite[]>;
+
+  /** Get test suites for plan. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "GetTestSuitesForPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites")
+  @get
+  GetTestSuitesForPlan(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan for which suites are requested. */
+    @path planId: int32,
+
+    /** Include the children suites and testers details. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SuiteExpand",
+        values: #[
+          #{ value: "none", description: "Dont include any of the expansions in output." },
+          #{ value: "children", description: "Include children in response." },
+          #{ value: "defaultTesters", description: "Include default testers in response." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expand?: "none" | "children" | "defaultTesters",
+
+    /** If the list of suites returned is not complete, a continuation token to query next batch of suites is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test suites. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** If the suites returned should be in a tree structure. */
+    @query(#{ explode: true }) asTreeView?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestSuite[]>;
+
+  /** Create test suite. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "CreateTestSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suites. */
+    @path planId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Parameters for suite creation */
+    @body body: TestSuiteCreateParams,
+  ): TestSuite;
+
+  /** Delete test suite. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "DeleteTestSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suite. */
+    @path planId: int32,
+
+    /** ID of the test suite to delete. */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get test suite by suite id. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "GetTestSuiteById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suites. */
+    @path planId: int32,
+
+    /** ID of the suite to get. */
+    @path suiteId: int32,
+
+    /** Include the children suites and testers details */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SuiteExpand",
+        values: #[
+          #{ value: "none", description: "Dont include any of the expansions in output." },
+          #{ value: "children", description: "Include children in response." },
+          #{ value: "defaultTesters", description: "Include default testers in response." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expand?: "none" | "children" | "defaultTesters",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TestSuite;
+
+  /** Update test suite. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "UpdateTestSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suites. */
+    @path planId: int32,
+
+    /** ID of the parent suite. */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Parameters for suite updation */
+    @body body: TestSuiteUpdateParams,
+  ): TestSuite;
+}
+
+interface Configurations {
+  /** Delete a test configuration by its ID. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "DeleteTestConfguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/configurations")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test configuration to delete. */
+    @query(#{ explode: true }) testConfiguartionId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a list of test configurations. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "GetTestConfigurations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/configurations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** If the list of configurations returned is not complete, a continuation token to query next batch of configurations is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test configurations. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestConfiguration[]>;
+
+  /** Update a test configuration by its ID. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "UpdateTestConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/configurations")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test configuration to update. */
+    @query(#{ explode: true }) testConfiguartionId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** TestConfigurationCreateUpdateParameters */
+    @body body: TestConfigurationCreateUpdateParameters,
+  ): TestConfiguration;
+
+  /** Create a test configuration. */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "CreateTestConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/configurations")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** TestConfigurationCreateUpdateParameters */
+    @body body: TestConfigurationCreateUpdateParameters,
+  ): TestConfiguration;
+
+  /** Get a test configuration */
+  @tag("Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "GetTestConfigurationById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/configurations/{testConfigurationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test configuration to get. */
+    @path testConfigurationId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TestConfiguration;
+}
+
+interface TestPlans {
+  /** Get a list of test plans */
+  @tag("Test  Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "GetTestPlans")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/plans")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Filter for test plan by owner ID or name */
+    @query(#{ explode: true }) owner?: string,
+
+    /** If the list of plans returned is not complete, a continuation token to query next batch of plans is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test plans. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Get all properties of the test plan */
+    @query(#{ explode: true }) includePlanDetails?: boolean,
+
+    /** Get just the active plans */
+    @query(#{ explode: true }) filterActivePlans?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestPlan[]>;
+
+  /** Create a test plan. */
+  @tag("Test  Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "CreateTestPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/plans")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** A testPlanCreateParams object.TestPlanCreateParams */
+    @body body: TestPlanCreateParams,
+  ): TestPlan;
+
+  /** Delete a test plan. */
+  @tag("Test  Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "DeleteTestPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/plans/{planId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan to be deleted. */
+    @path planId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a test plan by Id. */
+  @tag("Test  Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "GetTestPlanById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/plans/{planId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan to get. */
+    @path planId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TestPlan;
+
+  /** Update a test plan. */
+  @tag("Test  Plans")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "plans")
+  @extension("x-ms-vss-method", "UpdateTestPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/plans/{planId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan to be updated. */
+    @path planId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** A testPlanUpdateParams object.TestPlanUpdateParams */
+    @body body: TestPlanUpdateParams,
+  ): TestPlan;
+}
+
+interface SuiteTestCase {
+  /** Removes test cases from a suite based on the list of test case Ids provided. This API can be used to remove a larger number of test cases. */
+  @tag("Suite Test Case")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suiteTestCase")
+  @extension("x-ms-vss-method", "RemoveTestCasesListFromSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
+  @delete
+  RemoveTestCasesListFromSuite(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan from which test cases are to be removed. */
+    @path planId: int32,
+
+    /** ID of the test suite from which test cases are to be removed. */
+    @path suiteId: int32,
+
+    /** Comma separated string of Test Case Ids to be removed. */
+    @query(#{ explode: true }) testIds: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Get Test Case List return those test cases which have all the configuration Ids as mentioned in the optional parameter. If configuration Ids is null, it return all the test cases */
+  @tag("Suite Test Case")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suiteTestCase")
+  @extension("x-ms-vss-method", "GetTestCaseList")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
+  @get
+  GetTestCaseList(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan for which test cases are requested. */
+    @path planId: int32,
+
+    /** ID of the test suite for which test cases are requested. */
+    @path suiteId: int32,
+
+    /** Test Case Ids to be fetched. */
+    @query(#{ explode: true }) testIds?: string,
+
+    /** Fetch Test Cases which contains all the configuration Ids specified. */
+    @query(#{ explode: true }) configurationIds?: string,
+
+    /** Get the list of witFields. */
+    @query(#{ explode: true }) witFields?: string,
+
+    /** If the list of test cases returned is not complete, a continuation token to query next batch of test cases is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test cases. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** If set to true, returns all identity fields, like AssignedTo, ActivatedBy etc., as IdentityRef objects. If set to false, these fields are returned as unique names in string format. This is false by default. */
+    @query(#{ explode: true }) returnIdentityRef?: boolean,
+
+    /** If set to false, will get a smaller payload containing only basic details about the suite test case object */
+    @query(#{ explode: true }) expand?: boolean,
+
+    /** Flag to exclude various values from payload. For example to remove point assignments pass exclude = 1. To remove extra information (links, test plan , test suite) pass exclude = 2. To remove both extra information and point assignments pass exclude = 3 (1 + 2). */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ExcludeFlags",
+        values: #[
+          #{ value: "none", description: "To exclude nothing" },
+          #{
+            value: "pointAssignments",
+            description: "To exclude point assignments, pass exclude = 1",
+          },
+          #{
+            value: "extraInformation",
+            description: "To exclude extra information (links, test plan, test suite), pass exclude = 2",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    excludeFlags?: "none" | "pointAssignments" | "extraInformation",
+
+    @query(#{ explode: true }) isRecursive?: boolean,
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<TestCase[]>;
+
+  /** Update the configurations for test cases */
+  @tag("Suite Test Case")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suiteTestCase")
+  @extension("x-ms-vss-method", "UpdateSuiteTestCases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan to which test cases are to be updated. */
+    @path planId: int32,
+
+    /** ID of the test suite to which test cases are to be updated. */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** A SuiteTestCaseCreateUpdateParameters object. */
+    @body body: SuiteTestCaseCreateUpdateParameters[],
+  ): Body<TestCase[]>;
+
+  /** Add test cases to a suite with specified configurations */
+  @tag("Suite Test Case")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suiteTestCase")
+  @extension("x-ms-vss-method", "AddTestCasesToSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan to which test cases are to be added. */
+    @path planId: int32,
+
+    /** ID of the test suite to which test cases are to be added. */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** SuiteTestCaseCreateUpdateParameters object. */
+    @body body: SuiteTestCaseCreateUpdateParameters[],
+  ): Body<TestCase[]>;
+
+  /** Get a particular Test Case from a Suite. */
+  @tag("Suite Test Case")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suiteTestCase")
+  @extension("x-ms-vss-method", "GetTestCase")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase/{testCaseId}")
+  @get
+  GetTestCase(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan for which test cases are requested. */
+    @path planId: int32,
+
+    /** ID of the test suite for which test cases are requested. */
+    @path suiteId: int32,
+
+    /** Test Case Id to be fetched. */
+    @path testCaseId: string,
+
+    /** Get the list of witFields. */
+    @query(#{ explode: true }) witFields?: string,
+
+    /** If set to true, returns all identity fields, like AssignedTo, ActivatedBy etc., as IdentityRef objects. If set to false, these fields are returned as unique names in string format. This is false by default. */
+    @query(#{ explode: true }) returnIdentityRef?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<TestCase[]>;
+}
+
+interface TestPointOperations {
+  /** Get a particular Test Point from a suite. */
+  @tag("Test Point")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testPoint")
+  @extension("x-ms-vss-method", "GetPoints")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestPoint")
+  @get
+  GetPoints(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan for which test points are requested. */
+    @path planId: int32,
+
+    /** ID of the test suite for which test points are requested. */
+    @path suiteId: int32,
+
+    /** ID of test point to be fetched. */
+    @query(#{ explode: true }) pointId: string,
+
+    /** If set to true, returns the AssignedTo field in TestCaseReference as IdentityRef object. */
+    @query(#{ explode: true }) returnIdentityRef?: boolean,
+
+    /** If set to false, will get a smaller payload containing only basic details about the test point object */
+    @query(#{ explode: true }) includePointDetails?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<TestPoint[]>;
+
+  /** Update Test Points. This is used to Reset test point to active, update the outcome of a test point or update the tester of a test point */
+  @tag("Test Point")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testPoint")
+  @extension("x-ms-vss-method", "UpdateTestPoints")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestPoint")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan for which test points are requested. */
+    @path planId: int32,
+
+    /** ID of the test suite for which test points are requested. */
+    @path suiteId: int32,
+
+    /** If set to false, will get a smaller payload containing only basic details about the test point object */
+    @query(#{ explode: true }) includePointDetails?: boolean,
+
+    /** If set to true, returns the AssignedTo field in TestCaseReference as IdentityRef object. */
+    @query(#{ explode: true }) returnIdentityRef?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** A TestPointUpdateParams Object. */
+    @body body: TestPointUpdateParams[],
+  ): Body<TestPoint[]>;
+}
+
+interface TestPlanClone {
+  /** Clone test plan */
+  @tag("Test Plan Clone")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testPlanClone")
+  @extension("x-ms-vss-method", "CloneTestPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/CloneOperation")
+  @post
+  CloneTestPlan(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Clones all the associated test cases as well */
+    @query(#{ explode: true }) deepClone?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Plan Clone Request Body detail TestPlanCloneRequest */
+    @body body: CloneTestPlanParams,
+  ): CloneTestPlanOperationInformation;
+
+  /** Get clone information. */
+  @tag("Test Plan Clone")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testPlanClone")
+  @extension("x-ms-vss-method", "GetCloneInformation")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Plans/CloneOperation/{cloneOperationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Operation ID returned when we queue a clone operation */
+    @path cloneOperationId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): CloneTestPlanOperationInformation;
+}
+
+interface TestPlanRecycleBin {
+  /** Get a list of deleted test plans */
+  @tag("Test  Plan  Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testPlan")
+  @extension("x-ms-vss-method", "GetDeletedTestPlans")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/recycleBin/testplan")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** If the list of plans returned is not complete, a continuation token to query next batch of plans is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test plans. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestPlan[]>;
+
+  /** Restores the deleted test plan */
+  @tag("Test  Plan  Recycle  Bin")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testPlan")
+  @extension("x-ms-vss-method", "RestoreDeletedTestPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/recycleBin/testplan/{planId}")
+  @patch
+  RestoreDeletedTestPlan(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the test plan to restore */
+    @path planId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The model containing the restore information */
+    @body body: TestPlanAndSuiteRestoreModel,
+  ): OkResponse;
+}
+
+interface TestSuiteRecycleBinOperations {
+  /** Get Deleted Test Suites for a Test Plan. */
+  @tag("Test  Suite  Recycle  Bin  Operations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testSuite")
+  @extension("x-ms-vss-method", "GetDeletedTestSuitesForPlan")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/recycleBin/TestPlan/{planId}/testsuite")
+  @get
+  GetDeletedTestSuitesForPlan(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan for which suites are requested. */
+    @path planId: int32,
+
+    /** Include the children suites and testers details. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SuiteExpand",
+        values: #[
+          #{ value: "none", description: "Dont include any of the expansions in output." },
+          #{ value: "children", description: "Include children in response." },
+          #{ value: "defaultTesters", description: "Include default testers in response." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expand?: "none" | "children" | "defaultTesters",
+
+    /** If the list of suites returned is not complete, a continuation token to query next batch of suites is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test suites. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** If the suites returned should be in a tree structure. */
+    @query(#{ explode: true }) asTreeView?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestSuite[]>;
+
+  /** Get Deleted Test Suites within a Project. */
+  @tag("Test  Suite  Recycle  Bin  Operations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testSuite")
+  @extension("x-ms-vss-method", "GetDeletedTestSuitesForProject")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/recycleBin/testsuite")
+  @get
+  GetDeletedTestSuitesForProject(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Include the children suites and testers details. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SuiteExpand",
+        values: #[
+          #{ value: "none", description: "Dont include any of the expansions in output." },
+          #{ value: "children", description: "Include children in response." },
+          #{ value: "defaultTesters", description: "Include default testers in response." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expand?: "none" | "children" | "defaultTesters",
+
+    /** If the list of suites returned is not complete, a continuation token to query next batch of suites is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test suites. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** If the suites returned should be in a tree structure. */
+    @query(#{ explode: true }) asTreeView?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestSuite[]>;
+
+  /** Restores the deleted test suite */
+  @tag("Test  Suite  Recycle  Bin  Operations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testSuite")
+  @extension("x-ms-vss-method", "RestoreDeletedTestSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/recycleBin/testsuite/{suiteId}")
+  @patch
+  RestoreDeletedTestSuite(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the test suite to restore */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The model containing the restore information */
+    @body body: TestPlanAndSuiteRestoreModel,
+  ): OkResponse;
+}
+
+interface TestSuiteEntry {
+  /** Get a list of test suite entries in the test suite. */
+  @tag("Test  Suite  Entry")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suiteEntry")
+  @extension("x-ms-vss-method", "GetSuiteEntries")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/suiteentry/{suiteId}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the parent suite. */
+    @path suiteId: int32,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SuiteEntryTypes",
+        values: #[
+          #{ value: "testCase", description: "Test Case" },
+          #{ value: "suite", description: "Child Suite" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    suiteEntryType?: "testCase" | "suite",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<SuiteEntry[]>;
+
+  /** Reorder test suite entries in the test suite. */
+  @tag("Test  Suite  Entry")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "suiteEntry")
+  @extension("x-ms-vss-method", "ReorderSuiteEntries")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/suiteentry/{suiteId}")
+  @patch
+  ReorderSuiteEntries(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the parent test suite. */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** List of SuiteEntry to reorder. */
+    @body body: SuiteEntryUpdateParams[],
+  ): Body<SuiteEntry[]>;
+}
+
+interface TestSuiteClone {
+  /** Clone test suite */
+  @tag("Test Suite Clone")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testSuiteClone")
+  @extension("x-ms-vss-method", "CloneTestSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Suites/CloneOperation")
+  @post
+  CloneTestSuite(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Clones all the associated test cases as well */
+    @query(#{ explode: true }) deepClone?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Suite Clone Request Body detail TestSuiteCloneRequest */
+    @body body: CloneTestSuiteParams,
+  ): CloneTestSuiteOperationInformation;
+
+  /** Get clone information. */
+  @tag("Test Suite Clone")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testSuiteClone")
+  @extension("x-ms-vss-method", "GetSuiteCloneInformation")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/Suites/CloneOperation/{cloneOperationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Operation ID returned when we queue a clone operation */
+    @path cloneOperationId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): CloneTestSuiteOperationInformation;
+}
+
+interface TestCases {
+  /** Delete a test case. */
+  @tag("Test Cases")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testCases")
+  @extension("x-ms-vss-method", "DeleteTestCase")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/testcases/{testCaseId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of test case to be deleted. */
+    @path testCaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+}
+
+interface TestCaseClone {
+  @tag("Test Case Clone")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testCaseClone")
+  @extension("x-ms-vss-method", "CloneTestCase")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/TestCases/CloneTestCaseOperation")
+  @post
+  CloneTestCase(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: CloneTestCaseParams,
+  ): CloneTestCaseOperationInformation;
+
+  /** Get clone information. */
+  @tag("Test Case Clone")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testCaseClone")
+  @extension("x-ms-vss-method", "GetTestCaseCloneInformation")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/TestCases/CloneTestCaseOperation/{cloneOperationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Operation ID returned when we queue a clone operation */
+    @path cloneOperationId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): CloneTestCaseOperationInformation;
+}
+
+interface Variables {
+  /** Get a list of test variables. */
+  @tag("Variables")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "variables")
+  @extension("x-ms-vss-method", "GetTestVariables")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/variables")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** If the list of variables returned is not complete, a continuation token to query next batch of variables is included in the response header as 'x-ms-continuationtoken'. Omit this parameter to get the first batch of test variables. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestVariable[]>;
+
+  /** Create a test variable. */
+  @tag("Variables")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "variables")
+  @extension("x-ms-vss-method", "CreateTestVariable")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/variables")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** TestVariableCreateUpdateParameters */
+    @body body: TestVariableCreateUpdateParameters,
+  ): TestVariable;
+
+  /** Delete a test variable by its ID. */
+  @tag("Variables")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "variables")
+  @extension("x-ms-vss-method", "DeleteTestVariable")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/variables/{testVariableId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test variable to delete. */
+    @path testVariableId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a test variable by its ID. */
+  @tag("Variables")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "variables")
+  @extension("x-ms-vss-method", "GetTestVariableById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/variables/{testVariableId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test variable to get. */
+    @path testVariableId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TestVariable;
+
+  /** Update a test variable by its ID. */
+  @tag("Variables")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "variables")
+  @extension("x-ms-vss-method", "UpdateTestVariable")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/testplan/variables/{testVariableId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test variable to update. */
+    @path testVariableId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** TestVariableCreateUpdateParameters */
+    @body body: TestVariableCreateUpdateParameters,
+  ): TestVariable;
 }

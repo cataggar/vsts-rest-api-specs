@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Tfvc" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Tfvc;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AssociatedWorkItem {
   assignedTo?: string;
@@ -817,557 +823,567 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Retrieve Tfvc changes for a given changeset. */
-@tag("Changesets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "changesetChanges")
-@extension("x-ms-vss-method", "GetChangesetChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/changesets/{id}/changes")
-@get
-op Changesets_GetChangesetChanges(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the changeset. Default: null */
-  @extension("x-ms-required", false) @path id: int32,
-
-  /** Number of results to skip. Default: null */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** The maximum number of results to return. Default: null */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Return the next page of results. Default: null */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TfvcChange[]>;
-
-/** Retrieves the work items associated with a particular changeset. */
-@tag("Changesets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "changesetWorkItems")
-@extension("x-ms-vss-method", "GetChangesetWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/changesets/{id}/workItems")
-@get
-op Changesets_GetChangesetWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the changeset. */
-  @extension("x-ms-required", false) @path id: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AssociatedWorkItem[]>;
-
-/** Returns changesets for a given list of changeset Ids. */
-@tag("Changesets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "changesetsBatch")
-@extension("x-ms-vss-method", "GetBatchedChangesets")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/changesetsbatch")
-@post
-op Changesets_GetBatchedChangesets(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** List of changeset IDs. */
-  @body body: TfvcChangesetsRequestData,
-): Body<TfvcChangesetRef[]>;
-
-/** Get items under a label. */
-@tag("Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "labelItems")
-@extension("x-ms-vss-method", "GetLabelItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/labels/{labelId}/items")
-@get
-op Labels_GetLabelItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Unique identifier of label */
-  @path labelId: string,
-
-  /** Max number of items to return */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of items to skip */
-  @query(#{ explode: true }) $skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TfvcItem[]>;
-
-/** Get a single deep shelveset. */
-@tag("Shelvesets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "shelvesets")
-@extension("x-ms-vss-method", "GetShelveset")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/shelvesets")
-@get
-op Shelvesets_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Shelveset's unique ID */
-  @query(#{ explode: true }) shelvesetId: string,
-
-  /** Whether to include policyOverride and notes Only applies when requesting a single deep shelveset */
-  @query(#{ explode: true }) `requestData.includeDetails`?: boolean,
-
-  /** Whether to include the _links field on the shallow references. Does not apply when requesting a single deep shelveset object. Links will always be included in the deep shelveset. */
-  @query(#{ explode: true }) `requestData.includeLinks`?: boolean,
-
-  /** Whether to include workItems */
-  @query(#{ explode: true }) `requestData.includeWorkItems`?: boolean,
-
-  /** Max number of changes to include */
-  @query(#{ explode: true }) `requestData.maxChangeCount`?: int32,
-
-  /** Max length of comment */
-  @query(#{ explode: true }) `requestData.maxCommentLength`?: int32,
-
-  /** Shelveset name */
-  @query(#{ explode: true }) `requestData.name`?: string,
-
-  /** Owner's ID. Could be a name or a guid. */
-  @query(#{ explode: true }) `requestData.owner`?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TfvcShelveset;
-
-/** Get changes included in a shelveset. */
-@tag("Shelvesets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "shelvesetChanges")
-@extension("x-ms-vss-method", "GetShelvesetChanges")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/shelvesets/changes")
-@get
-op Shelvesets_GetShelvesetChanges(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Shelveset's unique ID */
-  @query(#{ explode: true }) shelvesetId: string,
-
-  /** Max number of changes to return */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of changes to skip */
-  @query(#{ explode: true }) $skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TfvcChange[]>;
-
-/** Get work items associated with a shelveset. */
-@tag("Shelvesets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "shelvesetWorkItems")
-@extension("x-ms-vss-method", "GetShelvesetWorkItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/tfvc/shelvesets/workitems")
-@get
-op Shelvesets_GetShelvesetWorkItems(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Shelveset's unique ID */
-  @query(#{ explode: true }) shelvesetId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AssociatedWorkItem[]>;
-
-/** Get branch hierarchies below the specified scopePath */
-@tag("Branches")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "branches")
-@extension("x-ms-vss-method", "GetBranchRefs")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/branches")
-@get
-op Branches_GetBranchRefs(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Full path to the branch. Default: $/ Examples: $/, $/MyProject, $/MyProject/SomeFolder. */
-  @query(#{ explode: true }) scopePath: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Return deleted branches. Default: False */
-  @query(#{ explode: true }) includeDeleted?: boolean,
-
-  /** Return links. Default: False */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TfvcBranchRef[]>;
-
-/** Retrieve Tfvc Changesets Note: This is a new version of the GetChangesets API that doesn't expose the unneeded queryParams present in the 1.0 version of the API. */
-@tag("Changesets")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "changesets")
-@extension("x-ms-vss-method", "GetChangesets")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/changesets")
-@get
-op Changesets_GetChangesets(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Include details about associated work items in the response. Default: null */
-  @query(#{ explode: true }) maxCommentLength?: int32,
-
-  /** Number of results to skip. Default: null */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** The maximum number of results to return. Default: null */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Results are sorted by ID in descending order by default. Use id asc to sort by ID in ascending order. */
-  @query(#{ explode: true }) $orderby?: string,
-
-  /** Alias or display name of user who made the changes. */
-  @query(#{ explode: true }) `searchCriteria.author`?: string,
-
-  /** Whether or not to follow renames for the given item being queried. */
-  @query(#{ explode: true }) `searchCriteria.followRenames`?: boolean,
-
-  /** If provided, only include changesets created after this date (string). */
-  @query(#{ explode: true }) `searchCriteria.fromDate`?: string,
-
-  /** If provided, only include changesets after this changesetID. */
-  @query(#{ explode: true }) `searchCriteria.fromId`?: int32,
-
-  /** Whether to include the _links field on the shallow references. */
-  @query(#{ explode: true }) `searchCriteria.includeLinks`?: boolean,
-
-  /** Path of item to search under. */
-  @query(#{ explode: true }) `searchCriteria.itemPath`?: string,
-
-  /** Following criteria available (.itemPath, .version, .versionType, .versionOption, .author, .fromId, .toId, .fromDate, .toDate) Default: null */
-  @query(#{ explode: true }) `searchCriteria.mappings`?: TfvcMappingFilter[],
-
-  /** If provided, only include changesets created before this date (string). */
-  @query(#{ explode: true }) `searchCriteria.toDate`?: string,
-
-  /** If provided, a version descriptor for the latest change list to include. */
-  @query(#{ explode: true }) `searchCriteria.toId`?: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<TfvcChangesetRef[]>;
-
-/** Create a new changeset. Accepts TfvcChangeset as JSON body */
-@tag("Changesets")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "changesets")
-@extension("x-ms-vss-method", "CreateChangeset")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/changesets")
-@post
-op Changesets_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-  @body body: TfvcChangeset,
-): TfvcChangesetRef;
-
-/** Retrieve a Tfvc Changeset */
-@tag("Changesets")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "changesets")
-@extension("x-ms-vss-method", "GetChangeset")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/changesets/{id}")
-@get
-op Changesets_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Changeset Id to retrieve. */
-  @path id: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Number of changes to return (maximum 100 changes) Default: 0 */
-  @query(#{ explode: true }) maxChangeCount?: int32,
-
-  /** Include policy details and check-in notes in the response. Default: false */
-  @query(#{ explode: true }) includeDetails?: boolean,
-
-  /** Include workitems. Default: false */
-  @query(#{ explode: true }) includeWorkItems?: boolean,
-
-  /** Include details about associated work items in the response. Default: null */
-  @query(#{ explode: true }) maxCommentLength?: int32,
-
-  /** Include renames. Default: false */
-  @query(#{ explode: true }) includeSourceRename?: boolean,
-
-  /** Number of results to skip. Default: null */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** The maximum number of results to return. Default: null */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Results are sorted by ID in descending order by default. Use id asc to sort by ID in ascending order. */
-  @query(#{ explode: true }) $orderby?: string,
-
-  /** Alias or display name of user who made the changes. */
-  @query(#{ explode: true }) `searchCriteria.author`?: string,
-
-  /** Whether or not to follow renames for the given item being queried. */
-  @query(#{ explode: true }) `searchCriteria.followRenames`?: boolean,
-
-  /** If provided, only include changesets created after this date (string). */
-  @query(#{ explode: true }) `searchCriteria.fromDate`?: string,
-
-  /** If provided, only include changesets after this changesetID. */
-  @query(#{ explode: true }) `searchCriteria.fromId`?: int32,
-
-  /** Whether to include the _links field on the shallow references. */
-  @query(#{ explode: true }) `searchCriteria.includeLinks`?: boolean,
-
-  /** Path of item to search under. */
-  @query(#{ explode: true }) `searchCriteria.itemPath`?: string,
-
-  /** Following criteria available (.itemPath, .version, .versionType, .versionOption, .author, .fromId, .toId, .fromDate, .toDate) Default: null */
-  @query(#{ explode: true }) `searchCriteria.mappings`?: TfvcMappingFilter[],
-
-  /** If provided, only include changesets created before this date (string). */
-  @query(#{ explode: true }) `searchCriteria.toDate`?: string,
-
-  /** If provided, a version descriptor for the latest change list to include. */
-  @query(#{ explode: true }) `searchCriteria.toId`?: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): TfvcChangeset;
-
-/** Post for retrieving a set of items given a list of paths or a long path. Allows for specifying the recursionLevel and version descriptors for each path. */
-@tag("Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "itemBatch")
-@extension("x-ms-vss-method", "GetItemsBatch")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/itembatch")
-@post
-op Items_GetItemsBatch(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: TfvcItemRequestData,
-):
-  | {
-      @header contentType: "application/zip";
-      @body body: unknown[][];
-    }
-  | Body<unknown[][]>;
-
-/** Get a list of Tfvc items */
-@tag("Items")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "items")
-@extension("x-ms-vss-method", "GetItems")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/items")
-@get
-op Items_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Version control path of a folder to return multiple items. */
-  @query(#{ explode: true }) scopePath?: string,
-
-  /** None (just the item), or OneLevel (contents of a folder). */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "VersionControlRecursionType",
-      values: #[
-        #{ value: "none", description: "Only return the specified item." },
-        #{ value: "oneLevel", description: "Return the specified item and its direct children." },
-        #{
-          value: "oneLevelPlusNestedEmptyFolders",
-          description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
-        },
-        #{ value: "full", description: "Return specified item and all descendants" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
-
-  /** True to include links. */
-  @query(#{ explode: true }) includeLinks?: boolean,
-
-  /** Version object. */
-  @query(#{ explode: true }) `versionDescriptor.version`?: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TfvcVersionOption",
-      values: #[
-        #{ value: "none", description: "None." },
-        #{ value: "previous", description: "Return the previous version." },
-        #{
-          value: "useRename",
-          description: "Only usuable with versiontype MergeSource and integer versions, uses RenameSource identifier instead of Merge identifier.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionOption`?: "none" | "previous" | "useRename",
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TfvcVersionType",
-      values: #[
-        #{ value: "none", description: "Version is treated as a ChangesetId." },
-        #{ value: "changeset", description: "Version is treated as a ChangesetId." },
-        #{ value: "shelveset", description: "Version is treated as a Shelveset name and owner." },
-        #{ value: "change", description: "Version is treated as a Change." },
-        #{ value: "date", description: "Version is treated as a Date." },
-        #{
-          value: "latest",
-          description: "If Version is defined the Latest of that Version will be used, if no version is defined the latest ChangesetId will be used.",
-        },
-        #{
-          value: "tip",
-          description: "Version will be treated as a Tip, if no version is defined latest will be used.",
-        },
-        #{ value: "mergeSource", description: "Version will be treated as a MergeSource." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `versionDescriptor.versionType`?:
-    | "none"
-    | "changeset"
-    | "shelveset"
-    | "change"
-    | "date"
-    | "latest"
-    | "tip"
-    | "mergeSource",
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TfvcItem[]>;
-
-/** Get a collection of shallow label references. */
-@tag("Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "labels")
-@extension("x-ms-vss-method", "GetLabels")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/labels")
-@get
-op Labels_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Whether to include the _links field on the shallow references */
-  @query(#{ explode: true }) `requestData.includeLinks`?: boolean,
-
-  /** labelScope, name, owner, and itemLabelFilter */
-  @query(#{ explode: true }) `requestData.itemLabelFilter`?: string,
-
-  /** labelScope, name, owner, and itemLabelFilter */
-  @query(#{ explode: true }) `requestData.labelScope`?: string,
-
-  /** labelScope, name, owner, and itemLabelFilter */
-  @query(#{ explode: true }) `requestData.maxItemCount`?: int32,
-
-  /** labelScope, name, owner, and itemLabelFilter */
-  @query(#{ explode: true }) `requestData.name`?: string,
-
-  /** labelScope, name, owner, and itemLabelFilter */
-  @query(#{ explode: true }) `requestData.owner`?: string,
-
-  /** Max number of labels to return, defaults to 100 when undefined */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Number of labels to skip */
-  @query(#{ explode: true }) $skip?: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TfvcLabelRef[]>;
-
-/** Get a single deep label. */
-@tag("Labels")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "labels")
-@extension("x-ms-vss-method", "GetLabel")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/tfvc/labels/{labelId}")
-@get
-op Labels_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Unique identifier of label */
-  @path labelId: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Whether to include the _links field on the shallow references */
-  @query(#{ explode: true }) `requestData.includeLinks`?: boolean,
-
-  /** maxItemCount */
-  @query(#{ explode: true }) `requestData.itemLabelFilter`?: string,
-
-  /** maxItemCount */
-  @query(#{ explode: true }) `requestData.labelScope`?: string,
-
-  /** maxItemCount */
-  @query(#{ explode: true }) `requestData.maxItemCount`?: int32,
-
-  /** maxItemCount */
-  @query(#{ explode: true }) `requestData.name`?: string,
-
-  /** maxItemCount */
-  @query(#{ explode: true }) `requestData.owner`?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TfvcLabel;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Changesets {
+  /** Retrieve Tfvc changes for a given changeset. */
+  @tag("Changesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "changesetChanges")
+  @extension("x-ms-vss-method", "GetChangesetChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/changesets/{id}/changes")
+  @get
+  GetChangesetChanges(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the changeset. Default: null */
+    @extension("x-ms-required", false) @path id: int32,
+
+    /** Number of results to skip. Default: null */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** The maximum number of results to return. Default: null */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Return the next page of results. Default: null */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TfvcChange[]>;
+
+  /** Retrieves the work items associated with a particular changeset. */
+  @tag("Changesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "changesetWorkItems")
+  @extension("x-ms-vss-method", "GetChangesetWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/changesets/{id}/workItems")
+  @get
+  GetChangesetWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the changeset. */
+    @extension("x-ms-required", false) @path id: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AssociatedWorkItem[]>;
+
+  /** Returns changesets for a given list of changeset Ids. */
+  @tag("Changesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "changesetsBatch")
+  @extension("x-ms-vss-method", "GetBatchedChangesets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/changesetsbatch")
+  @post
+  GetBatchedChangesets(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** List of changeset IDs. */
+    @body body: TfvcChangesetsRequestData,
+  ): Body<TfvcChangesetRef[]>;
+
+  /** Retrieve Tfvc Changesets Note: This is a new version of the GetChangesets API that doesn't expose the unneeded queryParams present in the 1.0 version of the API. */
+  @tag("Changesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "changesets")
+  @extension("x-ms-vss-method", "GetChangesets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/changesets")
+  @get
+  GetChangesets(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Include details about associated work items in the response. Default: null */
+    @query(#{ explode: true }) maxCommentLength?: int32,
+
+    /** Number of results to skip. Default: null */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** The maximum number of results to return. Default: null */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Results are sorted by ID in descending order by default. Use id asc to sort by ID in ascending order. */
+    @query(#{ explode: true }) $orderby?: string,
+
+    /** Alias or display name of user who made the changes. */
+    @query(#{ name: "searchCriteria.author", explode: true }) searchCriteriaAuthor?: string,
+
+    /** Whether or not to follow renames for the given item being queried. */
+    @query(#{ name: "searchCriteria.followRenames", explode: true }) searchCriteriaFollowRenames?: boolean,
+
+    /** If provided, only include changesets created after this date (string). */
+    @query(#{ name: "searchCriteria.fromDate", explode: true }) searchCriteriaFromDate?: string,
+
+    /** If provided, only include changesets after this changesetID. */
+    @query(#{ name: "searchCriteria.fromId", explode: true }) searchCriteriaFromId?: int32,
+
+    /** Whether to include the _links field on the shallow references. */
+    @query(#{ name: "searchCriteria.includeLinks", explode: true }) searchCriteriaIncludeLinks?: boolean,
+
+    /** Path of item to search under. */
+    @query(#{ name: "searchCriteria.itemPath", explode: true }) searchCriteriaItemPath?: string,
+
+    /** Following criteria available (.itemPath, .version, .versionType, .versionOption, .author, .fromId, .toId, .fromDate, .toDate) Default: null */
+    @query(#{ name: "searchCriteria.mappings", explode: true }) searchCriteriaMappings?: TfvcMappingFilter[],
+
+    /** If provided, only include changesets created before this date (string). */
+    @query(#{ name: "searchCriteria.toDate", explode: true }) searchCriteriaToDate?: string,
+
+    /** If provided, a version descriptor for the latest change list to include. */
+    @query(#{ name: "searchCriteria.toId", explode: true }) searchCriteriaToId?: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<TfvcChangesetRef[]>;
+
+  /** Create a new changeset. Accepts TfvcChangeset as JSON body */
+  @tag("Changesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "changesets")
+  @extension("x-ms-vss-method", "CreateChangeset")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/changesets")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+    @body body: TfvcChangeset,
+  ): TfvcChangesetRef;
+
+  /** Retrieve a Tfvc Changeset */
+  @tag("Changesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "changesets")
+  @extension("x-ms-vss-method", "GetChangeset")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/changesets/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Changeset Id to retrieve. */
+    @path id: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Number of changes to return (maximum 100 changes) Default: 0 */
+    @query(#{ explode: true }) maxChangeCount?: int32,
+
+    /** Include policy details and check-in notes in the response. Default: false */
+    @query(#{ explode: true }) includeDetails?: boolean,
+
+    /** Include workitems. Default: false */
+    @query(#{ explode: true }) includeWorkItems?: boolean,
+
+    /** Include details about associated work items in the response. Default: null */
+    @query(#{ explode: true }) maxCommentLength?: int32,
+
+    /** Include renames. Default: false */
+    @query(#{ explode: true }) includeSourceRename?: boolean,
+
+    /** Number of results to skip. Default: null */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** The maximum number of results to return. Default: null */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Results are sorted by ID in descending order by default. Use id asc to sort by ID in ascending order. */
+    @query(#{ explode: true }) $orderby?: string,
+
+    /** Alias or display name of user who made the changes. */
+    @query(#{ name: "searchCriteria.author", explode: true }) searchCriteriaAuthor?: string,
+
+    /** Whether or not to follow renames for the given item being queried. */
+    @query(#{ name: "searchCriteria.followRenames", explode: true }) searchCriteriaFollowRenames?: boolean,
+
+    /** If provided, only include changesets created after this date (string). */
+    @query(#{ name: "searchCriteria.fromDate", explode: true }) searchCriteriaFromDate?: string,
+
+    /** If provided, only include changesets after this changesetID. */
+    @query(#{ name: "searchCriteria.fromId", explode: true }) searchCriteriaFromId?: int32,
+
+    /** Whether to include the _links field on the shallow references. */
+    @query(#{ name: "searchCriteria.includeLinks", explode: true }) searchCriteriaIncludeLinks?: boolean,
+
+    /** Path of item to search under. */
+    @query(#{ name: "searchCriteria.itemPath", explode: true }) searchCriteriaItemPath?: string,
+
+    /** Following criteria available (.itemPath, .version, .versionType, .versionOption, .author, .fromId, .toId, .fromDate, .toDate) Default: null */
+    @query(#{ name: "searchCriteria.mappings", explode: true }) searchCriteriaMappings?: TfvcMappingFilter[],
+
+    /** If provided, only include changesets created before this date (string). */
+    @query(#{ name: "searchCriteria.toDate", explode: true }) searchCriteriaToDate?: string,
+
+    /** If provided, a version descriptor for the latest change list to include. */
+    @query(#{ name: "searchCriteria.toId", explode: true }) searchCriteriaToId?: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): TfvcChangeset;
+}
+
+interface Labels {
+  /** Get items under a label. */
+  @tag("Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "labelItems")
+  @extension("x-ms-vss-method", "GetLabelItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/labels/{labelId}/items")
+  @get
+  GetLabelItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Unique identifier of label */
+    @path labelId: string,
+
+    /** Max number of items to return */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of items to skip */
+    @query(#{ explode: true }) $skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TfvcItem[]>;
+
+  /** Get a collection of shallow label references. */
+  @tag("Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "labels")
+  @extension("x-ms-vss-method", "GetLabels")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/labels")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Whether to include the _links field on the shallow references */
+    @query(#{ name: "requestData.includeLinks", explode: true }) requestDataIncludeLinks?: boolean,
+
+    /** labelScope, name, owner, and itemLabelFilter */
+    @query(#{ name: "requestData.itemLabelFilter", explode: true }) requestDataItemLabelFilter?: string,
+
+    /** labelScope, name, owner, and itemLabelFilter */
+    @query(#{ name: "requestData.labelScope", explode: true }) requestDataLabelScope?: string,
+
+    /** labelScope, name, owner, and itemLabelFilter */
+    @query(#{ name: "requestData.maxItemCount", explode: true }) requestDataMaxItemCount?: int32,
+
+    /** labelScope, name, owner, and itemLabelFilter */
+    @query(#{ name: "requestData.name", explode: true }) requestDataName?: string,
+
+    /** labelScope, name, owner, and itemLabelFilter */
+    @query(#{ name: "requestData.owner", explode: true }) requestDataOwner?: string,
+
+    /** Max number of labels to return, defaults to 100 when undefined */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of labels to skip */
+    @query(#{ explode: true }) $skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TfvcLabelRef[]>;
+
+  /** Get a single deep label. */
+  @tag("Labels")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "labels")
+  @extension("x-ms-vss-method", "GetLabel")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/labels/{labelId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Unique identifier of label */
+    @path labelId: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Whether to include the _links field on the shallow references */
+    @query(#{ name: "requestData.includeLinks", explode: true }) requestDataIncludeLinks?: boolean,
+
+    /** maxItemCount */
+    @query(#{ name: "requestData.itemLabelFilter", explode: true }) requestDataItemLabelFilter?: string,
+
+    /** maxItemCount */
+    @query(#{ name: "requestData.labelScope", explode: true }) requestDataLabelScope?: string,
+
+    /** maxItemCount */
+    @query(#{ name: "requestData.maxItemCount", explode: true }) requestDataMaxItemCount?: int32,
+
+    /** maxItemCount */
+    @query(#{ name: "requestData.name", explode: true }) requestDataName?: string,
+
+    /** maxItemCount */
+    @query(#{ name: "requestData.owner", explode: true }) requestDataOwner?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TfvcLabel;
+}
+
+interface Shelvesets {
+  /** Get a single deep shelveset. */
+  @tag("Shelvesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "shelvesets")
+  @extension("x-ms-vss-method", "GetShelveset")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/shelvesets")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Shelveset's unique ID */
+    @query(#{ explode: true }) shelvesetId: string,
+
+    /** Whether to include policyOverride and notes Only applies when requesting a single deep shelveset */
+    @query(#{ name: "requestData.includeDetails", explode: true }) requestDataIncludeDetails?: boolean,
+
+    /** Whether to include the _links field on the shallow references. Does not apply when requesting a single deep shelveset object. Links will always be included in the deep shelveset. */
+    @query(#{ name: "requestData.includeLinks", explode: true }) requestDataIncludeLinks?: boolean,
+
+    /** Whether to include workItems */
+    @query(#{ name: "requestData.includeWorkItems", explode: true }) requestDataIncludeWorkItems?: boolean,
+
+    /** Max number of changes to include */
+    @query(#{ name: "requestData.maxChangeCount", explode: true }) requestDataMaxChangeCount?: int32,
+
+    /** Max length of comment */
+    @query(#{ name: "requestData.maxCommentLength", explode: true }) requestDataMaxCommentLength?: int32,
+
+    /** Shelveset name */
+    @query(#{ name: "requestData.name", explode: true }) requestDataName?: string,
+
+    /** Owner's ID. Could be a name or a guid. */
+    @query(#{ name: "requestData.owner", explode: true }) requestDataOwner?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TfvcShelveset;
+
+  /** Get changes included in a shelveset. */
+  @tag("Shelvesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "shelvesetChanges")
+  @extension("x-ms-vss-method", "GetShelvesetChanges")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/shelvesets/changes")
+  @get
+  GetShelvesetChanges(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Shelveset's unique ID */
+    @query(#{ explode: true }) shelvesetId: string,
+
+    /** Max number of changes to return */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Number of changes to skip */
+    @query(#{ explode: true }) $skip?: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TfvcChange[]>;
+
+  /** Get work items associated with a shelveset. */
+  @tag("Shelvesets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "shelvesetWorkItems")
+  @extension("x-ms-vss-method", "GetShelvesetWorkItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/tfvc/shelvesets/workitems")
+  @get
+  GetShelvesetWorkItems(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Shelveset's unique ID */
+    @query(#{ explode: true }) shelvesetId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AssociatedWorkItem[]>;
+}
+
+interface Branches {
+  /** Get branch hierarchies below the specified scopePath */
+  @tag("Branches")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "branches")
+  @extension("x-ms-vss-method", "GetBranchRefs")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/branches")
+  @get
+  GetBranchRefs(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Full path to the branch. Default: $/ Examples: $/, $/MyProject, $/MyProject/SomeFolder. */
+    @query(#{ explode: true }) scopePath: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Return deleted branches. Default: False */
+    @query(#{ explode: true }) includeDeleted?: boolean,
+
+    /** Return links. Default: False */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TfvcBranchRef[]>;
+}
+
+interface Items {
+  /** Post for retrieving a set of items given a list of paths or a long path. Allows for specifying the recursionLevel and version descriptors for each path. */
+  @tag("Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "itemBatch")
+  @extension("x-ms-vss-method", "GetItemsBatch")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/itembatch")
+  @post
+  GetItemsBatch(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: TfvcItemRequestData,
+  ):
+    | {
+        @header contentType: "application/zip";
+        @body body: unknown[][];
+      }
+    | Body<unknown[][]>;
+
+  /** Get a list of Tfvc items */
+  @tag("Items")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "items")
+  @extension("x-ms-vss-method", "GetItems")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/tfvc/items")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Version control path of a folder to return multiple items. */
+    @query(#{ explode: true }) scopePath?: string,
+
+    /** None (just the item), or OneLevel (contents of a folder). */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "VersionControlRecursionType",
+        values: #[
+          #{ value: "none", description: "Only return the specified item." },
+          #{ value: "oneLevel", description: "Return the specified item and its direct children." },
+          #{
+            value: "oneLevelPlusNestedEmptyFolders",
+            description: "Return the specified item and its direct children, as well as recursive chains of nested child folders that only contain a single folder.",
+          },
+          #{ value: "full", description: "Return specified item and all descendants" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full",
+
+    /** True to include links. */
+    @query(#{ explode: true }) includeLinks?: boolean,
+
+    /** Version object. */
+    @query(#{ name: "versionDescriptor.version", explode: true }) versionDescriptorVersion?: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TfvcVersionOption",
+        values: #[
+          #{ value: "none", description: "None." },
+          #{ value: "previous", description: "Return the previous version." },
+          #{
+            value: "useRename",
+            description: "Only usuable with versiontype MergeSource and integer versions, uses RenameSource identifier instead of Merge identifier.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionOption`?: "none" | "previous" | "useRename",
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TfvcVersionType",
+        values: #[
+          #{ value: "none", description: "Version is treated as a ChangesetId." },
+          #{ value: "changeset", description: "Version is treated as a ChangesetId." },
+          #{ value: "shelveset", description: "Version is treated as a Shelveset name and owner." },
+          #{ value: "change", description: "Version is treated as a Change." },
+          #{ value: "date", description: "Version is treated as a Date." },
+          #{
+            value: "latest",
+            description: "If Version is defined the Latest of that Version will be used, if no version is defined the latest ChangesetId will be used.",
+          },
+          #{
+            value: "tip",
+            description: "Version will be treated as a Tip, if no version is defined latest will be used.",
+          },
+          #{ value: "mergeSource", description: "Version will be treated as a MergeSource." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `versionDescriptor.versionType`?:
+      | "none"
+      | "changeset"
+      | "shelveset"
+      | "change"
+      | "date"
+      | "latest"
+      | "tip"
+      | "mergeSource",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TfvcItem[]>;
 }

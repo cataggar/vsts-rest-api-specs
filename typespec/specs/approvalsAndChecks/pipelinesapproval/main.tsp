@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Approval" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Approval;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model Approval {
   _links?: ReferenceLinks;
@@ -454,151 +460,153 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** List Approvals. This can be used to get a set of pending approvals in a pipeline, on an user or for a resource.. */
-@tag("Approvals")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "approvals")
-@extension("x-ms-vss-method", "QueryApprovals")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/approvals")
-@get
-op Approvals_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** List of approval Ids to get. */
-  @format("array (uuid)") @query(#{ explode: true }) approvalIds?: string,
-
-  /** Include these additional details in the returned objects. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ApprovalDetailsExpandParameter",
-      values: #[
-        #{ value: "none", description: "No additional properties." },
-        #{ value: "steps", description: "Include approval steps associated with the approval." },
-        #{
-          value: "permissions",
-          description: "Include current user permissions for approval object.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "steps" | "permissions",
-
-  /** List of user Ids approvals assigned to. Accepts user Ids, user descriptors or user emails. */
-  @format("array (string)") @query(#{ explode: true }) assignedTo?: string,
-
-  /** Approval status. Returns approvals of any status if not provided */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ApprovalStatus",
-      values: #[
-        #{ value: "undefined", description: "" },
-        #{
-          value: "uninitiated",
-          description: "Indicates the approval is Uninitiated. Used in case of in sequence order of execution where given approver is not yet actionable.",
-        },
-        #{ value: "pending", description: "Indicates the approval is Pending." },
-        #{ value: "approved", description: "Indicates the approval is Approved." },
-        #{ value: "rejected", description: "Indicates the approval is Rejected." },
-        #{ value: "skipped", description: "Indicates the approval is Skipped." },
-        #{ value: "canceled", description: "Indicates the approval is Canceled." },
-        #{ value: "timedOut", description: "Indicates the approval is Timed out." },
-        #{ value: "deferred", description: "Indicates the approval is Deferred." },
-        #{ value: "failed", description: "" },
-        #{ value: "completed", description: "" },
-        #{ value: "all", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  state?:
-    | "undefined"
-    | "uninitiated"
-    | "pending"
-    | "approved"
-    | "rejected"
-    | "skipped"
-    | "canceled"
-    | "timedOut"
-    | "deferred"
-    | "failed"
-    | "completed"
-    | "all",
-
-  /** Maximum number of approvals to get. */
-  @query(#{ explode: true }) top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<Approval[]>;
-
-/** Update approvals. */
-@tag("Approvals")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "approvals")
-@extension("x-ms-vss-method", "UpdateApprovals")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/approvals")
-@patch
-op Approvals_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: ApprovalUpdateParameters[],
-): Body<Approval[]>;
-
-/** Get an approval. */
-@tag("Approvals")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "approvals")
-@extension("x-ms-vss-method", "GetApproval")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/approvals/{approvalId}")
-@get
-op Approvals_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the approval. */
-  @format("uuid") @path approvalId: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ApprovalDetailsExpandParameter",
-      values: #[
-        #{ value: "none", description: "No additional properties." },
-        #{ value: "steps", description: "Include approval steps associated with the approval." },
-        #{
-          value: "permissions",
-          description: "Include current user permissions for approval object.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "steps" | "permissions",
-  ...Parameters.`api-Version-preview`.`2`,
-): Approval;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Approvals {
+  /** List Approvals. This can be used to get a set of pending approvals in a pipeline, on an user or for a resource.. */
+  @tag("Approvals")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "approvals")
+  @extension("x-ms-vss-method", "QueryApprovals")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/approvals")
+  @get
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** List of approval Ids to get. */
+    @format("array (uuid)") @query(#{ explode: true }) approvalIds?: string,
+
+    /** Include these additional details in the returned objects. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ApprovalDetailsExpandParameter",
+        values: #[
+          #{ value: "none", description: "No additional properties." },
+          #{ value: "steps", description: "Include approval steps associated with the approval." },
+          #{
+            value: "permissions",
+            description: "Include current user permissions for approval object.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "steps" | "permissions",
+
+    /** List of user Ids approvals assigned to. Accepts user Ids, user descriptors or user emails. */
+    @format("array (string)") @query(#{ explode: true }) assignedTo?: string,
+
+    /** Approval status. Returns approvals of any status if not provided */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ApprovalStatus",
+        values: #[
+          #{ value: "undefined", description: "" },
+          #{
+            value: "uninitiated",
+            description: "Indicates the approval is Uninitiated. Used in case of in sequence order of execution where given approver is not yet actionable.",
+          },
+          #{ value: "pending", description: "Indicates the approval is Pending." },
+          #{ value: "approved", description: "Indicates the approval is Approved." },
+          #{ value: "rejected", description: "Indicates the approval is Rejected." },
+          #{ value: "skipped", description: "Indicates the approval is Skipped." },
+          #{ value: "canceled", description: "Indicates the approval is Canceled." },
+          #{ value: "timedOut", description: "Indicates the approval is Timed out." },
+          #{ value: "deferred", description: "Indicates the approval is Deferred." },
+          #{ value: "failed", description: "" },
+          #{ value: "completed", description: "" },
+          #{ value: "all", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    state?:
+      | "undefined"
+      | "uninitiated"
+      | "pending"
+      | "approved"
+      | "rejected"
+      | "skipped"
+      | "canceled"
+      | "timedOut"
+      | "deferred"
+      | "failed"
+      | "completed"
+      | "all",
+
+    /** Maximum number of approvals to get. */
+    @query(#{ explode: true }) top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<Approval[]>;
+
+  /** Update approvals. */
+  @tag("Approvals")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "approvals")
+  @extension("x-ms-vss-method", "UpdateApprovals")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/approvals")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: ApprovalUpdateParameters[],
+  ): Body<Approval[]>;
+
+  /** Get an approval. */
+  @tag("Approvals")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "approvals")
+  @extension("x-ms-vss-method", "GetApproval")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/approvals/{approvalId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the approval. */
+    @format("uuid") @path approvalId: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ApprovalDetailsExpandParameter",
+        values: #[
+          #{ value: "none", description: "No additional properties." },
+          #{ value: "steps", description: "Include approval steps associated with the approval." },
+          #{
+            value: "permissions",
+            description: "Include current user permissions for approval object.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "steps" | "permissions",
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Approval;
 }

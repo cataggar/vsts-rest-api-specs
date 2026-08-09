@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "PipelinesChecks" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace PipelinesChecks;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model ApprovalCheckConfiguration {
   ...CheckConfiguration;
@@ -579,253 +585,257 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get Check configuration by resource type and id */
-@tag("Check Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "GetCheckConfigurationsOnResource")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/configurations")
-@get
-op CheckConfigurations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** resource type */
-  @query(#{ explode: true }) resourceType?: string,
-
-  /** resource id */
-  @query(#{ explode: true }) resourceId?: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CheckConfigurationExpandParameter",
-      values: #[#{ value: "none", description: "" }, #{ value: "settings", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "settings",
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<CheckConfiguration[]>;
-
-/** Add a check configuration */
-@tag("Check Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "AddCheckConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/configurations")
-@post
-op CheckConfigurations_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: CheckConfiguration,
-): CheckConfiguration;
-
-/** Delete check configuration by id */
-@tag("Check Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "DeleteCheckConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
-@delete
-op CheckConfigurations_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** check configuration id */
-  @path id: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get Check configuration by Id */
-@tag("Check Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "GetCheckConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
-@get
-op CheckConfigurations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path id: int32,
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CheckConfigurationExpandParameter",
-      values: #[#{ value: "none", description: "" }, #{ value: "settings", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "settings",
-  ...Parameters.`api-Version-preview`.`1`,
-): CheckConfiguration;
-
-/** Update check configuration */
-@tag("Check Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "configurations")
-@extension("x-ms-vss-method", "UpdateCheckConfiguration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
-@patch
-op CheckConfigurations_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** check configuration id */
-  @path id: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** check configuration */
-  @body body: CheckConfiguration,
-): CheckConfiguration;
-
-/** Get check configurations for multiple resources by resource type and id. */
-@tag("Check Configurations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "queryconfigurations")
-@extension("x-ms-vss-method", "QueryCheckConfigurationsOnResources")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/queryconfigurations")
-@post
-op CheckConfigurations_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The properties that should be expanded in the list of check configurations. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CheckConfigurationExpandParameter",
-      values: #[#{ value: "none", description: "" }, #{ value: "settings", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "settings",
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** List of resources. */
-  @body body: Resource[],
-): Body<CheckConfiguration[]>;
-
-/** Initiate an evaluation for a check in a pipeline */
-@tag("Check Evaluations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "EvaluateCheckSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/runs")
-@post
-op CheckEvaluations_Evaluate(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CheckSuiteExpandParameter",
-      values: #[#{ value: "none", description: "" }, #{ value: "resources", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "resources",
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: CheckSuiteRequest,
-): CheckSuite;
-
-/** Get details for a specific check evaluation */
-@tag("Check Evaluations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "GetCheckSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}")
-@get
-op CheckEvaluations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @format("uuid") @path checkSuiteId: string,
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CheckSuiteExpandParameter",
-      values: #[#{ value: "none", description: "" }, #{ value: "resources", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "resources",
-  ...Parameters.`api-Version-preview`.`1`,
-): CheckSuite;
-
-/** Update a check run of a check suite Following update actions are supported: * rerun - allows to rerun an already completed check, if the check retry interval is 0 * bypass - applied on a check which has not already been bypassed and whose check suite is not completed yet */
-@tag("Check Evaluations")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "UpdateCheckSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}")
-@patch
-op CheckEvaluations_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @format("uuid") @path checkSuiteId: string,
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "CheckSuiteExpandParameter",
-      values: #[#{ value: "none", description: "" }, #{ value: "resources", description: "" }],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "resources",
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: CheckSuiteUpdateParameter,
-): CheckSuite;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface CheckConfigurations {
+  /** Get Check configuration by resource type and id */
+  @tag("Check Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "GetCheckConfigurationsOnResource")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/configurations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** resource type */
+    @query(#{ explode: true }) resourceType?: string,
+
+    /** resource id */
+    @query(#{ explode: true }) resourceId?: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CheckConfigurationExpandParameter",
+        values: #[#{ value: "none", description: "" }, #{ value: "settings", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "settings",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<CheckConfiguration[]>;
+
+  /** Add a check configuration */
+  @tag("Check Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "AddCheckConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/configurations")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: CheckConfiguration,
+  ): CheckConfiguration;
+
+  /** Delete check configuration by id */
+  @tag("Check Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "DeleteCheckConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** check configuration id */
+    @path id: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get Check configuration by Id */
+  @tag("Check Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "GetCheckConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path id: int32,
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CheckConfigurationExpandParameter",
+        values: #[#{ value: "none", description: "" }, #{ value: "settings", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "settings",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): CheckConfiguration;
+
+  /** Update check configuration */
+  @tag("Check Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "configurations")
+  @extension("x-ms-vss-method", "UpdateCheckConfiguration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** check configuration id */
+    @path id: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** check configuration */
+    @body body: CheckConfiguration,
+  ): CheckConfiguration;
+
+  /** Get check configurations for multiple resources by resource type and id. */
+  @tag("Check Configurations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "queryconfigurations")
+  @extension("x-ms-vss-method", "QueryCheckConfigurationsOnResources")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/queryconfigurations")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The properties that should be expanded in the list of check configurations. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CheckConfigurationExpandParameter",
+        values: #[#{ value: "none", description: "" }, #{ value: "settings", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "settings",
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** List of resources. */
+    @body body: Resource[],
+  ): Body<CheckConfiguration[]>;
+}
+
+interface CheckEvaluations {
+  /** Initiate an evaluation for a check in a pipeline */
+  @tag("Check Evaluations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "EvaluateCheckSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/runs")
+  @post
+  Evaluate(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CheckSuiteExpandParameter",
+        values: #[#{ value: "none", description: "" }, #{ value: "resources", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "resources",
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: CheckSuiteRequest,
+  ): CheckSuite;
+
+  /** Get details for a specific check evaluation */
+  @tag("Check Evaluations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "GetCheckSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @format("uuid") @path checkSuiteId: string,
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CheckSuiteExpandParameter",
+        values: #[#{ value: "none", description: "" }, #{ value: "resources", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "resources",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): CheckSuite;
+
+  /** Update a check run of a check suite Following update actions are supported: * rerun - allows to rerun an already completed check, if the check retry interval is 0 * bypass - applied on a check which has not already been bypassed and whose check suite is not completed yet */
+  @tag("Check Evaluations")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "UpdateCheckSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @format("uuid") @path checkSuiteId: string,
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "CheckSuiteExpandParameter",
+        values: #[#{ value: "none", description: "" }, #{ value: "resources", description: "" }],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "resources",
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: CheckSuiteUpdateParameter,
+  ): CheckSuite;
 }

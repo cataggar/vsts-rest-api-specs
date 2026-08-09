@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Management" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://advsec.dev.azure.com")
 namespace Management;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AdvSecEnablementFeatures {
   /** Copilot Autofix enablement status set to False when disabled and True when enabled; Null is never explicitly set. Setting Autofix enablement state is only supported for repo enablement and not org or project enablement at this time. */
@@ -355,271 +361,285 @@ model SecretProtectionFeatures {
   secretProtectionEnablementLastChangedDate?: utcDateTime;
 }
 
-/** Get the current status of Advanced Security for the organization */
-@tag("Org Enablement")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "orgEnablement")
-@extension("x-ms-vss-method", "GetOrgEnablementStatus2")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/management/enablement")
-@get
-op OrgEnablement_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** When true, also determine if pushes are blocked if they contain secrets */
-  @query(#{ explode: true }) includeAllProperties?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OrgEnablementSettings;
-
-/** Update the status of Advanced Security for the organization */
-@tag("Org Enablement")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "orgEnablement")
-@extension("x-ms-vss-method", "UpdateOrgEnablementStatus2")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/management/enablement")
-@patch
-op OrgEnablement_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The new status */
-  @body body: OrgEnablementSettings,
-): OkResponse;
-
-/** Get commiters used when calculating billing information. */
-@tag("Meter Usage")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "meterUsage")
-@extension("x-ms-vss-method", "GetMeterUsage2")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/management/meterusage/default")
-@get
-op MeterUsage_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The plan to query. Plans supported: CodeSecurity and SecretProtection. This is a mandatory parameter. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "Plan",
-      values: #[
-        #{ value: "codeSecurity", description: "The Code Security plan" },
-        #{ value: "secretProtection", description: "The Secret Protection plan" },
-        #{ value: "all", description: "Include all plans" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  plan: "codeSecurity" | "secretProtection" | "all",
-
-  /** The date to query, or if not provided, today */
-  @query(#{ explode: true }) billingDate?: utcDateTime,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): MeterUsageForPlan;
-
-/** Estimate the pushers that would be added to the customer's usage if Advanced Security was enabled for this organization. */
-@tag("Org Meter Usage Estimate")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "orgMeterUsageEstimate")
-@extension("x-ms-vss-method", "GetEstimatedBillablePushersDetailsForOrg2")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/management/meterUsageEstimate/default")
-@get
-op OrgMeterUsageEstimate_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The plan to query. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "Plan",
-      values: #[
-        #{ value: "codeSecurity", description: "The Code Security plan" },
-        #{ value: "secretProtection", description: "The Secret Protection plan" },
-        #{ value: "all", description: "Include all plans" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  plan?: "codeSecurity" | "secretProtection" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): MeterUsageEstimate;
-
-/** Get the current status of Advanced Security for a project */
-@tag("Project Enablement")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "projectEnablement")
-@extension("x-ms-vss-method", "GetProjectEnablementStatus2")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/management/enablement")
-@get
-op ProjectEnablement_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** When true, also determine if pushes are blocked if they contain secrets */
-  @query(#{ explode: true }) includeAllProperties?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): ProjectEnablementSettings;
-
-/** Update the status of Advanced Security for the project */
-@tag("Project Enablement")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "projectEnablement")
-@extension("x-ms-vss-method", "UpdateProjectEnablementStatus2")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/management/enablement")
-@patch
-op ProjectEnablement_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** The new status */
-  @body body: ProjectEnablementSettings,
-): OkResponse;
-
-/** Estimate the pushers that would be added to the customer's usage if Advanced Security was enabled for this project. */
-@tag("Project Meter Usage Estimate")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "projectMeterUsageEstimate")
-@extension("x-ms-vss-method", "GetEstimatedBillablePushersDetailsForProject2")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/management/meterUsageEstimate/default")
-@get
-op ProjectMeterUsageEstimate_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "Plan",
-      values: #[
-        #{ value: "codeSecurity", description: "The Code Security plan" },
-        #{ value: "secretProtection", description: "The Secret Protection plan" },
-        #{ value: "all", description: "Include all plans" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  plan?: "codeSecurity" | "secretProtection" | "all",
-  ...Parameters.`api-Version-preview`.`3`,
-): MeterUsageEstimate;
-
-/** Determines if Code Security, Secret Protection, and their features are enabled for the repository. */
-@tag("Repo Enablement")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "repoEnablement")
-@extension("x-ms-vss-method", "GetRepoEnablementStatus2")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/management/repositories/{repository}/enablement")
-@get
-op RepoEnablement_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository */
-  @path repository: string,
-
-  /** When true, will also determine if pushes are blocked when secrets are detected */
-  @query(#{ explode: true }) includeAllProperties?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): RepoEnablementSettings;
-
-/** Update the enablement status of Code Security and Secret Protection, along with their respective features, for a given repository. */
-@tag("Repo Enablement")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "repoEnablement")
-@extension("x-ms-vss-method", "UpdateRepoAdvSecEnablementStatus2")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/management/repositories/{repository}/enablement")
-@patch
-op RepoEnablement_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name or ID of the repository */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** new status */
-  @body body: RepoEnablementSettings,
-): OkResponse;
-
-/** Estimate the pushers that would be added to the customer's usage if Advanced Security was enabled for this repository. */
-@tag("Repo Meter Usage Estimate")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "repoMeterUsageEstimate")
-@extension("x-ms-vss-method", "GetEstimatedBillableCommittersDetailsForRepo2")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/management/repositories/{repository}/meterUsageEstimate/default")
-@get
-op RepoMeterUsageEstimate_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository */
-  @path repository: string,
-
-  /** The plan to query. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "Plan",
-      values: #[
-        #{ value: "codeSecurity", description: "The Code Security plan" },
-        #{ value: "secretProtection", description: "The Secret Protection plan" },
-        #{ value: "all", description: "Include all plans" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  plan?: "codeSecurity" | "secretProtection" | "all",
-
-  ...Parameters.`api-Version-preview`.`3`,
-): MeterUsageEstimate;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface OrgEnablement {
+  /** Get the current status of Advanced Security for the organization */
+  @tag("Org Enablement")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "orgEnablement")
+  @extension("x-ms-vss-method", "GetOrgEnablementStatus2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/management/enablement")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** When true, also determine if pushes are blocked if they contain secrets */
+    @query(#{ explode: true }) includeAllProperties?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OrgEnablementSettings;
+
+  /** Update the status of Advanced Security for the organization */
+  @tag("Org Enablement")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "orgEnablement")
+  @extension("x-ms-vss-method", "UpdateOrgEnablementStatus2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/management/enablement")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The new status */
+    @body body: OrgEnablementSettings,
+  ): OkResponse;
+}
+
+interface MeterUsageOperations {
+  /** Get commiters used when calculating billing information. */
+  @tag("Meter Usage")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "meterUsage")
+  @extension("x-ms-vss-method", "GetMeterUsage2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/management/meterusage/default")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The plan to query. Plans supported: CodeSecurity and SecretProtection. This is a mandatory parameter. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "Plan",
+        values: #[
+          #{ value: "codeSecurity", description: "The Code Security plan" },
+          #{ value: "secretProtection", description: "The Secret Protection plan" },
+          #{ value: "all", description: "Include all plans" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    plan: "codeSecurity" | "secretProtection" | "all",
+
+    /** The date to query, or if not provided, today */
+    @query(#{ explode: true }) billingDate?: utcDateTime,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): MeterUsageForPlan;
+}
+
+interface OrgMeterUsageEstimate {
+  /** Estimate the pushers that would be added to the customer's usage if Advanced Security was enabled for this organization. */
+  @tag("Org Meter Usage Estimate")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "orgMeterUsageEstimate")
+  @extension("x-ms-vss-method", "GetEstimatedBillablePushersDetailsForOrg2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/management/meterUsageEstimate/default")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The plan to query. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "Plan",
+        values: #[
+          #{ value: "codeSecurity", description: "The Code Security plan" },
+          #{ value: "secretProtection", description: "The Secret Protection plan" },
+          #{ value: "all", description: "Include all plans" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    plan?: "codeSecurity" | "secretProtection" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): MeterUsageEstimate;
+}
+
+interface ProjectEnablement {
+  /** Get the current status of Advanced Security for a project */
+  @tag("Project Enablement")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "projectEnablement")
+  @extension("x-ms-vss-method", "GetProjectEnablementStatus2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/management/enablement")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** When true, also determine if pushes are blocked if they contain secrets */
+    @query(#{ explode: true }) includeAllProperties?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): ProjectEnablementSettings;
+
+  /** Update the status of Advanced Security for the project */
+  @tag("Project Enablement")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "projectEnablement")
+  @extension("x-ms-vss-method", "UpdateProjectEnablementStatus2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/management/enablement")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** The new status */
+    @body body: ProjectEnablementSettings,
+  ): OkResponse;
+}
+
+interface ProjectMeterUsageEstimate {
+  /** Estimate the pushers that would be added to the customer's usage if Advanced Security was enabled for this project. */
+  @tag("Project Meter Usage Estimate")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "projectMeterUsageEstimate")
+  @extension("x-ms-vss-method", "GetEstimatedBillablePushersDetailsForProject2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/management/meterUsageEstimate/default")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "Plan",
+        values: #[
+          #{ value: "codeSecurity", description: "The Code Security plan" },
+          #{ value: "secretProtection", description: "The Secret Protection plan" },
+          #{ value: "all", description: "Include all plans" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    plan?: "codeSecurity" | "secretProtection" | "all",
+    ...Parameters.`api-Version-preview`.`3`,
+  ): MeterUsageEstimate;
+}
+
+interface RepoEnablement {
+  /** Determines if Code Security, Secret Protection, and their features are enabled for the repository. */
+  @tag("Repo Enablement")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "repoEnablement")
+  @extension("x-ms-vss-method", "GetRepoEnablementStatus2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/management/repositories/{repository}/enablement")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository */
+    @path repository: string,
+
+    /** When true, will also determine if pushes are blocked when secrets are detected */
+    @query(#{ explode: true }) includeAllProperties?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): RepoEnablementSettings;
+
+  /** Update the enablement status of Code Security and Secret Protection, along with their respective features, for a given repository. */
+  @tag("Repo Enablement")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "repoEnablement")
+  @extension("x-ms-vss-method", "UpdateRepoAdvSecEnablementStatus2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/management/repositories/{repository}/enablement")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name or ID of the repository */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** new status */
+    @body body: RepoEnablementSettings,
+  ): OkResponse;
+}
+
+interface RepoMeterUsageEstimate {
+  /** Estimate the pushers that would be added to the customer's usage if Advanced Security was enabled for this repository. */
+  @tag("Repo Meter Usage Estimate")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "repoMeterUsageEstimate")
+  @extension("x-ms-vss-method", "GetEstimatedBillableCommittersDetailsForRepo2")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/management/repositories/{repository}/meterUsageEstimate/default")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository */
+    @path repository: string,
+
+    /** The plan to query. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "Plan",
+        values: #[
+          #{ value: "codeSecurity", description: "The Code Security plan" },
+          #{ value: "secretProtection", description: "The Secret Protection plan" },
+          #{ value: "all", description: "Include all plans" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    plan?: "codeSecurity" | "secretProtection" | "all",
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): MeterUsageEstimate;
 }

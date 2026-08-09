@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Test" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace Test;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AbortTestRunRequest {
   options?: int32;
@@ -5177,1056 +5183,1078 @@ model YamlReleaseReference {
   stagesToSkip?: string;
 }
 
-/** Get code coverage data for a build. */
-@tag("Code Coverage")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "codeCoverage")
-@extension("x-ms-vss-method", "GetBuildCodeCoverage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/codecoverage")
-@get
-op CodeCoverage_GetBuildCodeCoverage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the build for which code coverage data needs to be fetched. */
-  @query(#{ explode: true }) buildId: int32,
-
-  /** Value of flags determine the level of code coverage details to be fetched. Flags are additive. Expected Values are 1 for Modules, 2 for Functions, 4 for BlockData. */
-  @query(#{ explode: true }) flags: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<BuildCoverage[]>;
-
-/** Get a list of test points. */
-@tag("Points")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "points")
-@extension("x-ms-vss-method", "GetPoints")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points")
-@get
-op Points_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan. */
-  @path planId: int32,
-
-  /** ID of the suite that contains the points. */
-  @path suiteId: int32,
-
-  /** Comma-separated list of work item field names. */
-  @query(#{ explode: true }) witFields?: string,
-
-  /** Get test points for specific configuration. */
-  @query(#{ explode: true }) configurationId?: string,
-
-  /** Get test points for a specific test case, valid when configurationId is not set. */
-  @query(#{ explode: true }) testCaseId?: string,
-
-  /** Get test points for comma-separated list of test point IDs, valid only when configurationId and testCaseId are not set. */
-  @query(#{ explode: true }) testPointIds?: string,
-
-  /** Include all properties for the test point. */
-  @query(#{ explode: true }) includePointDetails?: boolean,
-
-  /** Number of test points to skip.. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Number of test points to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<TestPoint[]>;
-
-/** Get a test point. */
-@tag("Points")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "points")
-@extension("x-ms-vss-method", "GetPoint")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points/{pointIds}")
-@get
-op Points_GetPoint(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan. */
-  @path planId: int32,
-
-  /** ID of the suite that contains the point. */
-  @path suiteId: int32,
-
-  /** ID of the test point to get. */
-  @path pointIds: int32,
-
-  /** Comma-separated list of work item field names. */
-  @query(#{ explode: true }) witFields?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): TestPoint;
-
-/** Update test points. */
-@tag("Points")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "points")
-@extension("x-ms-vss-method", "UpdateTestPoints")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points/{pointIds}")
-@patch
-op Points_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan. */
-  @path planId: int32,
-
-  /** ID of the suite that contains the points. */
-  @path suiteId: int32,
-
-  /** ID of the test point to get. Use a comma-separated list of IDs to update multiple test points. */
-  @path pointIds: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** Data to update. */
-  @body body: PointUpdateModel,
-): Body<TestPoint[]>;
-
-/** Get all test cases in a suite. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "GetTestCases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases")
-@get
-op TestSuites_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suites. */
-  @path planId: int32,
-
-  /** ID of the suite to get. */
-  @path suiteId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<SuiteTestCase[]>;
-
-/** The test points associated with the test cases are removed from the test suite. The test case work item is not deleted from the system. See test cases resource to delete a test case permanently. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "RemoveTestCasesFromSuiteUrl")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
-@delete
-op TestSuites_RemoveTestCasesFromSuiteUrl(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suite. */
-  @path planId: int32,
-
-  /** ID of the suite to get. */
-  @path suiteId: int32,
-
-  /** IDs of the test cases to remove from the suite. */
-  @path testCaseIds: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Get a specific test case in a test suite with test case id. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "GetTestCaseById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
-@get
-op TestSuites_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suites. */
-  @path planId: int32,
-
-  /** ID of the suite that contains the test case. */
-  @path suiteId: int32,
-
-  /** ID of the test case to get. */
-  @path testCaseIds: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): SuiteTestCase;
-
-/** Updates the properties of the test case association in a suite. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "UpdateSuiteTestCases")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
-@patch
-op TestSuites_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suite. */
-  @path planId: int32,
-
-  /** ID of the test suite to which the test cases must be added. */
-  @path suiteId: int32,
-
-  /** IDs of the test cases to add to the suite. Ids are specified in comma separated format. */
-  @path testCaseIds: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** Model for updation of the properties of test case suite association. */
-  @body body: SuiteTestCaseUpdateModel,
-): Body<SuiteTestCase[]>;
-
-/** Add test cases to suite. */
-@tag("Test  Suites")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "suites")
-@extension("x-ms-vss-method", "AddTestCasesToSuite")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
-@post
-op TestSuites_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test plan that contains the suite. */
-  @path planId: int32,
-
-  /** ID of the test suite to which the test cases must be added. */
-  @path suiteId: int32,
-
-  /** IDs of the test cases to add to the suite. Ids are specified in comma separated format. */
-  @path testCaseIds: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<SuiteTestCase[]>;
-
-/** Get test points using query. */
-@tag("Points")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "points")
-@extension("x-ms-vss-method", "GetPointsByQuery")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/points")
-@post
-op Points_GetPointsByQuery(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Number of test points to skip.. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Number of test points to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** TestPointsQuery to get test points. */
-  @body body: TestPointsQuery,
-): TestPointsQuery;
-
-/** Get test result retention settings */
-@tag("Result Retention Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "resultRetentionSettings")
-@extension("x-ms-vss-method", "GetResultRetentionSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/resultretentionsettings")
-@get
-op ResultRetentionSettings_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): ResultRetentionSettings;
-
-/** Update test result retention settings */
-@tag("Result Retention Settings")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "resultRetentionSettings")
-@extension("x-ms-vss-method", "UpdateResultRetentionSettings")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/resultretentionsettings")
-@patch
-op ResultRetentionSettings_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Test result retention settings details to be updated */
-  @body body: ResultRetentionSettings,
-): ResultRetentionSettings;
-
-/** Get history of a test method using TestHistoryQuery */
-@tag("Test History")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "testHistory")
-@extension("x-ms-vss-method", "QueryTestHistory")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Results/testhistory")
-@post
-op TestHistory_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-
-  /** TestHistoryQuery to get history */
-  @body body: TestHistoryQuery,
-): TestHistoryQuery;
-
-/** Get a list of test runs. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "GetTestRuns")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/runs")
-@get
-op Runs_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** URI of the build that the runs used. */
-  @query(#{ explode: true }) buildUri?: string,
-
-  /** Team foundation ID of the owner of the runs. */
-  @query(#{ explode: true }) owner?: string,
-
-  @query(#{ explode: true }) tmiRunId?: string,
-
-  /** ID of the test plan that the runs are a part of. */
-  @query(#{ explode: true }) planId?: int32,
-
-  /** If true, include all the properties of the runs. */
-  @query(#{ explode: true }) includeRunDetails?: boolean,
-
-  /** If true, only returns automated runs. */
-  @query(#{ explode: true }) automated?: boolean,
-
-  /** Number of test runs to skip. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Number of test runs to return. */
-  @query(#{ explode: true }) $top?: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<TestRun[]>;
-
-/** Create new test run. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "CreateTestRun")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/runs")
-@post
-op Runs_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** Run details RunCreateModel */
-  @body body: RunCreateModel,
-): TestRun;
-
-/** Delete a test run by its ID. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "DeleteTestRun")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/runs/{runId}")
-@delete
-op Runs_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the run to delete. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): OkResponse;
-
-/** Get a test run by its ID. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "GetTestRunById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/runs/{runId}")
-@get
-op Runs_GetTestRunById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the run to get. */
-  @path runId: int32,
-
-  /** Default value is true. It includes details like run statistics, release, build, test environment, post process state, and more. */
-  @query(#{ explode: true }) includeDetails?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): TestRun;
-
-/** Update test run by its ID. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "UpdateTestRun")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/runs/{runId}")
-@patch
-op Runs_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the run to update. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-
-  /** Run details RunUpdateModel */
-  @body body: RunUpdateModel,
-): TestRun;
-
-/** Get list of test run attachments reference. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetTestRunAttachments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments")
-@get
-op Attachments_GetTestRunAttachments(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestAttachment[]>;
-
-/** Attach a file to a test run. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "CreateTestRunAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments")
-@post
-op Attachments_CreateTestRunAttachment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run against which attachment has to be uploaded. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Attachment details TestAttachmentRequestModel */
-  @body body: TestAttachmentRequestModel,
-): TestAttachmentReference;
-
-/** Download a test run attachment by its ID. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetTestRunAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments/{attachmentId}")
-@get
-op Attachments_GetTestRunAttachmentZip(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run whose attachment has to be downloaded. */
-  @path runId: int32,
-
-  /** ID of the test run attachment to be downloaded. */
-  @path attachmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header contentType: "application/octet-stream";
-      @body @format("Stream") body: string;
-    }
-  | {
-      @header contentType: "application/zip";
-      @body @format("Stream") body: string;
-    };
-
-/** Get code coverage data for a test run */
-@tag("Code Coverage")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "codeCoverage")
-@extension("x-ms-vss-method", "GetTestRunCodeCoverage")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/codecoverage")
-@get
-op CodeCoverage_GetTestRunCodeCoverage(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run for which code coverage data needs to be fetched. */
-  @path runId: int32,
-
-  /** Value of flags determine the level of code coverage details to be fetched. Flags are additive. Expected Values are 1 for Modules, 2 for Functions, 4 for BlockData. */
-  @query(#{ explode: true }) flags: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestRunCoverage[]>;
-
-/** Get test results for a test run. */
-@tag("Results")
-@extension("x-ms-docs-override-version", "7.2-preview.6")
-@extension("x-ms-vss-resource", "results")
-@extension("x-ms-vss-method", "GetTestResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/results")
-@get
-op Results_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Test run ID of test results to fetch. */
-  @path runId: int32,
-
-  /** Details to include with test results. Default is None. Other values are Iterations and WorkItems. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ResultDetails",
-      values: #[
-        #{
-          value: "none",
-          description: "Core fields of test result. Core fields includes State, Outcome, Priority, AutomatedTestName, AutomatedTestStorage, Comments, ErrorMessage etc.",
-        },
-        #{ value: "iterations", description: "Test iteration details in a test result." },
-        #{ value: "workItems", description: "Workitems associated with a test result." },
-        #{ value: "subResults", description: "Subresults in a test result." },
-        #{ value: "point", description: "Point and plan detail in a test result." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  detailsToInclude?: "none" | "iterations" | "workItems" | "subResults" | "point",
-
-  /** Number of test results to skip from beginning. */
-  @query(#{ explode: true }) $skip?: int32,
-
-  /** Number of test results to return. Maximum is 1000 when detailsToInclude is None and 200 otherwise. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Comma separated list of test outcomes to filter test results. */
-  @format("array (TestOutcome)") @query(#{ explode: true }) outcomes?: string,
-
-  ...Parameters.`api-Version-preview`.`6`,
-): Body<TestCaseResult[]>;
-
-/** Update test results in a test run. */
-@tag("Results")
-@extension("x-ms-docs-override-version", "7.2-preview.6")
-@extension("x-ms-vss-resource", "results")
-@extension("x-ms-vss-method", "UpdateTestResults")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/results")
-@patch
-op Results_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Test run ID whose test results to update. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`6`,
-
-  /** List of test results to update. */
-  @body body: TestCaseResult[],
-): Body<TestCaseResult[]>;
-
-/** Add test results to a test run. */
-@tag("Results")
-@extension("x-ms-docs-override-version", "7.2-preview.6")
-@extension("x-ms-vss-resource", "results")
-@extension("x-ms-vss-method", "AddTestResultsToTestRun")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/results")
-@post
-op Results_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Test run ID into which test results to add. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`6`,
-
-  /** List of test results to add. */
-  @body body: TestCaseResult[],
-): Body<TestCaseResult[]>;
-
-/** Get a test result for a test run. */
-@tag("Results")
-@extension("x-ms-docs-override-version", "7.2-preview.6")
-@extension("x-ms-vss-resource", "results")
-@extension("x-ms-vss-method", "GetTestResultById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/results/{testCaseResultId}")
-@get
-op Results_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Test run ID of a test result to fetch. */
-  @path runId: int32,
-
-  /** Test result ID. */
-  @path testCaseResultId: int32,
-
-  /** Details to include with test results. Default is None. Other values are Iterations, WorkItems and SubResults. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ResultDetails",
-      values: #[
-        #{
-          value: "none",
-          description: "Core fields of test result. Core fields includes State, Outcome, Priority, AutomatedTestName, AutomatedTestStorage, Comments, ErrorMessage etc.",
-        },
-        #{ value: "iterations", description: "Test iteration details in a test result." },
-        #{ value: "workItems", description: "Workitems associated with a test result." },
-        #{ value: "subResults", description: "Subresults in a test result." },
-        #{ value: "point", description: "Point and plan detail in a test result." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  detailsToInclude?: "none" | "iterations" | "workItems" | "subResults" | "point",
-
-  ...Parameters.`api-Version-preview`.`6`,
-): TestCaseResult;
-
-/** Get list of test result attachments reference. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetTestResultAttachments")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments")
-@get
-op Attachments_GetTestResultAttachments(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run that contains the result. */
-  @path runId: int32,
-
-  /** ID of the test result. */
-  @path testCaseResultId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestAttachment[]>;
-
-/** Attach a file to a test result. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "CreateTestResultAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments")
-@post
-op Attachments_CreateTestResultAttachment(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run that contains the result. */
-  @path runId: int32,
-
-  /** ID of the test result against which attachment has to be uploaded. */
-  @path testCaseResultId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Attachment details TestAttachmentRequestModel */
-  @body body: TestAttachmentRequestModel,
-): TestAttachmentReference;
-
-/** Download a test result attachment by its ID. */
-@tag("Attachments")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "attachments")
-@extension("x-ms-vss-method", "GetTestResultAttachment")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments/{attachmentId}")
-@get
-op Attachments_GetTestResultAttachmentZip(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run that contains the testCaseResultId. */
-  @path runId: int32,
-
-  /** ID of the test result whose attachment has to be downloaded. */
-  @path testCaseResultId: int32,
-
-  /** ID of the test result attachment to be downloaded. */
-  @path attachmentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-):
-  | {
-      @header contentType: "application/octet-stream";
-      @body @format("Stream") body: string;
-    }
-  | {
-      @header contentType: "application/zip";
-      @body @format("Stream") body: string;
-    };
-
-/** Get iterations for a result */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "iterations")
-@extension("x-ms-vss-method", "GetTestIterations")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/iterations")
-@get
-op Iterations_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run that contains the result. */
-  @path runId: int32,
-
-  /** ID of the test result that contains the iterations. */
-  @path testCaseResultId: int32,
-
-  /** Include result details for each action performed in the test iteration. ActionResults refer to outcome (pass/fail) of test steps that are executed as part of a running a manual test. Including the ActionResults flag gets the outcome of test steps in the actionResults section and test parameters in the parameters section for each test iteration. */
-  @query(#{ explode: true }) includeActionResults?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): Body<TestIterationDetailsModel[]>;
-
-/** Get iteration for a result */
-@tag("Iterations")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "iterations")
-@extension("x-ms-vss-method", "GetTestIteration")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/iterations/{iterationId}")
-@get
-op Iterations_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the test run that contains the result. */
-  @path runId: int32,
-
-  /** ID of the test result that contains the iterations. */
-  @path testCaseResultId: int32,
-
-  /** Id of the test results Iteration. */
-  @path iterationId: int32,
-
-  /** Include result details for each action performed in the test iteration. ActionResults refer to outcome (pass/fail) of test steps that are executed as part of a running a manual test. Including the ActionResults flag gets the outcome of test steps in the actionResults section and test parameters in the parameters section for each test iteration. */
-  @query(#{ explode: true }) includeActionResults?: boolean,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): TestIterationDetailsModel;
-
-/** Get test run statistics , used when we want to get summary of a run by outcome. */
-@tag("Runs")
-@extension("x-ms-docs-override-version", "7.2-preview.3")
-@extension("x-ms-vss-resource", "runs")
-@extension("x-ms-vss-method", "GetTestRunStatistics")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/runs/{runId}/Statistics")
-@get
-op Runs_GetTestRunStatistics(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the run to get. */
-  @path runId: int32,
-
-  ...Parameters.`api-Version-preview`.`3`,
-): TestRunStatistic;
-
-/** Delete a test case. */
-@tag("Test Cases")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "testCases")
-@extension("x-ms-vss-method", "DeleteTestCase")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/test/testcases/{testCaseId}")
-@delete
-op TestCases_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of test case to delete. */
-  @path testCaseId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a list of test sessions */
-@tag("Session")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "session")
-@extension("x-ms-vss-method", "GetTestSessions")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/test/session")
-@get
-op Session_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  /** Period in days from now, for which test sessions are fetched. */
-  @query(#{ explode: true }) period?: int32,
-
-  /** If false, returns test sessions for current user. Otherwise, it returns test sessions for all users */
-  @query(#{ explode: true }) allSessions?: boolean,
-
-  /** If true, it returns all properties of the test sessions. Otherwise, it returns the skinny version. */
-  @query(#{ explode: true }) includeAllProperties?: boolean,
-
-  /** Source of the test session. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TestSessionSource",
-      values: #[
-        #{ value: "unknown", description: "Source of test session uncertain as it is stale" },
-        #{
-          value: "xtDesktop",
-          description: "The session was created from Microsoft Test Manager exploratory desktop tool.",
-        },
-        #{
-          value: "feedbackDesktop",
-          description: "The session was created from feedback client.",
-        },
-        #{ value: "xtWeb", description: "The session was created from browser extension." },
-        #{ value: "feedbackWeb", description: "The session was created from browser extension." },
-        #{
-          value: "xtDesktop2",
-          description: "The session was created from web access using Microsoft Test Manager exploratory desktop tool.",
-        },
-        #{
-          value: "sessionInsightsForAll",
-          description: "To show sessions from all supported sources.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  source?:
-    | "unknown"
-    | "xtDesktop"
-    | "feedbackDesktop"
-    | "xtWeb"
-    | "feedbackWeb"
-    | "xtDesktop2"
-    | "sessionInsightsForAll",
-
-  /** If true, it returns test sessions in completed state. Otherwise, it returns test sessions for all states */
-  @query(#{ explode: true }) includeOnlyCompletedSessions?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TestSession[]>;
-
-/** Update a test session */
-@tag("Session")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "session")
-@extension("x-ms-vss-method", "UpdateTestSession")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/test/session")
-@patch
-op Session_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Test session details for update */
-  @body body: TestSession,
-): TestSession;
-
-/** Create a test session */
-@tag("Session")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "session")
-@extension("x-ms-vss-method", "CreateTestSession")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/{team}/_apis/test/session")
-@post
-op Session_Create(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Team ID or team name */
-  @extension("x-ms-required", false) @path team: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Test session details for creation */
-  @body body: TestSession,
-): TestSession;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `6` {
       /** Version of the API to use. This should be set to '7.2-preview.6' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `7` {
       /** Version of the API to use. This should be set to '7.2-preview.7' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface CodeCoverage {
+  /** Get code coverage data for a build. */
+  @tag("Code Coverage")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "codeCoverage")
+  @extension("x-ms-vss-method", "GetBuildCodeCoverage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/codecoverage")
+  @get
+  GetBuildCodeCoverage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the build for which code coverage data needs to be fetched. */
+    @query(#{ explode: true }) buildId: int32,
+
+    /** Value of flags determine the level of code coverage details to be fetched. Flags are additive. Expected Values are 1 for Modules, 2 for Functions, 4 for BlockData. */
+    @query(#{ explode: true }) flags: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<BuildCoverage[]>;
+
+  /** Get code coverage data for a test run */
+  @tag("Code Coverage")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "codeCoverage")
+  @extension("x-ms-vss-method", "GetTestRunCodeCoverage")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/codecoverage")
+  @get
+  GetTestRunCodeCoverage(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run for which code coverage data needs to be fetched. */
+    @path runId: int32,
+
+    /** Value of flags determine the level of code coverage details to be fetched. Flags are additive. Expected Values are 1 for Modules, 2 for Functions, 4 for BlockData. */
+    @query(#{ explode: true }) flags: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestRunCoverage[]>;
+}
+
+interface Points {
+  /** Get a list of test points. */
+  @tag("Points")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "points")
+  @extension("x-ms-vss-method", "GetPoints")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan. */
+    @path planId: int32,
+
+    /** ID of the suite that contains the points. */
+    @path suiteId: int32,
+
+    /** Comma-separated list of work item field names. */
+    @query(#{ explode: true }) witFields?: string,
+
+    /** Get test points for specific configuration. */
+    @query(#{ explode: true }) configurationId?: string,
+
+    /** Get test points for a specific test case, valid when configurationId is not set. */
+    @query(#{ explode: true }) testCaseId?: string,
+
+    /** Get test points for comma-separated list of test point IDs, valid only when configurationId and testCaseId are not set. */
+    @query(#{ explode: true }) testPointIds?: string,
+
+    /** Include all properties for the test point. */
+    @query(#{ explode: true }) includePointDetails?: boolean,
+
+    /** Number of test points to skip.. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Number of test points to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<TestPoint[]>;
+
+  /** Get a test point. */
+  @tag("Points")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "points")
+  @extension("x-ms-vss-method", "GetPoint")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points/{pointIds}")
+  @get
+  GetPoint(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan. */
+    @path planId: int32,
+
+    /** ID of the suite that contains the point. */
+    @path suiteId: int32,
+
+    /** ID of the test point to get. */
+    @path pointIds: int32,
+
+    /** Comma-separated list of work item field names. */
+    @query(#{ explode: true }) witFields?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): TestPoint;
+
+  /** Update test points. */
+  @tag("Points")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "points")
+  @extension("x-ms-vss-method", "UpdateTestPoints")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points/{pointIds}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan. */
+    @path planId: int32,
+
+    /** ID of the suite that contains the points. */
+    @path suiteId: int32,
+
+    /** ID of the test point to get. Use a comma-separated list of IDs to update multiple test points. */
+    @path pointIds: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** Data to update. */
+    @body body: PointUpdateModel,
+  ): Body<TestPoint[]>;
+
+  /** Get test points using query. */
+  @tag("Points")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "points")
+  @extension("x-ms-vss-method", "GetPointsByQuery")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/points")
+  @post
+  GetPointsByQuery(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Number of test points to skip.. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Number of test points to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** TestPointsQuery to get test points. */
+    @body body: TestPointsQuery,
+  ): TestPointsQuery;
+}
+
+interface TestSuites {
+  /** Get all test cases in a suite. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "GetTestCases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suites. */
+    @path planId: int32,
+
+    /** ID of the suite to get. */
+    @path suiteId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<SuiteTestCase[]>;
+
+  /** The test points associated with the test cases are removed from the test suite. The test case work item is not deleted from the system. See test cases resource to delete a test case permanently. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "RemoveTestCasesFromSuiteUrl")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
+  @delete
+  RemoveTestCasesFromSuiteUrl(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suite. */
+    @path planId: int32,
+
+    /** ID of the suite to get. */
+    @path suiteId: int32,
+
+    /** IDs of the test cases to remove from the suite. */
+    @path testCaseIds: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Get a specific test case in a test suite with test case id. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "GetTestCaseById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suites. */
+    @path planId: int32,
+
+    /** ID of the suite that contains the test case. */
+    @path suiteId: int32,
+
+    /** ID of the test case to get. */
+    @path testCaseIds: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): SuiteTestCase;
+
+  /** Updates the properties of the test case association in a suite. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "UpdateSuiteTestCases")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suite. */
+    @path planId: int32,
+
+    /** ID of the test suite to which the test cases must be added. */
+    @path suiteId: int32,
+
+    /** IDs of the test cases to add to the suite. Ids are specified in comma separated format. */
+    @path testCaseIds: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** Model for updation of the properties of test case suite association. */
+    @body body: SuiteTestCaseUpdateModel,
+  ): Body<SuiteTestCase[]>;
+
+  /** Add test cases to suite. */
+  @tag("Test  Suites")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "suites")
+  @extension("x-ms-vss-method", "AddTestCasesToSuite")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test plan that contains the suite. */
+    @path planId: int32,
+
+    /** ID of the test suite to which the test cases must be added. */
+    @path suiteId: int32,
+
+    /** IDs of the test cases to add to the suite. Ids are specified in comma separated format. */
+    @path testCaseIds: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<SuiteTestCase[]>;
+}
+
+interface ResultRetentionSettingsOperations {
+  /** Get test result retention settings */
+  @tag("Result Retention Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "resultRetentionSettings")
+  @extension("x-ms-vss-method", "GetResultRetentionSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/resultretentionsettings")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): ResultRetentionSettings;
+
+  /** Update test result retention settings */
+  @tag("Result Retention Settings")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "resultRetentionSettings")
+  @extension("x-ms-vss-method", "UpdateResultRetentionSettings")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/resultretentionsettings")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Test result retention settings details to be updated */
+    @body body: ResultRetentionSettings,
+  ): ResultRetentionSettings;
+}
+
+interface TestHistory {
+  /** Get history of a test method using TestHistoryQuery */
+  @tag("Test History")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "testHistory")
+  @extension("x-ms-vss-method", "QueryTestHistory")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Results/testhistory")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+
+    /** TestHistoryQuery to get history */
+    @body body: TestHistoryQuery,
+  ): TestHistoryQuery;
+}
+
+interface Runs {
+  /** Get a list of test runs. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "GetTestRuns")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/runs")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** URI of the build that the runs used. */
+    @query(#{ explode: true }) buildUri?: string,
+
+    /** Team foundation ID of the owner of the runs. */
+    @query(#{ explode: true }) owner?: string,
+
+    @query(#{ explode: true }) tmiRunId?: string,
+
+    /** ID of the test plan that the runs are a part of. */
+    @query(#{ explode: true }) planId?: int32,
+
+    /** If true, include all the properties of the runs. */
+    @query(#{ explode: true }) includeRunDetails?: boolean,
+
+    /** If true, only returns automated runs. */
+    @query(#{ explode: true }) automated?: boolean,
+
+    /** Number of test runs to skip. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Number of test runs to return. */
+    @query(#{ explode: true }) $top?: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<TestRun[]>;
+
+  /** Create new test run. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "CreateTestRun")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/runs")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** Run details RunCreateModel */
+    @body body: RunCreateModel,
+  ): TestRun;
+
+  /** Delete a test run by its ID. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "DeleteTestRun")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/runs/{runId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the run to delete. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): OkResponse;
+
+  /** Get a test run by its ID. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "GetTestRunById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/runs/{runId}")
+  @get
+  GetTestRunById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the run to get. */
+    @path runId: int32,
+
+    /** Default value is true. It includes details like run statistics, release, build, test environment, post process state, and more. */
+    @query(#{ explode: true }) includeDetails?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): TestRun;
+
+  /** Update test run by its ID. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "UpdateTestRun")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/runs/{runId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the run to update. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+
+    /** Run details RunUpdateModel */
+    @body body: RunUpdateModel,
+  ): TestRun;
+
+  /** Get test run statistics , used when we want to get summary of a run by outcome. */
+  @tag("Runs")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "runs")
+  @extension("x-ms-vss-method", "GetTestRunStatistics")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/runs/{runId}/Statistics")
+  @get
+  GetTestRunStatistics(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the run to get. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): TestRunStatistic;
+}
+
+interface Attachments {
+  /** Get list of test run attachments reference. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetTestRunAttachments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments")
+  @get
+  GetTestRunAttachments(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestAttachment[]>;
+
+  /** Attach a file to a test run. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "CreateTestRunAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments")
+  @post
+  CreateTestRunAttachment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run against which attachment has to be uploaded. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Attachment details TestAttachmentRequestModel */
+    @body body: TestAttachmentRequestModel,
+  ): TestAttachmentReference;
+
+  /** Download a test run attachment by its ID. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetTestRunAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments/{attachmentId}")
+  @get
+  GetTestRunAttachmentZip(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run whose attachment has to be downloaded. */
+    @path runId: int32,
+
+    /** ID of the test run attachment to be downloaded. */
+    @path attachmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header contentType: "application/octet-stream";
+        @body @format("Stream") body: string;
+      }
+    | {
+        @header contentType: "application/zip";
+        @body @format("Stream") body: string;
+      };
+
+  /** Get list of test result attachments reference. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetTestResultAttachments")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments")
+  @get
+  GetTestResultAttachments(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run that contains the result. */
+    @path runId: int32,
+
+    /** ID of the test result. */
+    @path testCaseResultId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestAttachment[]>;
+
+  /** Attach a file to a test result. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "CreateTestResultAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments")
+  @post
+  CreateTestResultAttachment(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run that contains the result. */
+    @path runId: int32,
+
+    /** ID of the test result against which attachment has to be uploaded. */
+    @path testCaseResultId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Attachment details TestAttachmentRequestModel */
+    @body body: TestAttachmentRequestModel,
+  ): TestAttachmentReference;
+
+  /** Download a test result attachment by its ID. */
+  @tag("Attachments")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "attachments")
+  @extension("x-ms-vss-method", "GetTestResultAttachment")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments/{attachmentId}")
+  @get
+  GetTestResultAttachmentZip(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run that contains the testCaseResultId. */
+    @path runId: int32,
+
+    /** ID of the test result whose attachment has to be downloaded. */
+    @path testCaseResultId: int32,
+
+    /** ID of the test result attachment to be downloaded. */
+    @path attachmentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ):
+    | {
+        @header contentType: "application/octet-stream";
+        @body @format("Stream") body: string;
+      }
+    | {
+        @header contentType: "application/zip";
+        @body @format("Stream") body: string;
+      };
+}
+
+interface Results {
+  /** Get test results for a test run. */
+  @tag("Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.6")
+  @extension("x-ms-vss-resource", "results")
+  @extension("x-ms-vss-method", "GetTestResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/results")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Test run ID of test results to fetch. */
+    @path runId: int32,
+
+    /** Details to include with test results. Default is None. Other values are Iterations and WorkItems. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ResultDetails",
+        values: #[
+          #{
+            value: "none",
+            description: "Core fields of test result. Core fields includes State, Outcome, Priority, AutomatedTestName, AutomatedTestStorage, Comments, ErrorMessage etc.",
+          },
+          #{ value: "iterations", description: "Test iteration details in a test result." },
+          #{ value: "workItems", description: "Workitems associated with a test result." },
+          #{ value: "subResults", description: "Subresults in a test result." },
+          #{ value: "point", description: "Point and plan detail in a test result." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    detailsToInclude?: "none" | "iterations" | "workItems" | "subResults" | "point",
+
+    /** Number of test results to skip from beginning. */
+    @query(#{ explode: true }) $skip?: int32,
+
+    /** Number of test results to return. Maximum is 1000 when detailsToInclude is None and 200 otherwise. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Comma separated list of test outcomes to filter test results. */
+    @format("array (TestOutcome)") @query(#{ explode: true }) outcomes?: string,
+
+    ...Parameters.`api-Version-preview`.`6`,
+  ): Body<TestCaseResult[]>;
+
+  /** Update test results in a test run. */
+  @tag("Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.6")
+  @extension("x-ms-vss-resource", "results")
+  @extension("x-ms-vss-method", "UpdateTestResults")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/results")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Test run ID whose test results to update. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`6`,
+
+    /** List of test results to update. */
+    @body body: TestCaseResult[],
+  ): Body<TestCaseResult[]>;
+
+  /** Add test results to a test run. */
+  @tag("Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.6")
+  @extension("x-ms-vss-resource", "results")
+  @extension("x-ms-vss-method", "AddTestResultsToTestRun")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/results")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Test run ID into which test results to add. */
+    @path runId: int32,
+
+    ...Parameters.`api-Version-preview`.`6`,
+
+    /** List of test results to add. */
+    @body body: TestCaseResult[],
+  ): Body<TestCaseResult[]>;
+
+  /** Get a test result for a test run. */
+  @tag("Results")
+  @extension("x-ms-docs-override-version", "7.2-preview.6")
+  @extension("x-ms-vss-resource", "results")
+  @extension("x-ms-vss-method", "GetTestResultById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/results/{testCaseResultId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Test run ID of a test result to fetch. */
+    @path runId: int32,
+
+    /** Test result ID. */
+    @path testCaseResultId: int32,
+
+    /** Details to include with test results. Default is None. Other values are Iterations, WorkItems and SubResults. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ResultDetails",
+        values: #[
+          #{
+            value: "none",
+            description: "Core fields of test result. Core fields includes State, Outcome, Priority, AutomatedTestName, AutomatedTestStorage, Comments, ErrorMessage etc.",
+          },
+          #{ value: "iterations", description: "Test iteration details in a test result." },
+          #{ value: "workItems", description: "Workitems associated with a test result." },
+          #{ value: "subResults", description: "Subresults in a test result." },
+          #{ value: "point", description: "Point and plan detail in a test result." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    detailsToInclude?: "none" | "iterations" | "workItems" | "subResults" | "point",
+
+    ...Parameters.`api-Version-preview`.`6`,
+  ): TestCaseResult;
+}
+
+interface Iterations {
+  /** Get iterations for a result */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "iterations")
+  @extension("x-ms-vss-method", "GetTestIterations")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/iterations")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run that contains the result. */
+    @path runId: int32,
+
+    /** ID of the test result that contains the iterations. */
+    @path testCaseResultId: int32,
+
+    /** Include result details for each action performed in the test iteration. ActionResults refer to outcome (pass/fail) of test steps that are executed as part of a running a manual test. Including the ActionResults flag gets the outcome of test steps in the actionResults section and test parameters in the parameters section for each test iteration. */
+    @query(#{ explode: true }) includeActionResults?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): Body<TestIterationDetailsModel[]>;
+
+  /** Get iteration for a result */
+  @tag("Iterations")
+  @extension("x-ms-docs-override-version", "7.2-preview.3")
+  @extension("x-ms-vss-resource", "iterations")
+  @extension("x-ms-vss-method", "GetTestIteration")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/iterations/{iterationId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the test run that contains the result. */
+    @path runId: int32,
+
+    /** ID of the test result that contains the iterations. */
+    @path testCaseResultId: int32,
+
+    /** Id of the test results Iteration. */
+    @path iterationId: int32,
+
+    /** Include result details for each action performed in the test iteration. ActionResults refer to outcome (pass/fail) of test steps that are executed as part of a running a manual test. Including the ActionResults flag gets the outcome of test steps in the actionResults section and test parameters in the parameters section for each test iteration. */
+    @query(#{ explode: true }) includeActionResults?: boolean,
+
+    ...Parameters.`api-Version-preview`.`3`,
+  ): TestIterationDetailsModel;
+}
+
+interface TestCases {
+  /** Delete a test case. */
+  @tag("Test Cases")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "testCases")
+  @extension("x-ms-vss-method", "DeleteTestCase")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/test/testcases/{testCaseId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of test case to delete. */
+    @path testCaseId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+}
+
+interface Session {
+  /** Get a list of test sessions */
+  @tag("Session")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "session")
+  @extension("x-ms-vss-method", "GetTestSessions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/test/session")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    /** Period in days from now, for which test sessions are fetched. */
+    @query(#{ explode: true }) period?: int32,
+
+    /** If false, returns test sessions for current user. Otherwise, it returns test sessions for all users */
+    @query(#{ explode: true }) allSessions?: boolean,
+
+    /** If true, it returns all properties of the test sessions. Otherwise, it returns the skinny version. */
+    @query(#{ explode: true }) includeAllProperties?: boolean,
+
+    /** Source of the test session. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TestSessionSource",
+        values: #[
+          #{ value: "unknown", description: "Source of test session uncertain as it is stale" },
+          #{
+            value: "xtDesktop",
+            description: "The session was created from Microsoft Test Manager exploratory desktop tool.",
+          },
+          #{
+            value: "feedbackDesktop",
+            description: "The session was created from feedback client.",
+          },
+          #{ value: "xtWeb", description: "The session was created from browser extension." },
+          #{ value: "feedbackWeb", description: "The session was created from browser extension." },
+          #{
+            value: "xtDesktop2",
+            description: "The session was created from web access using Microsoft Test Manager exploratory desktop tool.",
+          },
+          #{
+            value: "sessionInsightsForAll",
+            description: "To show sessions from all supported sources.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    source?:
+      | "unknown"
+      | "xtDesktop"
+      | "feedbackDesktop"
+      | "xtWeb"
+      | "feedbackWeb"
+      | "xtDesktop2"
+      | "sessionInsightsForAll",
+
+    /** If true, it returns test sessions in completed state. Otherwise, it returns test sessions for all states */
+    @query(#{ explode: true }) includeOnlyCompletedSessions?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TestSession[]>;
+
+  /** Update a test session */
+  @tag("Session")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "session")
+  @extension("x-ms-vss-method", "UpdateTestSession")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/test/session")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Test session details for update */
+    @body body: TestSession,
+  ): TestSession;
+
+  /** Create a test session */
+  @tag("Session")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "session")
+  @extension("x-ms-vss-method", "CreateTestSession")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/{team}/_apis/test/session")
+  @post
+  Create(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Team ID or team name */
+    @extension("x-ms-required", false) @path team: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Test session details for creation */
+    @body body: TestSession,
+  ): TestSession;
 }

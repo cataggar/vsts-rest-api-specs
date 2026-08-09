@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "TaskAgent" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://dev.azure.com")
 namespace TaskAgent;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AadOauthTokenRequest {
   refresh?: boolean;
@@ -4050,1361 +4056,1387 @@ model YamlCheckReference {
   type?: "none" | "productionReadiness";
 }
 
-@tag("Agentclouds")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agentclouds")
-@extension("x-ms-vss-method", "GetAgentClouds")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentclouds")
-@get
-op Agentclouds_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskAgentCloud[]>;
-
-@tag("Agentclouds")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agentclouds")
-@extension("x-ms-vss-method", "AddAgentCloud")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentclouds")
-@post
-op Agentclouds_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: TaskAgentCloud,
-): TaskAgentCloud;
-
-@tag("Agentclouds")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agentclouds")
-@extension("x-ms-vss-method", "DeleteAgentCloud")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}")
-@delete
-op Agentclouds_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path agentCloudId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskAgentCloud;
-
-@tag("Agentclouds")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agentclouds")
-@extension("x-ms-vss-method", "GetAgentCloud")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}")
-@get
-op Agentclouds_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path agentCloudId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskAgentCloud;
-
-@tag("Agentclouds")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agentclouds")
-@extension("x-ms-vss-method", "UpdateAgentCloud")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}")
-@patch
-op Agentclouds_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path agentCloudId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: TaskAgentCloud,
-): TaskAgentCloud;
-
-@tag("Requests")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "requests")
-@extension("x-ms-vss-method", "GetAgentCloudRequests")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}/requests")
-@get
-op Requests_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @path agentCloudId: int32,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskAgentCloudRequest[]>;
-
-/** Get agent cloud types. */
-@tag("Agentcloudtypes")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agentcloudtypes")
-@extension("x-ms-vss-method", "GetAgentCloudTypes")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/agentcloudtypes")
-@get
-op Agentcloudtypes_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskAgentCloudType[]>;
-
-/** Get a list of agent pools. */
-@tag("Pools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pools")
-@extension("x-ms-vss-method", "GetAgentPoolsByIds")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools")
-@get
-op Pools_GetAgentPoolsByIds(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** pool Ids to fetch */
-  @format("array (int32)") @query(#{ explode: true }) poolIds: string,
-
-  /** Filter by whether the calling user has use or manage permissions */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskAgentPoolActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskAgentPool[]>;
-
-/** Create an agent pool. */
-@tag("Pools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pools")
-@extension("x-ms-vss-method", "AddAgentPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools")
-@post
-op Pools_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Details about the new agent pool */
-  @body body: TaskAgentPool,
-): TaskAgentPool;
-
-/** Delete an agent pool. */
-@tag("Pools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pools")
-@extension("x-ms-vss-method", "DeleteAgentPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}")
-@delete
-op Pools_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** ID of the agent pool to delete */
-  @path poolId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get information about an agent pool. */
-@tag("Pools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pools")
-@extension("x-ms-vss-method", "GetAgentPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}")
-@get
-op Pools_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** An agent pool ID */
-  @path poolId: int32,
-
-  /** Agent pool properties (comma-separated) */
-  @format("array (string)") @query(#{ explode: true }) properties?: string,
-
-  /** Filter by whether the calling user has use or manage permissions */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskAgentPoolActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskAgentPool;
-
-/** Update properties on an agent pool */
-@tag("Pools")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pools")
-@extension("x-ms-vss-method", "UpdateAgentPool")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}")
-@patch
-op Pools_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent pool to update */
-  @path poolId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Updated agent pool details */
-  @body body: TaskAgentPool,
-): TaskAgentPool;
-
-/** Get a list of agents. */
-@tag("Agents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agents")
-@extension("x-ms-vss-method", "GetAgents")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/agents")
-@get
-op Agents_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent pool containing the agents */
-  @path poolId: int32,
-
-  /** Filter on agent name */
-  @query(#{ explode: true }) agentName?: string,
-
-  /** Whether to include the agents' capabilities in the response */
-  @query(#{ explode: true }) includeCapabilities?: boolean,
-
-  /** Whether to include details about the agents' current work */
-  @query(#{ explode: true }) includeAssignedRequest?: boolean,
-
-  /** Whether to include details about the agents' most recent completed work */
-  @query(#{ explode: true }) includeLastCompletedRequest?: boolean,
-
-  /** Filter which custom properties will be returned */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  /** Filter by demands the agents can satisfy */
-  @format("array (string)") @query(#{ explode: true }) demands?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskAgent[]>;
-
-/** Adds an agent to a pool. You probably don't want to call this endpoint directly. Instead, [configure an agent](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) using the agent download package. */
-@tag("Agents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agents")
-@extension("x-ms-vss-method", "AddAgent")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/agents")
-@post
-op Agents_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent pool in which to add the agent */
-  @path poolId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Details about the agent being added */
-  @body body: TaskAgent,
-): TaskAgent;
-
-/** Delete an agent. You probably don't want to call this endpoint directly. Instead, [use the agent configuration script](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) to remove an agent from your organization. */
-@tag("Agents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agents")
-@extension("x-ms-vss-method", "DeleteAgent")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
-@delete
-op Agents_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The pool ID to remove the agent from */
-  @path poolId: int32,
-
-  /** The agent ID to remove */
-  @path agentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get information about an agent. */
-@tag("Agents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agents")
-@extension("x-ms-vss-method", "GetAgent")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
-@get
-op Agents_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent pool containing the agent */
-  @path poolId: int32,
-
-  /** The agent ID to get information about */
-  @path agentId: int32,
-
-  /** Whether to include the agent's capabilities in the response */
-  @query(#{ explode: true }) includeCapabilities?: boolean,
-
-  /** Whether to include details about the agent's current work */
-  @query(#{ explode: true }) includeAssignedRequest?: boolean,
-
-  /** Whether to include details about the agents' most recent completed work */
-  @query(#{ explode: true }) includeLastCompletedRequest?: boolean,
-
-  /** Filter which custom properties will be returned */
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskAgent;
-
-/** Update agent details. */
-@tag("Agents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agents")
-@extension("x-ms-vss-method", "UpdateAgent")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
-@patch
-op Agents_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent pool to use */
-  @path poolId: int32,
-
-  /** The agent to update */
-  @path agentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Updated details about the agent */
-  @body body: TaskAgent,
-): TaskAgent;
-
-/** Replace an agent. You probably don't want to call this endpoint directly. Instead, [use the agent configuration script](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) to remove and reconfigure an agent from your organization. */
-@tag("Agents")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "agents")
-@extension("x-ms-vss-method", "ReplaceAgent")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
-@put
-op Agents_ReplaceAgent(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent pool to use */
-  @path poolId: int32,
-
-  /** The agent to replace */
-  @path agentId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Updated details about the replacing agent */
-  @body body: TaskAgent,
-): TaskAgent;
-
-/** Checks if current identity has passed permissions on a pool. */
-@tag("Poolpermissions")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "poolpermissions")
-@extension("x-ms-vss-method", "HasPoolPermissions")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/pools/{poolId}/permissions/{permissions}")
-@get
-op Poolpermissions_HasPoolPermissions(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of the pool to check */
-  @path poolId: int32,
-
-  /** Permissions to check. Multiple permissions might be merged into single value using bitwise OR operator (e.g. AgentPoolPermissions.Manage | AgentPoolPermissions.View) */
-  @path permissions: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<boolean>;
-
-/** Add a variable group. */
-@tag("Variablegroups")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "variablegroups")
-@extension("x-ms-vss-method", "ShareVariableGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/variablegroups")
-@patch
-op Variablegroups_ShareVariableGroup(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  @query(#{ explode: true }) variableGroupId: int32,
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: VariableGroupProjectReference[],
-): OkResponse;
-
-/** Add a variable group. */
-@tag("Variablegroups")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "variablegroups")
-@extension("x-ms-vss-method", "AddVariableGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/variablegroups")
-@post
-op Variablegroups_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: VariableGroupParameters,
-): VariableGroup;
-
-/** Delete a variable group */
-@tag("Variablegroups")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "variablegroups")
-@extension("x-ms-vss-method", "DeleteVariableGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/variablegroups/{groupId}")
-@delete
-op Variablegroups_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of the variable group. */
-  @path groupId: int32,
-
-  @format("array (string)") @query(#{ explode: true }) projectIds: string,
-  ...Parameters.`api-Version-preview`.`2`,
-): OkResponse;
-
-/** Update a variable group. */
-@tag("Variablegroups")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "variablegroups")
-@extension("x-ms-vss-method", "UpdateVariableGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/variablegroups/{groupId}")
-@put
-op Variablegroups_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Id of the variable group to update. */
-  @path groupId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-  @body body: VariableGroupParameters,
-): VariableGroup;
-
-/** GET the Yaml schema used for Yaml file validation. */
-@tag("Yamlschema")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "yamlschema")
-@extension("x-ms-vss-method", "GetYamlSchema")
-@extension("x-ms-preview", true)
-@route("/{organization}/_apis/distributedtask/yamlschema")
-@get
-op Yamlschema_Get(
-  /** The name of the Azure DevOps organization. */
-  @extension("x-ms-required", false) @path organization: string,
-
-  /** Whether the schema should validate that tasks are actually installed (useful for offline tools where you don't want validation). */
-  @query(#{ explode: true }) validateTaskNames?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<{}>;
-
-/** Get a list of deployment groups by name or IDs. */
-@tag("Deploymentgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deploymentgroups")
-@extension("x-ms-vss-method", "GetDeploymentGroups")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups")
-@get
-op Deploymentgroups_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name of the deployment group. */
-  @query(#{ explode: true }) name?: string,
-
-  /** Get only deployment groups on which this action can be performed. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentGroupActionFilter",
-      values: #[
-        #{ value: "none", description: "All deployment groups." },
-        #{
-          value: "manage",
-          description: "Only deployment groups for which caller has **manage** permission.",
-        },
-        #{
-          value: "use",
-          description: "Only deployment groups for which caller has **use** permission.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-
-  /** Include these additional details in the returned objects. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentGroupExpands",
-      values: #[
-        #{ value: "none", description: "No additional properties." },
-        #{ value: "machines", description: "Deprecated: Include all the deployment targets." },
-        #{
-          value: "tags",
-          description: "Include unique list of tags across all deployment targets.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "machines" | "tags",
-
-  /** Get deployment groups with names greater than this continuationToken lexicographically. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Maximum number of deployment groups to return. Default is **1000**. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Comma separated list of IDs of the deployment groups. */
-  @format("array (int32)") @query(#{ explode: true }) ids?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<DeploymentGroup[]>;
-
-/** Create a deployment group. */
-@tag("Deploymentgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deploymentgroups")
-@extension("x-ms-vss-method", "AddDeploymentGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups")
-@post
-op Deploymentgroups_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Deployment group to create. */
-  @body body: DeploymentGroupCreateParameter,
-): DeploymentGroup;
-
-/** Delete a deployment group. */
-@tag("Deploymentgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deploymentgroups")
-@extension("x-ms-vss-method", "DeleteDeploymentGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}")
-@delete
-op Deploymentgroups_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group to be deleted. */
-  @path deploymentGroupId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a deployment group by its ID. */
-@tag("Deploymentgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deploymentgroups")
-@extension("x-ms-vss-method", "GetDeploymentGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}")
-@get
-op Deploymentgroups_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group. */
-  @path deploymentGroupId: int32,
-
-  /** Get the deployment group only if this action can be performed on it. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentGroupActionFilter",
-      values: #[
-        #{ value: "none", description: "All deployment groups." },
-        #{
-          value: "manage",
-          description: "Only deployment groups for which caller has **manage** permission.",
-        },
-        #{
-          value: "use",
-          description: "Only deployment groups for which caller has **use** permission.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-
-  /** Include these additional details in the returned object. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentGroupExpands",
-      values: #[
-        #{ value: "none", description: "No additional properties." },
-        #{ value: "machines", description: "Deprecated: Include all the deployment targets." },
-        #{
-          value: "tags",
-          description: "Include unique list of tags across all deployment targets.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "machines" | "tags",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): DeploymentGroup;
-
-/** Update a deployment group. */
-@tag("Deploymentgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "deploymentgroups")
-@extension("x-ms-vss-method", "UpdateDeploymentGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}")
-@patch
-op Deploymentgroups_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group. */
-  @path deploymentGroupId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Deployment group to update. */
-  @body body: DeploymentGroupUpdateParameter,
-): DeploymentGroup;
-
-/** Get a list of deployment targets in a deployment group. */
-@tag("Targets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "targets")
-@extension("x-ms-vss-method", "GetDeploymentTargets")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets")
-@get
-op Targets_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group. */
-  @path deploymentGroupId: int32,
-
-  /** Get only the deployment targets that contain all these comma separted list of tags. */
-  @format("array (string)") @query(#{ explode: true }) tags?: string,
-
-  /** Name pattern of the deployment targets to return. */
-  @query(#{ explode: true }) name?: string,
-
-  /** When set to true, treats **name** as pattern. Else treats it as absolute match. Default is **false**. */
-  @query(#{ explode: true }) partialNameMatch?: boolean,
-
-  /** Include these additional details in the returned objects. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentTargetExpands",
-      values: #[
-        #{ value: "none", description: "No additional properties." },
-        #{ value: "capabilities", description: "Include capabilities of the deployment agent." },
-        #{
-          value: "assignedRequest",
-          description: "Include the job request assigned to the deployment agent.",
-        },
-        #{
-          value: "lastCompletedRequest",
-          description: "Include the last completed job request of the deployment agent.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "capabilities" | "assignedRequest" | "lastCompletedRequest",
-
-  /** Get only deployment targets that have this status. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskAgentStatusFilter",
-      values: #[
-        #{ value: "offline", description: "Only deployment targets that are offline." },
-        #{ value: "online", description: "Only deployment targets that are online." },
-        #{ value: "all", description: "All deployment targets." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  agentStatus?: "offline" | "online" | "all",
-
-  /** Get only deployment targets that have this last job result. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskAgentJobResultFilter",
-      values: #[
-        #{
-          value: "failed",
-          description: "Only those deployment targets on which last job failed (**Abandoned**, **Canceled**, **Failed**, **Skipped**).",
-        },
-        #{
-          value: "passed",
-          description: "Only those deployment targets on which last job Passed (**Succeeded**, **Succeeded with issues**).",
-        },
-        #{
-          value: "neverDeployed",
-          description: "Only those deployment targets that never executed a job.",
-        },
-        #{ value: "all", description: "All deployment targets." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  agentJobResult?: "failed" | "passed" | "neverDeployed" | "all",
-
-  /** Get deployment targets with names greater than this continuationToken lexicographically. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** Maximum number of deployment targets to return. Default is **1000**. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Get only deployment targets that are enabled or disabled. Default is 'null' which returns all the targets. */
-  @query(#{ explode: true }) enabled?: boolean,
-
-  @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<DeploymentMachine[]>;
-
-/** Update tags of a list of deployment targets in a deployment group. */
-@tag("Targets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "targets")
-@extension("x-ms-vss-method", "UpdateDeploymentTargets")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets")
-@patch
-op Targets_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group in which deployment targets are updated. */
-  @path deploymentGroupId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Deployment targets with tags to udpdate. */
-  @body body: DeploymentTargetUpdateParameter[],
-): Body<DeploymentMachine[]>;
-
-/** Delete a deployment target in a deployment group. This deletes the agent from associated deployment pool too. */
-@tag("Targets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "targets")
-@extension("x-ms-vss-method", "DeleteDeploymentTarget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/{targetId}")
-@delete
-op Targets_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group in which deployment target is deleted. */
-  @path deploymentGroupId: int32,
-
-  /** ID of the deployment target to delete. */
-  @path targetId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a deployment target by its ID in a deployment group */
-@tag("Targets")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "targets")
-@extension("x-ms-vss-method", "GetDeploymentTarget")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/{targetId}")
-@get
-op Targets_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of the deployment group to which deployment target belongs. */
-  @path deploymentGroupId: int32,
-
-  /** ID of the deployment target to return. */
-  @path targetId: int32,
-
-  /** Include these additional details in the returned objects. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "DeploymentTargetExpands",
-      values: #[
-        #{ value: "none", description: "No additional properties." },
-        #{ value: "capabilities", description: "Include capabilities of the deployment agent." },
-        #{
-          value: "assignedRequest",
-          description: "Include the job request assigned to the deployment agent.",
-        },
-        #{
-          value: "lastCompletedRequest",
-          description: "Include the last completed job request of the deployment agent.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  $expand?: "none" | "capabilities" | "assignedRequest" | "lastCompletedRequest",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): DeploymentMachine;
-
-/** Get a list of agent queues by pool ids */
-@tag("Queues")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "queues")
-@extension("x-ms-vss-method", "GetAgentQueuesForPools")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/queues")
-@get
-op Queues_GetAgentQueuesForPools(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** A comma-separated list of pool ids to get the corresponding queues for */
-  @format("array (int32)") @query(#{ explode: true }) poolIds: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Filter by whether the calling user has use or manage permissions */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskAgentQueueActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskAgentQueue[]>;
-
-/** Create a new agent queue to connect a project to an agent pool. */
-@tag("Queues")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "queues")
-@extension("x-ms-vss-method", "AddAgentQueue")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/queues")
-@post
-op Queues_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Automatically authorize this queue when using YAML */
-  @query(#{ explode: true }) authorizePipelines?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Details about the queue to create */
-  @body body: TaskAgentQueue,
-): TaskAgentQueue;
-
-/** Removes an agent queue from a project. */
-@tag("Queues")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "queues")
-@extension("x-ms-vss-method", "DeleteAgentQueue")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/queues/{queueId}")
-@delete
-op Queues_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent queue to remove */
-  @path queueId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get information about an agent queue. */
-@tag("Queues")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "queues")
-@extension("x-ms-vss-method", "GetAgentQueue")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/queues/{queueId}")
-@get
-op Queues_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** The agent queue to get information about */
-  @path queueId: int32,
-
-  /** Project ID or project name */
-  @extension("x-ms-required", false) @path project: string,
-
-  /** Filter by whether the calling user has use or manage permissions */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskAgentQueueActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): TaskAgentQueue;
-
-/** Get secure files */
-@tag("Securefiles")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "securefiles")
-@extension("x-ms-vss-method", "GetSecureFilesByNames")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/securefiles")
-@get
-op Securefiles_GetSecureFilesByNames(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** A list of secure file Ids */
-  @format("array (string)") @query(#{ explode: true }) secureFileNames: string,
-
-  /** If includeDownloadTickets is true and the caller has permissions, a download ticket for each secure file is included in the response. */
-  @query(#{ explode: true }) includeDownloadTickets?: boolean,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SecureFileActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<SecureFile[]>;
-
-/** Update properties and/or names of a set of secure files. Files are identified by their IDs. Properties provided override the existing one entirely, i.e. do not merge. */
-@tag("Securefiles")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "securefiles")
-@extension("x-ms-vss-method", "UpdateSecureFiles")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/securefiles")
-@patch
-op Securefiles_UpdateSecureFiles(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** A list of secure file objects. Only three field must be populated Id, Name, and Properties. The rest of fields in the object are ignored. */
-  @body body: SecureFile[],
-): Body<SecureFile[]>;
-
-/** Query secure files using a name pattern and a condition on file properties. */
-@tag("Securefiles")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "securefiles")
-@extension("x-ms-vss-method", "QuerySecureFilesByProperties")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/securefiles")
-@post
-op Securefiles_Query(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name of the secure file to match. Can include wildcards to match multiple files. */
-  @query(#{ explode: true }) namePattern?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The main condition syntax is described [here](https://go.microsoft.com/fwlink/?linkid=842996). Use the *property('property-name')* function to access the value of the specified property of a secure file. It returns null if the property is not set. E.g. ``` and( eq( property('devices'), '2' ), in( property('provisioning profile type'), 'ad hoc', 'development' ) ) ``` */
-  @body body: string,
-): Body<SecureFile[]>;
-
-/** Delete a secure file */
-@tag("Securefiles")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "securefiles")
-@extension("x-ms-vss-method", "DeleteSecureFile")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
-@delete
-op Securefiles_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The unique secure file Id */
-  @format("uuid") @path secureFileId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Get a secure file */
-@tag("Securefiles")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "securefiles")
-@extension("x-ms-vss-method", "GetSecureFile")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
-@get
-op Securefiles_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The unique secure file Id */
-  @format("uuid") @path secureFileId: string,
-
-  /** If includeDownloadTicket is true and the caller has permissions, a download ticket is included in the response. */
-  @query(#{ explode: true }) includeDownloadTicket?: boolean,
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "SecureFileActionFilter",
-      values: #[
-        #{ value: "none", description: "" },
-        #{ value: "manage", description: "" },
-        #{ value: "use", description: "" }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  actionFilter?: "none" | "manage" | "use",
-  ...Parameters.`api-Version-preview`.`1`,
-): SecureFile;
-
-/** Update the name or properties of an existing secure file */
-@tag("Securefiles")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "securefiles")
-@extension("x-ms-vss-method", "UpdateSecureFile")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
-@patch
-op Securefiles_UpdateSecureFile(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The unique secure file Id */
-  @format("uuid") @path secureFileId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The secure file with updated name and/or properties */
-  @body body: SecureFile,
-): SecureFile;
-
-/** Create a task group. */
-@tag("Taskgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskgroups")
-@extension("x-ms-vss-method", "AddTaskGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/taskgroups")
-@post
-op Taskgroups_Add(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Task group object to create. */
-  @body body: TaskGroupCreateParameter,
-): TaskGroup;
-
-/** Delete a task group. */
-@tag("Taskgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskgroups")
-@extension("x-ms-vss-method", "DeleteTaskGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/taskgroups/{taskGroupId}")
-@delete
-op Taskgroups_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the task group to be deleted. */
-  @format("uuid") @path taskGroupId: string,
-
-  /** Comments to delete. */
-  @query(#{ explode: true }) comment?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** List task groups. */
-@tag("Taskgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskgroups")
-@extension("x-ms-vss-method", "GetTaskGroups")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/taskgroups/{taskGroupId}")
-@get
-op Taskgroups_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the task group. */
-  @extension("x-ms-required", false)
-  @format("uuid")
-  @path
-  taskGroupId: string,
-
-  /** 'true' to recursively expand task groups. Default is 'false'. */
-  @query(#{ explode: true }) expanded?: boolean,
-
-  /** Guid of the taskId to filter. */
-  @format("uuid") @query(#{ explode: true }) taskIdFilter?: string,
-
-  /** 'true'to include deleted task groups. Default is 'false'. */
-  @query(#{ explode: true }) deleted?: boolean,
-
-  /** Number of task groups to get. */
-  @query(#{ explode: true }) $top?: int32,
-
-  /** Gets the task groups after the continuation token provided. */
-  @query(#{ explode: true }) continuationToken?: utcDateTime,
-
-  /** Gets the results in the defined order. Default is 'CreatedOnDescending'. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "TaskGroupQueryOrder",
-      values: #[
-        #{ value: "createdOnAscending", description: "Order by createdon ascending." },
-        #{ value: "createdOnDescending", description: "Order by createdon descending." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  queryOrder?: "createdOnAscending" | "createdOnDescending",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<TaskGroup[]>;
-
-/** Update a task group. */
-@tag("Taskgroups")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "taskgroups")
-@extension("x-ms-vss-method", "UpdateTaskGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/taskgroups/{taskGroupId}")
-@put
-op Taskgroups_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the task group to update. */
-  @extension("x-ms-required", false)
-  @format("uuid")
-  @path
-  taskGroupId: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Task group to update. */
-  @body body: TaskGroupUpdateParameter,
-): TaskGroup;
-
-/** Get variable groups by ids. */
-@tag("Variablegroups")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "variablegroups")
-@extension("x-ms-vss-method", "GetVariableGroupsById")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/variablegroups")
-@get
-op Variablegroups_GetVariableGroupsById(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Comma separated list of Ids of variable groups. */
-  @format("array (int32)") @query(#{ explode: true }) groupIds: string,
-
-  /** Flag indicating if the secrets within variable groups should be loaded. */
-  @query(#{ explode: true }) loadSecrets?: boolean,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Body<VariableGroup[]>;
-
-/** Get a variable group. */
-@tag("Variablegroups")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "variablegroups")
-@extension("x-ms-vss-method", "GetVariableGroup")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/distributedtask/variablegroups/{groupId}")
-@get
-op Variablegroups_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Id of the variable group. */
-  @path groupId: int32,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): VariableGroup;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `3` {
       /** Version of the API to use. This should be set to '7.2-preview.3' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Agentclouds {
+  @tag("Agentclouds")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agentclouds")
+  @extension("x-ms-vss-method", "GetAgentClouds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentclouds")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskAgentCloud[]>;
+
+  @tag("Agentclouds")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agentclouds")
+  @extension("x-ms-vss-method", "AddAgentCloud")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentclouds")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: TaskAgentCloud,
+  ): TaskAgentCloud;
+
+  @tag("Agentclouds")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agentclouds")
+  @extension("x-ms-vss-method", "DeleteAgentCloud")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path agentCloudId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskAgentCloud;
+
+  @tag("Agentclouds")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agentclouds")
+  @extension("x-ms-vss-method", "GetAgentCloud")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path agentCloudId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskAgentCloud;
+
+  @tag("Agentclouds")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agentclouds")
+  @extension("x-ms-vss-method", "UpdateAgentCloud")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path agentCloudId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: TaskAgentCloud,
+  ): TaskAgentCloud;
+}
+
+interface Requests {
+  @tag("Requests")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "requests")
+  @extension("x-ms-vss-method", "GetAgentCloudRequests")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentclouds/{agentCloudId}/requests")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @path agentCloudId: int32,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskAgentCloudRequest[]>;
+}
+
+interface Agentcloudtypes {
+  /** Get agent cloud types. */
+  @tag("Agentcloudtypes")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agentcloudtypes")
+  @extension("x-ms-vss-method", "GetAgentCloudTypes")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/agentcloudtypes")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskAgentCloudType[]>;
+}
+
+interface Pools {
+  /** Get a list of agent pools. */
+  @tag("Pools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pools")
+  @extension("x-ms-vss-method", "GetAgentPoolsByIds")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools")
+  @get
+  GetAgentPoolsByIds(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** pool Ids to fetch */
+    @format("array (int32)") @query(#{ explode: true }) poolIds: string,
+
+    /** Filter by whether the calling user has use or manage permissions */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskAgentPoolActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskAgentPool[]>;
+
+  /** Create an agent pool. */
+  @tag("Pools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pools")
+  @extension("x-ms-vss-method", "AddAgentPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Details about the new agent pool */
+    @body body: TaskAgentPool,
+  ): TaskAgentPool;
+
+  /** Delete an agent pool. */
+  @tag("Pools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pools")
+  @extension("x-ms-vss-method", "DeleteAgentPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** ID of the agent pool to delete */
+    @path poolId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get information about an agent pool. */
+  @tag("Pools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pools")
+  @extension("x-ms-vss-method", "GetAgentPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** An agent pool ID */
+    @path poolId: int32,
+
+    /** Agent pool properties (comma-separated) */
+    @format("array (string)") @query(#{ explode: true }) properties?: string,
+
+    /** Filter by whether the calling user has use or manage permissions */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskAgentPoolActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskAgentPool;
+
+  /** Update properties on an agent pool */
+  @tag("Pools")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pools")
+  @extension("x-ms-vss-method", "UpdateAgentPool")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent pool to update */
+    @path poolId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Updated agent pool details */
+    @body body: TaskAgentPool,
+  ): TaskAgentPool;
+}
+
+interface Agents {
+  /** Get a list of agents. */
+  @tag("Agents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agents")
+  @extension("x-ms-vss-method", "GetAgents")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent pool containing the agents */
+    @path poolId: int32,
+
+    /** Filter on agent name */
+    @query(#{ explode: true }) agentName?: string,
+
+    /** Whether to include the agents' capabilities in the response */
+    @query(#{ explode: true }) includeCapabilities?: boolean,
+
+    /** Whether to include details about the agents' current work */
+    @query(#{ explode: true }) includeAssignedRequest?: boolean,
+
+    /** Whether to include details about the agents' most recent completed work */
+    @query(#{ explode: true }) includeLastCompletedRequest?: boolean,
+
+    /** Filter which custom properties will be returned */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    /** Filter by demands the agents can satisfy */
+    @format("array (string)") @query(#{ explode: true }) demands?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskAgent[]>;
+
+  /** Adds an agent to a pool. You probably don't want to call this endpoint directly. Instead, [configure an agent](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) using the agent download package. */
+  @tag("Agents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agents")
+  @extension("x-ms-vss-method", "AddAgent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent pool in which to add the agent */
+    @path poolId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Details about the agent being added */
+    @body body: TaskAgent,
+  ): TaskAgent;
+
+  /** Delete an agent. You probably don't want to call this endpoint directly. Instead, [use the agent configuration script](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) to remove an agent from your organization. */
+  @tag("Agents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agents")
+  @extension("x-ms-vss-method", "DeleteAgent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The pool ID to remove the agent from */
+    @path poolId: int32,
+
+    /** The agent ID to remove */
+    @path agentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get information about an agent. */
+  @tag("Agents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agents")
+  @extension("x-ms-vss-method", "GetAgent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent pool containing the agent */
+    @path poolId: int32,
+
+    /** The agent ID to get information about */
+    @path agentId: int32,
+
+    /** Whether to include the agent's capabilities in the response */
+    @query(#{ explode: true }) includeCapabilities?: boolean,
+
+    /** Whether to include details about the agent's current work */
+    @query(#{ explode: true }) includeAssignedRequest?: boolean,
+
+    /** Whether to include details about the agents' most recent completed work */
+    @query(#{ explode: true }) includeLastCompletedRequest?: boolean,
+
+    /** Filter which custom properties will be returned */
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskAgent;
+
+  /** Update agent details. */
+  @tag("Agents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agents")
+  @extension("x-ms-vss-method", "UpdateAgent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent pool to use */
+    @path poolId: int32,
+
+    /** The agent to update */
+    @path agentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Updated details about the agent */
+    @body body: TaskAgent,
+  ): TaskAgent;
+
+  /** Replace an agent. You probably don't want to call this endpoint directly. Instead, [use the agent configuration script](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) to remove and reconfigure an agent from your organization. */
+  @tag("Agents")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "agents")
+  @extension("x-ms-vss-method", "ReplaceAgent")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
+  @put
+  ReplaceAgent(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent pool to use */
+    @path poolId: int32,
+
+    /** The agent to replace */
+    @path agentId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Updated details about the replacing agent */
+    @body body: TaskAgent,
+  ): TaskAgent;
+}
+
+interface Poolpermissions {
+  /** Checks if current identity has passed permissions on a pool. */
+  @tag("Poolpermissions")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "poolpermissions")
+  @extension("x-ms-vss-method", "HasPoolPermissions")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/pools/{poolId}/permissions/{permissions}")
+  @get
+  HasPoolPermissions(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of the pool to check */
+    @path poolId: int32,
+
+    /** Permissions to check. Multiple permissions might be merged into single value using bitwise OR operator (e.g. AgentPoolPermissions.Manage | AgentPoolPermissions.View) */
+    @path permissions: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<boolean>;
+}
+
+interface Variablegroups {
+  /** Add a variable group. */
+  @tag("Variablegroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "variablegroups")
+  @extension("x-ms-vss-method", "ShareVariableGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/variablegroups")
+  @patch
+  ShareVariableGroup(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    @query(#{ explode: true }) variableGroupId: int32,
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: VariableGroupProjectReference[],
+  ): OkResponse;
+
+  /** Add a variable group. */
+  @tag("Variablegroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "variablegroups")
+  @extension("x-ms-vss-method", "AddVariableGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/variablegroups")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: VariableGroupParameters,
+  ): VariableGroup;
+
+  /** Delete a variable group */
+  @tag("Variablegroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "variablegroups")
+  @extension("x-ms-vss-method", "DeleteVariableGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/variablegroups/{groupId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of the variable group. */
+    @path groupId: int32,
+
+    @format("array (string)") @query(#{ explode: true }) projectIds: string,
+    ...Parameters.`api-Version-preview`.`2`,
+  ): OkResponse;
+
+  /** Update a variable group. */
+  @tag("Variablegroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "variablegroups")
+  @extension("x-ms-vss-method", "UpdateVariableGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/variablegroups/{groupId}")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Id of the variable group to update. */
+    @path groupId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+    @body body: VariableGroupParameters,
+  ): VariableGroup;
+
+  /** Get variable groups by ids. */
+  @tag("Variablegroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "variablegroups")
+  @extension("x-ms-vss-method", "GetVariableGroupsById")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/variablegroups")
+  @get
+  GetVariableGroupsById(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Comma separated list of Ids of variable groups. */
+    @format("array (int32)") @query(#{ explode: true }) groupIds: string,
+
+    /** Flag indicating if the secrets within variable groups should be loaded. */
+    @query(#{ explode: true }) loadSecrets?: boolean,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Body<VariableGroup[]>;
+
+  /** Get a variable group. */
+  @tag("Variablegroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "variablegroups")
+  @extension("x-ms-vss-method", "GetVariableGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/variablegroups/{groupId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the variable group. */
+    @path groupId: int32,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): VariableGroup;
+}
+
+interface Yamlschema {
+  /** GET the Yaml schema used for Yaml file validation. */
+  @tag("Yamlschema")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "yamlschema")
+  @extension("x-ms-vss-method", "GetYamlSchema")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/_apis/distributedtask/yamlschema")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @extension("x-ms-required", false) @path organization: string,
+
+    /** Whether the schema should validate that tasks are actually installed (useful for offline tools where you don't want validation). */
+    @query(#{ explode: true }) validateTaskNames?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<{}>;
+}
+
+interface Deploymentgroups {
+  /** Get a list of deployment groups by name or IDs. */
+  @tag("Deploymentgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deploymentgroups")
+  @extension("x-ms-vss-method", "GetDeploymentGroups")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name of the deployment group. */
+    @query(#{ explode: true }) name?: string,
+
+    /** Get only deployment groups on which this action can be performed. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentGroupActionFilter",
+        values: #[
+          #{ value: "none", description: "All deployment groups." },
+          #{
+            value: "manage",
+            description: "Only deployment groups for which caller has **manage** permission.",
+          },
+          #{
+            value: "use",
+            description: "Only deployment groups for which caller has **use** permission.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+
+    /** Include these additional details in the returned objects. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentGroupExpands",
+        values: #[
+          #{ value: "none", description: "No additional properties." },
+          #{ value: "machines", description: "Deprecated: Include all the deployment targets." },
+          #{
+            value: "tags",
+            description: "Include unique list of tags across all deployment targets.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "machines" | "tags",
+
+    /** Get deployment groups with names greater than this continuationToken lexicographically. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Maximum number of deployment groups to return. Default is **1000**. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Comma separated list of IDs of the deployment groups. */
+    @format("array (int32)") @query(#{ explode: true }) ids?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<DeploymentGroup[]>;
+
+  /** Create a deployment group. */
+  @tag("Deploymentgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deploymentgroups")
+  @extension("x-ms-vss-method", "AddDeploymentGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Deployment group to create. */
+    @body body: DeploymentGroupCreateParameter,
+  ): DeploymentGroup;
+
+  /** Delete a deployment group. */
+  @tag("Deploymentgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deploymentgroups")
+  @extension("x-ms-vss-method", "DeleteDeploymentGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group to be deleted. */
+    @path deploymentGroupId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a deployment group by its ID. */
+  @tag("Deploymentgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deploymentgroups")
+  @extension("x-ms-vss-method", "GetDeploymentGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group. */
+    @path deploymentGroupId: int32,
+
+    /** Get the deployment group only if this action can be performed on it. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentGroupActionFilter",
+        values: #[
+          #{ value: "none", description: "All deployment groups." },
+          #{
+            value: "manage",
+            description: "Only deployment groups for which caller has **manage** permission.",
+          },
+          #{
+            value: "use",
+            description: "Only deployment groups for which caller has **use** permission.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+
+    /** Include these additional details in the returned object. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentGroupExpands",
+        values: #[
+          #{ value: "none", description: "No additional properties." },
+          #{ value: "machines", description: "Deprecated: Include all the deployment targets." },
+          #{
+            value: "tags",
+            description: "Include unique list of tags across all deployment targets.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "machines" | "tags",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): DeploymentGroup;
+
+  /** Update a deployment group. */
+  @tag("Deploymentgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "deploymentgroups")
+  @extension("x-ms-vss-method", "UpdateDeploymentGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group. */
+    @path deploymentGroupId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Deployment group to update. */
+    @body body: DeploymentGroupUpdateParameter,
+  ): DeploymentGroup;
+}
+
+interface Targets {
+  /** Get a list of deployment targets in a deployment group. */
+  @tag("Targets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "targets")
+  @extension("x-ms-vss-method", "GetDeploymentTargets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group. */
+    @path deploymentGroupId: int32,
+
+    /** Get only the deployment targets that contain all these comma separted list of tags. */
+    @format("array (string)") @query(#{ explode: true }) tags?: string,
+
+    /** Name pattern of the deployment targets to return. */
+    @query(#{ explode: true }) name?: string,
+
+    /** When set to true, treats **name** as pattern. Else treats it as absolute match. Default is **false**. */
+    @query(#{ explode: true }) partialNameMatch?: boolean,
+
+    /** Include these additional details in the returned objects. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentTargetExpands",
+        values: #[
+          #{ value: "none", description: "No additional properties." },
+          #{ value: "capabilities", description: "Include capabilities of the deployment agent." },
+          #{
+            value: "assignedRequest",
+            description: "Include the job request assigned to the deployment agent.",
+          },
+          #{
+            value: "lastCompletedRequest",
+            description: "Include the last completed job request of the deployment agent.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "capabilities" | "assignedRequest" | "lastCompletedRequest",
+
+    /** Get only deployment targets that have this status. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskAgentStatusFilter",
+        values: #[
+          #{ value: "offline", description: "Only deployment targets that are offline." },
+          #{ value: "online", description: "Only deployment targets that are online." },
+          #{ value: "all", description: "All deployment targets." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    agentStatus?: "offline" | "online" | "all",
+
+    /** Get only deployment targets that have this last job result. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskAgentJobResultFilter",
+        values: #[
+          #{
+            value: "failed",
+            description: "Only those deployment targets on which last job failed (**Abandoned**, **Canceled**, **Failed**, **Skipped**).",
+          },
+          #{
+            value: "passed",
+            description: "Only those deployment targets on which last job Passed (**Succeeded**, **Succeeded with issues**).",
+          },
+          #{
+            value: "neverDeployed",
+            description: "Only those deployment targets that never executed a job.",
+          },
+          #{ value: "all", description: "All deployment targets." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    agentJobResult?: "failed" | "passed" | "neverDeployed" | "all",
+
+    /** Get deployment targets with names greater than this continuationToken lexicographically. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** Maximum number of deployment targets to return. Default is **1000**. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Get only deployment targets that are enabled or disabled. Default is 'null' which returns all the targets. */
+    @query(#{ explode: true }) enabled?: boolean,
+
+    @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<DeploymentMachine[]>;
+
+  /** Update tags of a list of deployment targets in a deployment group. */
+  @tag("Targets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "targets")
+  @extension("x-ms-vss-method", "UpdateDeploymentTargets")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group in which deployment targets are updated. */
+    @path deploymentGroupId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Deployment targets with tags to udpdate. */
+    @body body: DeploymentTargetUpdateParameter[],
+  ): Body<DeploymentMachine[]>;
+
+  /** Delete a deployment target in a deployment group. This deletes the agent from associated deployment pool too. */
+  @tag("Targets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "targets")
+  @extension("x-ms-vss-method", "DeleteDeploymentTarget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/{targetId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group in which deployment target is deleted. */
+    @path deploymentGroupId: int32,
+
+    /** ID of the deployment target to delete. */
+    @path targetId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a deployment target by its ID in a deployment group */
+  @tag("Targets")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "targets")
+  @extension("x-ms-vss-method", "GetDeploymentTarget")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/{targetId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of the deployment group to which deployment target belongs. */
+    @path deploymentGroupId: int32,
+
+    /** ID of the deployment target to return. */
+    @path targetId: int32,
+
+    /** Include these additional details in the returned objects. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "DeploymentTargetExpands",
+        values: #[
+          #{ value: "none", description: "No additional properties." },
+          #{ value: "capabilities", description: "Include capabilities of the deployment agent." },
+          #{
+            value: "assignedRequest",
+            description: "Include the job request assigned to the deployment agent.",
+          },
+          #{
+            value: "lastCompletedRequest",
+            description: "Include the last completed job request of the deployment agent.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    $expand?: "none" | "capabilities" | "assignedRequest" | "lastCompletedRequest",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): DeploymentMachine;
+}
+
+interface Queues {
+  /** Get a list of agent queues by pool ids */
+  @tag("Queues")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "queues")
+  @extension("x-ms-vss-method", "GetAgentQueuesForPools")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/queues")
+  @get
+  GetAgentQueuesForPools(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** A comma-separated list of pool ids to get the corresponding queues for */
+    @format("array (int32)") @query(#{ explode: true }) poolIds: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Filter by whether the calling user has use or manage permissions */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskAgentQueueActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskAgentQueue[]>;
+
+  /** Create a new agent queue to connect a project to an agent pool. */
+  @tag("Queues")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "queues")
+  @extension("x-ms-vss-method", "AddAgentQueue")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/queues")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Automatically authorize this queue when using YAML */
+    @query(#{ explode: true }) authorizePipelines?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Details about the queue to create */
+    @body body: TaskAgentQueue,
+  ): TaskAgentQueue;
+
+  /** Removes an agent queue from a project. */
+  @tag("Queues")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "queues")
+  @extension("x-ms-vss-method", "DeleteAgentQueue")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/queues/{queueId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent queue to remove */
+    @path queueId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get information about an agent queue. */
+  @tag("Queues")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "queues")
+  @extension("x-ms-vss-method", "GetAgentQueue")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/queues/{queueId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** The agent queue to get information about */
+    @path queueId: int32,
+
+    /** Project ID or project name */
+    @extension("x-ms-required", false) @path project: string,
+
+    /** Filter by whether the calling user has use or manage permissions */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskAgentQueueActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): TaskAgentQueue;
+}
+
+interface Securefiles {
+  /** Get secure files */
+  @tag("Securefiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "securefiles")
+  @extension("x-ms-vss-method", "GetSecureFilesByNames")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/securefiles")
+  @get
+  GetSecureFilesByNames(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** A list of secure file Ids */
+    @format("array (string)") @query(#{ explode: true }) secureFileNames: string,
+
+    /** If includeDownloadTickets is true and the caller has permissions, a download ticket for each secure file is included in the response. */
+    @query(#{ explode: true }) includeDownloadTickets?: boolean,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SecureFileActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<SecureFile[]>;
+
+  /** Update properties and/or names of a set of secure files. Files are identified by their IDs. Properties provided override the existing one entirely, i.e. do not merge. */
+  @tag("Securefiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "securefiles")
+  @extension("x-ms-vss-method", "UpdateSecureFiles")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/securefiles")
+  @patch
+  UpdateSecureFiles(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** A list of secure file objects. Only three field must be populated Id, Name, and Properties. The rest of fields in the object are ignored. */
+    @body body: SecureFile[],
+  ): Body<SecureFile[]>;
+
+  /** Query secure files using a name pattern and a condition on file properties. */
+  @tag("Securefiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "securefiles")
+  @extension("x-ms-vss-method", "QuerySecureFilesByProperties")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/securefiles")
+  @post
+  Query(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name of the secure file to match. Can include wildcards to match multiple files. */
+    @query(#{ explode: true }) namePattern?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The main condition syntax is described [here](https://go.microsoft.com/fwlink/?linkid=842996). Use the *property('property-name')* function to access the value of the specified property of a secure file. It returns null if the property is not set. E.g. ``` and( eq( property('devices'), '2' ), in( property('provisioning profile type'), 'ad hoc', 'development' ) ) ``` */
+    @body body: string,
+  ): Body<SecureFile[]>;
+
+  /** Delete a secure file */
+  @tag("Securefiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "securefiles")
+  @extension("x-ms-vss-method", "DeleteSecureFile")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The unique secure file Id */
+    @format("uuid") @path secureFileId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** Get a secure file */
+  @tag("Securefiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "securefiles")
+  @extension("x-ms-vss-method", "GetSecureFile")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The unique secure file Id */
+    @format("uuid") @path secureFileId: string,
+
+    /** If includeDownloadTicket is true and the caller has permissions, a download ticket is included in the response. */
+    @query(#{ explode: true }) includeDownloadTicket?: boolean,
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "SecureFileActionFilter",
+        values: #[
+          #{ value: "none", description: "" },
+          #{ value: "manage", description: "" },
+          #{ value: "use", description: "" }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    actionFilter?: "none" | "manage" | "use",
+    ...Parameters.`api-Version-preview`.`1`,
+  ): SecureFile;
+
+  /** Update the name or properties of an existing secure file */
+  @tag("Securefiles")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "securefiles")
+  @extension("x-ms-vss-method", "UpdateSecureFile")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
+  @patch
+  UpdateSecureFile(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The unique secure file Id */
+    @format("uuid") @path secureFileId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The secure file with updated name and/or properties */
+    @body body: SecureFile,
+  ): SecureFile;
+}
+
+interface Taskgroups {
+  /** Create a task group. */
+  @tag("Taskgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskgroups")
+  @extension("x-ms-vss-method", "AddTaskGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/taskgroups")
+  @post
+  Add(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Task group object to create. */
+    @body body: TaskGroupCreateParameter,
+  ): TaskGroup;
+
+  /** Delete a task group. */
+  @tag("Taskgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskgroups")
+  @extension("x-ms-vss-method", "DeleteTaskGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/taskgroups/{taskGroupId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the task group to be deleted. */
+    @format("uuid") @path taskGroupId: string,
+
+    /** Comments to delete. */
+    @query(#{ explode: true }) comment?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+
+  /** List task groups. */
+  @tag("Taskgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskgroups")
+  @extension("x-ms-vss-method", "GetTaskGroups")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/taskgroups/{taskGroupId}")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the task group. */
+    @extension("x-ms-required", false)
+    @format("uuid")
+    @path
+    taskGroupId: string,
+
+    /** 'true' to recursively expand task groups. Default is 'false'. */
+    @query(#{ explode: true }) expanded?: boolean,
+
+    /** Guid of the taskId to filter. */
+    @format("uuid") @query(#{ explode: true }) taskIdFilter?: string,
+
+    /** 'true'to include deleted task groups. Default is 'false'. */
+    @query(#{ explode: true }) deleted?: boolean,
+
+    /** Number of task groups to get. */
+    @query(#{ explode: true }) $top?: int32,
+
+    /** Gets the task groups after the continuation token provided. */
+    @query(#{ explode: true }) continuationToken?: utcDateTime,
+
+    /** Gets the results in the defined order. Default is 'CreatedOnDescending'. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "TaskGroupQueryOrder",
+        values: #[
+          #{ value: "createdOnAscending", description: "Order by createdon ascending." },
+          #{ value: "createdOnDescending", description: "Order by createdon descending." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    queryOrder?: "createdOnAscending" | "createdOnDescending",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<TaskGroup[]>;
+
+  /** Update a task group. */
+  @tag("Taskgroups")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "taskgroups")
+  @extension("x-ms-vss-method", "UpdateTaskGroup")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/distributedtask/taskgroups/{taskGroupId}")
+  @put
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Id of the task group to update. */
+    @extension("x-ms-required", false)
+    @format("uuid")
+    @path
+    taskGroupId: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Task group to update. */
+    @body body: TaskGroupUpdateParameter,
+  ): TaskGroup;
 }

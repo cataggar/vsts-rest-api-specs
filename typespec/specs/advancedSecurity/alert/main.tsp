@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "Alert" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://advsec.dev.azure.com")
 namespace Alert;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model Alert {
   /** Additional properties of this alert. */
@@ -1352,417 +1358,433 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Get alerts for a repository */
-@tag("Alerts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "alerts")
-@extension("x-ms-vss-method", "GetAlertsAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts")
-@get
-op Alerts_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository */
-  @path repository: string,
-
-  /** The maximum number of alerts to return */
-  @query(#{ explode: true }) top?: int32,
-
-  /** Must be 'id' 'firstSeen' 'lastSeen' 'fixedOn' or 'severity' Defaults to 'id' */
-  @query(#{ explode: true }) orderBy?: string,
-
-  /** If provided, only return alerts with the ids specified. <br />Otherwise, return any alert. */
-  @query `criteria.alertIds`?: int64[],
-
-  /** If provided, only return alerts of this type. Otherwise, return alerts of all types. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AlertType",
-      values: #[
-        #{ value: "unknown", description: "The code has an unspecified vulnerability type" },
-        #{
-          value: "dependency",
-          description: "The code uses a dependency with a known vulnerability.",
-        },
-        #{
-          value: "secret",
-          description: "The code contains a secret that has now been compromised and must be revoked.",
-        },
-        #{
-          value: "code",
-          description: "The code contains a weakness determined by static analysis.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  `criteria.alertType`?: "unknown" | "dependency" | "secret" | "code",
-
-  /** If provided, only return alerts at these confidence levels. <br />Both High and Other need to be specified to fetch alerts of all confidence levels. <br />Otherwise, return alerts with high confidence level. <br />Only applicable for secret alerts. */
-  @query `criteria.confidenceLevels`?: string[],
-
-  /** If provided, only alerts for this dependency are returned. <br />Otherwise, return alerts for all dependencies. <br />In a sarif submission, a dependency (or a component) is specified in result.RelatedLocations[].logicalLocation. <br />Not applicable for secret alerts. */
-  @query(#{ explode: true }) `criteria.dependencyName`?: string,
-
-  /** If provided, only return alerts last seen after this date. <br />Otherwise return all alerts. */
-  @query(#{ explode: true }) `criteria.fromDate`?: utcDateTime,
-
-  /** If provided, filters alerts based on whether they have linked work items. <br />Set to 'true' to return only alerts with linked work items. <br />Set to 'false' to return only alerts without linked work items. <br />If not provided, returns all alerts regardless of linked work items. <br />Not applicable for secret and dependency scanning alerts. */
-  @query(#{ explode: true }) `criteria.hasLinkedWorkItems`?: boolean,
-
-  /** If provided with isTriaged, only return alerts that have been triaged. <br />Otherwise, return alerts regardless of triage status. */
-  @query(#{ explode: true }) `criteria.isTriaged`?: boolean,
-
-  /** If provided, only return alerts whose titles match this pattern. */
-  @query(#{ explode: true }) `criteria.keywords`?: string,
-
-  /** If provided, only alerts created for dependency with this license are returned. <br />Otherwise, return alerts for all licenses. <br />In a sarif submission, license for a dependency (or a component) is specified in result.RelatedLocations[].logicalLocation.properties.license. <br />Not applicable for secret alerts. */
-  @query(#{ explode: true }) `criteria.licenseName`?: string,
-
-  /** If provided, only return alerts that were modified since this date. <br />Otherwise return all alerts. */
-  @query(#{ explode: true }) `criteria.modifiedSince`?: utcDateTime,
-
-  /** If true or not set, only return alerts found on the default branch of the repository. <br />If there have been no runs completed on the default branch, the last run is used instead regardless of the branch used for that run. If false, return alerts from all branches. <br />This option is ignored if ref is provided. <br />Not applicable for secret alerts. */
-  @query(#{ explode: true }) `criteria.onlyDefaultBranch`?: boolean,
-
-  /** If provided with pipelineName, only return alerts detected in this pipeline phase <br />Otherwise, return alerts detected in all phases. <br />Not applicable for secret alerts. */
-  @format("uuid") @query(#{ explode: true }) `criteria.phaseId`?: string,
-
-  /** If provided with pipelineName, only return alerts detected in this pipeline phase <br />Otherwise, return alerts detected in all phases. <br />Not applicable for secret alerts. */
-  @query(#{ explode: true }) `criteria.phaseName`?: string,
-
-  /** If provided with pipelineId, only return alerts detected in this pipeline <br />Otherwise, return alerts detected in all pipelines. */
-  @query(#{ explode: true }) `criteria.pipelineId`?: int32,
-
-  /** If provided, only return alerts detected in this pipeline. <br />Otherwise, return alerts detected in all pipelines. <br />Not applicable for secret alerts. */
-  @query(#{ explode: true }) `criteria.pipelineName`?: string,
-
-  /** If provided, only include alerts for this ref. <br />If not provided and OnlyDefaultBranch is true, only include alerts found on the default branch or last run branch if there is no analysis configuration for the default branch. <br />Otherwise, include alerts from all branches. <br />Not applicable for secret alerts. */
-  @query(#{ explode: true }) `criteria.ref`?: string,
-
-  /** If provided, only return alerts for this rule. <br />Otherwise, return alerts of all rules. */
-  @query(#{ explode: true }) `criteria.ruleId`?: string,
-
-  /** If provided, only return alerts for this rule. <br />Otherwise, return alerts for all rules. */
-  @query(#{ explode: true }) `criteria.ruleName`?: string,
-
-  /** If provided, only return alerts at these severities. <br />Otherwise, return alerts at any severity. */
-  @query `criteria.severities`?: string[],
-
-  /** If provided, only return alerts in these states. <br />Otherwise, return alerts in any state. */
-  @query `criteria.states`?: string[],
-
-  /** If provided, only return alerts last seen before this date. <br />Otherwise return all alerts. */
-  @query(#{ explode: true }) `criteria.toDate`?: utcDateTime,
-
-  /** If provided with toolName, only return alerts detected by this tool. <br />Otherwise, return alerts detected by all tools. */
-  @query(#{ explode: true }) `criteria.toolName`?: string,
-
-  /** If provided, only return alerts with the validity specified here. If the validity status is Unknown, fetch alerts of all validity results. <br />Only applicable for secret alerts. <br />Filtering by validity status may cause less alerts to be returned than requested with TOP parameter. <br />Due to this behavior, the ContinuationToken(<![CDATA[<header name>]]>) in the response header should be relied on to decide if another batch needs to be fetched. */
-  @query `criteria.validity`?: string[],
-
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AlertListExpandOption",
-      values: #[
-        #{ value: "none", description: "No Expands." },
-        #{ value: "minimal", description: "Return a minimal representation of an alert." },
-        #{
-          value: "count",
-          description: "Return only the count of active alerts grouped by alert type.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expand?: "none" | "minimal" | "count",
-
-  /** If there are more alerts than can be returned, a continuation token is placed in the 'x-ms-continuationtoken' header. Use that token here to get the next page of alerts */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Alert[]>;
-
-/** Get an alert. */
-@tag("Alerts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "alerts")
-@extension("x-ms-vss-method", "GetAlertAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}")
-@get
-op Alerts_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of alert to retrieve */
-  @path alertId: int64,
-
-  /** Name or id of a repository that alert is part of */
-  @path repository: string,
-
-  @query(#{ explode: true }) ref?: string,
-
-  /** Expand attributes of a secret alert. Possible values are `None` and `ValidationFingerprint`. Defaults to `None`. Be aware that if `expand` is set to `ValidationFingerprint`, the response may contain the secret in its unencrypted form. Please exercise caution when using this data. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "ExpandOption",
-      values: #[
-        #{ value: "none", description: "No Expands." },
-        #{ value: "validationFingerprint", description: "Return validationFingerprints in Alert." }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  expand?: "none" | "validationFingerprint",
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Alert;
-
-/** Update the status of an alert */
-@tag("Alerts")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "alerts")
-@extension("x-ms-vss-method", "UpdateAlertAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}")
-@patch
-op Alerts_Update(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The ID of the alert */
-  @path alertId: int64,
-
-  /** The name or ID of the repository */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** The new status of the alert */
-  @body body: AlertStateUpdate,
-): Alert;
-
-/** Get instances of an alert on a branch specified with \@ref. If \@ref is not provided, return instances of an alert on default branch(if the alert exist in default branch) or latest affected branch. */
-@tag("Instances")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "instances")
-@extension("x-ms-vss-method", "GetAlertInstancesAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}/instances")
-@get
-op Instances_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of alert to retrieve */
-  @path alertId: int64,
-
-  /** Name or id of a repository that alert is part of */
-  @path repository: string,
-
-  @query(#{ explode: true }) ref?: string,
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<AlertAnalysisInstance[]>;
-
-/** Get an alert metadata. */
-@tag("Metadata2")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "metadata2")
-@extension("x-ms-vss-method", "GetAlertMetadataAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}/metadata")
-@get
-op Metadata2_Get(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** ID of alert to retrieve */
-  @path alertId: int64,
-
-  /** Name or id of a repository that alert is part of */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): AlertMetadata;
-
-/** Get alerts metadata. */
-@tag("Metadata Batch")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "metadataBatch")
-@extension("x-ms-vss-method", "GetAlertMetadataBatchAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/metadatabatch")
-@post
-op MetadataBatch_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** Name or id of a repository that alert is part of */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-  @body body: AlertMetadataBatchRequest,
-): Body<AlertMetadata[]>;
-
-/** Get alerts by alert IDs Currently supports fetching secret alerts only. */
-@tag("Alerts Batch")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "alertsBatch")
-@extension("x-ms-vss-method", "GetAlertsByIdsAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/AlertsBatch")
-@post
-op AlertsBatch_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-
-  /** Request containing alert IDs and optional alert type filter */
-  @body body: AlertBatchRequest,
-): Body<Alert[]>;
-
-/** Returns the branches for which analysis results were submitted. */
-@tag("Analysis")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "analysis")
-@extension("x-ms-vss-method", "GetBranchesAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/filters/branches")
-@get
-op Analysis_List(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  @path repository: string,
-
-  /** The type of alert: Dependency Scanning (1), Secret (2), Code QL (3), etc. */
-  @extension(
-    "x-ms-enum",
-    #{
-      name: "AlertType",
-      values: #[
-        #{ value: "unknown", description: "The code has an unspecified vulnerability type" },
-        #{
-          value: "dependency",
-          description: "The code uses a dependency with a known vulnerability.",
-        },
-        #{
-          value: "secret",
-          description: "The code contains a secret that has now been compromised and must be revoked.",
-        },
-        #{
-          value: "code",
-          description: "The code contains a weakness determined by static analysis.",
-        }
-      ],
-    }
-  )
-  @query(#{ explode: true })
-  alertType: "unknown" | "dependency" | "secret" | "code",
-
-  /** A string variable that represents the branch name and is used to fetch branches that follow it in alphabetical order. */
-  @query(#{ explode: true }) continuationToken?: string,
-
-  /** A string variable used to fetch branches that contain this string anywhere in the branch name, case insensitive. */
-  @query(#{ explode: true }) branchNameContains?: string,
-
-  /** An int variable used to return the top k branches that satisfy the search criteria. */
-  @query(#{ explode: true }) top?: int32,
-
-  /** A bool variable indicating whether or not to include pull request branches. */
-  @query(#{ explode: true }) includePullRequestBranches?: boolean,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): Body<Branch[]>;
-
-/** Soft-deletes analysis data for all pipelines in a repository, cleaning up the associated Advanced Security alerts. */
-@tag("Pipeline Analyses")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelineAnalyses")
-@extension("x-ms-vss-method", "DeleteAllPipelineAnalysesAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/pipelineAnalyses")
-@delete
-op PipelineAnalyses_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repository: string,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
-/** Soft-deletes analysis data for a specific pipeline, cleaning up the associated Advanced Security alerts. */
-@tag("Pipeline Analysis")
-@extension("x-ms-docs-override-version", "7.2-preview.1")
-@extension("x-ms-vss-resource", "pipelineAnalysis")
-@extension("x-ms-vss-method", "DeletePipelineAnalysisAsync")
-@extension("x-ms-preview", true)
-@route("/{organization}/{project}/_apis/alert/repositories/{repository}/pipelineAnalysis/{adoPipelineId}")
-@delete
-op PipelineAnalysis_Delete(
-  /** The name of the Azure DevOps organization. */
-  @path organization: string,
-
-  /** Project ID or project name */
-  @path project: string,
-
-  /** The name or ID of the repository. */
-  @path repository: string,
-
-  /** The ID of the ADO pipeline whose analysis data should be cleaned up. */
-  @path adoPipelineId: int32,
-
-  ...Parameters.`api-Version-preview`.`1`,
-): OkResponse;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface Alerts {
+  /** Get alerts for a repository */
+  @tag("Alerts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "alerts")
+  @extension("x-ms-vss-method", "GetAlertsAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository */
+    @path repository: string,
+
+    /** The maximum number of alerts to return */
+    @query(#{ explode: true }) top?: int32,
+
+    /** Must be 'id' 'firstSeen' 'lastSeen' 'fixedOn' or 'severity' Defaults to 'id' */
+    @query(#{ explode: true }) orderBy?: string,
+
+    /** If provided, only return alerts with the ids specified. <br />Otherwise, return any alert. */
+    @query(#{ name: "criteria.alertIds" }) criteriaAlertIds?: int64[],
+
+    /** If provided, only return alerts of this type. Otherwise, return alerts of all types. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AlertType",
+        values: #[
+          #{ value: "unknown", description: "The code has an unspecified vulnerability type" },
+          #{
+            value: "dependency",
+            description: "The code uses a dependency with a known vulnerability.",
+          },
+          #{
+            value: "secret",
+            description: "The code contains a secret that has now been compromised and must be revoked.",
+          },
+          #{
+            value: "code",
+            description: "The code contains a weakness determined by static analysis.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    `criteria.alertType`?: "unknown" | "dependency" | "secret" | "code",
+
+    /** If provided, only return alerts at these confidence levels. <br />Both High and Other need to be specified to fetch alerts of all confidence levels. <br />Otherwise, return alerts with high confidence level. <br />Only applicable for secret alerts. */
+    @query(#{ name: "criteria.confidenceLevels" }) criteriaConfidenceLevels?: string[],
+
+    /** If provided, only alerts for this dependency are returned. <br />Otherwise, return alerts for all dependencies. <br />In a sarif submission, a dependency (or a component) is specified in result.RelatedLocations[].logicalLocation. <br />Not applicable for secret alerts. */
+    @query(#{ name: "criteria.dependencyName", explode: true }) criteriaDependencyName?: string,
+
+    /** If provided, only return alerts last seen after this date. <br />Otherwise return all alerts. */
+    @query(#{ name: "criteria.fromDate", explode: true }) criteriaFromDate?: utcDateTime,
+
+    /** If provided, filters alerts based on whether they have linked work items. <br />Set to 'true' to return only alerts with linked work items. <br />Set to 'false' to return only alerts without linked work items. <br />If not provided, returns all alerts regardless of linked work items. <br />Not applicable for secret and dependency scanning alerts. */
+    @query(#{ name: "criteria.hasLinkedWorkItems", explode: true }) criteriaHasLinkedWorkItems?: boolean,
+
+    /** If provided with isTriaged, only return alerts that have been triaged. <br />Otherwise, return alerts regardless of triage status. */
+    @query(#{ name: "criteria.isTriaged", explode: true }) criteriaIsTriaged?: boolean,
+
+    /** If provided, only return alerts whose titles match this pattern. */
+    @query(#{ name: "criteria.keywords", explode: true }) criteriaKeywords?: string,
+
+    /** If provided, only alerts created for dependency with this license are returned. <br />Otherwise, return alerts for all licenses. <br />In a sarif submission, license for a dependency (or a component) is specified in result.RelatedLocations[].logicalLocation.properties.license. <br />Not applicable for secret alerts. */
+    @query(#{ name: "criteria.licenseName", explode: true }) criteriaLicenseName?: string,
+
+    /** If provided, only return alerts that were modified since this date. <br />Otherwise return all alerts. */
+    @query(#{ name: "criteria.modifiedSince", explode: true }) criteriaModifiedSince?: utcDateTime,
+
+    /** If true or not set, only return alerts found on the default branch of the repository. <br />If there have been no runs completed on the default branch, the last run is used instead regardless of the branch used for that run. If false, return alerts from all branches. <br />This option is ignored if ref is provided. <br />Not applicable for secret alerts. */
+    @query(#{ name: "criteria.onlyDefaultBranch", explode: true }) criteriaOnlyDefaultBranch?: boolean,
+
+    /** If provided with pipelineName, only return alerts detected in this pipeline phase <br />Otherwise, return alerts detected in all phases. <br />Not applicable for secret alerts. */
+    @format("uuid") @query(#{ name: "criteria.phaseId", explode: true }) criteriaPhaseId?: string,
+
+    /** If provided with pipelineName, only return alerts detected in this pipeline phase <br />Otherwise, return alerts detected in all phases. <br />Not applicable for secret alerts. */
+    @query(#{ name: "criteria.phaseName", explode: true }) criteriaPhaseName?: string,
+
+    /** If provided with pipelineId, only return alerts detected in this pipeline <br />Otherwise, return alerts detected in all pipelines. */
+    @query(#{ name: "criteria.pipelineId", explode: true }) criteriaPipelineId?: int32,
+
+    /** If provided, only return alerts detected in this pipeline. <br />Otherwise, return alerts detected in all pipelines. <br />Not applicable for secret alerts. */
+    @query(#{ name: "criteria.pipelineName", explode: true }) criteriaPipelineName?: string,
+
+    /** If provided, only include alerts for this ref. <br />If not provided and OnlyDefaultBranch is true, only include alerts found on the default branch or last run branch if there is no analysis configuration for the default branch. <br />Otherwise, include alerts from all branches. <br />Not applicable for secret alerts. */
+    @query(#{ name: "criteria.ref", explode: true }) criteriaRef?: string,
+
+    /** If provided, only return alerts for this rule. <br />Otherwise, return alerts of all rules. */
+    @query(#{ name: "criteria.ruleId", explode: true }) criteriaRuleId?: string,
+
+    /** If provided, only return alerts for this rule. <br />Otherwise, return alerts for all rules. */
+    @query(#{ name: "criteria.ruleName", explode: true }) criteriaRuleName?: string,
+
+    /** If provided, only return alerts at these severities. <br />Otherwise, return alerts at any severity. */
+    @query(#{ name: "criteria.severities" }) criteriaSeverities?: string[],
+
+    /** If provided, only return alerts in these states. <br />Otherwise, return alerts in any state. */
+    @query(#{ name: "criteria.states" }) criteriaStates?: string[],
+
+    /** If provided, only return alerts last seen before this date. <br />Otherwise return all alerts. */
+    @query(#{ name: "criteria.toDate", explode: true }) criteriaToDate?: utcDateTime,
+
+    /** If provided with toolName, only return alerts detected by this tool. <br />Otherwise, return alerts detected by all tools. */
+    @query(#{ name: "criteria.toolName", explode: true }) criteriaToolName?: string,
+
+    /** If provided, only return alerts with the validity specified here. If the validity status is Unknown, fetch alerts of all validity results. <br />Only applicable for secret alerts. <br />Filtering by validity status may cause less alerts to be returned than requested with TOP parameter. <br />Due to this behavior, the ContinuationToken(<![CDATA[<header name>]]>) in the response header should be relied on to decide if another batch needs to be fetched. */
+    @query(#{ name: "criteria.validity" }) criteriaValidity?: string[],
+
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AlertListExpandOption",
+        values: #[
+          #{ value: "none", description: "No Expands." },
+          #{ value: "minimal", description: "Return a minimal representation of an alert." },
+          #{
+            value: "count",
+            description: "Return only the count of active alerts grouped by alert type.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expand?: "none" | "minimal" | "count",
+
+    /** If there are more alerts than can be returned, a continuation token is placed in the 'x-ms-continuationtoken' header. Use that token here to get the next page of alerts */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Alert[]>;
+
+  /** Get an alert. */
+  @tag("Alerts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "alerts")
+  @extension("x-ms-vss-method", "GetAlertAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of alert to retrieve */
+    @path alertId: int64,
+
+    /** Name or id of a repository that alert is part of */
+    @path repository: string,
+
+    @query(#{ explode: true }) ref?: string,
+
+    /** Expand attributes of a secret alert. Possible values are `None` and `ValidationFingerprint`. Defaults to `None`. Be aware that if `expand` is set to `ValidationFingerprint`, the response may contain the secret in its unencrypted form. Please exercise caution when using this data. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "ExpandOption",
+        values: #[
+          #{ value: "none", description: "No Expands." },
+          #{ value: "validationFingerprint", description: "Return validationFingerprints in Alert." }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    expand?: "none" | "validationFingerprint",
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Alert;
+
+  /** Update the status of an alert */
+  @tag("Alerts")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "alerts")
+  @extension("x-ms-vss-method", "UpdateAlertAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}")
+  @patch
+  Update(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The ID of the alert */
+    @path alertId: int64,
+
+    /** The name or ID of the repository */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** The new status of the alert */
+    @body body: AlertStateUpdate,
+  ): Alert;
+}
+
+interface Instances {
+  /** Get instances of an alert on a branch specified with \@ref. If \@ref is not provided, return instances of an alert on default branch(if the alert exist in default branch) or latest affected branch. */
+  @tag("Instances")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "instances")
+  @extension("x-ms-vss-method", "GetAlertInstancesAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}/instances")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of alert to retrieve */
+    @path alertId: int64,
+
+    /** Name or id of a repository that alert is part of */
+    @path repository: string,
+
+    @query(#{ explode: true }) ref?: string,
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<AlertAnalysisInstance[]>;
+}
+
+interface Metadata2 {
+  /** Get an alert metadata. */
+  @tag("Metadata2")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "metadata2")
+  @extension("x-ms-vss-method", "GetAlertMetadataAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/{alertId}/metadata")
+  @get
+  Get(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** ID of alert to retrieve */
+    @path alertId: int64,
+
+    /** Name or id of a repository that alert is part of */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): AlertMetadata;
+}
+
+interface MetadataBatch {
+  /** Get alerts metadata. */
+  @tag("Metadata Batch")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "metadataBatch")
+  @extension("x-ms-vss-method", "GetAlertMetadataBatchAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/metadatabatch")
+  @post
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** Name or id of a repository that alert is part of */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+    @body body: AlertMetadataBatchRequest,
+  ): Body<AlertMetadata[]>;
+}
+
+interface AlertsBatch {
+  /** Get alerts by alert IDs Currently supports fetching secret alerts only. */
+  @tag("Alerts Batch")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "alertsBatch")
+  @extension("x-ms-vss-method", "GetAlertsByIdsAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/AlertsBatch")
+  @post
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+
+    /** Request containing alert IDs and optional alert type filter */
+    @body body: AlertBatchRequest,
+  ): Body<Alert[]>;
+}
+
+interface Analysis {
+  /** Returns the branches for which analysis results were submitted. */
+  @tag("Analysis")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "analysis")
+  @extension("x-ms-vss-method", "GetBranchesAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/filters/branches")
+  @get
+  List(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    @path repository: string,
+
+    /** The type of alert: Dependency Scanning (1), Secret (2), Code QL (3), etc. */
+    @extension(
+      "x-ms-enum",
+      #{
+        name: "AlertType",
+        values: #[
+          #{ value: "unknown", description: "The code has an unspecified vulnerability type" },
+          #{
+            value: "dependency",
+            description: "The code uses a dependency with a known vulnerability.",
+          },
+          #{
+            value: "secret",
+            description: "The code contains a secret that has now been compromised and must be revoked.",
+          },
+          #{
+            value: "code",
+            description: "The code contains a weakness determined by static analysis.",
+          }
+        ],
+      }
+    )
+    @query(#{ explode: true })
+    alertType: "unknown" | "dependency" | "secret" | "code",
+
+    /** A string variable that represents the branch name and is used to fetch branches that follow it in alphabetical order. */
+    @query(#{ explode: true }) continuationToken?: string,
+
+    /** A string variable used to fetch branches that contain this string anywhere in the branch name, case insensitive. */
+    @query(#{ explode: true }) branchNameContains?: string,
+
+    /** An int variable used to return the top k branches that satisfy the search criteria. */
+    @query(#{ explode: true }) top?: int32,
+
+    /** A bool variable indicating whether or not to include pull request branches. */
+    @query(#{ explode: true }) includePullRequestBranches?: boolean,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): Body<Branch[]>;
+}
+
+interface PipelineAnalyses {
+  /** Soft-deletes analysis data for all pipelines in a repository, cleaning up the associated Advanced Security alerts. */
+  @tag("Pipeline Analyses")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelineAnalyses")
+  @extension("x-ms-vss-method", "DeleteAllPipelineAnalysesAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/pipelineAnalyses")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repository: string,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
+}
+
+interface PipelineAnalysis {
+  /** Soft-deletes analysis data for a specific pipeline, cleaning up the associated Advanced Security alerts. */
+  @tag("Pipeline Analysis")
+  @extension("x-ms-docs-override-version", "7.2-preview.1")
+  @extension("x-ms-vss-resource", "pipelineAnalysis")
+  @extension("x-ms-vss-method", "DeletePipelineAnalysisAsync")
+  @extension("x-ms-preview", true)
+  @route("/{organization}/{project}/_apis/alert/repositories/{repository}/pipelineAnalysis/{adoPipelineId}")
+  @delete
+  Delete(
+    /** The name of the Azure DevOps organization. */
+    @path organization: string,
+
+    /** Project ID or project name */
+    @path project: string,
+
+    /** The name or ID of the repository. */
+    @path repository: string,
+
+    /** The ID of the ADO pipeline whose analysis data should be cleaned up. */
+    @path adoPipelineId: int32,
+
+    ...Parameters.`api-Version-preview`.`1`,
+  ): OkResponse;
 }

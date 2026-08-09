@@ -1,10 +1,12 @@
 import "@typespec/http";
 import "@typespec/openapi";
-import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using Http;
 using OpenAPI;
+using Versioning;
 
+@versioned(ServiceApiVersions)
 @service(#{ title: "DelegatedAuthorization" })
 @info(#{
   version: "7.2-preview",
@@ -17,6 +19,10 @@ using OpenAPI;
 })
 @server("https://vssps.dev.azure.com")
 namespace DelegatedAuthorization;
+
+enum ServiceApiVersions {
+  v7_2_preview: "7.2-preview",
+}
 
 model AccessTokenResult {
   accessToken?: JsonWebToken;
@@ -460,48 +466,50 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
-/** Create Alternative Secret for the ADO OAuth App Registration */
-@tag("Registration Secret")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "registrationSecret")
-@extension("x-ms-vss-method", "CreateAlternativeSecret")
-@extension("x-ms-preview", true)
-@route("/_apis/delegatedauth/registrationsecret/{registrationId}")
-@post
-op RegistrationSecret_Create(
-  /** The registration id of the ADO OAuth App Registration */
-  @format("uuid") @path registrationId: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): JsonWebToken;
-
-/** Rotate one of the two secrets for the ADO OAuth App Registration */
-@tag("Registration Secret")
-@extension("x-ms-docs-override-version", "7.2-preview.2")
-@extension("x-ms-vss-resource", "registrationSecret")
-@extension("x-ms-vss-method", "RotateSecret")
-@extension("x-ms-preview", true)
-@route("/_apis/delegatedauth/registrationsecret/{registrationId}")
-@put
-op RegistrationSecret_RotateSecret(
-  /** The registration id of the ADO OAuth App Registration */
-  @format("uuid") @path registrationId: string,
-
-  /** The secret type to rotate, either primary or alternative */
-  @query(#{ explode: true }) secretType?: string,
-
-  ...Parameters.`api-Version-preview`.`2`,
-): Registration;
-
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
       /** Version of the API to use. This should be set to '7.2-preview.1' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
     model `2` {
       /** Version of the API to use. This should be set to '7.2-preview.2' to use this version of the api. */
-      @query(#{ explode: true }) `api-version`: string;
+      @query(#{ name: "api-version", explode: true }) apiVersion: string;
     }
   }
+}
+
+interface RegistrationSecret {
+  /** Create Alternative Secret for the ADO OAuth App Registration */
+  @tag("Registration Secret")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "registrationSecret")
+  @extension("x-ms-vss-method", "CreateAlternativeSecret")
+  @extension("x-ms-preview", true)
+  @route("/_apis/delegatedauth/registrationsecret/{registrationId}")
+  @post
+  Create(
+    /** The registration id of the ADO OAuth App Registration */
+    @format("uuid") @path registrationId: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): JsonWebToken;
+
+  /** Rotate one of the two secrets for the ADO OAuth App Registration */
+  @tag("Registration Secret")
+  @extension("x-ms-docs-override-version", "7.2-preview.2")
+  @extension("x-ms-vss-resource", "registrationSecret")
+  @extension("x-ms-vss-method", "RotateSecret")
+  @extension("x-ms-preview", true)
+  @route("/_apis/delegatedauth/registrationsecret/{registrationId}")
+  @put
+  RotateSecret(
+    /** The registration id of the ADO OAuth App Registration */
+    @format("uuid") @path registrationId: string,
+
+    /** The secret type to rotate, either primary or alternative */
+    @query(#{ explode: true }) secretType?: string,
+
+    ...Parameters.`api-Version-preview`.`2`,
+  ): Registration;
 }
