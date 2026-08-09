@@ -4129,7 +4129,12 @@ interface Definitions {
     @query(#{ explode: true }) searchTextContainsFolderName?: boolean,
 
     ...Parameters.`api-Version-preview`.`4`,
-  ): Body<ReleaseDefinition[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: ReleaseDefinition[];
+  };
 
   /** Create a release definition */
   @tag("Definitions")

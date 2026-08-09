@@ -6075,7 +6075,12 @@ interface PullRequestCommits {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitCommitRef[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: GitCommitRef[];
+  };
 
   /** Get the commits for the specified iteration of a pull request. */
   @tag("Pull Request Commits")
@@ -7452,7 +7457,12 @@ interface Refs {
     @query(#{ explode: true }) includeTargetBranches?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitRef[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: GitRef[];
+  };
 
   /** Lock or Unlock a branch. */
   @tag("Refs")

@@ -389,7 +389,12 @@ interface Pipelines {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Pipeline[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: Pipeline[];
+  };
 
   /** Create a pipeline. */
   @tag("Pipelines")

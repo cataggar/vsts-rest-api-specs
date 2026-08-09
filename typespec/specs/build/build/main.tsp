@@ -3937,7 +3937,12 @@ interface Builds {
     @query(#{ explode: true }) repositoryType?: string,
 
     ...Parameters.`api-Version-preview`.`8`,
-  ): Body<Build[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: Build[];
+  };
 
   /** Updates multiple builds. */
   @tag("Builds")
@@ -4075,7 +4080,12 @@ interface Builds {
 
     @query(#{ explode: true }) includeSourceChange?: boolean,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Change[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: Change[];
+  };
 
   /** Gets all retention leases that apply to a specific build. */
   @tag("Builds")
@@ -4993,7 +5003,12 @@ interface Definitions {
     @query(#{ explode: true }) yamlFilename?: string,
 
     ...Parameters.`api-Version-preview`.`8`,
-  ): Body<BuildDefinitionReference[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: BuildDefinitionReference[];
+  };
 
   /** Creates a new definition. */
   @tag("Definitions")

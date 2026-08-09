@@ -1508,7 +1508,12 @@ interface Alerts {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Alert[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: Alert[];
+  };
 
   /** Get an alert. */
   @tag("Alerts")
@@ -1737,7 +1742,12 @@ interface Analysis {
     @query(#{ explode: true }) includePullRequestBranches?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Branch[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: Branch[];
+  };
 }
 
 interface PipelineAnalyses {

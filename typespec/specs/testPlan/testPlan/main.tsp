@@ -1642,7 +1642,12 @@ interface TestSuites {
     @query(#{ explode: true }) asTreeView?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestSuite[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestSuite[];
+  };
 
   /** Create test suite. */
   @tag("Test  Suites")
@@ -1800,7 +1805,12 @@ interface Configurations {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestConfiguration[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestConfiguration[];
+  };
 
   /** Update a test configuration by its ID. */
   @tag("Configurations")
@@ -1898,7 +1908,12 @@ interface TestPlans {
     @query(#{ explode: true }) filterActivePlans?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestPlan[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestPlan[];
+  };
 
   /** Create a test plan. */
   @tag("Test  Plans")
@@ -2078,7 +2093,12 @@ interface SuiteTestCase {
 
     @query(#{ explode: true }) isRecursive?: boolean,
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<TestCase[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestCase[];
+  };
 
   /** Update the configurations for test cases */
   @tag("Suite Test Case")
@@ -2303,7 +2323,12 @@ interface TestPlanRecycleBin {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestPlan[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestPlan[];
+  };
 
   /** Restores the deleted test plan */
   @tag("Test  Plan  Recycle  Bin")
@@ -2371,7 +2396,12 @@ interface TestSuiteRecycleBinOperations {
     @query(#{ explode: true }) asTreeView?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestSuite[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestSuite[];
+  };
 
   /** Get Deleted Test Suites within a Project. */
   @tag("Test  Suite  Recycle  Bin  Operations")
@@ -2410,7 +2440,12 @@ interface TestSuiteRecycleBinOperations {
     @query(#{ explode: true }) asTreeView?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestSuite[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestSuite[];
+  };
 
   /** Restores the deleted test suite */
   @tag("Test  Suite  Recycle  Bin  Operations")
@@ -2627,7 +2662,12 @@ interface Variables {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestVariable[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TestVariable[];
+  };
 
   /** Create a test variable. */
   @tag("Variables")

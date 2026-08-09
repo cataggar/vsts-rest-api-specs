@@ -10,7 +10,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -27,7 +28,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 8
+        "operationIds": 8,
+        "continuationTokenHeaders": 1
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -57,7 +59,7 @@
         "criteria.states.secretAlerts": "criteriaStatesSecretAlerts",
         "api-version": "apiVersion"
       },
-      "lines": 997
+      "lines": 1002
     },
     {
       "area": "advancedSecurity",
@@ -67,7 +69,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 4
+        "operationIds": 4,
+        "continuationTokenHeaders": 2
       },
       "interfaces": 8,
       "renamedInterfaces": {},
@@ -96,7 +99,7 @@
         "criteria.validity": "criteriaValidity",
         "api-version": "apiVersion"
       },
-      "lines": 1791
+      "lines": 1801
     },
     {
       "area": "advancedSecurity",
@@ -106,7 +109,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 10
+        "operationIds": 10,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 7,
       "renamedInterfaces": {
@@ -125,7 +129,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 0,
       "renamedInterfaces": {},
@@ -142,7 +147,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 3
+        "operationIds": 3,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -159,7 +165,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 9
+        "operationIds": 9,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -176,7 +183,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -193,7 +201,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 36
+        "operationIds": 36,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 7,
       "renamedInterfaces": {},
@@ -210,7 +219,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -227,7 +237,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 0,
       "renamedInterfaces": {},
@@ -244,7 +255,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 9
+        "operationIds": 9,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -261,7 +273,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 7
+        "operationIds": 7,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -278,7 +291,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 13
+        "operationIds": 13,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -295,7 +309,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 10
+        "operationIds": 10,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -312,7 +327,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 10
+        "operationIds": 10,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -329,7 +345,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 7
+        "operationIds": 7,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -346,7 +363,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 6
+        "operationIds": 6,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -363,7 +381,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 2,
-        "operationIds": 48
+        "operationIds": 48,
+        "continuationTokenHeaders": 3
       },
       "interfaces": 28,
       "renamedInterfaces": {
@@ -372,7 +391,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 6026
+      "lines": 6041
     },
     {
       "area": "core",
@@ -382,7 +401,8 @@
       "patched": {
         "duplicateProperties": 1,
         "pathParameters": 0,
-        "operationIds": 8
+        "operationIds": 8,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -399,7 +419,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 10
+        "operationIds": 10,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 3,
       "renamedInterfaces": {},
@@ -416,7 +437,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 2
+        "operationIds": 2,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -433,7 +455,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 0,
       "renamedInterfaces": {},
@@ -450,7 +473,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 3,
       "renamedInterfaces": {},
@@ -467,7 +491,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 3
+        "operationIds": 3,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -484,14 +509,15 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 9
+        "operationIds": 9,
+        "continuationTokenHeaders": 3
       },
       "interfaces": 13,
       "renamedInterfaces": {},
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 5443
+      "lines": 5458
     },
     {
       "area": "environments",
@@ -501,14 +527,15 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 2
+        "operationIds": 2,
+        "continuationTokenHeaders": 3
       },
       "interfaces": 6,
       "renamedInterfaces": {},
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1024
+      "lines": 1039
     },
     {
       "area": "extensionManagement",
@@ -518,7 +545,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 5
+        "operationIds": 5,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -535,7 +563,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 4
+        "operationIds": 4,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -552,7 +581,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 88
+        "operationIds": 88,
+        "continuationTokenHeaders": 2
       },
       "interfaces": 37,
       "renamedInterfaces": {},
@@ -577,7 +607,7 @@
         "baseVersionDescriptor.version": "baseVersionDescriptorVersion",
         "api-version": "apiVersion"
       },
-      "lines": 7915
+      "lines": 7925
     },
     {
       "area": "graph",
@@ -587,7 +617,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 13
+        "operationIds": 13,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 12,
       "renamedInterfaces": {},
@@ -604,7 +635,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 8
+        "operationIds": 8,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -621,7 +653,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 1
+        "operationIds": 1,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -638,14 +671,15 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 19
+        "operationIds": 19,
+        "continuationTokenHeaders": 1
       },
       "interfaces": 6,
       "renamedInterfaces": {},
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1445
+      "lines": 1450
     },
     {
       "area": "notification",
@@ -655,7 +689,8 @@
       "patched": {
         "duplicateProperties": 10,
         "pathParameters": 0,
-        "operationIds": 5
+        "operationIds": 5,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -672,7 +707,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -689,7 +725,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 4
+        "operationIds": 4,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {
@@ -708,14 +745,15 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 1
+        "operationIds": 1,
+        "continuationTokenHeaders": 1
       },
       "interfaces": 5,
       "renamedInterfaces": {},
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 660
+      "lines": 665
     },
     {
       "area": "policy",
@@ -725,14 +763,15 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 1
+        "operationIds": 1,
+        "continuationTokenHeaders": 1
       },
       "interfaces": 4,
       "renamedInterfaces": {},
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 501
+      "lines": 506
     },
     {
       "area": "processadmin",
@@ -742,7 +781,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 3
+        "operationIds": 3,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -759,7 +799,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 21
+        "operationIds": 21,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 13,
       "renamedInterfaces": {},
@@ -776,7 +817,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -793,14 +835,15 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 16
+        "operationIds": 16,
+        "continuationTokenHeaders": 1
       },
       "interfaces": 8,
       "renamedInterfaces": {},
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 5172
+      "lines": 5177
     },
     {
       "area": "resourceUsage",
@@ -810,7 +853,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 1
+        "operationIds": 1,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -827,7 +871,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 4
+        "operationIds": 4,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -844,7 +889,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 9
+        "operationIds": 9,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -861,7 +907,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 4
+        "operationIds": 4,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -878,7 +925,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 7
+        "operationIds": 7,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -895,7 +943,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -912,7 +961,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 10
+        "operationIds": 10,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -929,7 +979,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 21
+        "operationIds": 21,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 11,
       "renamedInterfaces": {
@@ -948,7 +999,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 32
+        "operationIds": 32,
+        "continuationTokenHeaders": 8
       },
       "interfaces": 13,
       "renamedInterfaces": {
@@ -957,7 +1009,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2719
+      "lines": 2759
     },
     {
       "area": "testResults",
@@ -967,7 +1019,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 40
+        "operationIds": 40,
+        "continuationTokenHeaders": 4
       },
       "interfaces": 41,
       "renamedInterfaces": {},
@@ -991,7 +1044,7 @@
         "releaseToCompare.name": "releaseToCompareName",
         "api-version": "apiVersion"
       },
-      "lines": 5038
+      "lines": 5058
     },
     {
       "area": "tfvc",
@@ -1001,7 +1054,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 9
+        "operationIds": 9,
+        "continuationTokenHeaders": 1
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -1028,7 +1082,7 @@
         "requestData.maxItemCount": "requestDataMaxItemCount",
         "api-version": "apiVersion"
       },
-      "lines": 1390
+      "lines": 1395
     },
     {
       "area": "tokenAdmin",
@@ -1038,7 +1092,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 3
+        "operationIds": 3,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 3,
       "renamedInterfaces": {},
@@ -1055,7 +1110,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 0
+        "operationIds": 0,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -1072,7 +1128,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 8
+        "operationIds": 8,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -1090,7 +1147,8 @@
       "patched": {
         "duplicateProperties": 1,
         "pathParameters": 0,
-        "operationIds": 56
+        "operationIds": 56,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 32,
       "renamedInterfaces": {
@@ -1110,7 +1168,8 @@
       "patched": {
         "duplicateProperties": 0,
         "pathParameters": 0,
-        "operationIds": 23
+        "operationIds": 23,
+        "continuationTokenHeaders": 0
       },
       "interfaces": 26,
       "renamedInterfaces": {

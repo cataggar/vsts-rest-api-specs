@@ -4702,7 +4702,12 @@ interface Deploymentgroups {
     @format("array (int32)") @query(#{ explode: true }) ids?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<DeploymentGroup[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: DeploymentGroup[];
+  };
 
   /** Create a deployment group. */
   @tag("Deploymentgroups")
@@ -4932,7 +4937,12 @@ interface Targets {
 
     @format("array (string)") @query(#{ explode: true }) propertyFilters?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<DeploymentMachine[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: DeploymentMachine[];
+  };
 
   /** Update tags of a list of deployment targets in a deployment group. */
   @tag("Targets")
@@ -5411,7 +5421,12 @@ interface Taskgroups {
     queryOrder?: "createdOnAscending" | "createdOnDescending",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskGroup[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TaskGroup[];
+  };
 
   /** Update a task group. */
   @tag("Taskgroups")

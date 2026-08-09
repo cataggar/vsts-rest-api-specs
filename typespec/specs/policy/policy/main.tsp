@@ -241,7 +241,12 @@ interface Configurations {
     @format("uuid") @query(#{ explode: true }) policyType?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PolicyConfiguration[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: PolicyConfiguration[];
+  };
 
   /** Create a policy configuration of a given policy type. */
   @tag("Configurations")

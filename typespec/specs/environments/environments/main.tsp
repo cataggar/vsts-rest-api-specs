@@ -640,7 +640,12 @@ interface Environments {
     @query(#{ explode: true }) continuationToken?: string,
     @query(#{ explode: true }) $top?: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<EnvironmentInstance[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: EnvironmentInstance[];
+  };
 
   /** Create an environment. */
   @tag("Environments")
@@ -767,7 +772,12 @@ interface Environmentdeploymentrecords {
     @query(#{ explode: true }) continuationToken?: string,
     @query(#{ explode: true }) top?: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<EnvironmentDeploymentExecutionRecord[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: EnvironmentDeploymentExecutionRecord[];
+  };
 }
 
 interface Kubernetes {
@@ -880,7 +890,12 @@ interface Vmresource {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<VirtualMachineResource[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: VirtualMachineResource[];
+  };
 
   /** Update Virtual Machine Resource */
   @tag("Vmresource")

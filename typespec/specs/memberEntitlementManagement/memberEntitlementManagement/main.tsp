@@ -1182,7 +1182,12 @@ interface MemberEntitlements {
     @query(#{ explode: true }) $filter?: string,
     @query(#{ explode: true }) $orderBy?: string,
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<unknown[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: unknown[];
+  };
 }
 
 interface ServicePrincipalEntitlements {

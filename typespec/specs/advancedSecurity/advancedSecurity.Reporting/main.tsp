@@ -950,7 +950,12 @@ interface SummaryDashboard {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<DashboardAlert[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: DashboardAlert[];
+  };
 
   /** Get Enablement summary for the org */
   @tag("Summary Dashboard")

@@ -162,6 +162,97 @@ export function normalizeOperationIds(document) {
   return renamed;
 }
 
+/**
+ * Azure DevOps pages long collections with a continuation token: the
+ * service returns it in the `x-ms-continuationtoken` response header and
+ * the caller passes it back as the `continuationToken` query parameter.
+ * An absent header means the last page was reached.
+ *
+ * The header is part of the documented contract but only 4 of the 50
+ * paged operations declare it, so a generator has nothing to surface and
+ * the token is unreachable from generated code. The rule below restores
+ * the declaration wherever the contract implies it.
+ *
+ * Three cases are deliberately left alone:
+ *
+ *  - Operations that already declare the header, under any casing.
+ *  - Operations whose token is an integer (`artifacts`, `core`), which
+ *    use a batch cursor rather than the header convention.
+ *  - Operations that return the token as a response *body* field
+ *    (`audit`, `memberEntitlementManagement`), which page off the body.
+ *
+ * Adding the header is safe even where the service omits it: a declared
+ * response header is optional, so a missing one reads back as null and
+ * terminates paging, which is exactly the end-of-collection signal.
+ */
+export function declareContinuationTokenHeader(document) {
+  const resolveRef = (ref, depth) => {
+    if (typeof ref !== "string" || !ref.startsWith("#/") || depth > 8) return null;
+    let node = document;
+    for (const part of ref.slice(2).split("/")) node = node?.[part];
+    return node ?? null;
+  };
+
+  const isString = (schema, depth = 0) => {
+    if (!schema || depth > 8) return false;
+    if (schema.$ref) return isString(resolveRef(schema.$ref, depth), depth + 1);
+    return schema.type === "string";
+  };
+
+  const hasTokenProperty = (schema, depth = 0, seen = new Set()) => {
+    if (!schema || depth > 6) return false;
+    if (schema.$ref) {
+      if (seen.has(schema.$ref)) return false;
+      seen.add(schema.$ref);
+      return hasTokenProperty(resolveRef(schema.$ref, depth), depth + 1, seen);
+    }
+    for (const key of Object.keys(schema.properties ?? {})) {
+      if (key.toLowerCase() === "continuationtoken") return true;
+    }
+    for (const group of ["allOf", "anyOf", "oneOf"]) {
+      for (const member of schema[group] ?? []) {
+        if (hasTokenProperty(member, depth + 1, seen)) return true;
+      }
+    }
+    return hasTokenProperty(schema.items, depth + 1, seen);
+  };
+
+  let declared = 0;
+  for (const item of Object.values(document.paths ?? {})) {
+    for (const method of ["get", "post"]) {
+      const operation = item[method];
+      if (!operation) continue;
+
+      const token = [...(item.parameters ?? []), ...(operation.parameters ?? [])].find(
+        (parameter) =>
+          parameter?.in === "query" && parameter.name?.toLowerCase() === "continuationtoken",
+      );
+      if (!token || !isString(token.schema)) continue;
+
+      const success = operation.responses?.["200"];
+      if (!success) continue;
+
+      const headers = success.headers ?? {};
+      if (Object.keys(headers).some((name) => name.toLowerCase() === "x-ms-continuationtoken")) {
+        continue;
+      }
+
+      const bodies = Object.values(success.content ?? {});
+      if (bodies.some((body) => hasTokenProperty(body.schema))) continue;
+
+      headers["x-ms-continuationtoken"] = {
+        description:
+          "A continuation token for the next page of results. Absent on the last page. " +
+          "Pass it back as the `continuationToken` query parameter.",
+        schema: { type: "string" },
+      };
+      success.headers = headers;
+      declared += 1;
+    }
+  }
+  return declared;
+}
+
 /** Applies every patch in order and returns a summary of what changed. */
 export function patchDocument(document) {
   sanitizeDocStrings(document);
@@ -170,5 +261,6 @@ export function patchDocument(document) {
     duplicateProperties: dedupeAllOfProperties(document),
     pathParameters: fixPathParameterCasing(document),
     operationIds: normalizeOperationIds(document),
+    continuationTokenHeaders: declareContinuationTokenHeader(document),
   };
 }

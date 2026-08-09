@@ -862,7 +862,12 @@ interface Changesets {
     @query(#{ explode: true }) continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TfvcChange[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: TfvcChange[];
+  };
 
   /** Retrieves the work items associated with a particular changeset. */
   @tag("Changesets")

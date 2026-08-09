@@ -3163,7 +3163,12 @@ interface Resultgroupsbybuild {
     @format("array (string)") @query(#{ explode: true }) fields?: string,
     @query(#{ explode: true }) continuationToken?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<FieldDetailsForTestResults[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: FieldDetailsForTestResults[];
+  };
 }
 
 interface Resultgroupsbyrelease {
@@ -3187,7 +3192,12 @@ interface Resultgroupsbyrelease {
     @format("array (string)") @query(#{ explode: true }) fields?: string,
     @query(#{ explode: true }) continuationToken?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<FieldDetailsForTestResults[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: FieldDetailsForTestResults[];
+  };
 }
 
 interface Results {
@@ -3559,7 +3569,12 @@ interface Resultsbybuild {
     @query(#{ explode: true }) $top?: int32,
     @query(#{ explode: true }) continuationToken?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ShallowTestCaseResult[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: ShallowTestCaseResult[];
+  };
 }
 
 interface Resultsbypipeline {
@@ -3628,7 +3643,12 @@ interface Resultsbyrelease {
     @query(#{ explode: true }) $top?: int32,
     @query(#{ explode: true }) continuationToken?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ShallowTestCaseResult[]>;
+  ): {
+    /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
+
+    @body body: ShallowTestCaseResult[];
+  };
 }
 
 interface ResultsgroupDetails {
