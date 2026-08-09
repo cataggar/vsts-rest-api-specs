@@ -120,7 +120,7 @@ const pagedOperation = (extra = {}) => ({
 
 test("declareContinuationTokenHeader declares the header on paged operations", () => {
   const doc = { paths: { "/builds": { get: pagedOperation() } } };
-  assert.equal(declareContinuationTokenHeader(doc), 1);
+  assert.equal(declareContinuationTokenHeader(doc).declared, 1);
   const header = doc.paths["/builds"].get.responses[200].headers["x-ms-continuationtoken"];
   assert.deepEqual(header.schema, { type: "string" });
   assert.match(header.description, /continuationToken/);
@@ -129,21 +129,30 @@ test("declareContinuationTokenHeader declares the header on paged operations", (
 test("declareContinuationTokenHeader honours a path-level token parameter", () => {
   const operation = pagedOperation();
   const doc = { paths: { "/builds": { parameters: operation.parameters, get: { responses: operation.responses } } } };
-  assert.equal(declareContinuationTokenHeader(doc), 1);
+  assert.equal(declareContinuationTokenHeader(doc).declared, 1);
 });
 
-test("declareContinuationTokenHeader is idempotent and casing-insensitive", () => {
+test("declareContinuationTokenHeader canonicalises an existing header spelling", () => {
   const doc = {
     paths: {
-      "/refs": { get: pagedOperation({ headers: { "X-MS-ContinuationToken": { schema: { type: "string" } } } }) },
+      "/refs": {
+        get: pagedOperation({
+          headers: { "X-MS-ContinuationToken": { schema: { type: "string" } } },
+        }),
+      },
     },
   };
-  assert.equal(declareContinuationTokenHeader(doc), 0);
-  assert.deepEqual(Object.keys(doc.paths["/refs"].get.responses[200].headers), ["X-MS-ContinuationToken"]);
+  const result = declareContinuationTokenHeader(doc);
+  assert.deepEqual(result, { declared: 0, renamed: 1 });
+  assert.deepEqual(Object.keys(doc.paths["/refs"].get.responses[200].headers), [
+    "x-ms-continuationtoken",
+  ]);
+});
 
+test("declareContinuationTokenHeader is idempotent", () => {
   const fresh = { paths: { "/builds": { get: pagedOperation() } } };
-  assert.equal(declareContinuationTokenHeader(fresh), 1);
-  assert.equal(declareContinuationTokenHeader(fresh), 0);
+  assert.equal(declareContinuationTokenHeader(fresh).declared, 1);
+  assert.deepEqual(declareContinuationTokenHeader(fresh), { declared: 0, renamed: 0 });
 });
 
 test("declareContinuationTokenHeader skips integer batch cursors", () => {
@@ -157,7 +166,7 @@ test("declareContinuationTokenHeader skips integer batch cursors", () => {
       },
     },
   };
-  assert.equal(declareContinuationTokenHeader(doc), 0);
+  assert.equal(declareContinuationTokenHeader(doc).declared, 0);
   assert.equal(doc.paths["/feeds"].get.responses[200].headers, undefined);
 });
 
@@ -187,7 +196,7 @@ test("declareContinuationTokenHeader skips operations paging off the body", () =
       },
     },
   };
-  assert.equal(declareContinuationTokenHeader(doc), 0);
+  assert.equal(declareContinuationTokenHeader(doc).declared, 0);
 });
 
 test("declareContinuationTokenHeader resolves a referenced token parameter schema", () => {
@@ -204,10 +213,10 @@ test("declareContinuationTokenHeader resolves a referenced token parameter schem
       },
     },
   };
-  assert.equal(declareContinuationTokenHeader(doc), 1);
+  assert.equal(declareContinuationTokenHeader(doc).declared, 1);
 });
 
 test("declareContinuationTokenHeader ignores operations without the token parameter", () => {
   const doc = { paths: { "/projects": { get: { parameters: [], responses: { 200: {} } } } } };
-  assert.equal(declareContinuationTokenHeader(doc), 0);
+  assert.equal(declareContinuationTokenHeader(doc).declared, 0);
 });

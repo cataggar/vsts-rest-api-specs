@@ -175,17 +175,27 @@ export function normalizeOperationIds(document) {
  *
  * Three cases are deliberately left alone:
  *
- *  - Operations that already declare the header, under any casing.
  *  - Operations whose token is an integer (`artifacts`, `core`), which
  *    use a batch cursor rather than the header convention.
  *  - Operations that return the token as a response *body* field
  *    (`audit`, `memberEntitlementManagement`), which page off the body.
+ *  - The success response of an operation that does not declare one.
+ *
+ * Declarations that already exist are kept but renamed to the canonical
+ * spelling: upstream writes the same header as both
+ * `x-ms-continuationtoken` (git) and `X-MS-ContinuationToken` (graph),
+ * and while HTTP header lookup is case-insensitive, a generator derives
+ * a *field name* from the spelling. Left alone, the two casings produce
+ * two different field names for one header, which defeats any generic
+ * pagination helper.
  *
  * Adding the header is safe even where the service omits it: a declared
  * response header is optional, so a missing one reads back as null and
  * terminates paging, which is exactly the end-of-collection signal.
  */
 export function declareContinuationTokenHeader(document) {
+  const CANONICAL = "x-ms-continuationtoken";
+
   const resolveRef = (ref, depth) => {
     if (typeof ref !== "string" || !ref.startsWith("#/") || depth > 8) return null;
     let node = document;
@@ -218,6 +228,7 @@ export function declareContinuationTokenHeader(document) {
   };
 
   let declared = 0;
+  let renamed = 0;
   for (const item of Object.values(document.paths ?? {})) {
     for (const method of ["get", "post"]) {
       const operation = item[method];
@@ -233,14 +244,20 @@ export function declareContinuationTokenHeader(document) {
       if (!success) continue;
 
       const headers = success.headers ?? {};
-      if (Object.keys(headers).some((name) => name.toLowerCase() === "x-ms-continuationtoken")) {
+      const existing = Object.keys(headers).find((name) => name.toLowerCase() === CANONICAL);
+      if (existing) {
+        if (existing !== CANONICAL) {
+          headers[CANONICAL] = headers[existing];
+          delete headers[existing];
+          renamed += 1;
+        }
         continue;
       }
 
       const bodies = Object.values(success.content ?? {});
       if (bodies.some((body) => hasTokenProperty(body.schema))) continue;
 
-      headers["x-ms-continuationtoken"] = {
+      headers[CANONICAL] = {
         description:
           "A continuation token for the next page of results. Absent on the last page. " +
           "Pass it back as the `continuationToken` query parameter.",
@@ -250,17 +267,19 @@ export function declareContinuationTokenHeader(document) {
       declared += 1;
     }
   }
-  return declared;
+  return { declared, renamed };
 }
 
 /** Applies every patch in order and returns a summary of what changed. */
 export function patchDocument(document) {
   sanitizeDocStrings(document);
   stripRootTags(document);
+  const continuation = declareContinuationTokenHeader(document);
   return {
     duplicateProperties: dedupeAllOfProperties(document),
     pathParameters: fixPathParameterCasing(document),
     operationIds: normalizeOperationIds(document),
-    continuationTokenHeaders: declareContinuationTokenHeader(document),
+    continuationTokenHeaders: continuation.declared,
+    renamedContinuationTokenHeaders: continuation.renamed,
   };
 }

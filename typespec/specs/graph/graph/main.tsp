@@ -602,7 +602,7 @@ interface Groups {
 
     ...Parameters.`api-Version-preview`.`1`,
   ): {
-    @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
     @body body: GraphGroup[];
   };
 
@@ -869,7 +869,7 @@ interface ServicePrincipals {
 
     ...Parameters.`api-Version-preview`.`1`,
   ): {
-    @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
     @body body: GraphServicePrincipal[];
   };
 
@@ -1079,7 +1079,7 @@ interface Users {
 
     ...Parameters.`api-Version-preview`.`1`,
   ): {
-    @header("X-MS-ContinuationToken") XMSContinuationToken?: string;
+    @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
     @body body: GraphUser[];
   };
 

@@ -11,7 +11,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -29,7 +30,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 8,
-        "continuationTokenHeaders": 1
+        "continuationTokenHeaders": 1,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -70,7 +72,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
-        "continuationTokenHeaders": 2
+        "continuationTokenHeaders": 2,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 8,
       "renamedInterfaces": {},
@@ -110,7 +113,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 7,
       "renamedInterfaces": {
@@ -130,7 +134,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 0,
       "renamedInterfaces": {},
@@ -148,7 +153,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -166,7 +172,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -184,7 +191,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -202,7 +210,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 36,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 7,
       "renamedInterfaces": {},
@@ -220,7 +229,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -238,7 +248,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 0,
       "renamedInterfaces": {},
@@ -256,7 +267,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -274,7 +286,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 7,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -292,7 +305,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 13,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -310,7 +324,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -328,7 +343,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -346,7 +362,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 7,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -364,7 +381,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 6,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -382,7 +400,8 @@
         "duplicateProperties": 0,
         "pathParameters": 2,
         "operationIds": 48,
-        "continuationTokenHeaders": 3
+        "continuationTokenHeaders": 3,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 28,
       "renamedInterfaces": {
@@ -402,7 +421,8 @@
         "duplicateProperties": 1,
         "pathParameters": 0,
         "operationIds": 8,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -420,7 +440,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 3,
       "renamedInterfaces": {},
@@ -438,7 +459,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 2,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -456,7 +478,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 0,
       "renamedInterfaces": {},
@@ -474,7 +497,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 3,
       "renamedInterfaces": {},
@@ -492,7 +516,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -510,7 +535,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
-        "continuationTokenHeaders": 3
+        "continuationTokenHeaders": 3,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 13,
       "renamedInterfaces": {},
@@ -528,7 +554,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 2,
-        "continuationTokenHeaders": 3
+        "continuationTokenHeaders": 3,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -546,7 +573,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 5,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -564,7 +592,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -582,7 +611,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 88,
-        "continuationTokenHeaders": 2
+        "continuationTokenHeaders": 2,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 37,
       "renamedInterfaces": {},
@@ -618,7 +648,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 13,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 3
       },
       "interfaces": 12,
       "renamedInterfaces": {},
@@ -636,7 +667,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 8,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -654,7 +686,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -672,7 +705,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 19,
-        "continuationTokenHeaders": 1
+        "continuationTokenHeaders": 1,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -690,7 +724,8 @@
         "duplicateProperties": 10,
         "pathParameters": 0,
         "operationIds": 5,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -708,7 +743,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -726,7 +762,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {
@@ -746,7 +783,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
-        "continuationTokenHeaders": 1
+        "continuationTokenHeaders": 1,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -764,7 +802,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
-        "continuationTokenHeaders": 1
+        "continuationTokenHeaders": 1,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -782,7 +821,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -800,7 +840,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 21,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 13,
       "renamedInterfaces": {},
@@ -818,7 +859,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -836,7 +878,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 16,
-        "continuationTokenHeaders": 1
+        "continuationTokenHeaders": 1,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 8,
       "renamedInterfaces": {},
@@ -854,7 +897,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -872,7 +916,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -890,7 +935,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -908,7 +954,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 2,
       "renamedInterfaces": {},
@@ -926,7 +973,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 7,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 4,
       "renamedInterfaces": {},
@@ -944,7 +992,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -962,7 +1011,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -980,7 +1030,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 21,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 11,
       "renamedInterfaces": {
@@ -1000,7 +1051,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 32,
-        "continuationTokenHeaders": 8
+        "continuationTokenHeaders": 8,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 13,
       "renamedInterfaces": {
@@ -1020,7 +1072,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 40,
-        "continuationTokenHeaders": 4
+        "continuationTokenHeaders": 4,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 41,
       "renamedInterfaces": {},
@@ -1055,7 +1108,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
-        "continuationTokenHeaders": 1
+        "continuationTokenHeaders": 1,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 5,
       "renamedInterfaces": {},
@@ -1093,7 +1147,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 3,
       "renamedInterfaces": {},
@@ -1111,7 +1166,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 1,
       "renamedInterfaces": {},
@@ -1129,7 +1185,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 8,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 6,
       "renamedInterfaces": {},
@@ -1148,7 +1205,8 @@
         "duplicateProperties": 1,
         "pathParameters": 0,
         "operationIds": 56,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 32,
       "renamedInterfaces": {
@@ -1169,7 +1227,8 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 23,
-        "continuationTokenHeaders": 0
+        "continuationTokenHeaders": 0,
+        "renamedContinuationTokenHeaders": 0
       },
       "interfaces": 26,
       "renamedInterfaces": {
