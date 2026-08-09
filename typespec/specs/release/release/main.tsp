@@ -4200,7 +4200,7 @@ op Definitions_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/definitions/{definitionId}/revisions")
 @get
-op `Definitions_Get Release Definition History`(
+op Definitions_GetReleaseDefinitionHistory(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4221,7 +4221,7 @@ op `Definitions_Get Release Definition History`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/definitions/{definitionId}/revisions/{revision}")
 @get
-op `Definitions_Get Definition Revision`(
+op Definitions_GetDefinitionRevision(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4699,7 +4699,7 @@ op Releases_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}")
 @get
-op `Releases_Get Release Revision`(
+op Releases_GetReleaseRevision(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4726,7 +4726,7 @@ op `Releases_Get Release Revision`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}")
 @patch
-op `Releases_Update Release Resource`(
+op Releases_UpdateReleaseResource(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4750,7 +4750,7 @@ op `Releases_Update Release Resource`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}")
 @put
-op `Releases_Update Release`(
+op Releases_UpdateRelease(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4774,7 +4774,7 @@ op `Releases_Update Release`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/environments/{environmentId}")
 @get
-op `Releases_Get Release Environment`(
+op Releases_GetReleaseEnvironment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4812,7 +4812,7 @@ op `Releases_Get Release Environment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/environments/{environmentId}")
 @patch
-op `Releases_Update Release Environment`(
+op Releases_UpdateReleaseEnvironment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4839,7 +4839,7 @@ op `Releases_Update Release Environment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/plan/{planId}/attachments/{type}")
 @get
-op `Attachments_Get Release Task Attachments`(
+op Attachments_GetReleaseTaskAttachments(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4872,7 +4872,7 @@ op `Attachments_Get Release Task Attachments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/plan/{planId}/timelines/{timelineId}/records/{recordId}/attachments/{type}/{name}")
 @get
-op `Attachments_Get Release Task Attachment Content`(
+op Attachments_GetReleaseTaskAttachmentContent(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4917,7 +4917,7 @@ op `Attachments_Get Release Task Attachment Content`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/timelines/{timelineId}/attachments/{type}")
 @get
-op `Attachments_Get Task Attachments`(
+op Attachments_GetTaskAttachments(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4950,7 +4950,7 @@ op `Attachments_Get Task Attachments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/attempts/{attemptId}/timelines/{timelineId}/records/{recordId}/attachments/{type}/{name}")
 @get
-op `Attachments_Get Task Attachment Content`(
+op Attachments_GetTaskAttachmentContent(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4992,7 +4992,7 @@ op `Attachments_Get Task Attachment Content`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}/environments/{environmentId}/deployPhases/{releaseDeployPhaseId}/tasks/{taskId}/logs")
 @get
-op `Releases_Get Task Log`(
+op Releases_GetTaskLog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5031,7 +5031,7 @@ op `Releases_Get Task Log`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/release/releases/{releaseId}/logs")
 @get
-op `Releases_Get Logs`(
+op Releases_GetLogs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5055,7 +5055,7 @@ op `Releases_Get Logs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions")
 @get
-op `Manual Interventions_List`(
+op ManualInterventions_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5076,7 +5076,7 @@ op `Manual Interventions_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions/{manualInterventionId}")
 @get
-op `Manual Interventions_Get`(
+op ManualInterventions_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5100,7 +5100,7 @@ op `Manual Interventions_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/Release/releases/{releaseId}/manualinterventions/{manualInterventionId}")
 @patch
-op `Manual Interventions_Update`(
+op ManualInterventions_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

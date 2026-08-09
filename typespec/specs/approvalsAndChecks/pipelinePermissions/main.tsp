@@ -115,7 +115,7 @@ model ResourcePipelinePermissions {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/pipelinepermissions")
 @patch
-op `Pipeline Permissions_Update Pipeline Permisions For Resources`(
+op PipelinePermissions_UpdatePipelinePermisionsForResources(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -134,7 +134,7 @@ op `Pipeline Permissions_Update Pipeline Permisions For Resources`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}")
 @get
-op `Pipeline Permissions_Get`(
+op PipelinePermissions_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -154,7 +154,7 @@ op `Pipeline Permissions_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}")
 @patch
-op `Pipeline Permissions_Update Pipeline Permisions For Resource`(
+op PipelinePermissions_UpdatePipelinePermisionsForResource(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

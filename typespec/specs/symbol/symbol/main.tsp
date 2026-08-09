@@ -239,7 +239,7 @@ model ResourceBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/availability")
 @get
-op `Availability_Check Availability`(
+op Availability_CheckAvailability(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -254,7 +254,7 @@ op `Availability_Check Availability`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/client")
 @head
-op `Client_Head Client`(
+op Client_HeadClient(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -292,7 +292,7 @@ op Client_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests")
 @delete
-op `Requests_Delete Requests Request Name`(
+op Requests_DeleteRequestsRequestName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -313,7 +313,7 @@ op `Requests_Delete Requests Request Name`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests")
 @get
-op `Requests_Get Requests Request Name`(
+op Requests_GetRequestsRequestName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -331,7 +331,7 @@ op `Requests_Get Requests Request Name`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests")
 @patch
-op `Requests_Update Requests Request Name`(
+op Requests_UpdateRequestsRequestName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -352,7 +352,7 @@ op `Requests_Update Requests Request Name`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests")
 @post
-op `Requests_Create Requests`(
+op Requests_CreateRequests(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -370,7 +370,7 @@ op `Requests_Create Requests`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests/{requestId}")
 @delete
-op `Requests_Delete Requests Request Id`(
+op Requests_DeleteRequestsRequestId(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -391,7 +391,7 @@ op `Requests_Delete Requests Request Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests/{requestId}")
 @get
-op `Requests_Get Requests Request Id`(
+op Requests_GetRequestsRequestId(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -409,7 +409,7 @@ op `Requests_Get Requests Request Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests/{requestId}")
 @patch
-op `Requests_Update Requests Request Id`(
+op Requests_UpdateRequestsRequestId(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -430,7 +430,7 @@ op `Requests_Update Requests Request Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/symbol/requests/{requestId}")
 @post
-op `Requests_Create Requests Request Id Debug Entries`(
+op Requests_CreateRequestsRequestIdDebugEntries(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

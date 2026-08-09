@@ -184,7 +184,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/accesscontrolentries/{securityNamespaceId}")
 @delete
-op `Access Control Entries_Remove Access Control Entries`(
+op AccessControlEntries_RemoveAccessControlEntries(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -208,7 +208,7 @@ op `Access Control Entries_Remove Access Control Entries`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/accesscontrolentries/{securityNamespaceId}")
 @post
-op `Access Control Entries_Set Access Control Entries`(
+op AccessControlEntries_SetAccessControlEntries(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -227,7 +227,7 @@ op `Access Control Entries_Set Access Control Entries`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/accesscontrollists/{securityNamespaceId}")
 @delete
-op `Access Control Lists_Remove Access Control Lists`(
+op AccessControlLists_RemoveAccessControlLists(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -251,7 +251,7 @@ op `Access Control Lists_Remove Access Control Lists`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/accesscontrollists/{securityNamespaceId}")
 @get
-op `Access Control Lists_Query`(
+op AccessControlLists_Query(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -281,7 +281,7 @@ op `Access Control Lists_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/accesscontrollists/{securityNamespaceId}")
 @post
-op `Access Control Lists_Set Access Control Lists`(
+op AccessControlLists_SetAccessControlLists(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -302,7 +302,7 @@ op `Access Control Lists_Set Access Control Lists`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/permissions/{securityNamespaceId}/{permissions}")
 @delete
-op `Permissions_Remove Permission`(
+op Permissions_RemovePermission(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -329,7 +329,7 @@ op `Permissions_Remove Permission`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/permissions/{securityNamespaceId}/{permissions}")
 @get
-op `Permissions_Has Permissions`(
+op Permissions_HasPermissions(
   /** Security namespace identifier. */
   @format("uuid") @path securityNamespaceId: string,
 
@@ -359,7 +359,7 @@ op `Permissions_Has Permissions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/security/permissionevaluationbatch")
 @post
-op `Permissions_Has Permissions Batch`(
+op Permissions_HasPermissionsBatch(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 
@@ -377,7 +377,7 @@ op `Permissions_Has Permissions Batch`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/securitynamespaces/{securityNamespaceId}")
 @get
-op `Security Namespaces_Query`(
+op SecurityNamespaces_Query(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 

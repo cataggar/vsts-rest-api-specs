@@ -951,7 +951,7 @@ op Consumers_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/consumers/{consumerId}/actions")
 @get
-op `Consumers_List Consumer Actions`(
+op Consumers_ListConsumerActions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -970,7 +970,7 @@ op `Consumers_List Consumer Actions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/consumers/{consumerId}/actions/{consumerActionId}")
 @get
-op `Consumers_Get Consumer Action`(
+op Consumers_GetConsumerAction(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1041,7 +1041,7 @@ op Publishers_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/publishers/{publisherId}/eventtypes")
 @get
-op `Publishers_List Event Types`(
+op Publishers_ListEventTypes(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1059,7 +1059,7 @@ op `Publishers_List Event Types`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/publishers/{publisherId}/eventtypes/{eventTypeId}")
 @get
-op `Publishers_Get Event Type`(
+op Publishers_GetEventType(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1077,7 +1077,7 @@ op `Publishers_Get Event Type`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/publishers/{publisherId}/inputValuesQuery")
 @post
-op `Publishers_Query Input Values`(
+op Publishers_QueryInputValues(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1094,7 +1094,7 @@ op `Publishers_Query Input Values`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/publishersquery")
 @post
-op `Publishers_Query Publishers`(
+op Publishers_QueryPublishers(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1191,7 +1191,7 @@ op Subscriptions_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/subscriptions/{subscriptionId}")
 @put
-op `Subscriptions_Replace Subscription`(
+op Subscriptions_ReplaceSubscription(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1328,7 +1328,7 @@ op Notifications_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/hooks/subscriptionsquery")
 @post
-op `Subscriptions_Create Subscriptions Query`(
+op Subscriptions_CreateSubscriptionsQuery(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

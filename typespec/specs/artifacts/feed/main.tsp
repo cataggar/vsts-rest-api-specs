@@ -817,7 +817,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/packaging/globalpermissions")
 @get
-op `Service  Settings_GetGlobalPermissions`(
+op ServiceSettings_GetGlobalPermissions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -835,7 +835,7 @@ op `Service  Settings_GetGlobalPermissions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/packaging/globalpermissions")
 @patch
-op `Service  Settings_SetGlobalPermissions`(
+op ServiceSettings_SetGlobalPermissions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -853,7 +853,7 @@ op `Service  Settings_SetGlobalPermissions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feedchanges")
 @get
-op `Change  Tracking_Get Feed Changes`(
+op ChangeTracking_GetFeedChanges(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -880,7 +880,7 @@ op `Change  Tracking_Get Feed Changes`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feedchanges/{feedId}")
 @get
-op `Change  Tracking_Get Feed Change`(
+op ChangeTracking_GetFeedChange(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -901,7 +901,7 @@ op `Change  Tracking_Get Feed Change`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feedrecyclebin")
 @get
-op `Feed Recycle Bin_List`(
+op FeedRecycleBin_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -919,7 +919,7 @@ op `Feed Recycle Bin_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feedrecyclebin/{feedId}")
 @delete
-op `Feed Recycle Bin_Permanent Delete Feed`(
+op FeedRecycleBin_PermanentDeleteFeed(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -940,7 +940,7 @@ op `Feed Recycle Bin_Permanent Delete Feed`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feedrecyclebin/{feedId}")
 @patch
-op `Feed Recycle Bin_Restore Deleted Feed`(
+op FeedRecycleBin_RestoreDeletedFeed(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -963,7 +963,7 @@ op `Feed Recycle Bin_Restore Deleted Feed`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds")
 @get
-op `Feed  Management_Get Feeds`(
+op FeedManagement_GetFeeds(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1014,7 +1014,7 @@ op `Feed  Management_Get Feeds`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds")
 @post
-op `Feed  Management_Create Feed`(
+op FeedManagement_CreateFeed(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1035,7 +1035,7 @@ op `Feed  Management_Create Feed`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
 @delete
-op `Feed  Management_Delete Feed`(
+op FeedManagement_DeleteFeed(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1056,7 +1056,7 @@ op `Feed  Management_Delete Feed`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
 @get
-op `Feed  Management_Get Feed`(
+op FeedManagement_GetFeed(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1080,7 +1080,7 @@ op `Feed  Management_Get Feed`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}")
 @patch
-op `Feed  Management_Update Feed`(
+op FeedManagement_UpdateFeed(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1104,7 +1104,7 @@ op `Feed  Management_Update Feed`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packagechanges")
 @get
-op `Change  Tracking_Get Package Changes`(
+op ChangeTracking_GetPackageChanges(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1130,7 +1130,7 @@ op `Change  Tracking_Get Package Changes`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packagemetricsbatch")
 @post
-op `Artifact  Details_Query Package Metrics`(
+op ArtifactDetails_QueryPackageMetrics(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1151,7 +1151,7 @@ op `Artifact  Details_Query Package Metrics`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packages")
 @get
-op `Artifact  Details_Get Packages`(
+op ArtifactDetails_GetPackages(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1214,7 +1214,7 @@ op `Artifact  Details_Get Packages`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/packages/{packageId}")
 @get
-op `Artifact  Details_Get Package`(
+op ArtifactDetails_GetPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1255,7 +1255,7 @@ op `Artifact  Details_Get Package`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versionmetricsbatch")
 @post
-op `Artifact  Details_Query Package Version Metrics`(
+op ArtifactDetails_QueryPackageVersionMetrics(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1277,7 +1277,7 @@ op `Artifact  Details_Query Package Version Metrics`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions")
 @get
-op `Artifact  Details_Get Package Versions`(
+op ArtifactDetails_GetPackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1310,7 +1310,7 @@ op `Artifact  Details_Get Package Versions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/versions/{packageVersionId}")
 @get
-op `Artifact  Details_Get Package Version`(
+op ArtifactDetails_GetPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1346,7 +1346,7 @@ op `Artifact  Details_Get Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/Packages/{packageId}/Versions/{packageVersionId}/provenance")
 @get
-op `Artifact  Details_GetPackageVersionProvenance`(
+op ArtifactDetails_GetPackageVersionProvenance(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1373,7 +1373,7 @@ op `Artifact  Details_GetPackageVersionProvenance`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/permissions")
 @get
-op `Feed  Management_Get Feed Permissions`(
+op FeedManagement_GetFeedPermissions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1406,7 +1406,7 @@ op `Feed  Management_Get Feed Permissions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/permissions")
 @patch
-op `Feed  Management_Set Feed Permissions`(
+op FeedManagement_SetFeedPermissions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1430,7 +1430,7 @@ op `Feed  Management_Set Feed Permissions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages")
 @delete
-op `Recycle  Bin_Empty Recycle Bin`(
+op RecycleBin_EmptyRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1451,7 +1451,7 @@ op `Recycle  Bin_Empty Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages")
 @get
-op `Recycle  Bin_Get Recycle Bin Packages`(
+op RecycleBin_GetRecycleBinPackages(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1490,7 +1490,7 @@ op `Recycle  Bin_Get Recycle Bin Packages`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}")
 @get
-op `Recycle  Bin_Get Recycle Bin Package`(
+op RecycleBin_GetRecycleBinPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1517,7 +1517,7 @@ op `Recycle  Bin_Get Recycle Bin Package`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions")
 @get
-op `Recycle  Bin_Get Recycle Bin Package Versions`(
+op RecycleBin_GetRecycleBinPackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1544,7 +1544,7 @@ op `Recycle  Bin_Get Recycle Bin Package Versions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/RecycleBin/Packages/{packageId}/Versions/{packageVersionId}")
 @get
-op `Recycle  Bin_Get Recycle Bin Package Version`(
+op RecycleBin_GetRecycleBinPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1574,7 +1574,7 @@ op `Recycle  Bin_Get Recycle Bin Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
 @delete
-op `Retention  Policies_Delete Retention Policy`(
+op RetentionPolicies_DeleteRetentionPolicy(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1595,7 +1595,7 @@ op `Retention  Policies_Delete Retention Policy`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
 @get
-op `Retention  Policies_Get Retention Policy`(
+op RetentionPolicies_GetRetentionPolicy(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1616,7 +1616,7 @@ op `Retention  Policies_Get Retention Policy`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/retentionpolicies")
 @put
-op `Retention  Policies_Set Retention Policy`(
+op RetentionPolicies_SetRetentionPolicy(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1640,7 +1640,7 @@ op `Retention  Policies_Set Retention Policy`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views")
 @get
-op `Feed  Management_Get Feed Views`(
+op FeedManagement_GetFeedViews(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1661,7 +1661,7 @@ op `Feed  Management_Get Feed Views`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views")
 @post
-op `Feed  Management_Create Feed View`(
+op FeedManagement_CreateFeedView(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1685,7 +1685,7 @@ op `Feed  Management_Create Feed View`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
 @delete
-op `Feed  Management_Delete Feed View`(
+op FeedManagement_DeleteFeedView(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1709,7 +1709,7 @@ op `Feed  Management_Delete Feed View`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
 @get
-op `Feed  Management_Get Feed View`(
+op FeedManagement_GetFeedView(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1733,7 +1733,7 @@ op `Feed  Management_Get Feed View`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/Feeds/{feedId}/views/{viewId}")
 @patch
-op `Feed  Management_Update Feed View`(
+op FeedManagement_UpdateFeedView(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1760,7 +1760,7 @@ op `Feed  Management_Update Feed View`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/public/packaging/Feeds/{feedId}/Packages/{packageId}/badge")
 @get
-op `Artifact  Details_Get Badge`(
+op ArtifactDetails_GetBadge(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

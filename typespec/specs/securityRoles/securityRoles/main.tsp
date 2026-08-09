@@ -162,7 +162,7 @@ op Roleassignments_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
 @patch
-op `Roleassignments_Remove Role Assignments`(
+op Roleassignments_RemoveRoleAssignments(
   @path scopeId: string,
   @path resourceId: string,
 
@@ -181,7 +181,7 @@ op `Roleassignments_Remove Role Assignments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}")
 @put
-op `Roleassignments_Set Role Assignments`(
+op Roleassignments_SetRoleAssignments(
   /** Id of the assigned scope */
   @path scopeId: string,
 
@@ -206,7 +206,7 @@ op `Roleassignments_Set Role Assignments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}")
 @delete
-op `Roleassignments_Remove Role Assignment`(
+op Roleassignments_RemoveRoleAssignment(
   /** Id of the assigned scope */
   @path scopeId: string,
 
@@ -230,7 +230,7 @@ op `Roleassignments_Remove Role Assignment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/securityroles/scopes/{scopeId}/roleassignments/resources/{resourceId}/{identityId}")
 @put
-op `Roleassignments_Set Role Assignment`(
+op Roleassignments_SetRoleAssignment(
   /** Id of the assigned scope */
   @path scopeId: string,
 

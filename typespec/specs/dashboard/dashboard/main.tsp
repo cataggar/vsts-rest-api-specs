@@ -391,7 +391,7 @@ model WidgetTypesResponse {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/dashboard/widgettypes")
 @get
-op `Widget Types_Get Widget Types`(
+op WidgetTypes_GetWidgetTypes(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -422,7 +422,7 @@ op `Widget Types_Get Widget Types`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/dashboard/widgettypes/{contributionId}")
 @get
-op `Widget Types_Get Widget Metadata`(
+op WidgetTypes_GetWidgetMetadata(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -488,7 +488,7 @@ op Dashboards_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards")
 @put
-op `Dashboards_Replace Dashboards`(
+op Dashboards_ReplaceDashboards(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -557,7 +557,7 @@ op Dashboards_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}")
 @put
-op `Dashboards_Replace Dashboard`(
+op Dashboards_ReplaceDashboard(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -584,7 +584,7 @@ op `Dashboards_Replace Dashboard`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
 @get
-op `Widgets_Get Widgets`(
+op Widgets_GetWidgets(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -614,7 +614,7 @@ op `Widgets_Get Widgets`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
 @patch
-op `Widgets_Update Widgets`(
+op Widgets_UpdateWidgets(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -674,7 +674,7 @@ op Widgets_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets")
 @put
-op `Widgets_Replace Widgets`(
+op Widgets_ReplaceWidgets(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -734,7 +734,7 @@ op Widgets_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
 @get
-op `Widgets_Get Widget`(
+op Widgets_GetWidget(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -761,7 +761,7 @@ op `Widgets_Get Widget`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
 @patch
-op `Widgets_Update Widget`(
+op Widgets_UpdateWidget(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -791,7 +791,7 @@ op `Widgets_Update Widget`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/dashboard/dashboards/{dashboardId}/widgets/{widgetId}")
 @put
-op `Widgets_Replace Widget`(
+op Widgets_ReplaceWidget(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

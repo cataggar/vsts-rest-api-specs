@@ -173,7 +173,7 @@ op Behaviors_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processadmin/processes/export/{id}")
 @get
-op `Processes_Export Process Template`(
+op Processes_ExportProcessTemplate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -194,7 +194,7 @@ op `Processes_Export Process Template`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processadmin/processes/import")
 @post
-op `Processes_Import Process Template`(
+op Processes_ImportProcessTemplate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -219,7 +219,7 @@ op `Processes_Import Process Template`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processadmin/processes/status/{id}")
 @get
-op `Processes_Import Process Template Status`(
+op Processes_ImportProcessTemplateStatus(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

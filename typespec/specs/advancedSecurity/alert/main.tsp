@@ -1614,7 +1614,7 @@ op Metadata2_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/alert/repositories/{repository}/alerts/metadatabatch")
 @post
-op `Metadata Batch_List`(
+op MetadataBatch_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1636,7 +1636,7 @@ op `Metadata Batch_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/alert/repositories/{repository}/AlertsBatch")
 @post
-op `Alerts Batch_List`(
+op AlertsBatch_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1717,7 +1717,7 @@ op Analysis_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/alert/repositories/{repository}/pipelineAnalyses")
 @delete
-op `Pipeline Analyses_Delete`(
+op PipelineAnalyses_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1738,7 +1738,7 @@ op `Pipeline Analyses_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/alert/repositories/{repository}/pipelineAnalysis/{adoPipelineId}")
 @delete
-op `Pipeline Analysis_Delete`(
+op PipelineAnalysis_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

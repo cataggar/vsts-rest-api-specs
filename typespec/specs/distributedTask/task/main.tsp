@@ -637,7 +637,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/public/distributedtask/webhooks/{webHookId}")
 @post
-op `Webhooks_Receive External Event`(
+op Webhooks_ReceiveExternalEvent(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -655,7 +655,7 @@ op `Webhooks_Receive External Event`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/events")
 @post
-op `Events_Post Event`(
+op Events_PostEvent(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -733,7 +733,7 @@ op Logs_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{scopeIdentifier}/_apis/distributedtask/hubs/{hubName}/plans/{planId}/logs/{logId}")
 @post
-op `Logs_Append Log Content`(
+op Logs_AppendLogContent(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

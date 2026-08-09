@@ -2849,7 +2849,7 @@ op Filecoverage_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/codecoverage/sourceview")
 @get
-op `Codecoverage_Fetch Source Code Coverage Report`(
+op Codecoverage_FetchSourceCodeCoverageReport(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3129,7 +3129,7 @@ op Resultgroupsbyrelease_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/results")
 @post
-op `Results_Get Test Results By Query`(
+op Results_GetTestResultsByQuery(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3165,7 +3165,7 @@ op History_Query(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/results/query")
 @post
-op `Results_Get Test Results By Query Wiql`(
+op Results_GetTestResultsByQueryWiql(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3188,7 +3188,7 @@ op `Results_Get Test Results By Query Wiql`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/results/resultmetadata")
 @post
-op `Result Meta Data_Query`(
+op ResultMetaData_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3226,7 +3226,7 @@ op `Result Meta Data_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/results/resultmetadata/{testCaseReferenceId}")
 @patch
-op `Result Meta Data_Update`(
+op ResultMetaData_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3250,7 +3250,7 @@ op `Result Meta Data_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/results/testhistory")
 @post
-op `Test History_Query`(
+op TestHistory_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3271,7 +3271,7 @@ op `Test History_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/results/workitems")
 @get
-op `Workitems_Query Test Result Work Items`(
+op Workitems_QueryTestResultWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3384,7 +3384,7 @@ op Resultsbyrelease_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/resultsgroupdetails")
 @get
-op `Resultsgroup Details_Test Results Group Details`(
+op ResultsgroupDetails_TestResultsGroupDetails(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3494,7 +3494,7 @@ op Resultsummarybypipeline_Query(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/resultsummarybyrelease")
 @get
-op `Resultsummarybyrelease_Query Test Results Report For Release`(
+op Resultsummarybyrelease_QueryTestResultsReportForRelease(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3546,7 +3546,7 @@ op `Resultsummarybyrelease_Query Test Results Report For Release`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/resultsummarybyrelease")
 @post
-op `Resultsummarybyrelease_Query Test Results Summary For Releases`(
+op Resultsummarybyrelease_QueryTestResultsSummaryForReleases(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3583,7 +3583,7 @@ op Resultsummarybyrequirement_Query(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/resulttrendbybuild")
 @post
-op `Result Trend By Build_Query`(
+op ResultTrendByBuild_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3601,7 +3601,7 @@ op `Result Trend By Build_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/resulttrendbyrelease")
 @post
-op `Result Trend By Release_Query`(
+op ResultTrendByRelease_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3719,7 +3719,7 @@ op Runs_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/attachments")
 @get
-op `Attachments_Get Test Run Attachments`(
+op Attachments_GetTestRunAttachments(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3737,7 +3737,7 @@ op `Attachments_Get Test Run Attachments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/attachments")
 @post
-op `Attachments_Create Test Run Attachment`(
+op Attachments_CreateTestRunAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3756,7 +3756,7 @@ op `Attachments_Create Test Run Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/attachments/{attachmentId}")
 @delete
-op `Attachments_Delete Test Run Attachment`(
+op Attachments_DeleteTestRunAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3776,7 +3776,7 @@ op `Attachments_Delete Test Run Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/attachments/{attachmentId}")
 @get
-op `Attachments_Get Test Run Attachment Zip`(
+op Attachments_GetTestRunAttachmentZip(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3803,7 +3803,7 @@ op `Attachments_Get Test Run Attachment Zip`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/codecoverage")
 @get
-op `Codecoverage_Get Test Run Code Coverage`(
+op Codecoverage_GetTestRunCodeCoverage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3823,7 +3823,7 @@ op `Codecoverage_Get Test Run Code Coverage`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/messagelogs")
 @get
-op `Message Logs_List`(
+op MessageLogs_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3843,7 +3843,7 @@ op `Message Logs_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/resultdocument")
 @post
-op `Result Document_Publish Test Result Document`(
+op ResultDocument_PublishTestResultDocument(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3862,7 +3862,7 @@ op `Result Document_Publish Test Result Document`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results")
 @get
-op `Results_Get Test Results`(
+op Results_GetTestResults(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3941,7 +3941,7 @@ op Results_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{resultId}/testlog")
 @get
-op `Testlog_Get Test Result Logs`(
+op Testlog_GetTestResultLogs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3991,7 +3991,7 @@ op `Testlog_Get Test Result Logs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{resultId}/testlogstoreendpoint")
 @get
-op `Testlogstoreendpoint_Get Test Log Store Endpoint Details For Result Log`(
+op Testlogstoreendpoint_GetTestLogStoreEndpointDetailsForResultLog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4029,7 +4029,7 @@ op `Testlogstoreendpoint_Get Test Log Store Endpoint Details For Result Log`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{resultId}/testlogstoreendpoint")
 @post
-op `Testlogstoreendpoint_Test Log Store Endpoint Details For Result`(
+op Testlogstoreendpoint_TestLogStoreEndpointDetailsForResult(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4069,7 +4069,7 @@ op `Testlogstoreendpoint_Test Log Store Endpoint Details For Result`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{testCaseResultId}/attachments")
 @get
-op `Attachments_Get Test Result Attachments`(
+op Attachments_GetTestResultAttachments(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4088,7 +4088,7 @@ op `Attachments_Get Test Result Attachments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{testCaseResultId}/attachments")
 @post
-op `Attachments_Create Test Result Attachment`(
+op Attachments_CreateTestResultAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4108,7 +4108,7 @@ op `Attachments_Create Test Result Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{testCaseResultId}/attachments/{attachmentId}")
 @delete
-op `Attachments_Delete Test Result Attachment`(
+op Attachments_DeleteTestResultAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4129,7 +4129,7 @@ op `Attachments_Delete Test Result Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{testCaseResultId}/attachments/{attachmentId}")
 @get
-op `Attachments_Get Test Result Attachment Zip`(
+op Attachments_GetTestResultAttachmentZip(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4195,7 +4195,7 @@ op Workitems_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{testResultId}")
 @get
-op `Results_Get Test Result By Id`(
+op Results_GetTestResultById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4233,7 +4233,7 @@ op `Results_Get Test Result By Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/results/{testResultId}/similartestresults")
 @get
-op `Similar Test Results_List`(
+op SimilarTestResults_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4377,7 +4377,7 @@ op Testattachments_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/testattachments")
 @post
-op `Testattachments_Create Test Run Log Store Attachment`(
+op Testattachments_CreateTestRunLogStoreAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4401,7 +4401,7 @@ op `Testattachments_Create Test Run Log Store Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/testlog")
 @get
-op `Testlog_Get Test Run Logs`(
+op Testlog_GetTestRunLogs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4448,7 +4448,7 @@ op `Testlog_Get Test Run Logs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/testlogstoreendpoint")
 @get
-op `Testlogstoreendpoint_Get Test Log Store Endpoint Details For Run Log`(
+op Testlogstoreendpoint_GetTestLogStoreEndpointDetailsForRunLog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4483,7 +4483,7 @@ op `Testlogstoreendpoint_Get Test Log Store Endpoint Details For Run Log`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/runs/{runId}/testlogstoreendpoint")
 @post
-op `Testlogstoreendpoint_Test Log Store Endpoint Details For Run`(
+op Testlogstoreendpoint_TestLogStoreEndpointDetailsForRun(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4583,7 +4583,7 @@ op Settings_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/tags")
 @get
-op `Tags_Get Test Tags For Build`(
+op Tags_GetTestTagsForBuild(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4604,7 +4604,7 @@ op `Tags_Get Test Tags For Build`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/tagsummary")
 @get
-op `Tagsummary_Get Test Tag Summary For Build`(
+op Tagsummary_GetTestTagSummaryForBuild(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4625,7 +4625,7 @@ op `Tagsummary_Get Test Tag Summary For Build`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/testai/completegithubauth")
 @get
-op `Testai_Complete Git Hub Auth`(
+op Testai_CompleteGitHubAuth(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4702,7 +4702,7 @@ op Testfailuretype_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/testlog")
 @get
-op `Testlog_Get Test Logs For Build`(
+op Testlog_GetTestLogsForBuild(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4749,7 +4749,7 @@ op `Testlog_Get Test Logs For Build`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/testlogstoreendpoint")
 @get
-op `Testlogstoreendpoint_Get Test Log Store Endpoint Details For Build Log`(
+op Testlogstoreendpoint_GetTestLogStoreEndpointDetailsForBuildLog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4784,7 +4784,7 @@ op `Testlogstoreendpoint_Get Test Log Store Endpoint Details For Build Log`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/testlogstoreendpoint")
 @post
-op `Testlogstoreendpoint_Test Log Store Endpoint Details For Build`(
+op Testlogstoreendpoint_TestLogStoreEndpointDetailsForBuild(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4907,7 +4907,7 @@ op Testsettings_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testresults/uploadbuildattachments/{buildId}")
 @post
-op `Testattachments_Create Build Attachment In Log Store`(
+op Testattachments_CreateBuildAttachmentInLogStore(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

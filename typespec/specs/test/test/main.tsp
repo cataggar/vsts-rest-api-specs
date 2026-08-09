@@ -5185,7 +5185,7 @@ model YamlReleaseReference {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/codecoverage")
 @get
-op `Code Coverage_Get Build Code Coverage`(
+op CodeCoverage_GetBuildCodeCoverage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5254,7 +5254,7 @@ op Points_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Plans/{planId}/Suites/{suiteId}/points/{pointIds}")
 @get
-op `Points_Get Point`(
+op Points_GetPoint(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5314,7 +5314,7 @@ op Points_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases")
 @get
-op `Test  Suites_List`(
+op TestSuites_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5338,7 +5338,7 @@ op `Test  Suites_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
 @delete
-op `Test  Suites_Remove Test Cases From Suite Url`(
+op TestSuites_RemoveTestCasesFromSuiteUrl(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5365,7 +5365,7 @@ op `Test  Suites_Remove Test Cases From Suite Url`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
 @get
-op `Test  Suites_Get`(
+op TestSuites_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5392,7 +5392,7 @@ op `Test  Suites_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
 @patch
-op `Test  Suites_Update`(
+op TestSuites_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5422,7 +5422,7 @@ op `Test  Suites_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Plans/{planId}/suites/{suiteId}/testcases/{testCaseIds}")
 @post
-op `Test  Suites_Add`(
+op TestSuites_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5449,7 +5449,7 @@ op `Test  Suites_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/points")
 @post
-op `Points_Get Points By Query`(
+op Points_GetPointsByQuery(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5476,7 +5476,7 @@ op `Points_Get Points By Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/resultretentionsettings")
 @get
-op `Result Retention Settings_Get`(
+op ResultRetentionSettings_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5494,7 +5494,7 @@ op `Result Retention Settings_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/resultretentionsettings")
 @patch
-op `Result Retention Settings_Update`(
+op ResultRetentionSettings_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5515,7 +5515,7 @@ op `Result Retention Settings_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Results/testhistory")
 @post
-op `Test History_Query`(
+op TestHistory_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5619,7 +5619,7 @@ op Runs_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/runs/{runId}")
 @get
-op `Runs_Get Test Run By Id`(
+op Runs_GetTestRunById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5667,7 +5667,7 @@ op Runs_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments")
 @get
-op `Attachments_Get Test Run Attachments`(
+op Attachments_GetTestRunAttachments(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5688,7 +5688,7 @@ op `Attachments_Get Test Run Attachments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments")
 @post
-op `Attachments_Create Test Run Attachment`(
+op Attachments_CreateTestRunAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5712,7 +5712,7 @@ op `Attachments_Create Test Run Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/attachments/{attachmentId}")
 @get
-op `Attachments_Get Test Run Attachment Zip`(
+op Attachments_GetTestRunAttachmentZip(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5744,7 +5744,7 @@ op `Attachments_Get Test Run Attachment Zip`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/codecoverage")
 @get
-op `Code Coverage_Get Test Run Code Coverage`(
+op CodeCoverage_GetTestRunCodeCoverage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5910,7 +5910,7 @@ op Results_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments")
 @get
-op `Attachments_Get Test Result Attachments`(
+op Attachments_GetTestResultAttachments(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5934,7 +5934,7 @@ op `Attachments_Get Test Result Attachments`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments")
 @post
-op `Attachments_Create Test Result Attachment`(
+op Attachments_CreateTestResultAttachment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5961,7 +5961,7 @@ op `Attachments_Create Test Result Attachment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/Runs/{runId}/Results/{testCaseResultId}/attachments/{attachmentId}")
 @get
-op `Attachments_Get Test Result Attachment Zip`(
+op Attachments_GetTestResultAttachmentZip(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6053,7 +6053,7 @@ op Iterations_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/runs/{runId}/Statistics")
 @get
-op `Runs_Get Test Run Statistics`(
+op Runs_GetTestRunStatistics(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6074,7 +6074,7 @@ op `Runs_Get Test Run Statistics`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/test/testcases/{testCaseId}")
 @delete
-op `Test Cases_Delete`(
+op TestCases_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

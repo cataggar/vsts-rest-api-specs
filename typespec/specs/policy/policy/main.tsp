@@ -424,7 +424,7 @@ op Evaluations_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/policy/evaluations/{evaluationId}")
 @patch
-op `Evaluations_Requeue Policy Evaluation`(
+op Evaluations_RequeuePolicyEvaluation(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

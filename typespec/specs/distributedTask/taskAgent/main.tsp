@@ -4163,7 +4163,7 @@ op Agentcloudtypes_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/distributedtask/pools")
 @get
-op `Pools_Get Agent Pools By Ids`(
+op Pools_GetAgentPoolsByIds(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4424,7 +4424,7 @@ op Agents_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/distributedtask/pools/{poolId}/agents/{agentId}")
 @put
-op `Agents_Replace Agent`(
+op Agents_ReplaceAgent(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4448,7 +4448,7 @@ op `Agents_Replace Agent`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/distributedtask/pools/{poolId}/permissions/{permissions}")
 @get
-op `Poolpermissions_Has Pool Permissions`(
+op Poolpermissions_HasPoolPermissions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4469,7 +4469,7 @@ op `Poolpermissions_Has Pool Permissions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/distributedtask/variablegroups")
 @patch
-op `Variablegroups_Share Variable Group`(
+op Variablegroups_ShareVariableGroup(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4949,7 +4949,7 @@ op Targets_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/distributedtask/queues")
 @get
-op `Queues_Get Agent Queues For Pools`(
+op Queues_GetAgentQueuesForPools(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5066,7 +5066,7 @@ op Queues_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/distributedtask/securefiles")
 @get
-op `Securefiles_Get Secure Files By Names`(
+op Securefiles_GetSecureFilesByNames(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5103,7 +5103,7 @@ op `Securefiles_Get Secure Files By Names`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/distributedtask/securefiles")
 @patch
-op `Securefiles_Update Secure Files`(
+op Securefiles_UpdateSecureFiles(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5206,7 +5206,7 @@ op Securefiles_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/distributedtask/securefiles/{secureFileId}")
 @patch
-op `Securefiles_Update Secure File`(
+op Securefiles_UpdateSecureFile(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5355,7 +5355,7 @@ op Taskgroups_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/distributedtask/variablegroups")
 @get
-op `Variablegroups_Get Variable Groups By Id`(
+op Variablegroups_GetVariableGroupsById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

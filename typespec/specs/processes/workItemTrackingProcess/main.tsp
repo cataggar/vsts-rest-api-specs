@@ -1295,7 +1295,7 @@ op Behaviors_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypes")
 @get
-op `Work Item Types_List`(
+op WorkItemTypes_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1335,7 +1335,7 @@ op `Work Item Types_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypes")
 @post
-op `Work Item Types_Create`(
+op WorkItemTypes_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1354,7 +1354,7 @@ op `Work Item Types_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypes/{witRefName}")
 @delete
-op `Work Item Types_Delete`(
+op WorkItemTypes_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1375,7 +1375,7 @@ op `Work Item Types_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypes/{witRefName}")
 @get
-op `Work Item Types_Get`(
+op WorkItemTypes_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1418,7 +1418,7 @@ op `Work Item Types_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypes/{witRefName}")
 @patch
-op `Work Item Types_Update`(
+op WorkItemTypes_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1483,7 +1483,7 @@ op Fields_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/fields/{fieldRefName}")
 @delete
-op `Fields_Remove Work Item Type Field`(
+op Fields_RemoveWorkItemTypeField(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1617,7 +1617,7 @@ op Controls_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/groups/{groupId}/controls/{controlId}")
 @delete
-op `Controls_Remove Control From Group`(
+op Controls_RemoveControlFromGroup(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1674,7 +1674,7 @@ op Controls_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/groups/{groupId}/controls/{controlId}")
 @put
-op `Controls_Move Control To Group`(
+op Controls_MoveControlToGroup(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1755,7 +1755,7 @@ op Pages_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}")
 @delete
-op `Pages_Remove Page`(
+op Pages_RemovePage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1809,7 +1809,7 @@ op Groups_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}/sections/{sectionId}/groups/{groupId}")
 @delete
-op `Groups_Remove Group`(
+op Groups_RemoveGroup(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1872,7 +1872,7 @@ op Groups_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/pages/{pageId}/sections/{sectionId}/groups/{groupId}")
 @put
-op `Groups_Move Group To Section`(
+op Groups_MoveGroupToSection(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1908,7 +1908,7 @@ op `Groups_Move Group To Section`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/systemcontrols")
 @get
-op `System Controls_List`(
+op SystemControls_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1929,7 +1929,7 @@ op `System Controls_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/systemcontrols/{controlId}")
 @delete
-op `System Controls_Delete`(
+op SystemControls_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1953,7 +1953,7 @@ op `System Controls_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/layout/systemcontrols/{controlId}")
 @patch
-op `System Controls_Update`(
+op SystemControls_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2210,7 +2210,7 @@ op States_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workItemTypes/{witRefName}/states/{stateId}")
 @put
-op `States_Hide State Definition`(
+op States_HideStateDefinition(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2235,7 +2235,7 @@ op `States_Hide State Definition`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypesbehaviors/{witRefNameForBehaviors}/behaviors")
 @get
-op `Work Item Types Behaviors_List`(
+op WorkItemTypesBehaviors_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2256,7 +2256,7 @@ op `Work Item Types Behaviors_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypesbehaviors/{witRefNameForBehaviors}/behaviors")
 @patch
-op `Work Item Types Behaviors_Update`(
+op WorkItemTypesBehaviors_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2278,7 +2278,7 @@ op `Work Item Types Behaviors_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypesbehaviors/{witRefNameForBehaviors}/behaviors")
 @post
-op `Work Item Types Behaviors_Add`(
+op WorkItemTypesBehaviors_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2300,7 +2300,7 @@ op `Work Item Types Behaviors_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypesbehaviors/{witRefNameForBehaviors}/behaviors/{behaviorRefName}")
 @delete
-op `Work Item Types Behaviors_Remove Behavior From Work Item Type`(
+op WorkItemTypesBehaviors_RemoveBehaviorFromWorkItemType(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2324,7 +2324,7 @@ op `Work Item Types Behaviors_Remove Behavior From Work Item Type`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processId}/workitemtypesbehaviors/{witRefNameForBehaviors}/behaviors/{behaviorRefName}")
 @get
-op `Work Item Types Behaviors_Get`(
+op WorkItemTypesBehaviors_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2392,7 +2392,7 @@ op Processes_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/processes/{processTypeId}")
 @patch
-op `Processes_Edit Process`(
+op Processes_EditProcess(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

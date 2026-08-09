@@ -476,7 +476,7 @@ op Runs_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/{pipelineId}/runs")
 @post
-op `Runs_Run Pipeline`(
+op Runs_RunPipeline(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

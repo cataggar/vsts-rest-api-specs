@@ -178,7 +178,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/favorite/favorites")
 @get
-op `Favorites_Get Favorites`(
+op Favorites_GetFavorites(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -196,7 +196,7 @@ op `Favorites_Get Favorites`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/favorite/favorites")
 @post
-op `Favorites_Create Favorite`(
+op Favorites_CreateFavorite(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -211,7 +211,7 @@ op `Favorites_Create Favorite`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/favorite/favorites/{favoriteId}")
 @delete
-op `Favorites_Delete Favorite By Id`(
+op Favorites_DeleteFavoriteById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -229,7 +229,7 @@ op `Favorites_Delete Favorite By Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/favorite/favorites/{favoriteId}")
 @get
-op `Favorites_Get Favorite By Id`(
+op Favorites_GetFavoriteById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

@@ -848,7 +848,7 @@ op Projects_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/avatar")
 @delete
-op `Avatar_Remove Project Avatar`(
+op Avatar_RemoveProjectAvatar(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -866,7 +866,7 @@ op `Avatar_Remove Project Avatar`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/avatar")
 @put
-op `Avatar_Set Project Avatar`(
+op Avatar_SetProjectAvatar(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -887,7 +887,7 @@ op `Avatar_Set Project Avatar`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/categorizedteams/")
 @get
-op `Categorized Teams_Get`(
+op CategorizedTeams_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -914,7 +914,7 @@ op `Categorized Teams_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/properties")
 @get
-op `Projects_Get Project Properties`(
+op Projects_GetProjectProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -935,7 +935,7 @@ op `Projects_Get Project Properties`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/properties")
 @patch
-op `Projects_Set Project Properties`(
+op Projects_SetProjectProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -957,7 +957,7 @@ op `Projects_Set Project Properties`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/teams")
 @get
-op `Teams_Get Teams`(
+op Teams_GetTeams(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1074,7 +1074,7 @@ op Teams_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/projects/{projectId}/teams/{teamId}/members")
 @get
-op `Teams_Get Team Members With Extended Properties`(
+op Teams_GetTeamMembersWithExtendedProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1097,7 +1097,7 @@ op `Teams_Get Team Members With Extended Properties`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/teams")
 @get
-op `Teams_Get All Teams`(
+op Teams_GetAllTeams(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

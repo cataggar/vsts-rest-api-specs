@@ -4488,7 +4488,7 @@ model WebApiTagDefinition {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/deletedrepositories")
 @get
-op `Repositories_Get Deleted Repositories`(
+op Repositories_GetDeletedRepositories(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4506,7 +4506,7 @@ op `Repositories_Get Deleted Repositories`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/favorites/refs")
 @get
-op `Refs Favorites_List`(
+op RefsFavorites_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4530,7 +4530,7 @@ op `Refs Favorites_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/favorites/refs")
 @post
-op `Refs Favorites_Create`(
+op RefsFavorites_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4551,7 +4551,7 @@ op `Refs Favorites_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/favorites/refs/{favoriteId}")
 @delete
-op `Refs Favorites_Delete`(
+op RefsFavorites_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4572,7 +4572,7 @@ op `Refs Favorites_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/favorites/refs/{favoriteId}")
 @get
-op `Refs Favorites_Get`(
+op RefsFavorites_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4592,7 +4592,7 @@ op `Refs Favorites_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/favorites/refsForProject")
 @get
-op `Refs Favorites For Project_List`(
+op RefsFavoritesForProject_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4611,7 +4611,7 @@ op `Refs Favorites For Project_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/policy/configurations")
 @get
-op `Policy Configurations_Get`(
+op PolicyConfigurations_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4647,7 +4647,7 @@ op `Policy Configurations_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/pullrequests")
 @get
-op `Pull Requests_Get Pull Requests By Project`(
+op PullRequests_GetPullRequestsByProject(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4758,7 +4758,7 @@ op `Pull Requests_Get Pull Requests By Project`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/pullrequests/{pullRequestId}")
 @get
-op `Pull Requests_Get Pull Request By Id`(
+op PullRequests_GetPullRequestById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4779,7 +4779,7 @@ op `Pull Requests_Get Pull Request By Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/recycleBin/repositories")
 @get
-op `Repositories_Get Recycle Bin Repositories`(
+op Repositories_GetRecycleBinRepositories(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4797,7 +4797,7 @@ op `Repositories_Get Recycle Bin Repositories`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}")
 @delete
-op `Repositories_Delete Repository From Recycle Bin`(
+op Repositories_DeleteRepositoryFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4818,7 +4818,7 @@ op `Repositories_Delete Repository From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}")
 @patch
-op `Repositories_Restore Repository From Recycle Bin`(
+op Repositories_RestoreRepositoryFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4912,7 +4912,7 @@ op Repositories_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}")
 @get
-op `Repositories_Get Repository`(
+op Repositories_GetRepository(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4957,7 +4957,7 @@ op Repositories_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags")
 @post
-op `Annotated Tags_Create`(
+op AnnotatedTags_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4981,7 +4981,7 @@ op `Annotated Tags_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}")
 @get
-op `Annotated Tags_Get`(
+op AnnotatedTags_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5005,7 +5005,7 @@ op `Annotated Tags_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/blobs")
 @post
-op `Blobs_Get Blobs Zip`(
+op Blobs_GetBlobsZip(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5033,7 +5033,7 @@ op `Blobs_Get Blobs Zip`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/blobs/{sha1}")
 @get
-op `Blobs_Get Blob`(
+op Blobs_GetBlob(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5078,7 +5078,7 @@ op `Blobs_Get Blob`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks")
 @get
-op `Cherry Picks_Get Cherry Pick For Ref Name`(
+op CherryPicks_GetCherryPickForRefName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5102,7 +5102,7 @@ op `Cherry Picks_Get Cherry Pick For Ref Name`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks")
 @post
-op `Cherry Picks_Create`(
+op CherryPicks_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5124,7 +5124,7 @@ op `Cherry Picks_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/cherryPicks/{cherryPickId}")
 @get
-op `Cherry Picks_Get Cherry Pick`(
+op CherryPicks_GetCherryPick(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5148,7 +5148,7 @@ op `Cherry Picks_Get Cherry Pick`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits")
 @get
-op `Commits_Get Push Commits`(
+op Commits_GetPushCommits(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5208,7 +5208,7 @@ op Commits_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}/changes")
 @get
-op `Commits_Get Changes`(
+op Commits_GetChanges(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5298,7 +5298,7 @@ op Statuses_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/commitsbatch")
 @post
-op `Commits_Get Commits Batch`(
+op Commits_GetCommitsBatch(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5433,7 +5433,7 @@ op Diffs_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests")
 @get
-op `Import Requests_Query`(
+op ImportRequests_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5457,7 +5457,7 @@ op `Import Requests_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests")
 @post
-op `Import Requests_Create`(
+op ImportRequests_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5481,7 +5481,7 @@ op `Import Requests_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests/{importRequestId}")
 @get
-op `Import Requests_Get`(
+op ImportRequests_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5505,7 +5505,7 @@ op `Import Requests_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/importRequests/{importRequestId}")
 @patch
-op `Import Requests_Update`(
+op ImportRequests_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5629,7 +5629,7 @@ op Items_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/itemsbatch")
 @post
-op `Items_Get Items Batch`(
+op Items_GetItemsBatch(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5653,7 +5653,7 @@ op `Items_Get Items Batch`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequestquery")
 @post
-op `Pull Request Query_Get`(
+op PullRequestQuery_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5677,7 +5677,7 @@ op `Pull Request Query_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests")
 @get
-op `Pull Requests_Get Pull Requests`(
+op PullRequests_GetPullRequests(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5791,7 +5791,7 @@ op `Pull Requests_Get Pull Requests`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests")
 @post
-op `Pull Requests_Create`(
+op PullRequests_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5818,7 +5818,7 @@ op `Pull Requests_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}")
 @get
-op `Pull Requests_Get Pull Request`(
+op PullRequests_GetPullRequest(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5857,7 +5857,7 @@ op `Pull Requests_Get Pull Request`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}")
 @patch
-op `Pull Requests_Update`(
+op PullRequests_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5884,7 +5884,7 @@ op `Pull Requests_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments")
 @get
-op `Pull Request Attachments_List`(
+op PullRequestAttachments_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5908,7 +5908,7 @@ op `Pull Request Attachments_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
 @delete
-op `Pull Request Attachments_Delete`(
+op PullRequestAttachments_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5935,7 +5935,7 @@ op `Pull Request Attachments_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
 @get
-op `Pull Request Attachments_Get`(
+op PullRequestAttachments_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5970,7 +5970,7 @@ op `Pull Request Attachments_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/attachments/{fileName}")
 @post
-op `Pull Request Attachments_Create`(
+op PullRequestAttachments_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6001,7 +6001,7 @@ op `Pull Request Attachments_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/commits")
 @get
-op `Pull Request Commits_Get Pull Request Commits`(
+op PullRequestCommits_GetPullRequestCommits(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6031,7 +6031,7 @@ op `Pull Request Commits_Get Pull Request Commits`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations")
 @get
-op `Pull Request Iterations_List`(
+op PullRequestIterations_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6058,7 +6058,7 @@ op `Pull Request Iterations_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}")
 @get
-op `Pull Request Iterations_Get`(
+op PullRequestIterations_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6085,7 +6085,7 @@ op `Pull Request Iterations_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/changes")
 @get
-op `Pull Request Iteration Changes_Get`(
+op PullRequestIterationChanges_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6121,7 +6121,7 @@ op `Pull Request Iteration Changes_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/commits")
 @get
-op `Pull Request Commits_Get Pull Request Iteration Commits`(
+op PullRequestCommits_GetPullRequestIterationCommits(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6154,7 +6154,7 @@ op `Pull Request Commits_Get Pull Request Iteration Commits`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
 @get
-op `Pull Request Iteration Statuses_List`(
+op PullRequestIterationStatuses_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6181,7 +6181,7 @@ op `Pull Request Iteration Statuses_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
 @patch
-op `Pull Request Iteration Statuses_Update`(
+op PullRequestIterationStatuses_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6212,7 +6212,7 @@ op `Pull Request Iteration Statuses_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses")
 @post
-op `Pull Request Iteration Statuses_Create`(
+op PullRequestIterationStatuses_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6242,7 +6242,7 @@ op `Pull Request Iteration Statuses_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses/{statusId}")
 @delete
-op `Pull Request Iteration Statuses_Delete`(
+op PullRequestIterationStatuses_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6272,7 +6272,7 @@ op `Pull Request Iteration Statuses_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/iterations/{iterationId}/statuses/{statusId}")
 @get
-op `Pull Request Iteration Statuses_Get`(
+op PullRequestIterationStatuses_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6302,7 +6302,7 @@ op `Pull Request Iteration Statuses_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels")
 @get
-op `Pull Request Labels_List`(
+op PullRequestLabels_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6329,7 +6329,7 @@ op `Pull Request Labels_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels")
 @post
-op `Pull Request Labels_Create`(
+op PullRequestLabels_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6359,7 +6359,7 @@ op `Pull Request Labels_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels/{labelIdOrName}")
 @delete
-op `Pull Request Labels_Delete`(
+op PullRequestLabels_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6389,7 +6389,7 @@ op `Pull Request Labels_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/labels/{labelIdOrName}")
 @get
-op `Pull Request Labels_Get`(
+op PullRequestLabels_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6419,7 +6419,7 @@ op `Pull Request Labels_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/properties")
 @get
-op `Pull Request Properties_List`(
+op PullRequestProperties_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6443,7 +6443,7 @@ op `Pull Request Properties_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/properties")
 @patch
-op `Pull Request Properties_Update`(
+op PullRequestProperties_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6471,7 +6471,7 @@ op `Pull Request Properties_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
 @get
-op `Pull Request Reviewers_List`(
+op PullRequestReviewers_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6495,7 +6495,7 @@ op `Pull Request Reviewers_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
 @patch
-op `Pull Request Reviewers_Update Pull Request Reviewers`(
+op PullRequestReviewers_UpdatePullRequestReviewers(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6522,7 +6522,7 @@ op `Pull Request Reviewers_Update Pull Request Reviewers`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
 @post
-op `Pull Request Reviewers_Create Pull Request Reviewers`(
+op PullRequestReviewers_CreatePullRequestReviewers(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6549,7 +6549,7 @@ op `Pull Request Reviewers_Create Pull Request Reviewers`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers")
 @put
-op `Pull Request Reviewers_Create Unmaterialized Pull Request Reviewer`(
+op PullRequestReviewers_CreateUnmaterializedPullRequestReviewer(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6576,7 +6576,7 @@ op `Pull Request Reviewers_Create Unmaterialized Pull Request Reviewer`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
 @delete
-op `Pull Request Reviewers_Delete`(
+op PullRequestReviewers_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6603,7 +6603,7 @@ op `Pull Request Reviewers_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
 @get
-op `Pull Request Reviewers_Get`(
+op PullRequestReviewers_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6630,7 +6630,7 @@ op `Pull Request Reviewers_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
 @patch
-op `Pull Request Reviewers_Update Pull Request Reviewer`(
+op PullRequestReviewers_UpdatePullRequestReviewer(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6660,7 +6660,7 @@ op `Pull Request Reviewers_Update Pull Request Reviewer`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/reviewers/{reviewerId}")
 @put
-op `Pull Request Reviewers_Create Pull Request Reviewer`(
+op PullRequestReviewers_CreatePullRequestReviewer(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6690,7 +6690,7 @@ op `Pull Request Reviewers_Create Pull Request Reviewer`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/share")
 @post
-op `Pull Request Share_Share Pull Request`(
+op PullRequestShare_SharePullRequest(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6715,7 +6715,7 @@ op `Pull Request Share_Share Pull Request`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
 @get
-op `Pull Request Statuses_List`(
+op PullRequestStatuses_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6739,7 +6739,7 @@ op `Pull Request Statuses_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
 @patch
-op `Pull Request Statuses_Update`(
+op PullRequestStatuses_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6767,7 +6767,7 @@ op `Pull Request Statuses_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses")
 @post
-op `Pull Request Statuses_Create`(
+op PullRequestStatuses_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6794,7 +6794,7 @@ op `Pull Request Statuses_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses/{statusId}")
 @delete
-op `Pull Request Statuses_Delete`(
+op PullRequestStatuses_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6821,7 +6821,7 @@ op `Pull Request Statuses_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/statuses/{statusId}")
 @get
-op `Pull Request Statuses_Get`(
+op PullRequestStatuses_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6848,7 +6848,7 @@ op `Pull Request Statuses_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads")
 @get
-op `Pull Request Threads_List`(
+op PullRequestThreads_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6878,7 +6878,7 @@ op `Pull Request Threads_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads")
 @post
-op `Pull Request Threads_Create`(
+op PullRequestThreads_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6905,7 +6905,7 @@ op `Pull Request Threads_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}")
 @get
-op `Pull Request Threads_Get`(
+op PullRequestThreads_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6938,7 +6938,7 @@ op `Pull Request Threads_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}")
 @patch
-op `Pull Request Threads_Update`(
+op PullRequestThreads_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6968,7 +6968,7 @@ op `Pull Request Threads_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments")
 @get
-op `Pull Request Thread Comments_List`(
+op PullRequestThreadComments_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -6995,7 +6995,7 @@ op `Pull Request Thread Comments_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments")
 @post
-op `Pull Request Thread Comments_Create`(
+op PullRequestThreadComments_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7025,7 +7025,7 @@ op `Pull Request Thread Comments_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
 @delete
-op `Pull Request Thread Comments_Delete`(
+op PullRequestThreadComments_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7055,7 +7055,7 @@ op `Pull Request Thread Comments_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
 @get
-op `Pull Request Thread Comments_Get`(
+op PullRequestThreadComments_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7085,7 +7085,7 @@ op `Pull Request Thread Comments_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}")
 @patch
-op `Pull Request Thread Comments_Update`(
+op PullRequestThreadComments_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7118,7 +7118,7 @@ op `Pull Request Thread Comments_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
 @delete
-op `Pull Request Comment Likes_Delete`(
+op PullRequestCommentLikes_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7148,7 +7148,7 @@ op `Pull Request Comment Likes_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
 @get
-op `Pull Request Comment Likes_List`(
+op PullRequestCommentLikes_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7178,7 +7178,7 @@ op `Pull Request Comment Likes_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/threads/{threadId}/comments/{commentId}/likes")
 @post
-op `Pull Request Comment Likes_Create`(
+op PullRequestCommentLikes_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7208,7 +7208,7 @@ op `Pull Request Comment Likes_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullRequests/{pullRequestId}/workitems")
 @get
-op `Pull Request Work Items_List`(
+op PullRequestWorkItems_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7380,7 +7380,7 @@ op Refs_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
 @patch
-op `Refs_Update Ref`(
+op Refs_UpdateRef(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7410,7 +7410,7 @@ op `Refs_Update Ref`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs")
 @post
-op `Refs_Update Refs`(
+op Refs_UpdateRefs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7437,7 +7437,7 @@ op `Refs_Update Refs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts")
 @get
-op `Reverts_Get Revert For Ref Name`(
+op Reverts_GetRevertForRefName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7483,7 +7483,7 @@ op Reverts_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryId}/reverts/{revertId}")
 @get
-op `Reverts_Get Revert`(
+op Reverts_GetRevert(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7629,7 +7629,7 @@ op Trees_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/commits/{commitId}/mergebases")
 @get
-op `Merge Bases_List`(
+op MergeBases_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7689,7 +7689,7 @@ op Forks_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests")
 @get
-op `Forks_Get Fork Sync Requests`(
+op Forks_GetForkSyncRequests(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7716,7 +7716,7 @@ op `Forks_Get Fork Sync Requests`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests")
 @post
-op `Forks_Create fork sync request`(
+op Forks_CreateForkSyncRequest(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -7743,7 +7743,7 @@ op `Forks_Create fork sync request`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/git/repositories/{repositoryNameOrId}/forkSyncRequests/{forkSyncOperationId}")
 @get
-op `Forks_Get fork sync request`(
+op Forks_GetForkSyncRequest(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

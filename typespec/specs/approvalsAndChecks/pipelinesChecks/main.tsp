@@ -587,7 +587,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/configurations")
 @get
-op `Check Configurations_List`(
+op CheckConfigurations_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -620,7 +620,7 @@ op `Check Configurations_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/configurations")
 @post
-op `Check Configurations_Add`(
+op CheckConfigurations_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -639,7 +639,7 @@ op `Check Configurations_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
 @delete
-op `Check Configurations_Delete`(
+op CheckConfigurations_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -660,7 +660,7 @@ op `Check Configurations_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
 @get
-op `Check Configurations_Get`(
+op CheckConfigurations_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -688,7 +688,7 @@ op `Check Configurations_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/configurations/{id}")
 @patch
-op `Check Configurations_Update`(
+op CheckConfigurations_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -712,7 +712,7 @@ op `Check Configurations_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/queryconfigurations")
 @post
-op `Check Configurations_Query`(
+op CheckConfigurations_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -744,7 +744,7 @@ op `Check Configurations_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/runs")
 @post
-op `Check Evaluations_Evaluate`(
+op CheckEvaluations_Evaluate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -772,7 +772,7 @@ op `Check Evaluations_Evaluate`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}")
 @get
-op `Check Evaluations_Get`(
+op CheckEvaluations_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -800,7 +800,7 @@ op `Check Evaluations_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/checks/runs/{checkSuiteId}")
 @patch
-op `Check Evaluations_Update`(
+op CheckEvaluations_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

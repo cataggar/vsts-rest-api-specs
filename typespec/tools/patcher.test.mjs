@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   dedupeAllOfProperties,
   fixPathParameterCasing,
+  normalizeOperationIds,
   sanitizeDocStrings,
   stripRootTags,
 } from "./patcher.mjs";
@@ -88,4 +89,20 @@ test("fixPathParameterCasing leaves unknown tokens alone", () => {
   const doc = { paths: { "/a/{unknown}": { get: { parameters: [] } } } };
   assert.equal(fixPathParameterCasing(doc), 0);
   assert.ok(doc.paths["/a/{unknown}"]);
+});
+
+test("normalizeOperationIds collapses spaces to PascalCase per segment", () => {
+  const doc = {
+    paths: {
+      "/a": {
+        get: { operationId: "Repositories_Get Deleted Repositories" },
+        post: { operationId: "Refs Favorites_Create" },
+      },
+      "/b": { get: { operationId: "Repositories_List" } },
+    },
+  };
+  assert.equal(normalizeOperationIds(doc), 2);
+  assert.equal(doc.paths["/a"].get.operationId, "Repositories_GetDeletedRepositories");
+  assert.equal(doc.paths["/a"].post.operationId, "RefsFavorites_Create");
+  assert.equal(doc.paths["/b"].get.operationId, "Repositories_List");
 });

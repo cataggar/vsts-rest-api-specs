@@ -1288,7 +1288,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/extensionmanagement/installedextensions")
 @get
-op `Installed Extensions_List`(
+op InstalledExtensions_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1313,7 +1313,7 @@ op `Installed Extensions_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/extensionmanagement/installedextensions")
 @patch
-op `Installed Extensions_Update`(
+op InstalledExtensions_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1329,7 +1329,7 @@ op `Installed Extensions_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}")
 @delete
-op `Installed Extensions_Uninstall Extension By Name`(
+op InstalledExtensions_UninstallExtensionByName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1352,7 +1352,7 @@ op `Installed Extensions_Uninstall Extension By Name`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}")
 @get
-op `Installed Extensions_Get`(
+op InstalledExtensions_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1376,7 +1376,7 @@ op `Installed Extensions_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/extensionmanagement/installedextensionsbyname/{publisherName}/{extensionName}/{version}")
 @post
-op `Installed Extensions_Install Extension By Name`(
+op InstalledExtensions_InstallExtensionByName(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

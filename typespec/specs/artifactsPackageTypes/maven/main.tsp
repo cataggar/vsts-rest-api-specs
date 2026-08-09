@@ -353,7 +353,7 @@ model UpstreamSourceInfo {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/upstreaming")
 @get
-op `Maven_Get Upstreaming Behavior`(
+op Maven_GetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -380,7 +380,7 @@ op `Maven_Get Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/upstreaming")
 @patch
-op `Maven_Set Upstreaming Behavior`(
+op Maven_SetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -437,7 +437,7 @@ op Maven_DeletePackageVersion(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
 @get
-op `Maven_Get Package Version`(
+op Maven_GetPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -470,7 +470,7 @@ op `Maven_Get Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
 @patch
-op `Maven_Update Package Version`(
+op Maven_UpdatePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -563,7 +563,7 @@ op Maven_GetPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/groups/{groupId}/artifacts/{artifactId}/versions/{version}")
 @patch
-op `Maven_Restore Package Version From Recycle Bin`(
+op Maven_RestorePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -596,7 +596,7 @@ op `Maven_Restore Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/maven/RecycleBin/packagesBatch")
 @post
-op `Maven_Update Recycle Bin Packages`(
+op Maven_UpdateRecycleBinPackages(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -655,7 +655,7 @@ op Maven_DownloadPackage(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/maven/packagesbatch")
 @post
-op `Maven_Update Package Versions`(
+op Maven_UpdatePackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

@@ -1073,7 +1073,7 @@ op Endpoints_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceendpoint/endpoints")
 @put
-op `Endpoints_Update Service Endpoints`(
+op Endpoints_UpdateServiceEndpoints(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1115,7 +1115,7 @@ op Endpoints_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
 @patch
-op `Endpoints_Share Service Endpoint`(
+op Endpoints_ShareServiceEndpoint(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1136,7 +1136,7 @@ op `Endpoints_Share Service Endpoint`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceendpoint/endpoints/{endpointId}")
 @put
-op `Endpoints_Update Service Endpoint`(
+op Endpoints_UpdateServiceEndpoint(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1160,7 +1160,7 @@ op `Endpoints_Update Service Endpoint`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceendpoint/types")
 @get
-op `Types_Get Service Endpoint Types`(
+op Types_GetServiceEndpointTypes(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1181,7 +1181,7 @@ op `Types_Get Service Endpoint Types`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceendpoint/types")
 @post
-op `Types_Get Filtered Service Endpoint Types`(
+op Types_GetFilteredServiceEndpointTypes(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1247,7 +1247,7 @@ op Endpointproxy_Query(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/serviceendpoint/endpoints")
 @get
-op `Endpoints_Get Service Endpoints By Names`(
+op Endpoints_GetServiceEndpointsByNames(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1283,7 +1283,7 @@ op `Endpoints_Get Service Endpoints By Names`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/serviceendpoint/endpoints")
 @post
-op `Endpoints_Get Service Endpoints With Refreshed Authentication`(
+op Endpoints_GetServiceEndpointsWithRefreshedAuthentication(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

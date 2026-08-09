@@ -196,7 +196,7 @@ model UpstreamSourceInfo {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packages/{packageName}/upstreaming")
 @get
-op `Python_Get Upstreaming Behavior`(
+op Python_GetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -220,7 +220,7 @@ op `Python_Get Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packages/{packageName}/upstreaming")
 @patch
-op `Python_Set Upstreaming Behavior`(
+op Python_SetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -247,7 +247,7 @@ op `Python_Set Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Python_Delete Package Version`(
+op Python_DeletePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -274,7 +274,7 @@ op `Python_Delete Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packages/{packageName}/versions/{packageVersion}")
 @get
-op `Python_Get Package Version`(
+op Python_GetPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -304,7 +304,7 @@ op `Python_Get Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Python_Update Package Version`(
+op Python_UpdatePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -334,7 +334,7 @@ op `Python_Update Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packages/{packageName}/versions/{packageVersion}/{fileName}/content")
 @get
-op `Python_Download Package`(
+op Python_DownloadPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -367,7 +367,7 @@ op `Python_Download Package`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/packagesbatch")
 @post
-op `Python_Update Package Versions`(
+op Python_UpdatePackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -391,7 +391,7 @@ op `Python_Update Package Versions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Python_Delete Package Version From Recycle Bin`(
+op Python_DeletePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -445,7 +445,7 @@ op Python_GetPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Python_Restore Package Version From Recycle Bin`(
+op Python_RestorePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -475,7 +475,7 @@ op `Python_Restore Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/pypi/RecycleBin/packagesBatch")
 @post
-op `Python_Update Recycle Bin Package Versions`(
+op Python_UpdateRecycleBinPackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

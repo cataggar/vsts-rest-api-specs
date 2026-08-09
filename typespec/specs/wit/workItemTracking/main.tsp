@@ -1697,7 +1697,7 @@ model WorkItemUpdate {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/wit/artifactlinktypes")
 @get
-op `Artifact Link Types_List`(
+op ArtifactLinkTypes_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1712,7 +1712,7 @@ op `Artifact Link Types_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/wit/workitemicons")
 @get
-op `Work Item Icons_List`(
+op WorkItemIcons_List(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 
@@ -1727,7 +1727,7 @@ op `Work Item Icons_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/wit/workitemicons/{icon}")
 @get
-op `Work Item Icons_Get`(
+op WorkItemIcons_Get(
   /** The name of the icon */
   @path icon: string,
 
@@ -1760,7 +1760,7 @@ op `Work Item Icons_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/wit/workitemrelationtypes")
 @get
-op `Work Item Relation Types_List`(
+op WorkItemRelationTypes_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1775,7 +1775,7 @@ op `Work Item Relation Types_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/wit/workitemrelationtypes/{relation}")
 @get
-op `Work Item Relation Types_Get`(
+op WorkItemRelationTypes_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1793,7 +1793,7 @@ op `Work Item Relation Types_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/wit/workitemtransitions")
 @get
-op `Work Item Transitions_List`(
+op WorkItemTransitions_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1814,7 +1814,7 @@ op `Work Item Transitions_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/work/accountmyworkrecentactivity")
 @get
-op `Account My Work Recent Activity_List`(
+op AccountMyWorkRecentActivity_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1829,7 +1829,7 @@ op `Account My Work Recent Activity_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/githubconnections")
 @get
-op `Github Connections_Get Github Connections`(
+op GithubConnections_GetGithubConnections(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1847,7 +1847,7 @@ op `Github Connections_Get Github Connections`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/githubconnections/{connectionId}/repos")
 @get
-op `Github Connections_Get Github Connection Repositories`(
+op GithubConnections_GetGithubConnectionRepositories(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1866,7 +1866,7 @@ op `Github Connections_Get Github Connection Repositories`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/githubconnections/{connectionId}/reposBatch")
 @post
-op `Github Connections_Update`(
+op GithubConnections_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1886,7 +1886,7 @@ op `Github Connections_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/artifacturiquery")
 @post
-op `Artifact Uri Query_Query`(
+op ArtifactUriQuery_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1994,7 +1994,7 @@ op Attachments_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/attachments/{id}")
 @put
-op `Attachments_Upload Chunk`(
+op Attachments_UploadChunk(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2023,7 +2023,7 @@ op `Attachments_Upload Chunk`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/classificationnodes")
 @get
-op `Classification Nodes_Get Root Nodes`(
+op ClassificationNodes_GetRootNodes(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2044,7 +2044,7 @@ op `Classification Nodes_Get Root Nodes`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
 @delete
-op `Classification Nodes_Delete`(
+op ClassificationNodes_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2079,7 +2079,7 @@ op `Classification Nodes_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
 @get
-op `Classification Nodes_Get`(
+op ClassificationNodes_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2114,7 +2114,7 @@ op `Classification Nodes_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
 @patch
-op `Classification Nodes_Update`(
+op ClassificationNodes_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2149,7 +2149,7 @@ op `Classification Nodes_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}")
 @post
-op `Classification Nodes_Create Or Update`(
+op ClassificationNodes_CreateOrUpdate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2304,7 +2304,7 @@ op Fields_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/projectprocessmigration")
 @post
-op `Project Process Migration_Migrate Projects Process`(
+op ProjectProcessMigration_MigrateProjectsProcess(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2492,7 +2492,7 @@ op Queries_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/queriesbatch")
 @post
-op `Queries_Get Queries Batch`(
+op Queries_GetQueriesBatch(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2511,7 +2511,7 @@ op `Queries_Get Queries Batch`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/recyclebin")
 @get
-op `Recyclebin_Get Deleted Work Item Shallow References`(
+op Recyclebin_GetDeletedWorkItemShallowReferences(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2529,7 +2529,7 @@ op `Recyclebin_Get Deleted Work Item Shallow References`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
 @delete
-op `Recyclebin_Destroy Work Item`(
+op Recyclebin_DestroyWorkItem(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2571,7 +2571,7 @@ op Recyclebin_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/recyclebin/{id}")
 @patch
-op `Recyclebin_Restore Work Item`(
+op Recyclebin_RestoreWorkItem(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2595,7 +2595,7 @@ op `Recyclebin_Restore Work Item`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/reporting/workitemlinks")
 @get
-op `Reporting Work Item Links_Get`(
+op ReportingWorkItemLinks_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2625,7 +2625,7 @@ op `Reporting Work Item Links_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/reporting/workitemrevisions")
 @get
-op `Reporting Work Item Revisions_Read Reporting Revisions Get`(
+op ReportingWorkItemRevisions_ReadReportingRevisionsGet(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2687,7 +2687,7 @@ op `Reporting Work Item Revisions_Read Reporting Revisions Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/reporting/workitemrevisions")
 @post
-op `Reporting Work Item Revisions_Read Reporting Revisions Post`(
+op ReportingWorkItemRevisions_ReadReportingRevisionsPost(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2725,7 +2725,7 @@ op `Reporting Work Item Revisions_Read Reporting Revisions Post`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/reporting/workItemRevisions/discussions")
 @get
-op `Work Item Revisions Discussions_Read Reporting Discussions`(
+op WorkItemRevisionsDiscussions_ReadReportingDiscussions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2745,7 +2745,7 @@ op `Work Item Revisions Discussions_Read Reporting Discussions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/sendmail")
 @post
-op `Send Mail_Send Mail`(
+op SendMail_SendMail(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2846,7 +2846,7 @@ op Tags_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/tempqueries")
 @post
-op `Temp Queries_Create`(
+op TempQueries_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2867,7 +2867,7 @@ op `Temp Queries_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitems")
 @get
-op `Work Items_List`(
+op WorkItems_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2925,7 +2925,7 @@ op `Work Items_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitems/\${type}")
 @get
-op `Work Items_Get Work Item Template`(
+op WorkItems_GetWorkItemTemplate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2969,7 +2969,7 @@ op `Work Items_Get Work Item Template`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitems/\${type}")
 @post
-op `Work Items_Create`(
+op WorkItems_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3020,7 +3020,7 @@ op `Work Items_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitems/{id}")
 @delete
-op `Work Items_Delete`(
+op WorkItems_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3044,7 +3044,7 @@ op `Work Items_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitems/{id}")
 @get
-op `Work Items_Get Work Item`(
+op WorkItems_GetWorkItem(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3088,7 +3088,7 @@ op `Work Items_Get Work Item`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitems/{id}")
 @patch
-op `Work Items_Update`(
+op WorkItems_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3255,7 +3255,7 @@ op Updates_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments")
 @get
-op `Comments_Get Comments Batch`(
+op Comments_GetCommentsBatch(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3305,7 +3305,7 @@ op `Comments_Get Comments Batch`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments")
 @post
-op `Comments_Add Comment`(
+op Comments_AddComment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3351,7 +3351,7 @@ op Comments_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
 @get
-op `Comments_Get Comment`(
+op Comments_GetComment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3401,7 +3401,7 @@ op `Comments_Get Comment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}")
 @patch
-op `Comments_Update Comment`(
+op Comments_UpdateComment(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3426,7 +3426,7 @@ op `Comments_Update Comment`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions")
 @get
-op `Comments Reactions_List`(
+op CommentsReactions_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3450,7 +3450,7 @@ op `Comments Reactions_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}")
 @delete
-op `Comments Reactions_Delete`(
+op CommentsReactions_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3492,7 +3492,7 @@ op `Comments Reactions_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}")
 @put
-op `Comments Reactions_Create`(
+op CommentsReactions_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3534,7 +3534,7 @@ op `Comments Reactions_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/reactions/{reactionType}/users")
 @get
-op `Comment Reactions Engaged Users_List`(
+op CommentReactionsEngagedUsers_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3577,7 +3577,7 @@ op `Comment Reactions Engaged Users_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/versions")
 @get
-op `Comments Versions_List`(
+op CommentsVersions_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3596,7 +3596,7 @@ op `Comments Versions_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workItems/{workItemId}/comments/{commentId}/versions/{version}")
 @get
-op `Comments Versions_Get`(
+op CommentsVersions_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3617,7 +3617,7 @@ op `Comments Versions_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemsbatch")
 @post
-op `Work Items_Get Work Items Batch`(
+op WorkItems_GetWorkItemsBatch(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3636,7 +3636,7 @@ op `Work Items_Get Work Items Batch`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemsdelete")
 @post
-op `Work Items_Delete Work Items`(
+op WorkItems_DeleteWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3655,7 +3655,7 @@ op `Work Items_Delete Work Items`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypecategories")
 @get
-op `Work Item Type Categories_List`(
+op WorkItemTypeCategories_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3673,7 +3673,7 @@ op `Work Item Type Categories_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypecategories/{category}")
 @get
-op `Work Item Type Categories_Get`(
+op WorkItemTypeCategories_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3694,7 +3694,7 @@ op `Work Item Type Categories_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypes")
 @get
-op `Work Item Types_List`(
+op WorkItemTypes_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3712,7 +3712,7 @@ op `Work Item Types_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}")
 @get
-op `Work Item Types_Get`(
+op WorkItemTypes_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3733,7 +3733,7 @@ op `Work Item Types_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields")
 @get
-op `Work Item Types Field_List`(
+op WorkItemTypesField_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3770,7 +3770,7 @@ op `Work Item Types Field_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}")
 @get
-op `Work Item Types Field_Get`(
+op WorkItemTypesField_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3809,7 +3809,7 @@ op `Work Item Types Field_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wit/workitemtypes/{type}/states")
 @get
-op `Work Item Type States_List`(
+op WorkItemTypeStates_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3926,7 +3926,7 @@ op Templates_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/wit/templates/{templateId}")
 @put
-op `Templates_Replace Template`(
+op Templates_ReplaceTemplate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3953,7 +3953,7 @@ op `Templates_Replace Template`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/wit/wiql")
 @post
-op `Wiql_Query By Wiql`(
+op Wiql_QueryByWiql(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3983,7 +3983,7 @@ op `Wiql_Query By Wiql`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/wit/wiql/{id}")
 @get
-op `Wiql_Query By Id`(
+op Wiql_QueryById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

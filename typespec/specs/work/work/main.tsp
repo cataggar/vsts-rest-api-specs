@@ -1480,7 +1480,7 @@ op Deliverytimeline_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/work/predefinedqueries")
 @get
-op `Predefined Queries_List`(
+op PredefinedQueries_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1498,7 +1498,7 @@ op `Predefined Queries_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/work/predefinedqueries/{id}")
 @get
-op `Predefined Queries_Get`(
+op PredefinedQueries_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1585,7 +1585,7 @@ op Backlogs_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/backlogs/{backlogId}/workItems")
 @get
-op `Backlogs_Get Backlog Level Work Items`(
+op Backlogs_GetBacklogLevelWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1607,7 +1607,7 @@ op `Backlogs_Get Backlog Level Work Items`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/backlogs/{id}")
 @get
-op `Backlogs_Get Backlog`(
+op Backlogs_GetBacklog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1723,7 +1723,7 @@ op Cardrulesettings_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardrulesettings")
 @patch
-op `Cardrulesettings_Update Board Card Rule Settings`(
+op Cardrulesettings_UpdateBoardCardRuleSettings(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1770,7 +1770,7 @@ op Cardsettings_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/cardsettings")
 @put
-op `Cardsettings_Update Board Card Settings`(
+op Cardsettings_UpdateBoardCardSettings(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1794,7 +1794,7 @@ op `Cardsettings_Update Board Card Settings`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/boards/{board}/chartimages/{name}")
 @get
-op `Chartimages_Get Board Chart Image`(
+op Chartimages_GetBoardChartImage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2038,7 +2038,7 @@ op Boards_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/boards/{id}")
 @put
-op `Boards_Set Board Options`(
+op Boards_SetBoardOptions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2089,7 +2089,7 @@ op Boardparents_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/iterations/{iterationId}/chartimages/{name}")
 @get
-op `Chartimages_Get Iteration Chart Image`(
+op Chartimages_GetIterationChartImage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2128,7 +2128,7 @@ op `Chartimages_Get Iteration Chart Image`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/iterations/{iterationId}/workitemsorder")
 @patch
-op `Workitemsorder_Reorder Iteration Work Items`(
+op Workitemsorder_ReorderIterationWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2153,7 +2153,7 @@ op `Workitemsorder_Reorder Iteration Work Items`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/iterations/chartimages/{name}")
 @get
-op `Chartimages_Get Iterations Chart Image`(
+op Chartimages_GetIterationsChartImage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2192,7 +2192,7 @@ op `Chartimages_Get Iterations Chart Image`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/taskboard/cardrulesettings")
 @patch
-op `Cardrulesettings_Update Taskboard Card Rule Settings`(
+op Cardrulesettings_UpdateTaskboardCardRuleSettings(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2214,7 +2214,7 @@ op `Cardrulesettings_Update Taskboard Card Rule Settings`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/taskboard/cardsettings")
 @put
-op `Cardsettings_Update Taskboard Card Settings`(
+op Cardsettings_UpdateTaskboardCardSettings(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2235,7 +2235,7 @@ op `Cardsettings_Update Taskboard Card Settings`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/taskboardcolumns")
 @get
-op `Taskboard Columns_Get`(
+op TaskboardColumns_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2255,7 +2255,7 @@ op `Taskboard Columns_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/taskboardcolumns")
 @put
-op `Taskboard Columns_Update`(
+op TaskboardColumns_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2276,7 +2276,7 @@ op `Taskboard Columns_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/taskboardworkitems/{iterationId}")
 @get
-op `Taskboard Work Items_List`(
+op TaskboardWorkItems_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2297,7 +2297,7 @@ op `Taskboard Work Items_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/taskboardworkitems/{iterationId}/{workItemId}")
 @patch
-op `Taskboard Work Items_Update`(
+op TaskboardWorkItems_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2390,7 +2390,7 @@ op Iterations_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations")
 @post
-op `Iterations_Post Team Iteration`(
+op Iterations_PostTeamIteration(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2462,7 +2462,7 @@ op Iterations_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities")
 @get
-op `Capacities_Get Capacities With Identity Ref And Totals`(
+op Capacities_GetCapacitiesWithIdentityRefAndTotals(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2486,7 +2486,7 @@ op `Capacities_Get Capacities With Identity Ref And Totals`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities")
 @put
-op `Capacities_Replace Capacities With Identity Ref`(
+op Capacities_ReplaceCapacitiesWithIdentityRef(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2513,7 +2513,7 @@ op `Capacities_Replace Capacities With Identity Ref`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/capacities/{teamMemberId}")
 @get
-op `Capacities_Get Capacity With Identity Ref`(
+op Capacities_GetCapacityWithIdentityRef(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2621,7 +2621,7 @@ op Teamdaysoff_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/teamsettings/iterations/{iterationId}/workitems")
 @get
-op `Iterations_Get Iteration Work Items`(
+op Iterations_GetIterationWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2688,7 +2688,7 @@ op Teamfieldvalues_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/{team}/_apis/work/workitemsorder")
 @patch
-op `Workitemsorder_Reorder Backlog Work Items`(
+op Workitemsorder_ReorderBacklogWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

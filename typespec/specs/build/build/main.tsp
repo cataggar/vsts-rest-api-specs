@@ -3566,7 +3566,7 @@ op Controllers_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/build/resourceusage")
 @get
-op `Resource Usage_Get`(
+op ResourceUsage_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3639,7 +3639,7 @@ op Authorizedresources_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/authorizedresources")
 @patch
-op `Authorizedresources_Authorize Project Resources`(
+op Authorizedresources_AuthorizeProjectResources(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3878,7 +3878,7 @@ op Builds_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds")
 @patch
-op `Builds_Update Builds`(
+op Builds_UpdateBuilds(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -3966,7 +3966,7 @@ op Builds_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}")
 @patch
-op `Builds_Update Build`(
+op Builds_UpdateBuild(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4096,7 +4096,7 @@ op Attachments_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/changes")
 @get
-op `Builds_Get Build Changes`(
+op Builds_GetBuildChanges(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4121,7 +4121,7 @@ op `Builds_Get Build Changes`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/leases")
 @get
-op `Builds_Get Retention Leases For Build`(
+op Builds_GetRetentionLeasesForBuild(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4142,7 +4142,7 @@ op `Builds_Get Retention Leases For Build`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/logs")
 @get
-op `Builds_Get Build Logs`(
+op Builds_GetBuildLogs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4168,7 +4168,7 @@ op `Builds_Get Build Logs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/logs/{logId}")
 @get
-op `Builds_Get Build Log`(
+op Builds_GetBuildLog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4207,7 +4207,7 @@ op `Builds_Get Build Log`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/properties")
 @get
-op `Properties_Get Build Properties`(
+op Properties_GetBuildProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4231,7 +4231,7 @@ op `Properties_Get Build Properties`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/properties")
 @patch
-op `Properties_Update Build Properties`(
+op Properties_UpdateBuildProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4305,7 +4305,7 @@ op Stages_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
 @get
-op `Tags_Get Build Tags`(
+op Tags_GetBuildTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4326,7 +4326,7 @@ op `Tags_Get Build Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
 @patch
-op `Tags_Update Build Tags`(
+op Tags_UpdateBuildTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4350,7 +4350,7 @@ op `Tags_Update Build Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags")
 @post
-op `Tags_Add Build Tags`(
+op Tags_AddBuildTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4374,7 +4374,7 @@ op `Tags_Add Build Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags/{tag}")
 @delete
-op `Tags_Delete Build Tag`(
+op Tags_DeleteBuildTag(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4398,7 +4398,7 @@ op `Tags_Delete Build Tag`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/tags/{tag}")
 @put
-op `Tags_Add Build Tag`(
+op Tags_AddBuildTag(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4449,7 +4449,7 @@ op Timeline_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/Timeline/{timelineId}/stages/{stageName}")
 @get
-op `Stage Timeline_Get Build Stage Timeline`(
+op StageTimeline_GetBuildStageTimeline(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4482,7 +4482,7 @@ op `Stage Timeline_Get Build Stage Timeline`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/Timeline/stages/{stageName}")
 @get
-op `Stage Timeline_Get Build Stage Latest Timeline`(
+op StageTimeline_GetBuildStageLatestTimeline(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4512,7 +4512,7 @@ op `Stage Timeline_Get Build Stage Latest Timeline`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/workitems")
 @get
-op `Builds_Get Build Work Items Refs`(
+op Builds_GetBuildWorkItemsRefs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4536,7 +4536,7 @@ op `Builds_Get Build Work Items Refs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/builds/{buildId}/workitems")
 @post
-op `Builds_Get Build Work Items Refs From Commits`(
+op Builds_GetBuildWorkItemsRefsFromCommits(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4563,7 +4563,7 @@ op `Builds_Get Build Work Items Refs From Commits`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/changes")
 @get
-op `Builds_Get Changes Between Builds`(
+op Builds_GetChangesBetweenBuilds(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4756,7 +4756,7 @@ op Definitions_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}")
 @patch
-op `Definitions_Restore Definition`(
+op Definitions_RestoreDefinition(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4813,7 +4813,7 @@ op Definitions_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/metrics")
 @get
-op `Metrics_Get Definition Metrics`(
+op Metrics_GetDefinitionMetrics(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4837,7 +4837,7 @@ op `Metrics_Get Definition Metrics`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/properties")
 @get
-op `Properties_Get Definition Properties`(
+op Properties_GetDefinitionProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4861,7 +4861,7 @@ op `Properties_Get Definition Properties`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/properties")
 @patch
-op `Properties_Update Definition Properties`(
+op Properties_UpdateDefinitionProperties(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4903,7 +4903,7 @@ op Resources_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/resources")
 @patch
-op `Resources_Authorize Definition Resources`(
+op Resources_AuthorizeDefinitionResources(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -4923,7 +4923,7 @@ op `Resources_Authorize Definition Resources`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/revisions")
 @get
-op `Definitions_Get Definition Revisions`(
+op Definitions_GetDefinitionRevisions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5035,7 +5035,7 @@ op Templates_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/templates/{templateId}")
 @put
-op `Templates_Save Template`(
+op Templates_SaveTemplate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5164,7 +5164,7 @@ op Folders_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/generalsettings")
 @get
-op `General Settings_Get`(
+op GeneralSettings_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5182,7 +5182,7 @@ op `General Settings_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/generalsettings")
 @patch
-op `General Settings_Update`(
+op GeneralSettings_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5225,7 +5225,7 @@ op Latest_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/metrics/{metricAggregationType}")
 @get
-op `Metrics_Get Project Metrics`(
+op Metrics_GetProjectMetrics(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5267,7 +5267,7 @@ op Options_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/repos/{repoType}/badge")
 @get
-op `Badge_Get Build Badge Data`(
+op Badge_GetBuildBadgeData(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5350,7 +5350,7 @@ op Leases_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/retention/leases")
 @get
-op `Leases_Get Retention Leases By Minimal Retention Leases`(
+op Leases_GetRetentionLeasesByMinimalRetentionLeases(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5508,7 +5508,7 @@ op Status_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/tags")
 @get
-op `Tags_Get Tags`(
+op Tags_GetTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5526,7 +5526,7 @@ op `Tags_Get Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/tags/{tag}")
 @delete
-op `Tags_Delete Tag`(
+op Tags_DeleteTag(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5547,7 +5547,7 @@ op `Tags_Delete Tag`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/workitems")
 @get
-op `Builds_Get Work Items Between Builds`(
+op Builds_GetWorkItemsBetweenBuilds(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5574,7 +5574,7 @@ op `Builds_Get Work Items Between Builds`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceproviders")
 @get
-op `Source Providers_List`(
+op SourceProviders_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5592,7 +5592,7 @@ op `Source Providers_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/branches")
 @get
-op `Source Providers_List Branches`(
+op SourceProviders_ListBranches(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5622,7 +5622,7 @@ op `Source Providers_List Branches`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/filecontents")
 @get
-op `Source Providers_Get File Contents`(
+op SourceProviders_GetFileContents(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5658,7 +5658,7 @@ op `Source Providers_Get File Contents`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/pathcontents")
 @get
-op `Source Providers_Get Path Contents`(
+op SourceProviders_GetPathContents(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5691,7 +5691,7 @@ op `Source Providers_Get Path Contents`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/pullrequests/{pullRequestId}")
 @get
-op `Source Providers_Get Pull Request`(
+op SourceProviders_GetPullRequest(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5721,7 +5721,7 @@ op `Source Providers_Get Pull Request`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/repositories")
 @get
-op `Source Providers_List Repositories`(
+op SourceProviders_ListRepositories(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5768,7 +5768,7 @@ op `Source Providers_List Repositories`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/webhooks")
 @get
-op `Source Providers_List Webhooks`(
+op SourceProviders_ListWebhooks(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5795,7 +5795,7 @@ op `Source Providers_List Webhooks`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/sourceProviders/{providerName}/webhooks")
 @post
-op `Source Providers_Restore Webhooks`(
+op SourceProviders_RestoreWebhooks(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5825,7 +5825,7 @@ op `Source Providers_Restore Webhooks`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
 @get
-op `Tags_Get Definition Tags`(
+op Tags_GetDefinitionTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5849,7 +5849,7 @@ op `Tags_Get Definition Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
 @patch
-op `Tags_Update Definition Tags`(
+op Tags_UpdateDefinitionTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5873,7 +5873,7 @@ op `Tags_Update Definition Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags")
 @post
-op `Tags_Add Definition Tags`(
+op Tags_AddDefinitionTags(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5897,7 +5897,7 @@ op `Tags_Add Definition Tags`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags/{tag}")
 @delete
-op `Tags_Delete Definition Tag`(
+op Tags_DeleteDefinitionTag(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -5921,7 +5921,7 @@ op `Tags_Delete Definition Tag`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/build/definitions/{definitionId}/tags/{tag}")
 @put
-op `Tags_Add Definition Tag`(
+op Tags_AddDefinitionTag(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

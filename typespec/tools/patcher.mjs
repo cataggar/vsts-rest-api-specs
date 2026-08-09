@@ -133,6 +133,35 @@ export function fixPathParameterCasing(document) {
   return fixed;
 }
 
+/**
+ * `operationId` becomes the TypeSpec operation name, and the Zig
+ * emitter derives client/method identifiers from it. Azure DevOps
+ * spells them with spaces (`Repositories_Get Deleted Repositories`),
+ * which forces backtick-quoted TypeSpec identifiers and leaks into
+ * generated code. Collapse each `_`-separated segment to PascalCase.
+ *
+ * Observed in 630 of 1086 operations across the 7.2 set.
+ */
+export function normalizeOperationIds(document) {
+  const toPascal = (segment) =>
+    segment
+      .replace(/[^A-Za-z0-9]+(.)?/g, (_, next) => (next ? next.toUpperCase() : ""))
+      .replace(/^(.)/, (first) => first.toUpperCase());
+
+  let renamed = 0;
+  for (const item of Object.values(document.paths ?? {})) {
+    for (const method of ["get", "put", "post", "patch", "delete", "head", "options"]) {
+      const operation = item[method];
+      if (!operation?.operationId) continue;
+      const next = operation.operationId.split("_").map(toPascal).join("_");
+      if (next === operation.operationId) continue;
+      operation.operationId = next;
+      renamed += 1;
+    }
+  }
+  return renamed;
+}
+
 /** Applies every patch in order and returns a summary of what changed. */
 export function patchDocument(document) {
   sanitizeDocStrings(document);
@@ -140,5 +169,6 @@ export function patchDocument(document) {
   return {
     duplicateProperties: dedupeAllOfProperties(document),
     pathParameters: fixPathParameterCasing(document),
+    operationIds: normalizeOperationIds(document),
   };
 }

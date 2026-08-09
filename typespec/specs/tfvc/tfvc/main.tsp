@@ -825,7 +825,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tfvc/changesets/{id}/changes")
 @get
-op `Changesets_Get Changeset Changes`(
+op Changesets_GetChangesetChanges(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -852,7 +852,7 @@ op `Changesets_Get Changeset Changes`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tfvc/changesets/{id}/workItems")
 @get
-op `Changesets_Get Changeset Work Items`(
+op Changesets_GetChangesetWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -870,7 +870,7 @@ op `Changesets_Get Changeset Work Items`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tfvc/changesetsbatch")
 @post
-op `Changesets_Get Batched Changesets`(
+op Changesets_GetBatchedChangesets(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -888,7 +888,7 @@ op `Changesets_Get Batched Changesets`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tfvc/labels/{labelId}/items")
 @get
-op `Labels_Get Label Items`(
+op Labels_GetLabelItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -951,7 +951,7 @@ op Shelvesets_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tfvc/shelvesets/changes")
 @get
-op `Shelvesets_Get Shelveset Changes`(
+op Shelvesets_GetShelvesetChanges(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -975,7 +975,7 @@ op `Shelvesets_Get Shelveset Changes`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tfvc/shelvesets/workitems")
 @get
-op `Shelvesets_Get Shelveset Work Items`(
+op Shelvesets_GetShelvesetWorkItems(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -993,7 +993,7 @@ op `Shelvesets_Get Shelveset Work Items`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/tfvc/branches")
 @get
-op `Branches_Get Branch Refs`(
+op Branches_GetBranchRefs(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1020,7 +1020,7 @@ op `Branches_Get Branch Refs`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/tfvc/changesets")
 @get
-op `Changesets_Get Changesets`(
+op Changesets_GetChangesets(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1168,7 +1168,7 @@ op Changesets_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/tfvc/itembatch")
 @post
-op `Items_Get Items Batch`(
+op Items_GetItemsBatch(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

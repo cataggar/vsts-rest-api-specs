@@ -214,7 +214,7 @@ model UpstreamSourceInfo {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/upstreaming")
 @get
-op `NuGet_Get Upstreaming Behavior`(
+op NuGet_GetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -238,7 +238,7 @@ op `NuGet_Get Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/upstreaming")
 @patch
-op `NuGet_Set Upstreaming Behavior`(
+op NuGet_SetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -265,7 +265,7 @@ op `NuGet_Set Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `NuGet_Delete Package Version`(
+op NuGet_DeletePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -292,7 +292,7 @@ op `NuGet_Delete Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/versions/{packageVersion}")
 @get
-op `NuGet_Get Package Version`(
+op NuGet_GetPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -322,7 +322,7 @@ op `NuGet_Get Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `NuGet_Update Package Version`(
+op NuGet_UpdatePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -352,7 +352,7 @@ op `NuGet_Update Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packages/{packageName}/versions/{packageVersion}/content")
 @get
-op `NuGet_Download Package`(
+op NuGet_DownloadPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -385,7 +385,7 @@ op `NuGet_Download Package`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/packagesbatch")
 @post
-op `NuGet_Update Package Versions`(
+op NuGet_UpdatePackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -409,7 +409,7 @@ op `NuGet_Update Package Versions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `NuGet_Delete Package Version From Recycle Bin`(
+op NuGet_DeletePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -463,7 +463,7 @@ op NuGet_GetPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `NuGet_Restore Package Version From Recycle Bin`(
+op NuGet_RestorePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -493,7 +493,7 @@ op `NuGet_Restore Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/nuget/RecycleBin/packagesBatch")
 @post
-op `NuGet_Update Recycle Bin Package Versions`(
+op NuGet_UpdateRecycleBinPackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

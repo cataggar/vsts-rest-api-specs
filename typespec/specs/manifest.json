@@ -9,7 +9,8 @@
       "typespec": "typespec/specs/account/accounts",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 169
     },
@@ -20,7 +21,8 @@
       "typespec": "typespec/specs/advancedSecurity/advancedSecurity.Reporting",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 8
       },
       "lines": 987
     },
@@ -31,7 +33,8 @@
       "typespec": "typespec/specs/advancedSecurity/alert",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 4
       },
       "lines": 1769
     },
@@ -42,7 +45,8 @@
       "typespec": "typespec/specs/advancedSecurity/management",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 10
       },
       "lines": 626
     },
@@ -53,7 +57,8 @@
       "typespec": "typespec/specs/advancedSecurity/reporting",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 76
     },
@@ -64,7 +69,8 @@
       "typespec": "typespec/specs/approvalsAndChecks/pipelinePermissions",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 3
       },
       "lines": 178
     },
@@ -75,7 +81,8 @@
       "typespec": "typespec/specs/approvalsAndChecks/pipelinesChecks",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 9
       },
       "lines": 832
     },
@@ -86,7 +93,8 @@
       "typespec": "typespec/specs/approvalsAndChecks/pipelinesapproval",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 605
     },
@@ -97,7 +105,8 @@
       "typespec": "typespec/specs/artifacts/feed",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 36
       },
       "lines": 1790
     },
@@ -108,7 +117,8 @@
       "typespec": "typespec/specs/artifacts/provenance",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 72
     },
@@ -119,7 +129,8 @@
       "typespec": "typespec/specs/artifacts/sbom",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 202
     },
@@ -130,7 +141,8 @@
       "typespec": "typespec/specs/artifactsPackageTypes/cargoApi-AzureArtifacts",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 9
       },
       "lines": 472
     },
@@ -141,7 +153,8 @@
       "typespec": "typespec/specs/artifactsPackageTypes/maven",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 7
       },
       "lines": 682
     },
@@ -152,7 +165,8 @@
       "typespec": "typespec/specs/artifactsPackageTypes/npm",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 13
       },
       "lines": 886
     },
@@ -163,7 +177,8 @@
       "typespec": "typespec/specs/artifactsPackageTypes/nuGet",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 10
       },
       "lines": 520
     },
@@ -174,7 +189,8 @@
       "typespec": "typespec/specs/artifactsPackageTypes/pyPiApi",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 10
       },
       "lines": 502
     },
@@ -185,7 +201,8 @@
       "typespec": "typespec/specs/artifactsPackageTypes/universal",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 7
       },
       "lines": 369
     },
@@ -196,7 +213,8 @@
       "typespec": "typespec/specs/audit/audit",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 6
       },
       "lines": 491
     },
@@ -207,7 +225,8 @@
       "typespec": "typespec/specs/build/build",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 2
+        "pathParameters": 2,
+        "operationIds": 48
       },
       "lines": 5964
     },
@@ -218,7 +237,8 @@
       "typespec": "typespec/specs/core/core",
       "patched": {
         "duplicateProperties": 1,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 8
       },
       "lines": 1139
     },
@@ -229,7 +249,8 @@
       "typespec": "typespec/specs/dashboard/dashboard",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 10
       },
       "lines": 832
     },
@@ -240,7 +261,8 @@
       "typespec": "typespec/specs/delegatedAuth/delegatedAuthorization",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 2
       },
       "lines": 508
     },
@@ -251,7 +273,8 @@
       "typespec": "typespec/specs/distributedTask/dynamicPipelines",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 167
     },
@@ -262,7 +285,8 @@
       "typespec": "typespec/specs/distributedTask/elastic",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 802
     },
@@ -273,7 +297,8 @@
       "typespec": "typespec/specs/distributedTask/task",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 3
       },
       "lines": 801
     },
@@ -284,7 +309,8 @@
       "typespec": "typespec/specs/distributedTask/taskAgent",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 9
       },
       "lines": 5411
     },
@@ -295,7 +321,8 @@
       "typespec": "typespec/specs/environments/environments",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 2
       },
       "lines": 1006
     },
@@ -306,7 +333,8 @@
       "typespec": "typespec/specs/extensionManagement/extensionManagement",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 5
       },
       "lines": 1405
     },
@@ -317,7 +345,8 @@
       "typespec": "typespec/specs/favorite/favorite",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 4
       },
       "lines": 252
     },
@@ -328,7 +357,8 @@
       "typespec": "typespec/specs/git/git",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 88
       },
       "lines": 7835
     },
@@ -339,7 +369,8 @@
       "typespec": "typespec/specs/graph/graph",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 13
       },
       "lines": 1152
     },
@@ -350,7 +381,8 @@
       "typespec": "typespec/specs/hooks/serviceHooks",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 8
       },
       "lines": 1366
     },
@@ -361,7 +393,8 @@
       "typespec": "typespec/specs/ims/identities",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 1
       },
       "lines": 390
     },
@@ -372,7 +405,8 @@
       "typespec": "typespec/specs/memberEntitlementManagement/memberEntitlementManagement",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 19
       },
       "lines": 1427
     },
@@ -383,7 +417,8 @@
       "typespec": "typespec/specs/notification/notification",
       "patched": {
         "duplicateProperties": 10,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 5
       },
       "lines": 2045
     },
@@ -394,7 +429,8 @@
       "typespec": "typespec/specs/operations/operations",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 104
     },
@@ -405,7 +441,8 @@
       "typespec": "typespec/specs/permissionsReport/permissionsReport",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 4
       },
       "lines": 208
     },
@@ -416,7 +453,8 @@
       "typespec": "typespec/specs/pipelines/pipelines",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 1
       },
       "lines": 644
     },
@@ -427,7 +465,8 @@
       "typespec": "typespec/specs/policy/policy",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 1
       },
       "lines": 487
     },
@@ -438,7 +477,8 @@
       "typespec": "typespec/specs/processadmin/workItemTrackingProcessTemplate",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 3
       },
       "lines": 240
     },
@@ -449,7 +489,8 @@
       "typespec": "typespec/specs/processes/workItemTrackingProcess",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 21
       },
       "lines": 2504
     },
@@ -460,7 +501,8 @@
       "typespec": "typespec/specs/profile/profile",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 234
     },
@@ -471,7 +513,8 @@
       "typespec": "typespec/specs/release/release",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 16
       },
       "lines": 5150
     },
@@ -482,7 +525,8 @@
       "typespec": "typespec/specs/resourceUsage/resourceUsage",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 1
       },
       "lines": 83
     },
@@ -493,7 +537,8 @@
       "typespec": "typespec/specs/search/search",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 4
       },
       "lines": 917
     },
@@ -504,7 +549,8 @@
       "typespec": "typespec/specs/security/security",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 9
       },
       "lines": 408
     },
@@ -515,7 +561,8 @@
       "typespec": "typespec/specs/securityRoles/securityRoles",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 4
       },
       "lines": 275
     },
@@ -526,7 +573,8 @@
       "typespec": "typespec/specs/serviceEndpoint/serviceEndpoint",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 7
       },
       "lines": 1354
     },
@@ -537,7 +585,8 @@
       "typespec": "typespec/specs/status/status",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 333
     },
@@ -548,7 +597,8 @@
       "typespec": "typespec/specs/symbol/symbol",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 10
       },
       "lines": 510
     },
@@ -559,7 +609,8 @@
       "typespec": "typespec/specs/test/test",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 21
       },
       "lines": 6233
     },
@@ -570,7 +621,8 @@
       "typespec": "typespec/specs/testPlan/testPlan",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 32
       },
       "lines": 2687
     },
@@ -581,7 +633,8 @@
       "typespec": "typespec/specs/testResults/testResults",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 40
       },
       "lines": 4950
     },
@@ -592,7 +645,8 @@
       "typespec": "typespec/specs/tfvc/tfvc",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 9
       },
       "lines": 1374
     },
@@ -603,7 +657,8 @@
       "typespec": "typespec/specs/tokenAdmin/tokenAdmin",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 3
       },
       "lines": 239
     },
@@ -614,7 +669,8 @@
       "typespec": "typespec/specs/tokens/tokens",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 0
       },
       "lines": 411
     },
@@ -625,7 +681,8 @@
       "typespec": "typespec/specs/wiki/wiki",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 8
       },
       "lines": 1397
     },
@@ -636,7 +693,8 @@
       "typespec": "typespec/specs/wit/workItemTracking",
       "patched": {
         "duplicateProperties": 1,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 56
       },
       "lines": 4058
     },
@@ -647,7 +705,8 @@
       "typespec": "typespec/specs/work/work",
       "patched": {
         "duplicateProperties": 0,
-        "pathParameters": 0
+        "pathParameters": 0,
+        "operationIds": 23
       },
       "lines": 2721
     }

@@ -1664,7 +1664,7 @@ model VssNotificationEvent {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/notification/diagnosticlogs/{source}/entries/{entryId}")
 @get
-op `Diagnostic Logs_List`(
+op DiagnosticLogs_List(
   /** ID specifying which type of logs to check diagnostics for. */
   @format("uuid") @path source: string,
 
@@ -1694,7 +1694,7 @@ op `Diagnostic Logs_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/notification/eventtypes")
 @get
-op `Event Types_List`(
+op EventTypes_List(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 
@@ -1712,7 +1712,7 @@ op `Event Types_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/notification/eventtypes/{eventType}")
 @get
-op `Event Types_Get`(
+op EventTypes_Get(
   /** The ID of the event type. */
   @path eventType: string,
 
@@ -2006,7 +2006,7 @@ op Diagnostics_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/notification/Subscriptions/{subscriptionId}/usersettings/{userId}")
 @put
-op `Subscriptions_Update Subscription User Settings`(
+op Subscriptions_UpdateSubscriptionUserSettings(
   @path subscriptionId: string,
 
   /** ID of the user */
@@ -2027,7 +2027,7 @@ op `Subscriptions_Update Subscription User Settings`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/notification/subscriptiontemplates")
 @get
-op `Subscriptions_Get Subscription Templates`(
+op Subscriptions_GetSubscriptionTemplates(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 

@@ -791,7 +791,7 @@ model WorkItemSearchResponse {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/search/packagesearchresults")
 @post
-op `Package Search Results_Fetch Package Search Results`(
+op PackageSearchResults_FetchPackageSearchResults(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -812,7 +812,7 @@ op `Package Search Results_Fetch Package Search Results`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/search/codesearchresults")
 @post
-op `Code Search Results_Fetch Code Search Results`(
+op CodeSearchResults_FetchCodeSearchResults(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -872,7 +872,7 @@ op Tfvc_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/search/wikisearchresults")
 @post
-op `Wiki Search Results_Fetch Wiki Search Results`(
+op WikiSearchResults_FetchWikiSearchResults(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -893,7 +893,7 @@ op `Wiki Search Results_Fetch Wiki Search Results`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/search/workitemsearchresults")
 @post
-op `Work Item Search Results_Fetch Work Item Search Results`(
+op WorkItemSearchResults_FetchWorkItemSearchResults(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

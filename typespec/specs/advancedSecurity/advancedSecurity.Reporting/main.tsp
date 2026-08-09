@@ -656,7 +656,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch")
 @get
-op `Filters Settings_List`(
+op FiltersSettings_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -677,7 +677,7 @@ op `Filters Settings_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch")
 @post
-op `Filters Settings_Create`(
+op FiltersSettings_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -695,7 +695,7 @@ op `Filters Settings_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
 @delete
-op `Filters Settings_Delete`(
+op FiltersSettings_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -713,7 +713,7 @@ op `Filters Settings_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
 @get
-op `Filters Settings_Get`(
+op FiltersSettings_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -731,7 +731,7 @@ op `Filters Settings_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/filtersSettings/alertsbatch/{filterId}")
 @patch
-op `Filters Settings_Update`(
+op FiltersSettings_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -752,7 +752,7 @@ op `Filters Settings_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/summary/alerts")
 @get
-op `Summary Dashboard_Get Alert Summary For Org`(
+op SummaryDashboard_GetAlertSummaryForOrg(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -803,7 +803,7 @@ op `Summary Dashboard_Get Alert Summary For Org`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/summary/alertsbatch")
 @get
-op `Summary Dashboard_List`(
+op SummaryDashboard_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -942,7 +942,7 @@ op `Summary Dashboard_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/reporting/summary/enablement")
 @get
-op `Summary Dashboard_Get Enablement Summary For Org`(
+op SummaryDashboard_GetEnablementSummaryForOrg(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

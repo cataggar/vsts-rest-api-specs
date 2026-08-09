@@ -926,7 +926,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/groupentitlements")
 @get
-op `Group Entitlements_List`(
+op GroupEntitlements_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -941,7 +941,7 @@ op `Group Entitlements_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/groupentitlements")
 @post
-op `Group Entitlements_Add`(
+op GroupEntitlements_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -973,7 +973,7 @@ op `Group Entitlements_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/groupentitlements/{groupId}")
 @delete
-op `Group Entitlements_Delete`(
+op GroupEntitlements_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1008,7 +1008,7 @@ op `Group Entitlements_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/groupentitlements/{groupId}")
 @get
-op `Group Entitlements_Get`(
+op GroupEntitlements_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1026,7 +1026,7 @@ op `Group Entitlements_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/groupentitlements/{groupId}")
 @patch
-op `Group Entitlements_Update`(
+op GroupEntitlements_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1086,7 +1086,7 @@ op Members_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/GroupEntitlements/{groupId}/members/{memberId}")
 @delete
-op `Members_Remove Member From Group`(
+op Members_RemoveMemberFromGroup(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1127,7 +1127,7 @@ op Members_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/memberentitlements")
 @get
-op `Member Entitlements_Search Member Entitlements`(
+op MemberEntitlements_SearchMemberEntitlements(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1160,7 +1160,7 @@ op `Member Entitlements_Search Member Entitlements`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceprincipalentitlements")
 @patch
-op `Service Principal Entitlements_Update Service Principal Entitlements`(
+op ServicePrincipalEntitlements_UpdateServicePrincipalEntitlements(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1179,7 +1179,7 @@ op `Service Principal Entitlements_Update Service Principal Entitlements`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceprincipalentitlements")
 @post
-op `Service Principal Entitlements_Add`(
+op ServicePrincipalEntitlements_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1197,7 +1197,7 @@ op `Service Principal Entitlements_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
 @delete
-op `Service Principal Entitlements_Delete`(
+op ServicePrincipalEntitlements_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1215,7 +1215,7 @@ op `Service Principal Entitlements_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
 @get
-op `Service Principal Entitlements_Get`(
+op ServicePrincipalEntitlements_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1233,7 +1233,7 @@ op `Service Principal Entitlements_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/serviceprincipalentitlements/{servicePrincipalId}")
 @patch
-op `Service Principal Entitlements_Update Service Principal Entitlement`(
+op ServicePrincipalEntitlements_UpdateServicePrincipalEntitlement(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1255,7 +1255,7 @@ op `Service Principal Entitlements_Update Service Principal Entitlement`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlements")
 @get
-op `User Entitlements_Search User Entitlements`(
+op UserEntitlements_SearchUserEntitlements(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1296,7 +1296,7 @@ op `User Entitlements_Search User Entitlements`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlements")
 @patch
-op `User Entitlements_Update User Entitlements`(
+op UserEntitlements_UpdateUserEntitlements(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1318,7 +1318,7 @@ op `User Entitlements_Update User Entitlements`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlements")
 @post
-op `User Entitlements_Add`(
+op UserEntitlements_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1336,7 +1336,7 @@ op `User Entitlements_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlements/{userId}")
 @delete
-op `User Entitlements_Delete`(
+op UserEntitlements_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1354,7 +1354,7 @@ op `User Entitlements_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlements/{userId}")
 @get
-op `User Entitlements_Get`(
+op UserEntitlements_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1372,7 +1372,7 @@ op `User Entitlements_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlements/{userId}")
 @patch
-op `User Entitlements_Update User Entitlement`(
+op UserEntitlements_UpdateUserEntitlement(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1394,7 +1394,7 @@ op `User Entitlements_Update User Entitlement`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/userentitlementsummary")
 @get
-op `User Entitlement Summary_Get`(
+op UserEntitlementSummary_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

@@ -149,7 +149,7 @@ model UPackRecycleBinPackageVersionDetails {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Universal_Delete Package Version`(
+op Universal_DeletePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -176,7 +176,7 @@ op `Universal_Delete Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/packages/{packageName}/versions/{packageVersion}")
 @get
-op `Universal_Get Package Version`(
+op Universal_GetPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -206,7 +206,7 @@ op `Universal_Get Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Universal_Update Package Version`(
+op Universal_UpdatePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -234,7 +234,7 @@ op `Universal_Update Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/packagesbatch")
 @post
-op `Universal_Update Package Versions`(
+op Universal_UpdatePackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -258,7 +258,7 @@ op `Universal_Update Package Versions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Universal_Delete Package Version From Recycle Bin`(
+op Universal_DeletePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -312,7 +312,7 @@ op Universal_GetPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Universal_Restore Package Version From Recycle Bin`(
+op Universal_RestorePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -342,7 +342,7 @@ op `Universal_Restore Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/upack/RecycleBin/packagesBatch")
 @post
-op `Universal_Update Recycle Bin Package Versions`(
+op Universal_UpdateRecycleBinPackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

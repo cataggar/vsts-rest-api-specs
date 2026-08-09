@@ -47,7 +47,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/resourceusage")
 @get
-op `Team Project Collection_List`(
+op TeamProjectCollection_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

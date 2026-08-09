@@ -710,7 +710,7 @@ op Memberships_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
 @delete
-op `Memberships_Remove Membership`(
+op Memberships_RemoveMembership(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -752,7 +752,7 @@ op Memberships_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}")
 @head
-op `Memberships_Check Membership Existence`(
+op Memberships_CheckMembershipExistence(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -794,7 +794,7 @@ op Memberships_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/membershipstates/{subjectDescriptor}")
 @get
-op `Membership States_Get`(
+op MembershipStates_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -811,7 +811,7 @@ op `Membership States_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/requestaccess")
 @post
-op `Request Access_Request Access`(
+op RequestAccess_RequestAccess(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -827,7 +827,7 @@ op `Request Access_Request Access`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/serviceprincipals")
 @get
-op `Service Principals_List`(
+op ServicePrincipals_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -851,7 +851,7 @@ op `Service Principals_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/serviceprincipals")
 @post
-op `Service Principals_Create`(
+op ServicePrincipals_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -872,7 +872,7 @@ op `Service Principals_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/serviceprincipals/{servicePrincipalDescriptor}")
 @delete
-op `Service Principals_Delete`(
+op ServicePrincipals_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -890,7 +890,7 @@ op `Service Principals_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/serviceprincipals/{servicePrincipalDescriptor}")
 @get
-op `Service Principals_Get`(
+op ServicePrincipals_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -908,7 +908,7 @@ op `Service Principals_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/storagekeys/{subjectDescriptor}")
 @get
-op `Storage Keys_Get`(
+op StorageKeys_Get(
   @path subjectDescriptor: string,
 
   /** The name of the Azure DevOps organization. */
@@ -925,7 +925,7 @@ op `Storage Keys_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/subjectlookup")
 @post
-op `Subject Lookup_Lookup Subjects`(
+op SubjectLookup_LookupSubjects(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -943,7 +943,7 @@ op `Subject Lookup_Lookup Subjects`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/subjectquery")
 @post
-op `Subject Query_Query`(
+op SubjectQuery_Query(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1006,7 +1006,7 @@ op Avatars_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/Subjects/{subjectDescriptor}/avatars")
 @put
-op `Avatars_Set Avatar`(
+op Avatars_SetAvatar(
   @path subjectDescriptor: string,
 
   /** The name of the Azure DevOps organization. */
@@ -1128,7 +1128,7 @@ op Users_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/graph/Users/{userDescriptor}/providerinfo")
 @get
-op `Provider Info_Get`(
+op ProviderInfo_Get(
   @path userDescriptor: string,
 
   /** The name of the Azure DevOps organization. */

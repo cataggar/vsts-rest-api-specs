@@ -912,7 +912,7 @@ op Vmresource_Add(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/environments/{environmentId}/providers/virtualmachines")
 @put
-op `Vmresource_Replace Virtual Machine Resource`(
+op Vmresource_ReplaceVirtualMachineResource(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -978,7 +978,7 @@ op Pool_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/pipelines/environments/environmentaccesstoken/{environmentId}")
 @post
-op `Environmentaccesstoken_Generate Environment Access Token`(
+op Environmentaccesstoken_GenerateEnvironmentAccessToken(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

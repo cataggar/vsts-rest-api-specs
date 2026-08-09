@@ -305,7 +305,7 @@ op Actions_List(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/audit/auditlog")
 @get
-op `Audit Log_Query`(
+op AuditLog_Query(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 
@@ -335,7 +335,7 @@ op `Audit Log_Query`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/audit/downloadlog")
 @get
-op `Download Log_Download Log`(
+op DownloadLog_DownloadLog(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -362,7 +362,7 @@ op `Download Log_Download Log`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/audit/streams")
 @get
-op `Streams_Query All Streams`(
+op Streams_QueryAllStreams(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -398,7 +398,7 @@ op Streams_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/audit/streams")
 @put
-op `Streams_Update Stream`(
+op Streams_UpdateStream(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -434,7 +434,7 @@ op Streams_Delete(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/audit/streams/{streamId}")
 @get
-op `Streams_Query Stream By Id`(
+op Streams_QueryStreamById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -452,7 +452,7 @@ op `Streams_Query Stream By Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/audit/streams/{streamId}")
 @put
-op `Streams_Update Status`(
+op Streams_UpdateStatus(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

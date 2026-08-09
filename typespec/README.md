@@ -88,6 +88,7 @@ OpenAPI 3 document by a named function in `tools/patcher.mjs`.
 | `stripRootTags`           | Root `tags` carry prose that converts to invalid `@tagMetadata` calls.             | `invalid-argument-count`, `invalid-ref: Unknown identifier Build`.       |
 | `dedupeAllOfProperties`   | `allOf` children redeclare a property already defined by their base.               | `duplicate-property`.                                                     |
 | `fixPathParameterCasing`  | Route templates spell a path parameter with different casing than the declaration. | `@typespec/http/missing-uri-param`.                                       |
+| `normalizeOperationIds`   | `operationId` contains spaces (`Repositories_Get Deleted Repositories`).           | Backtick-quoted TypeSpec identifiers that leak into generated client code. |
 
 `swagger2openapi --patch` additionally repairs non-body parameters that
 omit `type` (`tfvc/tfvc.json`).

@@ -363,7 +363,7 @@ model SecretProtectionFeatures {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/management/enablement")
 @get
-op `Org Enablement_Get`(
+op OrgEnablement_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -381,7 +381,7 @@ op `Org Enablement_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/management/enablement")
 @patch
-op `Org Enablement_Update`(
+op OrgEnablement_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -399,7 +399,7 @@ op `Org Enablement_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/management/meterusage/default")
 @get
-op `Meter Usage_Get`(
+op MeterUsage_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -432,7 +432,7 @@ op `Meter Usage_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/management/meterUsageEstimate/default")
 @get
-op `Org Meter Usage Estimate_Get`(
+op OrgMeterUsageEstimate_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -462,7 +462,7 @@ op `Org Meter Usage Estimate_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/management/enablement")
 @get
-op `Project Enablement_Get`(
+op ProjectEnablement_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -483,7 +483,7 @@ op `Project Enablement_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/management/enablement")
 @patch
-op `Project Enablement_Update`(
+op ProjectEnablement_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -504,7 +504,7 @@ op `Project Enablement_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/management/meterUsageEstimate/default")
 @get
-op `Project Meter Usage Estimate_Get`(
+op ProjectMeterUsageEstimate_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -535,7 +535,7 @@ op `Project Meter Usage Estimate_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/management/repositories/{repository}/enablement")
 @get
-op `Repo Enablement_Get`(
+op RepoEnablement_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -559,7 +559,7 @@ op `Repo Enablement_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/management/repositories/{repository}/enablement")
 @patch
-op `Repo Enablement_Update`(
+op RepoEnablement_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -583,7 +583,7 @@ op `Repo Enablement_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/management/repositories/{repository}/meterUsageEstimate/default")
 @get
-op `Repo Meter Usage Estimate_Get`(
+op RepoMeterUsageEstimate_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

@@ -468,7 +468,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/_apis/delegatedauth/registrationsecret/{registrationId}")
 @post
-op `Registration Secret_Create`(
+op RegistrationSecret_Create(
   /** The registration id of the ADO OAuth App Registration */
   @format("uuid") @path registrationId: string,
 
@@ -483,7 +483,7 @@ op `Registration Secret_Create`(
 @extension("x-ms-preview", true)
 @route("/_apis/delegatedauth/registrationsecret/{registrationId}")
 @put
-op `Registration Secret_Rotate Secret`(
+op RegistrationSecret_RotateSecret(
   /** The registration id of the ADO OAuth App Registration */
   @format("uuid") @path registrationId: string,
 

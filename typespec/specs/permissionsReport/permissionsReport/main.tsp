@@ -133,7 +133,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/permissionsreport")
 @get
-op `Permissions Report_List`(
+op PermissionsReport_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -148,7 +148,7 @@ op `Permissions Report_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/permissionsreport")
 @post
-op `Permissions Report_Create`(
+op PermissionsReport_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -166,7 +166,7 @@ op `Permissions Report_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/permissionsreport/{id}")
 @get
-op `Permissions Report_Get`(
+op PermissionsReport_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -184,7 +184,7 @@ op `Permissions Report_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/permissionsreport/{id}/download")
 @get
-op `Permissions Report Download_Download`(
+op PermissionsReportDownload_Download(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

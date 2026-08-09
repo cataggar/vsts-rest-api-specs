@@ -199,7 +199,7 @@ model UpstreamSourceInfo {
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/cargo/packages/{packageName}/upstreaming")
 @get
-op `Cargo_Get Upstreaming Behavior`(
+op Cargo_GetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -223,7 +223,7 @@ op `Cargo_Get Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feed}/cargo/packages/{packageName}/upstreaming")
 @patch
-op `Cargo_Set Upstreaming Behavior`(
+op Cargo_SetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -250,7 +250,7 @@ op `Cargo_Set Upstreaming Behavior`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/cargo/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Cargo_Delete Package Version`(
+op Cargo_DeletePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -277,7 +277,7 @@ op `Cargo_Delete Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/cargo/packages/{packageName}/versions/{packageVersion}")
 @get
-op `Cargo_Get Package Version`(
+op Cargo_GetPackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -307,7 +307,7 @@ op `Cargo_Get Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/cargo/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Cargo_Update Package Version`(
+op Cargo_UpdatePackageVersion(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -337,7 +337,7 @@ op `Cargo_Update Package Version`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/cargo/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Cargo_Delete Package Version From Recycle Bin`(
+op Cargo_DeletePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -391,7 +391,7 @@ op Cargo_GetPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/cargo/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Cargo_Restore Package Version From Recycle Bin`(
+op Cargo_RestorePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -421,7 +421,7 @@ op `Cargo_Restore Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/cargo/RecycleBin/packagesBatch")
 @post
-op `Cargo_Update Recycle Bin Package Versions`(
+op Cargo_UpdateRecycleBinPackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -445,7 +445,7 @@ op `Cargo_Update Recycle Bin Package Versions`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_packaging/packaging/feeds/{feedId}/cargo/packagesbatch")
 @post
-op `Cargo_Update Package Versions`(
+op Cargo_UpdatePackageVersions(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

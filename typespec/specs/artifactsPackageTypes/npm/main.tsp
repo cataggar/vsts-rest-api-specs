@@ -234,7 +234,7 @@ model ValidateCustomPublicUpstreamSourceResponse {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/packaging/npm/validateupstream")
 @post
-op `Npm_Validate Custom Public Upstream Source`(
+op Npm_ValidateCustomPublicUpstreamSource(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -252,7 +252,7 @@ op `Npm_Validate Custom Public Upstream Source`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
 @delete
-op `Npm_Unpublish Scoped Package`(
+op Npm_UnpublishScopedPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -312,7 +312,7 @@ op Npm_GetScopedPackageVersion(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
 @patch
-op `Npm_Update Scoped Package`(
+op Npm_UpdateScopedPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -344,7 +344,7 @@ op `Npm_Update Scoped Package`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
 @delete
-op `Npm_Unpublish Package`(
+op Npm_UnpublishPackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -398,7 +398,7 @@ op Npm_GetPackageVersion(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/{packageName}/versions/{packageVersion}")
 @patch
-op `Npm_Update Package`(
+op Npm_UpdatePackage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -455,7 +455,7 @@ op Npm_GetPackageUpstreamingBehavior(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/@{packageScope}/{unscopedPackageName}/upstreaming")
 @patch
-op `Npm_Set Scoped Upstreaming Behavior`(
+op Npm_SetScopedUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -575,7 +575,7 @@ op Npm_GetScopedPackageUpstreamingBehavior(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packages/{packageName}/upstreaming")
 @patch
-op `Npm_Set Upstreaming Behavior`(
+op Npm_SetUpstreamingBehavior(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -662,7 +662,7 @@ op Npm_GetPackageReadme(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/packagesbatch")
 @post
-op `Npm_Update Packages`(
+op Npm_UpdatePackages(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -686,7 +686,7 @@ op `Npm_Update Packages`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
 @delete
-op `Npm_Delete Scoped Package Version From Recycle Bin`(
+op Npm_DeleteScopedPackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -746,7 +746,7 @@ op Npm_GetScopedPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/@{packageScope}/{unscopedPackageName}/versions/{packageVersion}")
 @patch
-op `Npm_Restore Scoped Package Version From Recycle Bin`(
+op Npm_RestoreScopedPackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -777,7 +777,7 @@ op `Npm_Restore Scoped Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @delete
-op `Npm_Delete Package Version From Recycle Bin`(
+op Npm_DeletePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -831,7 +831,7 @@ op Npm_GetPackageVersionFromRecycleBin(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/packages/{packageName}/versions/{packageVersion}")
 @patch
-op `Npm_Restore Package Version From Recycle Bin`(
+op Npm_RestorePackageVersionFromRecycleBin(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -859,7 +859,7 @@ op `Npm_Restore Package Version From Recycle Bin`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/packaging/feeds/{feedId}/npm/RecycleBin/PackagesBatch")
 @post
-op `Npm_Update Recycle Bin Packages`(
+op Npm_UpdateRecycleBinPackages(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

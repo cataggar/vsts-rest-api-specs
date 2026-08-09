@@ -813,7 +813,7 @@ op Attachments_Create(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagemoves")
 @post
-op `Page Moves_Create`(
+op PageMoves_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -880,7 +880,7 @@ op `Page Moves_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
 @delete
-op `Pages_Delete Page`(
+op Pages_DeletePage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -952,7 +952,7 @@ op `Pages_Delete Page`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
 @get
-op `Pages_Get Page`(
+op Pages_GetPage(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1065,7 +1065,7 @@ op `Pages_Get Page`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages")
 @put
-op `Pages_Create Or Update`(
+op Pages_CreateOrUpdate(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1148,7 +1148,7 @@ op `Pages_Create Or Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
 @delete
-op `Pages_Delete Page By Id`(
+op Pages_DeletePageById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1184,7 +1184,7 @@ op `Pages_Delete Page By Id`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{id}")
 @get
-op `Pages_Get Page By Id`(
+op Pages_GetPageById(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1303,7 +1303,7 @@ op Pages_Update(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pages/{pageId}/stats")
 @get
-op `Page Stats_Get`(
+op PageStats_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1330,7 +1330,7 @@ op `Page Stats_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/wiki/wikis/{wikiIdentifier}/pagesbatch")
 @post
-op `Pages Batch_Get`(
+op PagesBatch_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

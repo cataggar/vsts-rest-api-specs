@@ -170,7 +170,7 @@ model TokenAdminRevocationRule {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tokenadmin/personalaccesstokens/{subjectDescriptor}")
 @get
-op `Personal Access Tokens_List`(
+op PersonalAccessTokens_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -197,7 +197,7 @@ op `Personal Access Tokens_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tokenadmin/revocationrules")
 @post
-op `Revocation Rules_Create`(
+op RevocationRules_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -215,7 +215,7 @@ op `Revocation Rules_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/tokenadmin/revocations")
 @post
-op `Revocations_Revoke Authorizations`(
+op Revocations_RevokeAuthorizations(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

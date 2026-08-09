@@ -1568,7 +1568,7 @@ model YamlReleaseReference {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/testplan/suites")
 @get
-op `Test  Suites_Get Suites By Test Case Id`(
+op TestSuites_GetSuitesByTestCaseId(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1694,7 +1694,7 @@ op Configurations_Get(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/plans")
 @get
-op `Test  Plans_List`(
+op TestPlans_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1724,7 +1724,7 @@ op `Test  Plans_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/plans")
 @post
-op `Test  Plans_Create`(
+op TestPlans_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1745,7 +1745,7 @@ op `Test  Plans_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/plans/{planId}")
 @delete
-op `Test  Plans_Delete`(
+op TestPlans_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1766,7 +1766,7 @@ op `Test  Plans_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/plans/{planId}")
 @get
-op `Test  Plans_Get`(
+op TestPlans_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1787,7 +1787,7 @@ op `Test  Plans_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/plans/{planId}")
 @patch
-op `Test  Plans_Update`(
+op TestPlans_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1811,7 +1811,7 @@ op `Test  Plans_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites")
 @get
-op `Test  Suites_Get Test Suites For Plan`(
+op TestSuites_GetTestSuitesForPlan(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1853,7 +1853,7 @@ op `Test  Suites_Get Test Suites For Plan`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites")
 @post
-op `Test  Suites_Create`(
+op TestSuites_Create(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1877,7 +1877,7 @@ op `Test  Suites_Create`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
 @delete
-op `Test  Suites_Delete`(
+op TestSuites_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1901,7 +1901,7 @@ op `Test  Suites_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
 @get
-op `Test  Suites_Get`(
+op TestSuites_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1940,7 +1940,7 @@ op `Test  Suites_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/suites/{suiteId}")
 @patch
-op `Test  Suites_Update`(
+op TestSuites_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1967,7 +1967,7 @@ op `Test  Suites_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
 @delete
-op `Suite Test Case_Remove Test Cases List From Suite`(
+op SuiteTestCase_RemoveTestCasesListFromSuite(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -1994,7 +1994,7 @@ op `Suite Test Case_Remove Test Cases List From Suite`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
 @get
-op `Suite Test Case_Get Test Case List`(
+op SuiteTestCase_GetTestCaseList(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2058,7 +2058,7 @@ op `Suite Test Case_Get Test Case List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
 @patch
-op `Suite Test Case_Update`(
+op SuiteTestCase_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2085,7 +2085,7 @@ op `Suite Test Case_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase")
 @post
-op `Suite Test Case_Add`(
+op SuiteTestCase_Add(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2112,7 +2112,7 @@ op `Suite Test Case_Add`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestCase/{testCaseId}")
 @get
-op `Suite Test Case_Get Test Case`(
+op SuiteTestCase_GetTestCase(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2145,7 +2145,7 @@ op `Suite Test Case_Get Test Case`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestPoint")
 @get
-op `Test Point_Get Points`(
+op TestPoint_GetPoints(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2178,7 +2178,7 @@ op `Test Point_Get Points`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/{planId}/Suites/{suiteId}/TestPoint")
 @patch
-op `Test Point_Update`(
+op TestPoint_Update(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2211,7 +2211,7 @@ op `Test Point_Update`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/CloneOperation")
 @post
-op `Test Plan Clone_Clone Test Plan`(
+op TestPlanClone_CloneTestPlan(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2235,7 +2235,7 @@ op `Test Plan Clone_Clone Test Plan`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Plans/CloneOperation/{cloneOperationId}")
 @get
-op `Test Plan Clone_Get`(
+op TestPlanClone_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2256,7 +2256,7 @@ op `Test Plan Clone_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/recycleBin/testplan")
 @get
-op `Test  Plan  Recycle  Bin_List`(
+op TestPlanRecycleBin_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2277,7 +2277,7 @@ op `Test  Plan  Recycle  Bin_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/recycleBin/testplan/{planId}")
 @patch
-op `Test  Plan  Recycle  Bin_Restore Deleted Test Plan`(
+op TestPlanRecycleBin_RestoreDeletedTestPlan(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2301,7 +2301,7 @@ op `Test  Plan  Recycle  Bin_Restore Deleted Test Plan`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/recycleBin/TestPlan/{planId}/testsuite")
 @get
-op `Test  Suite  Recycle  Bin  Operations_Get Deleted Test Suites For Plan`(
+op TestSuiteRecycleBinOperations_GetDeletedTestSuitesForPlan(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2343,7 +2343,7 @@ op `Test  Suite  Recycle  Bin  Operations_Get Deleted Test Suites For Plan`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/recycleBin/testsuite")
 @get
-op `Test  Suite  Recycle  Bin  Operations_Get Deleted Test Suites For Project`(
+op TestSuiteRecycleBinOperations_GetDeletedTestSuitesForProject(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2382,7 +2382,7 @@ op `Test  Suite  Recycle  Bin  Operations_Get Deleted Test Suites For Project`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/recycleBin/testsuite/{suiteId}")
 @patch
-op `Test  Suite  Recycle  Bin  Operations_Restore Deleted Test Suite`(
+op TestSuiteRecycleBinOperations_RestoreDeletedTestSuite(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2406,7 +2406,7 @@ op `Test  Suite  Recycle  Bin  Operations_Restore Deleted Test Suite`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/suiteentry/{suiteId}")
 @get
-op `Test  Suite  Entry_List`(
+op TestSuiteEntry_List(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2439,7 +2439,7 @@ op `Test  Suite  Entry_List`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/suiteentry/{suiteId}")
 @patch
-op `Test  Suite  Entry_Reorder Suite Entries`(
+op TestSuiteEntry_ReorderSuiteEntries(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2463,7 +2463,7 @@ op `Test  Suite  Entry_Reorder Suite Entries`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Suites/CloneOperation")
 @post
-op `Test Suite Clone_Clone Test Suite`(
+op TestSuiteClone_CloneTestSuite(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2487,7 +2487,7 @@ op `Test Suite Clone_Clone Test Suite`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/Suites/CloneOperation/{cloneOperationId}")
 @get
-op `Test Suite Clone_Get`(
+op TestSuiteClone_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2508,7 +2508,7 @@ op `Test Suite Clone_Get`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/testcases/{testCaseId}")
 @delete
-op `Test Cases_Delete`(
+op TestCases_Delete(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2528,7 +2528,7 @@ op `Test Cases_Delete`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/TestCases/CloneTestCaseOperation")
 @post
-op `Test Case Clone_Clone Test Case`(
+op TestCaseClone_CloneTestCase(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 
@@ -2547,7 +2547,7 @@ op `Test Case Clone_Clone Test Case`(
 @extension("x-ms-preview", true)
 @route("/{organization}/{project}/_apis/testplan/TestCases/CloneTestCaseOperation/{cloneOperationId}")
 @get
-op `Test Case Clone_Get`(
+op TestCaseClone_Get(
   /** The name of the Azure DevOps organization. */
   @path organization: string,
 

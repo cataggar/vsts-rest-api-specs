@@ -334,7 +334,7 @@ model VssJsonCollectionWrapperBase {
 @extension("x-ms-preview", true)
 @route("/{organization}/_apis/identities")
 @get
-op `Identities_Read Identities`(
+op Identities_ReadIdentities(
   /** The name of the Azure DevOps organization. */
   @extension("x-ms-required", false) @path organization: string,
 
