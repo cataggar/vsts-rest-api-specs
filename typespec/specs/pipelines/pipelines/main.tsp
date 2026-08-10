@@ -354,6 +354,18 @@ model YamlFileDetails {
   yamlFile?: string;
 }
 
+/** A collection of `Pipeline` as returned by Azure DevOps. */
+model PipelineList {
+  count?: int32;
+  value?: Pipeline[];
+}
+
+/** A collection of `Run` as returned by Azure DevOps. */
+model RunList {
+  count?: int32;
+  value?: Run[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -393,7 +405,7 @@ interface Pipelines {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: Pipeline[];
+    @body body: PipelineList;
   };
 
   /** Create a pipeline. */
@@ -491,7 +503,7 @@ interface Runs {
     @path pipelineId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Run[]>;
+  ): RunList;
 
   /** Runs a pipeline. */
   @tag("Runs")

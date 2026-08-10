@@ -113,6 +113,12 @@ model ResourcePipelinePermissions {
   resource?: Resource;
 }
 
+/** A collection of `ResourcePipelinePermissions` as returned by Azure DevOps. */
+model ResourcePipelinePermissionsList {
+  count?: int32;
+  value?: ResourcePipelinePermissions[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -140,7 +146,7 @@ interface PipelinePermissions {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: ResourcePipelinePermissions[],
-  ): Body<ResourcePipelinePermissions[]>;
+  ): ResourcePipelinePermissionsList;
 
   /** Given a ResourceType and ResourceId, returns authorized definitions for that resource. */
   @tag("Pipeline Permissions")

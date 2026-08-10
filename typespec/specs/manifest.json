@@ -11,6 +11,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -19,7 +20,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 177
+      "lines": 183
     },
     {
       "area": "advancedSecurity",
@@ -30,6 +31,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 8,
+        "arrayResponses": 2,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -61,7 +63,7 @@
         "criteria.states.secretAlerts": "criteriaStatesSecretAlerts",
         "api-version": "apiVersion"
       },
-      "lines": 1002
+      "lines": 1014
     },
     {
       "area": "advancedSecurity",
@@ -72,6 +74,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
+        "arrayResponses": 5,
         "continuationTokenHeaders": 2,
         "renamedContinuationTokenHeaders": 0
       },
@@ -102,7 +105,7 @@
         "criteria.validity": "criteriaValidity",
         "api-version": "apiVersion"
       },
-      "lines": 1801
+      "lines": 1825
     },
     {
       "area": "advancedSecurity",
@@ -113,6 +116,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -134,6 +138,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -153,6 +158,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -161,7 +167,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 186
+      "lines": 192
     },
     {
       "area": "approvalsAndChecks",
@@ -172,6 +178,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
+        "arrayResponses": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -180,7 +187,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 842
+      "lines": 848
     },
     {
       "area": "approvalsAndChecks",
@@ -191,6 +198,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -199,7 +207,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 613
+      "lines": 619
     },
     {
       "area": "artifacts",
@@ -210,6 +218,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 36,
+        "arrayResponses": 13,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -218,7 +227,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1810
+      "lines": 1864
     },
     {
       "area": "artifacts",
@@ -229,6 +238,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -248,6 +258,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -267,6 +278,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -286,6 +298,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 7,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -305,6 +318,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 13,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -324,6 +338,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -343,6 +358,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -362,6 +378,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 7,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -381,6 +398,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 6,
+        "arrayResponses": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -389,7 +407,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 505
+      "lines": 517
     },
     {
       "area": "build",
@@ -400,6 +418,7 @@
         "duplicateProperties": 0,
         "pathParameters": 2,
         "operationIds": 48,
+        "arrayResponses": 29,
         "continuationTokenHeaders": 3,
         "renamedContinuationTokenHeaders": 0
       },
@@ -410,7 +429,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 6041
+      "lines": 6149
     },
     {
       "area": "core",
@@ -421,6 +440,7 @@
         "duplicateProperties": 1,
         "pathParameters": 0,
         "operationIds": 8,
+        "arrayResponses": 6,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -429,7 +449,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1155
+      "lines": 1185
     },
     {
       "area": "dashboard",
@@ -440,6 +460,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
+        "arrayResponses": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -448,7 +469,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 844
+      "lines": 856
     },
     {
       "area": "delegatedAuth",
@@ -459,6 +480,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 2,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -478,6 +500,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -497,6 +520,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 3,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -505,7 +529,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 814
+      "lines": 832
     },
     {
       "area": "distributedTask",
@@ -516,6 +540,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -524,7 +549,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 817
+      "lines": 823
     },
     {
       "area": "distributedTask",
@@ -535,6 +560,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
+        "arrayResponses": 14,
         "continuationTokenHeaders": 3,
         "renamedContinuationTokenHeaders": 0
       },
@@ -543,7 +569,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 5458
+      "lines": 5524
     },
     {
       "area": "environments",
@@ -554,6 +580,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 2,
+        "arrayResponses": 3,
         "continuationTokenHeaders": 3,
         "renamedContinuationTokenHeaders": 0
       },
@@ -562,7 +589,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1039
+      "lines": 1057
     },
     {
       "area": "extensionManagement",
@@ -573,6 +600,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 5,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -581,7 +609,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1413
+      "lines": 1419
     },
     {
       "area": "favorite",
@@ -592,6 +620,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -600,7 +629,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 260
+      "lines": 266
     },
     {
       "area": "git",
@@ -611,6 +640,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 88,
+        "arrayResponses": 34,
         "continuationTokenHeaders": 2,
         "renamedContinuationTokenHeaders": 0
       },
@@ -637,7 +667,7 @@
         "baseVersionDescriptor.version": "baseVersionDescriptorVersion",
         "api-version": "apiVersion"
       },
-      "lines": 7925
+      "lines": 8075
     },
     {
       "area": "graph",
@@ -648,6 +678,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 13,
+        "arrayResponses": 5,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 3
       },
@@ -656,7 +687,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1182
+      "lines": 1212
     },
     {
       "area": "hooks",
@@ -667,6 +698,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 8,
+        "arrayResponses": 6,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -675,7 +707,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1382
+      "lines": 1418
     },
     {
       "area": "ims",
@@ -686,6 +718,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -694,7 +727,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 398
+      "lines": 404
     },
     {
       "area": "memberEntitlementManagement",
@@ -705,6 +738,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 19,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -713,7 +747,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1450
+      "lines": 1456
     },
     {
       "area": "notification",
@@ -724,6 +758,7 @@
         "duplicateProperties": 10,
         "pathParameters": 0,
         "operationIds": 5,
+        "arrayResponses": 5,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -732,7 +767,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2063
+      "lines": 2087
     },
     {
       "area": "operations",
@@ -743,6 +778,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -762,6 +798,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -772,7 +809,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 218
+      "lines": 224
     },
     {
       "area": "pipelines",
@@ -783,6 +820,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
+        "arrayResponses": 2,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -791,7 +829,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 665
+      "lines": 677
     },
     {
       "area": "policy",
@@ -802,6 +840,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
+        "arrayResponses": 4,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -810,7 +849,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 506
+      "lines": 524
     },
     {
       "area": "processadmin",
@@ -821,6 +860,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
+        "arrayResponses": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -829,7 +869,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 250
+      "lines": 256
     },
     {
       "area": "processes",
@@ -840,6 +880,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 21,
+        "arrayResponses": 10,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -848,7 +889,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2536
+      "lines": 2590
     },
     {
       "area": "profile",
@@ -859,6 +900,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -878,6 +920,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 16,
+        "arrayResponses": 9,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -886,7 +929,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 5177
+      "lines": 5225
     },
     {
       "area": "resourceUsage",
@@ -897,6 +940,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 1,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -916,6 +960,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -935,6 +980,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
+        "arrayResponses": 3,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -943,7 +989,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 422
+      "lines": 440
     },
     {
       "area": "securityRoles",
@@ -954,6 +1000,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 4,
+        "arrayResponses": 3,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -962,7 +1009,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 285
+      "lines": 297
     },
     {
       "area": "serviceEndpoint",
@@ -973,6 +1020,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 7,
+        "arrayResponses": 6,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -981,7 +1029,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1368
+      "lines": 1386
     },
     {
       "area": "status",
@@ -992,6 +1040,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1011,6 +1060,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 10,
+        "arrayResponses": 3,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1019,7 +1069,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 526
+      "lines": 523
     },
     {
       "area": "test",
@@ -1030,6 +1080,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 21,
+        "arrayResponses": 15,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1040,7 +1091,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 6261
+      "lines": 6315
     },
     {
       "area": "testPlan",
@@ -1051,6 +1102,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 32,
+        "arrayResponses": 16,
         "continuationTokenHeaders": 8,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1061,7 +1113,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2759
+      "lines": 2801
     },
     {
       "area": "testResults",
@@ -1072,6 +1124,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 40,
+        "arrayResponses": 33,
         "continuationTokenHeaders": 4,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1097,7 +1150,7 @@
         "releaseToCompare.name": "releaseToCompareName",
         "api-version": "apiVersion"
       },
-      "lines": 5058
+      "lines": 5166
     },
     {
       "area": "tfvc",
@@ -1108,6 +1161,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 9,
+        "arrayResponses": 10,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1136,7 +1190,7 @@
         "requestData.maxItemCount": "requestDataMaxItemCount",
         "api-version": "apiVersion"
       },
-      "lines": 1395
+      "lines": 1431
     },
     {
       "area": "tokenAdmin",
@@ -1147,6 +1201,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 3,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1166,6 +1221,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 0,
+        "arrayResponses": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1185,6 +1241,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 8,
+        "arrayResponses": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1194,7 +1251,7 @@
         "versionDescriptor.version": "versionDescriptorVersion",
         "api-version": "apiVersion"
       },
-      "lines": 1415
+      "lines": 1427
     },
     {
       "area": "wit",
@@ -1205,6 +1262,7 @@
         "duplicateProperties": 1,
         "pathParameters": 0,
         "operationIds": 56,
+        "arrayResponses": 26,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1216,7 +1274,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 4128
+      "lines": 4260
     },
     {
       "area": "work",
@@ -1227,6 +1285,7 @@
         "duplicateProperties": 0,
         "pathParameters": 0,
         "operationIds": 23,
+        "arrayResponses": 17,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1237,7 +1296,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2779
+      "lines": 2857
     }
   ]
 }

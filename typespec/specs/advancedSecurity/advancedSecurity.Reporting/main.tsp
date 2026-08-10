@@ -654,6 +654,18 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `AdvancedFilter` as returned by Azure DevOps. */
+model AdvancedFilterList {
+  count?: int32;
+  value?: AdvancedFilter[];
+}
+
+/** A collection of `DashboardAlert` as returned by Azure DevOps. */
+model DashboardAlertList {
+  count?: int32;
+  value?: DashboardAlert[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -683,7 +695,7 @@ interface FiltersSettings {
     @query(#{ explode: true }) keywords?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AdvancedFilter[]>;
+  ): AdvancedFilterList;
 
   /** Creates a new advanced filter for the organization. */
   @tag("Filters Settings")
@@ -954,7 +966,7 @@ interface SummaryDashboard {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: DashboardAlert[];
+    @body body: DashboardAlertList;
   };
 
   /** Get Enablement summary for the org */

@@ -237,6 +237,12 @@ model ResourceBase {
   url?: string;
 }
 
+/** A collection of `DebugEntry` as returned by Azure DevOps. */
+model DebugEntryList {
+  count?: int32;
+  value?: DebugEntry[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -464,16 +470,7 @@ interface Requests {
 
     /** A batch that contains debug entries to create. */
     @body body: DebugEntryCreateBatch,
-  ):
-    | Body<DebugEntry[]>
-    | {
-        @statusCode statusCode: 400;
-        @body body: DebugEntry[];
-      }
-    | {
-        @statusCode statusCode: 409;
-        @body body: DebugEntry[];
-      };
+  ): DebugEntryList | (BadRequestResponse & DebugEntryList) | (ConflictResponse & DebugEntryList);
 }
 
 interface Contents {

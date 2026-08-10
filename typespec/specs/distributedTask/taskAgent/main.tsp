@@ -4056,6 +4056,72 @@ model YamlCheckReference {
   type?: "none" | "productionReadiness";
 }
 
+/** A collection of `TaskAgentCloud` as returned by Azure DevOps. */
+model TaskAgentCloudList {
+  count?: int32;
+  value?: TaskAgentCloud[];
+}
+
+/** A collection of `TaskAgentCloudRequest` as returned by Azure DevOps. */
+model TaskAgentCloudRequestList {
+  count?: int32;
+  value?: TaskAgentCloudRequest[];
+}
+
+/** A collection of `TaskAgentCloudType` as returned by Azure DevOps. */
+model TaskAgentCloudTypeList {
+  count?: int32;
+  value?: TaskAgentCloudType[];
+}
+
+/** A collection of `TaskAgentPool` as returned by Azure DevOps. */
+model TaskAgentPoolList {
+  count?: int32;
+  value?: TaskAgentPool[];
+}
+
+/** A collection of `TaskAgent` as returned by Azure DevOps. */
+model TaskAgentList {
+  count?: int32;
+  value?: TaskAgent[];
+}
+
+/** A collection of `DeploymentGroup` as returned by Azure DevOps. */
+model DeploymentGroupList {
+  count?: int32;
+  value?: DeploymentGroup[];
+}
+
+/** A collection of `DeploymentMachine` as returned by Azure DevOps. */
+model DeploymentMachineList {
+  count?: int32;
+  value?: DeploymentMachine[];
+}
+
+/** A collection of `TaskAgentQueue` as returned by Azure DevOps. */
+model TaskAgentQueueList {
+  count?: int32;
+  value?: TaskAgentQueue[];
+}
+
+/** A collection of `SecureFile` as returned by Azure DevOps. */
+model SecureFileList {
+  count?: int32;
+  value?: SecureFile[];
+}
+
+/** A collection of `TaskGroup` as returned by Azure DevOps. */
+model TaskGroupList {
+  count?: int32;
+  value?: TaskGroup[];
+}
+
+/** A collection of `VariableGroup` as returned by Azure DevOps. */
+model VariableGroupList {
+  count?: int32;
+  value?: VariableGroup[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -4086,7 +4152,7 @@ interface Agentclouds {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskAgentCloud[]>;
+  ): TaskAgentCloudList;
 
   @tag("Agentclouds")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -4164,7 +4230,7 @@ interface Requests {
 
     @path agentCloudId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskAgentCloudRequest[]>;
+  ): TaskAgentCloudRequestList;
 }
 
 interface Agentcloudtypes {
@@ -4181,7 +4247,7 @@ interface Agentcloudtypes {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskAgentCloudType[]>;
+  ): TaskAgentCloudTypeList;
 }
 
 interface Pools {
@@ -4216,7 +4282,7 @@ interface Pools {
     actionFilter?: "none" | "manage" | "use",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskAgentPool[]>;
+  ): TaskAgentPoolList;
 
   /** Create an agent pool. */
   @tag("Pools")
@@ -4347,7 +4413,7 @@ interface Agents {
     @format("array (string)") @query(#{ explode: true }) demands?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskAgent[]>;
+  ): TaskAgentList;
 
   /** Adds an agent to a pool. You probably don't want to call this endpoint directly. Instead, [configure an agent](https://docs.microsoft.com/azure/devops/pipelines/agents/agents) using the agent download package. */
   @tag("Agents")
@@ -4590,7 +4656,7 @@ interface Variablegroups {
     @query(#{ explode: true }) loadSecrets?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<VariableGroup[]>;
+  ): VariableGroupList;
 
   /** Get a variable group. */
   @tag("Variablegroups")
@@ -4706,7 +4772,7 @@ interface Deploymentgroups {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: DeploymentGroup[];
+    @body body: DeploymentGroupList;
   };
 
   /** Create a deployment group. */
@@ -4941,7 +5007,7 @@ interface Targets {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: DeploymentMachine[];
+    @body body: DeploymentMachineList;
   };
 
   /** Update tags of a list of deployment targets in a deployment group. */
@@ -4966,7 +5032,7 @@ interface Targets {
 
     /** Deployment targets with tags to udpdate. */
     @body body: DeploymentTargetUpdateParameter[],
-  ): Body<DeploymentMachine[]>;
+  ): DeploymentMachineList;
 
   /** Delete a deployment target in a deployment group. This deletes the agent from associated deployment pool too. */
   @tag("Targets")
@@ -5074,7 +5140,7 @@ interface Queues {
     actionFilter?: "none" | "manage" | "use",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskAgentQueue[]>;
+  ): TaskAgentQueueList;
 
   /** Create a new agent queue to connect a project to an agent pool. */
   @tag("Queues")
@@ -5194,7 +5260,7 @@ interface Securefiles {
     @query(#{ explode: true })
     actionFilter?: "none" | "manage" | "use",
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SecureFile[]>;
+  ): SecureFileList;
 
   /** Update properties and/or names of a set of secure files. Files are identified by their IDs. Properties provided override the existing one entirely, i.e. do not merge. */
   @tag("Securefiles")
@@ -5215,7 +5281,7 @@ interface Securefiles {
 
     /** A list of secure file objects. Only three field must be populated Id, Name, and Properties. The rest of fields in the object are ignored. */
     @body body: SecureFile[],
-  ): Body<SecureFile[]>;
+  ): SecureFileList;
 
   /** Query secure files using a name pattern and a condition on file properties. */
   @tag("Securefiles")
@@ -5239,7 +5305,7 @@ interface Securefiles {
 
     /** The main condition syntax is described [here](https://go.microsoft.com/fwlink/?linkid=842996). Use the *property('property-name')* function to access the value of the specified property of a secure file. It returns null if the property is not set. E.g. ``` and( eq( property('devices'), '2' ), in( property('provisioning profile type'), 'ad hoc', 'development' ) ) ``` */
     @body body: string,
-  ): Body<SecureFile[]>;
+  ): SecureFileList;
 
   /** Delete a secure file */
   @tag("Securefiles")
@@ -5425,7 +5491,7 @@ interface Taskgroups {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TaskGroup[];
+    @body body: TaskGroupList;
   };
 
   /** Update a task group. */

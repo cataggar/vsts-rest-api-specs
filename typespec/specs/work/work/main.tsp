@@ -1286,6 +1286,84 @@ model WorkItemTypeStateInfo {
   workItemTypeName?: string;
 }
 
+/** A collection of `BoardSuggestedValue` as returned by Azure DevOps. */
+model BoardSuggestedValueList {
+  count?: int32;
+  value?: BoardSuggestedValue[];
+}
+
+/** A collection of `Plan` as returned by Azure DevOps. */
+model PlanList {
+  count?: int32;
+  value?: Plan[];
+}
+
+/** A collection of `PredefinedQuery` as returned by Azure DevOps. */
+model PredefinedQueryList {
+  count?: int32;
+  value?: PredefinedQuery[];
+}
+
+/** A collection of `BacklogLevelConfiguration` as returned by Azure DevOps. */
+model BacklogLevelConfigurationList {
+  count?: int32;
+  value?: BacklogLevelConfiguration[];
+}
+
+/** A collection of `BoardReference` as returned by Azure DevOps. */
+model BoardReferenceList {
+  count?: int32;
+  value?: BoardReference[];
+}
+
+/** A collection of `BoardChartReference` as returned by Azure DevOps. */
+model BoardChartReferenceList {
+  count?: int32;
+  value?: BoardChartReference[];
+}
+
+/** A collection of `BoardColumn` as returned by Azure DevOps. */
+model BoardColumnList {
+  count?: int32;
+  value?: BoardColumn[];
+}
+
+/** A collection of `BoardRow` as returned by Azure DevOps. */
+model BoardRowList {
+  count?: int32;
+  value?: BoardRow[];
+}
+
+/** A collection of `ParentChildWIMap` as returned by Azure DevOps. */
+model ParentChildWIMapList {
+  count?: int32;
+  value?: ParentChildWIMap[];
+}
+
+/** A collection of `ReorderResult` as returned by Azure DevOps. */
+model ReorderResultList {
+  count?: int32;
+  value?: ReorderResult[];
+}
+
+/** A collection of `TaskboardWorkItemColumn` as returned by Azure DevOps. */
+model TaskboardWorkItemColumnList {
+  count?: int32;
+  value?: TaskboardWorkItemColumn[];
+}
+
+/** A collection of `TeamSettingsIteration` as returned by Azure DevOps. */
+model TeamSettingsIterationList {
+  count?: int32;
+  value?: TeamSettingsIteration[];
+}
+
+/** A collection of `TeamMemberCapacityIdentityRef` as returned by Azure DevOps. */
+model TeamMemberCapacityIdentityRefList {
+  count?: int32;
+  value?: TeamMemberCapacityIdentityRef[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1320,7 +1398,7 @@ interface Boardcolumns {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BoardSuggestedValue[]>;
+  ): BoardSuggestedValueList;
 }
 
 interface Boardrows {
@@ -1340,7 +1418,7 @@ interface Boardrows {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BoardSuggestedValue[]>;
+  ): BoardSuggestedValueList;
 }
 
 interface Iterationcapacities {
@@ -1383,7 +1461,7 @@ interface Plans {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Plan[]>;
+  ): PlanList;
 
   /** Add a new plan for the team */
   @tag("Plans")
@@ -1522,7 +1600,7 @@ interface PredefinedQueries {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PredefinedQuery[]>;
+  ): PredefinedQueryList;
 
   /** Retrieves the specified predefined query including the query results */
   @tag("Predefined Queries")
@@ -1615,7 +1693,7 @@ interface Backlogs {
     @path team: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BacklogLevelConfiguration[]>;
+  ): BacklogLevelConfigurationList;
 
   /** Get a list of work items within a backlog level */
   @tag("Backlogs")
@@ -1684,7 +1762,7 @@ interface Boards {
     @extension("x-ms-required", false) @path team: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BoardReference[]>;
+  ): BoardReferenceList;
 
   /** Get board */
   @tag("Boards")
@@ -2072,7 +2150,7 @@ interface Charts {
     @extension("x-ms-required", false) @path team: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BoardChartReference[]>;
+  ): BoardChartReferenceList;
 
   /** Get a board chart */
   @tag("Charts")
@@ -2153,7 +2231,7 @@ interface Columns {
     @extension("x-ms-required", false) @path team: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BoardColumn[]>;
+  ): BoardColumnList;
 
   /** Update columns on a board */
   @tag("Columns")
@@ -2180,7 +2258,7 @@ interface Columns {
 
     /** List of board columns to update */
     @body body: BoardColumn[],
-  ): Body<BoardColumn[]>;
+  ): BoardColumnList;
 }
 
 interface Rows {
@@ -2206,7 +2284,7 @@ interface Rows {
     @extension("x-ms-required", false) @path team: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BoardRow[]>;
+  ): BoardRowList;
 
   /** Update rows on a board */
   @tag("Rows")
@@ -2233,7 +2311,7 @@ interface Rows {
 
     /** List of board rows to update */
     @body body: BoardRow[],
-  ): Body<BoardRow[]>;
+  ): BoardRowList;
 }
 
 interface Boardparents {
@@ -2259,7 +2337,7 @@ interface Boardparents {
     @extension("x-ms-required", false) @path team: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ParentChildWIMap[]>;
+  ): ParentChildWIMapList;
 }
 
 interface Workitemsorder {
@@ -2286,7 +2364,7 @@ interface Workitemsorder {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: ReorderOperation,
-  ): Body<ReorderResult[]>;
+  ): ReorderResultList;
 
   /** Reorder Product Backlog/Boards Work Items */
   @tag("Workitemsorder")
@@ -2308,7 +2386,7 @@ interface Workitemsorder {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: ReorderOperation,
-  ): Body<ReorderResult[]>;
+  ): ReorderResultList;
 }
 
 interface TaskboardColumnsOperations {
@@ -2374,7 +2452,7 @@ interface TaskboardWorkItems {
 
     @format("uuid") @path iterationId: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TaskboardWorkItemColumn[]>;
+  ): TaskboardWorkItemColumnList;
 
   @tag("Taskboard Work Items")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -2470,7 +2548,7 @@ interface Iterations {
     @query(#{ explode: true }) $timeframe?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TeamSettingsIteration[]>;
+  ): TeamSettingsIterationList;
 
   /** Add an iteration to the team */
   @tag("Iterations")
@@ -2619,7 +2697,7 @@ interface Capacities {
 
     /** Team capacity to replace */
     @body body: TeamMemberCapacityIdentityRef[],
-  ): Body<TeamMemberCapacityIdentityRef[]>;
+  ): TeamMemberCapacityIdentityRefList;
 
   /** Get a team member's capacity */
   @tag("Capacities")

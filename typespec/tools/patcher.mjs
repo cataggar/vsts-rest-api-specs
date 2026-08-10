@@ -270,15 +270,75 @@ export function declareContinuationTokenHeader(document) {
   return { declared, renamed };
 }
 
+/**
+ * Azure DevOps never returns a bare JSON array. Every collection comes
+ * back wrapped in an envelope — `{"count": 2, "value": [ … ]}` — but the
+ * Swagger declares the response as a plain array of the item type, so a
+ * generated client tries to parse the envelope as an array and fails on
+ * the very first list call.
+ *
+ * The service is the source of truth here, so the response schema is
+ * replaced with a generated `<Item>List` object holding `count` and
+ * `value`. `azure-devops-rust-api` patches its specs the same way, for
+ * the same reason.
+ *
+ * `count` is intentionally optional: it is present on most collections
+ * but absent from others (`_apis/teams`, `_apis/git/repositories`).
+ *
+ * Only arrays whose items are a `$ref` are wrapped. That is what makes a
+ * stable envelope name available, and it confines the rule to the model
+ * collections the convention actually covers rather than, say, an
+ * operation returning a bare array of strings.
+ */
+export function wrapArrayResponses(document) {
+  const schemas = (document.components ??= {}).schemas ??= {};
+
+  let wrapped = 0;
+  for (const item of Object.values(document.paths ?? {})) {
+    for (const method of ["get", "put", "post", "patch", "delete", "head", "options"]) {
+      const operation = item[method];
+      if (!operation) continue;
+
+      for (const response of Object.values(operation.responses ?? {})) {
+        for (const body of Object.values(response.content ?? {})) {
+          const schema = body.schema;
+          if (schema?.type !== "array") continue;
+          const ref = schema.items?.$ref;
+          if (typeof ref !== "string") continue;
+
+          const itemName = ref.slice(ref.lastIndexOf("/") + 1);
+          const envelopeName = `${itemName}List`;
+          const existing = schemas[envelopeName];
+          if (existing && existing.properties?.value?.items?.$ref !== ref) continue;
+
+          schemas[envelopeName] ??= {
+            type: "object",
+            description: `A collection of \`${itemName}\` as returned by Azure DevOps.`,
+            properties: {
+              count: { type: "integer", format: "int32" },
+              value: { type: "array", items: { $ref: ref } },
+            },
+          };
+          body.schema = { $ref: `#/components/schemas/${envelopeName}` };
+          wrapped += 1;
+        }
+      }
+    }
+  }
+  return wrapped;
+}
+
 /** Applies every patch in order and returns a summary of what changed. */
 export function patchDocument(document) {
   sanitizeDocStrings(document);
   stripRootTags(document);
+  const arrayResponses = wrapArrayResponses(document);
   const continuation = declareContinuationTokenHeader(document);
   return {
     duplicateProperties: dedupeAllOfProperties(document),
     pathParameters: fixPathParameterCasing(document),
     operationIds: normalizeOperationIds(document),
+    arrayResponses,
     continuationTokenHeaders: continuation.declared,
     renamedContinuationTokenHeaders: continuation.renamed,
   };

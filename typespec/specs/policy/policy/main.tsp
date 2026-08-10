@@ -203,6 +203,24 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `PolicyConfiguration` as returned by Azure DevOps. */
+model PolicyConfigurationList {
+  count?: int32;
+  value?: PolicyConfiguration[];
+}
+
+/** A collection of `PolicyEvaluationRecord` as returned by Azure DevOps. */
+model PolicyEvaluationRecordList {
+  count?: int32;
+  value?: PolicyEvaluationRecord[];
+}
+
+/** A collection of `PolicyType` as returned by Azure DevOps. */
+model PolicyTypeList {
+  count?: int32;
+  value?: PolicyType[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -245,7 +263,7 @@ interface Configurations {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: PolicyConfiguration[];
+    @body body: PolicyConfigurationList;
   };
 
   /** Create a policy configuration of a given policy type. */
@@ -362,7 +380,7 @@ interface Revisions {
     @query(#{ explode: true }) $skip?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PolicyConfiguration[]>;
+  ): PolicyConfigurationList;
 
   /** Retrieve a specific revision of a given policy by ID. */
   @tag("Revisions")
@@ -418,7 +436,7 @@ interface Evaluations {
     @query(#{ explode: true }) $skip?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PolicyEvaluationRecord[]>;
+  ): PolicyEvaluationRecordList;
 
   /** Gets the present evaluation state of a policy. Each policy which applies to a pull request will have an evaluation state which is specific to that policy running in the context of that pull request. Each evaluation is uniquely identified via a Guid. You can find all the policy evaluations for a specific pull request using the List operation of this controller. */
   @tag("Evaluations")
@@ -480,7 +498,7 @@ interface Types {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PolicyType[]>;
+  ): PolicyTypeList;
 
   /** Retrieve a specific policy type by ID. */
   @tag("Types")

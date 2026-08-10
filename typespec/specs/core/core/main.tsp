@@ -682,6 +682,36 @@ model WebApiTeamRef {
   url?: string;
 }
 
+/** A collection of `Process` as returned by Azure DevOps. */
+model ProcessList {
+  count?: int32;
+  value?: Process[];
+}
+
+/** A collection of `TeamProjectReference` as returned by Azure DevOps. */
+model TeamProjectReferenceList {
+  count?: int32;
+  value?: TeamProjectReference[];
+}
+
+/** A collection of `ProjectProperty` as returned by Azure DevOps. */
+model ProjectPropertyList {
+  count?: int32;
+  value?: ProjectProperty[];
+}
+
+/** A collection of `WebApiTeam` as returned by Azure DevOps. */
+model WebApiTeamList {
+  count?: int32;
+  value?: WebApiTeam[];
+}
+
+/** A collection of `TeamMember` as returned by Azure DevOps. */
+model TeamMemberList {
+  count?: int32;
+  value?: TeamMember[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -717,7 +747,7 @@ interface Processes {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Process[]>;
+  ): ProcessList;
 
   /** Get a process by ID. */
   @tag("Processes")
@@ -788,7 +818,7 @@ interface Projects {
 
     @query(#{ explode: true }) getDefaultTeamImageUrl?: boolean,
     ...Parameters.`api-Version-preview`.`4`,
-  ): Body<TeamProjectReference[]>;
+  ): TeamProjectReferenceList;
 
   /** Queues a project to be created. Use the [GetOperation](../../operations/operations/get) to periodically check for create project status. */
   @tag("Projects")
@@ -889,7 +919,7 @@ interface Projects {
     @format("array (string)") @query(#{ explode: true }) keys?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ProjectProperty[]>;
+  ): ProjectPropertyList;
 
   /** Create, update, and delete team project properties. */
   @tag("Projects")
@@ -1012,7 +1042,7 @@ interface Teams {
     @query(#{ explode: true }) $expandIdentity?: boolean,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WebApiTeam[]>;
+  ): WebApiTeamList;
 
   /** Create a team in a team project. Possible failure scenarios Invalid project name/ID (project doesn't exist) 404 Invalid team name or description 400 Team already exists 400 Insufficient privileges 400 */
   @tag("Teams")
@@ -1123,7 +1153,7 @@ interface Teams {
     @query(#{ explode: true }) $top?: int32,
     @query(#{ explode: true }) $skip?: int32,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<TeamMember[]>;
+  ): TeamMemberList;
 
   /** Get a list of all teams. */
   @tag("Teams")
@@ -1150,5 +1180,5 @@ interface Teams {
     @query(#{ explode: true }) $expandIdentity?: boolean,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WebApiTeam[]>;
+  ): WebApiTeamList;
 }

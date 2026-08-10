@@ -182,6 +182,24 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `AccessControlEntry` as returned by Azure DevOps. */
+model AccessControlEntryList {
+  count?: int32;
+  value?: AccessControlEntry[];
+}
+
+/** A collection of `AccessControlList` as returned by Azure DevOps. */
+model AccessControlListList {
+  count?: int32;
+  value?: AccessControlList[];
+}
+
+/** A collection of `SecurityNamespaceDescription` as returned by Azure DevOps. */
+model SecurityNamespaceDescriptionList {
+  count?: int32;
+  value?: SecurityNamespaceDescription[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -237,7 +255,7 @@ interface AccessControlEntries {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: JObject,
-  ): Body<AccessControlEntry[]>;
+  ): AccessControlEntryList;
 }
 
 interface AccessControlLists {
@@ -293,7 +311,7 @@ interface AccessControlLists {
     @query(#{ explode: true }) recurse?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AccessControlList[]>;
+  ): AccessControlListList;
 
   /** Create or update one or more access control lists. All data that currently exists for the ACLs supplied will be overwritten. */
   @tag("Access Control Lists")
@@ -417,5 +435,5 @@ interface SecurityNamespaces {
     @query(#{ explode: true }) localOnly?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SecurityNamespaceDescription[]>;
+  ): SecurityNamespaceDescriptionList;
 }

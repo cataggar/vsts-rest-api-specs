@@ -545,6 +545,36 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `GraphGroup` as returned by Azure DevOps. */
+model GraphGroupList {
+  count?: int32;
+  value?: GraphGroup[];
+}
+
+/** A collection of `GraphMembership` as returned by Azure DevOps. */
+model GraphMembershipList {
+  count?: int32;
+  value?: GraphMembership[];
+}
+
+/** A collection of `GraphServicePrincipal` as returned by Azure DevOps. */
+model GraphServicePrincipalList {
+  count?: int32;
+  value?: GraphServicePrincipal[];
+}
+
+/** A collection of `GraphSubject` as returned by Azure DevOps. */
+model GraphSubjectList {
+  count?: int32;
+  value?: GraphSubject[];
+}
+
+/** A collection of `GraphUser` as returned by Azure DevOps. */
+model GraphUserList {
+  count?: int32;
+  value?: GraphUser[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -603,7 +633,7 @@ interface Groups {
     ...Parameters.`api-Version-preview`.`1`,
   ): {
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
-    @body body: GraphGroup[];
+    @body body: GraphGroupList;
   };
 
   /** Create a new Azure DevOps group or materialize an existing AAD group. The body of the request must be a derived type of GraphGroupCreationContext: * GraphGroupVstsCreationContext - Create a new Azure DevOps group that is not backed by an external provider. * GraphGroupMailAddressCreationContext - Create a new group using the mail address as a reference to an existing group from an external AD or AAD backed provider. * GraphGroupOriginIdCreationContext - Create a new group using the OriginID as a reference to a group from an external AD or AAD backed provider. Optionally, you can add the newly created group as a member of an existing Azure DevOps group and/or specify a custom storage key for the group. */
@@ -724,7 +754,7 @@ interface Memberships {
     @query(#{ explode: true }) depth?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GraphMembership[]>;
+  ): GraphMembershipList;
 
   /** Deletes a membership between a container and subject. */
   @tag("Memberships")
@@ -870,7 +900,7 @@ interface ServicePrincipals {
     ...Parameters.`api-Version-preview`.`1`,
   ): {
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
-    @body body: GraphServicePrincipal[];
+    @body body: GraphServicePrincipalList;
   };
 
   /** Materialize an existing AAD service principal into the ADO account. NOTE: Created service principals are not active in an account. Adding a service principal to an account is required before the service principal can be added to ADO groups or assigned an asset. The body of the request must be a derived type of GraphServicePrincipalCreationContext: * GraphServicePrincipalOriginIdCreationContext - Create a new service principal using the OriginID as a reference to an existing service principal from AAD backed provider. If the service principal to be added corresponds to a service principal that was previously deleted, then that service principal will be restored. Optionally, you can add the newly created service principal as a member of an existing ADO group and/or specify a custom storage key for the service principal. */
@@ -987,7 +1017,7 @@ interface SubjectQuery {
 
     /** The query that we'll be using to search includes the following: Query: the search term. The search will be prefix matching only. SubjectKind: 'User' or 'Group' can be specified, both or either ScopeDescriptor: Non-default scope can be specified, i.e. project scope descriptor */
     @body body: GraphSubjectQuery,
-  ): Body<GraphSubject[]>;
+  ): GraphSubjectList;
 }
 
 interface Avatars {
@@ -1080,7 +1110,7 @@ interface Users {
     ...Parameters.`api-Version-preview`.`1`,
   ): {
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
-    @body body: GraphUser[];
+    @body body: GraphUserList;
   };
 
   /** Materialize an existing AAD or MSA user into the ADO account. NOTE: Created users are not active in an account unless they have been explicitly assigned a parent group at creation time or have signed in and been autolicensed through AAD group memberships. Adding a user to an account is required before the user can be added to ADO groups or assigned an asset. The body of the request must be a derived type of GraphUserCreationContext: * GraphUserMailAddressCreationContext - Create a new user using the mail address as a reference to an existing user from an external AD or AAD backed provider. * GraphUserOriginIdCreationContext - Create a new user using the OriginID as a reference to an existing user from an external AD or AAD backed provider. * GraphUserPrincipalNameCreationContext - Create a new user using the principal name as a reference to an existing user from an external AD or AAD backed provider. If the user to be added corresponds to a user that was previously deleted, then that user will be restored. Optionally, you can add the newly created user as a member of an existing ADO group and/or specify a custom storage key for the user. */

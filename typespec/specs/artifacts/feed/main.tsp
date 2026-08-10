@@ -815,6 +815,60 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `GlobalPermission` as returned by Azure DevOps. */
+model GlobalPermissionList {
+  count?: int32;
+  value?: GlobalPermission[];
+}
+
+/** A collection of `Feed` as returned by Azure DevOps. */
+model FeedList {
+  count?: int32;
+  value?: Feed[];
+}
+
+/** A collection of `PackageMetrics` as returned by Azure DevOps. */
+model PackageMetricsList {
+  count?: int32;
+  value?: PackageMetrics[];
+}
+
+/** A collection of `Package` as returned by Azure DevOps. */
+model PackageList {
+  count?: int32;
+  value?: Package[];
+}
+
+/** A collection of `PackageVersionMetrics` as returned by Azure DevOps. */
+model PackageVersionMetricsList {
+  count?: int32;
+  value?: PackageVersionMetrics[];
+}
+
+/** A collection of `PackageVersion` as returned by Azure DevOps. */
+model PackageVersionList {
+  count?: int32;
+  value?: PackageVersion[];
+}
+
+/** A collection of `FeedPermission` as returned by Azure DevOps. */
+model FeedPermissionList {
+  count?: int32;
+  value?: FeedPermission[];
+}
+
+/** A collection of `RecycleBinPackageVersion` as returned by Azure DevOps. */
+model RecycleBinPackageVersionList {
+  count?: int32;
+  value?: RecycleBinPackageVersion[];
+}
+
+/** A collection of `FeedView` as returned by Azure DevOps. */
+model FeedViewList {
+  count?: int32;
+  value?: FeedView[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -841,7 +895,7 @@ interface ServiceSettings {
     @query(#{ explode: true }) includeIds?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GlobalPermission[]>;
+  ): GlobalPermissionList;
 
   /** Set service-wide permissions that govern feed creation and administration. */
   @tag("Service  Settings")
@@ -859,7 +913,7 @@ interface ServiceSettings {
 
     /** New permissions for the organization. */
     @body body: GlobalPermission[],
-  ): Body<GlobalPermission[]>;
+  ): GlobalPermissionList;
 }
 
 interface ChangeTracking {
@@ -956,7 +1010,7 @@ interface FeedRecycleBin {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Feed[]>;
+  ): FeedList;
 
   /** Permanently delete a feed and all of its packages. The action is irreversible and the package content will be deleted immediately. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Feed Recycle Bin")
@@ -1053,7 +1107,7 @@ interface FeedManagement {
     @query(#{ explode: true }) includeUrls?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Feed[]>;
+  ): FeedList;
 
   /** Create a feed, a container for various package types. Feeds can be created in a project if the project parameter is included in the request url. If the project parameter is omitted, the feed will not be associated with a project and will be created at the organization level. */
   @tag("Feed  Management")
@@ -1176,7 +1230,7 @@ interface FeedManagement {
     @query(#{ explode: true }) includeDeletedFeeds?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<FeedPermission[]>;
+  ): FeedPermissionList;
 
   /** Update the permissions on a feed. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Feed  Management")
@@ -1200,7 +1254,7 @@ interface FeedManagement {
 
     /** Permissions to set. */
     @body body: FeedPermission[],
-  ): Body<FeedPermission[]>;
+  ): FeedPermissionList;
 
   /** Get all views for a feed. The project parameter must be supplied if the feed was created in a project. */
   @tag("Feed  Management")
@@ -1221,7 +1275,7 @@ interface FeedManagement {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<FeedView[]>;
+  ): FeedViewList;
 
   /** Create a new view on the referenced feed. The project parameter must be supplied if the feed was created in a project. */
   @tag("Feed  Management")
@@ -1342,7 +1396,7 @@ interface ArtifactDetails {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: PackageMetricsQuery,
-  ): Body<PackageMetrics[]>;
+  ): PackageMetricsList;
 
   /** Get details about all of the packages in the feed. Use the various filters to include or exclude information from the result set. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Artifact  Details")
@@ -1405,7 +1459,7 @@ interface ArtifactDetails {
     @format("uuid") @query(#{ explode: true }) directUpstreamId?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Package[]>;
+  ): PackageList;
 
   /** Get details about a specific package. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Artifact  Details")
@@ -1468,7 +1522,7 @@ interface ArtifactDetails {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: PackageVersionMetricsQuery,
-  ): Body<PackageVersionMetrics[]>;
+  ): PackageVersionMetricsList;
 
   /** Get a list of package versions, optionally filtering by state. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Artifact  Details")
@@ -1501,7 +1555,7 @@ interface ArtifactDetails {
     @query(#{ explode: true }) isDeleted?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PackageVersion[]>;
+  ): PackageVersionList;
 
   /** Get details about a specific package version. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Artifact  Details")
@@ -1653,7 +1707,7 @@ interface RecycleBin {
     @query(#{ explode: true }) includeAllVersions?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Package[]>;
+  ): PackageList;
 
   /** Get information about a package and all its versions within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Recycle  Bin")
@@ -1707,7 +1761,7 @@ interface RecycleBin {
     @query(#{ explode: true }) includeUrls?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<RecycleBinPackageVersion[]>;
+  ): RecycleBinPackageVersionList;
 
   /** Get information about a package version within the recycle bin. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. */
   @tag("Recycle  Bin")

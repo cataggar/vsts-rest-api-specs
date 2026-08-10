@@ -4486,6 +4486,156 @@ model WebApiTagDefinition {
   url?: string;
 }
 
+/** A collection of `GitDeletedRepository` as returned by Azure DevOps. */
+model GitDeletedRepositoryList {
+  count?: int32;
+  value?: GitDeletedRepository[];
+}
+
+/** A collection of `GitRefFavorite` as returned by Azure DevOps. */
+model GitRefFavoriteList {
+  count?: int32;
+  value?: GitRefFavorite[];
+}
+
+/** A collection of `PolicyConfiguration` as returned by Azure DevOps. */
+model PolicyConfigurationList {
+  count?: int32;
+  value?: PolicyConfiguration[];
+}
+
+/** A collection of `GitPullRequest` as returned by Azure DevOps. */
+model GitPullRequestList {
+  count?: int32;
+  value?: GitPullRequest[];
+}
+
+/** A collection of `GitRepository` as returned by Azure DevOps. */
+model GitRepositoryList {
+  count?: int32;
+  value?: GitRepository[];
+}
+
+/** A collection of `GitCommitRef` as returned by Azure DevOps. */
+model GitCommitRefList {
+  count?: int32;
+  value?: GitCommitRef[];
+}
+
+/** A collection of `GitStatus` as returned by Azure DevOps. */
+model GitStatusList {
+  count?: int32;
+  value?: GitStatus[];
+}
+
+/** A collection of `GitImportRequest` as returned by Azure DevOps. */
+model GitImportRequestList {
+  count?: int32;
+  value?: GitImportRequest[];
+}
+
+/** A collection of `GitItem` as returned by Azure DevOps. */
+model GitItemList {
+  count?: int32;
+  value?: GitItem[];
+}
+
+/** A collection of `Attachment` as returned by Azure DevOps. */
+model AttachmentList {
+  count?: int32;
+  value?: Attachment[];
+}
+
+/** A collection of `GitPullRequestIteration` as returned by Azure DevOps. */
+model GitPullRequestIterationList {
+  count?: int32;
+  value?: GitPullRequestIteration[];
+}
+
+/** A collection of `GitPullRequestStatus` as returned by Azure DevOps. */
+model GitPullRequestStatusList {
+  count?: int32;
+  value?: GitPullRequestStatus[];
+}
+
+/** A collection of `WebApiTagDefinition` as returned by Azure DevOps. */
+model WebApiTagDefinitionList {
+  count?: int32;
+  value?: WebApiTagDefinition[];
+}
+
+/** A collection of `IdentityRefWithVote` as returned by Azure DevOps. */
+model IdentityRefWithVoteList {
+  count?: int32;
+  value?: IdentityRefWithVote[];
+}
+
+/** A collection of `GitPullRequestCommentThread` as returned by Azure DevOps. */
+model GitPullRequestCommentThreadList {
+  count?: int32;
+  value?: GitPullRequestCommentThread[];
+}
+
+/** A collection of `Comment` as returned by Azure DevOps. */
+model CommentList {
+  count?: int32;
+  value?: Comment[];
+}
+
+/** A collection of `IdentityRef` as returned by Azure DevOps. */
+model IdentityRefList {
+  count?: int32;
+  value?: IdentityRef[];
+}
+
+/** A collection of `ResourceRef` as returned by Azure DevOps. */
+model ResourceRefList {
+  count?: int32;
+  value?: ResourceRef[];
+}
+
+/** A collection of `GitPush` as returned by Azure DevOps. */
+model GitPushList {
+  count?: int32;
+  value?: GitPush[];
+}
+
+/** A collection of `GitRef` as returned by Azure DevOps. */
+model GitRefList {
+  count?: int32;
+  value?: GitRef[];
+}
+
+/** A collection of `GitRefUpdateResult` as returned by Azure DevOps. */
+model GitRefUpdateResultList {
+  count?: int32;
+  value?: GitRefUpdateResult[];
+}
+
+/** A collection of `GitBranchStats` as returned by Azure DevOps. */
+model GitBranchStatsList {
+  count?: int32;
+  value?: GitBranchStats[];
+}
+
+/** A collection of `GitSuggestion` as returned by Azure DevOps. */
+model GitSuggestionList {
+  count?: int32;
+  value?: GitSuggestion[];
+}
+
+/** A collection of `GitRepositoryRef` as returned by Azure DevOps. */
+model GitRepositoryRefList {
+  count?: int32;
+  value?: GitRepositoryRef[];
+}
+
+/** A collection of `GitForkSyncRequest` as returned by Azure DevOps. */
+model GitForkSyncRequestList {
+  count?: int32;
+  value?: GitForkSyncRequest[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -4520,7 +4670,7 @@ interface Repositories {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitDeletedRepository[]>;
+  ): GitDeletedRepositoryList;
 
   /** Retrieve soft-deleted git repositories from the recycle bin. */
   @tag("Repositories")
@@ -4538,7 +4688,7 @@ interface Repositories {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitDeletedRepository[]>;
+  ): GitDeletedRepositoryList;
 
   /** Destroy (hard delete) a soft-deleted Git repository. */
   @tag("Repositories")
@@ -4608,7 +4758,7 @@ interface Repositories {
     @query(#{ explode: true }) includeHidden?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitRepository[]>;
+  ): GitRepositoryList;
 
   /** Create a git repository in a team project. */
   @tag("Repositories")
@@ -4724,7 +4874,7 @@ interface RefsFavorites {
     @query(#{ explode: true }) identityId?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitRefFavorite[]>;
+  ): GitRefFavoriteList;
 
   /** Creates a ref favorite */
   @tag("Refs Favorites")
@@ -4807,7 +4957,7 @@ interface RefsFavoritesForProject {
 
     @query(#{ explode: true }) identityId?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitRefFavorite[]>;
+  ): GitRefFavoriteList;
 }
 
 interface PolicyConfigurations {
@@ -4844,7 +4994,7 @@ interface PolicyConfigurations {
     ...Parameters.`api-Version-preview`.`1`,
   ): {
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
-    @body body: PolicyConfiguration[];
+    @body body: PolicyConfigurationList;
   };
 }
 
@@ -4958,7 +5108,7 @@ interface PullRequests {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitPullRequest[]>;
+  ): GitPullRequestList;
 
   /** Retrieve a pull request. */
   @tag("Pull Requests")
@@ -5093,7 +5243,7 @@ interface PullRequests {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitPullRequest[]>;
+  ): GitPullRequestList;
 
   /** Create a pull request. */
   @tag("Pull Requests")
@@ -5418,7 +5568,7 @@ interface Commits {
     @query(#{ explode: true }) includeLinks?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitCommitRef[]>;
+  ): GitCommitRefList;
 
   /** Retrieve a particular commit. */
   @tag("Commits")
@@ -5508,7 +5658,7 @@ interface Commits {
 
     /** Search options */
     @body body: GitQueryCommitsCriteria,
-  ): Body<GitCommitRef[]>;
+  ): GitCommitRefList;
 }
 
 interface Statuses {
@@ -5543,7 +5693,7 @@ interface Statuses {
     @query(#{ explode: true }) latestOnly?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitStatus[]>;
+  ): GitStatusList;
 
   /** Create Git commit status. */
   @tag("Statuses")
@@ -5700,7 +5850,7 @@ interface ImportRequests {
     @query(#{ explode: true }) includeAbandoned?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitImportRequest[]>;
+  ): GitImportRequestList;
 
   /** Create an import request. */
   @tag("Import Requests")
@@ -5874,7 +6024,7 @@ interface Items {
     @query(#{ explode: true }) zipForUnix?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitItem[]>;
+  ): GitItemList;
 
   /** Retrieves a batch of items in a repo / project for a given list of paths or a long path */
   @tag("Items")
@@ -5950,7 +6100,7 @@ interface PullRequestAttachments {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Attachment[]>;
+  ): AttachmentList;
 
   /** Delete a pull request attachment. */
   @tag("Pull Request Attachments")
@@ -6079,7 +6229,7 @@ interface PullRequestCommits {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: GitCommitRef[];
+    @body body: GitCommitRefList;
   };
 
   /** Get the commits for the specified iteration of a pull request. */
@@ -6113,7 +6263,7 @@ interface PullRequestCommits {
     @query(#{ explode: true }) skip?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitCommitRef[]>;
+  ): GitCommitRefList;
 }
 
 interface PullRequestIterations {
@@ -6142,7 +6292,7 @@ interface PullRequestIterations {
     @query(#{ explode: true }) includeCommits?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitPullRequestIteration[]>;
+  ): GitPullRequestIterationList;
 
   /** Get the specified iteration for a pull request. */
   @tag("Pull Request Iterations")
@@ -6236,7 +6386,7 @@ interface PullRequestIterationStatuses {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitPullRequestStatus[]>;
+  ): GitPullRequestStatusList;
 
   /** Update pull request iteration statuses collection. The only supported operation type is `remove`. This operation allows to delete multiple statuses in one call. The path of the `remove` operation should refer to the ID of the pull request status. For example `path='/1'` refers to the pull request status with ID 1. */
   @tag("Pull Request Iteration Statuses")
@@ -6386,7 +6536,7 @@ interface PullRequestLabels {
     @query(#{ explode: true }) projectId?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WebApiTagDefinition[]>;
+  ): WebApiTagDefinitionList;
 
   /** Create a tag (if that does not exists yet) and add that as a label (tag) for a specified pull request. The only required field is the name of the new label (tag). */
   @tag("Pull Request Labels")
@@ -6556,7 +6706,7 @@ interface PullRequestReviewers {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<IdentityRefWithVote[]>;
+  ): IdentityRefWithVoteList;
 
   /** Reset the votes of multiple reviewers on a pull request. NOTE: This endpoint only supports updating votes, but does not support updating required reviewers (use policy) or display names. */
   @tag("Pull Request Reviewers")
@@ -6610,7 +6760,7 @@ interface PullRequestReviewers {
 
     /** Reviewers to add to the pull request. */
     @body body: IdentityRef[],
-  ): Body<IdentityRefWithVote[]>;
+  ): IdentityRefWithVoteList;
 
   /** Add an unmaterialized identity to the reviewers of a pull request. */
   @tag("Pull Request Reviewers")
@@ -6804,7 +6954,7 @@ interface PullRequestStatuses {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitPullRequestStatus[]>;
+  ): GitPullRequestStatusList;
 
   /** Update pull request statuses collection. The only supported operation type is `remove`. This operation allows to delete multiple statuses in one call. The path of the `remove` operation should refer to the ID of the pull request status. For example `path='/1'` refers to the pull request status with ID 1. */
   @tag("Pull Request Statuses")
@@ -6945,7 +7095,7 @@ interface PullRequestThreads {
     @query(#{ explode: true }) $baseIteration?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitPullRequestCommentThread[]>;
+  ): GitPullRequestCommentThreadList;
 
   /** Create a thread in a pull request. */
   @tag("Pull Request Threads")
@@ -7064,7 +7214,7 @@ interface PullRequestThreadComments {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Comment[]>;
+  ): CommentList;
 
   /** Create a comment on a specific thread in a pull request (up to 500 comments can be created per thread). */
   @tag("Pull Request Thread Comments")
@@ -7249,7 +7399,7 @@ interface PullRequestCommentLikes {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<IdentityRef[]>;
+  ): IdentityRefList;
 
   /** Add a like on a comment. */
   @tag("Pull Request Comment Likes")
@@ -7305,7 +7455,7 @@ interface PullRequestWorkItems {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ResourceRef[]>;
+  ): ResourceRefList;
 }
 
 interface Pushes {
@@ -7352,7 +7502,7 @@ interface Pushes {
     @query(#{ name: "searchCriteria.toDate", explode: true }) searchCriteriaToDate?: utcDateTime,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<GitPush[]>;
+  ): GitPushList;
 
   /** Push changes to the repository. */
   @tag("Pushes")
@@ -7461,7 +7611,7 @@ interface Refs {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: GitRef[];
+    @body body: GitRefList;
   };
 
   /** Lock or Unlock a branch. */
@@ -7519,7 +7669,7 @@ interface Refs {
 
     /** List of ref updates to attempt to perform */
     @body body: GitRefUpdate[],
-  ): Body<GitRefUpdateResult[]>;
+  ): GitRefUpdateResultList;
 }
 
 interface Reverts {
@@ -7650,7 +7800,7 @@ interface Stats {
     `baseVersionDescriptor.versionType`?: "branch" | "tag" | "commit",
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<GitBranchStats[]>;
+  ): GitBranchStatsList;
 }
 
 interface Suggestions {
@@ -7676,7 +7826,7 @@ interface Suggestions {
     @query(#{ explode: true }) preferCompareBranch?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitSuggestion[]>;
+  ): GitSuggestionList;
 }
 
 interface Trees {
@@ -7754,7 +7904,7 @@ interface MergeBases {
     @format("uuid") @query(#{ explode: true }) otherRepositoryId?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitCommitRef[]>;
+  ): GitCommitRefList;
 }
 
 interface Forks {
@@ -7783,7 +7933,7 @@ interface Forks {
     @query(#{ explode: true }) includeLinks?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitRepositoryRef[]>;
+  ): GitRepositoryRefList;
 
   /** Retrieve all requested fork sync operations on this repository. */
   @tag("Forks")
@@ -7810,7 +7960,7 @@ interface Forks {
     @query(#{ explode: true }) includeLinks?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitForkSyncRequest[]>;
+  ): GitForkSyncRequestList;
 
   /** Request that another repository's refs be fetched into this one. It syncs two existing forks. To create a fork, please see the <a href='https://docs.microsoft.com/en-us/rest/api/vsts/git/repositories/create?view=azure-devops-rest-5.1'> repositories endpoint</a> */
   @tag("Forks")

@@ -1358,6 +1358,30 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `Alert` as returned by Azure DevOps. */
+model AlertList {
+  count?: int32;
+  value?: Alert[];
+}
+
+/** A collection of `AlertAnalysisInstance` as returned by Azure DevOps. */
+model AlertAnalysisInstanceList {
+  count?: int32;
+  value?: AlertAnalysisInstance[];
+}
+
+/** A collection of `AlertMetadata` as returned by Azure DevOps. */
+model AlertMetadataList {
+  count?: int32;
+  value?: AlertMetadata[];
+}
+
+/** A collection of `Branch` as returned by Azure DevOps. */
+model BranchList {
+  count?: int32;
+  value?: Branch[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1512,7 +1536,7 @@ interface Alerts {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: Alert[];
+    @body body: AlertList;
   };
 
   /** Get an alert. */
@@ -1607,7 +1631,7 @@ interface Instances {
 
     @query(#{ explode: true }) ref?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AlertAnalysisInstance[]>;
+  ): AlertAnalysisInstanceList;
 }
 
 interface Metadata2 {
@@ -1657,7 +1681,7 @@ interface MetadataBatch {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: AlertMetadataBatchRequest,
-  ): Body<AlertMetadata[]>;
+  ): AlertMetadataList;
 }
 
 interface AlertsBatch {
@@ -1683,7 +1707,7 @@ interface AlertsBatch {
 
     /** Request containing alert IDs and optional alert type filter */
     @body body: AlertBatchRequest,
-  ): Body<Alert[]>;
+  ): AlertList;
 }
 
 interface Analysis {
@@ -1746,7 +1770,7 @@ interface Analysis {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: Branch[];
+    @body body: BranchList;
   };
 }
 

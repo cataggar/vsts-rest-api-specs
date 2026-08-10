@@ -140,6 +140,18 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `RoleAssignment` as returned by Azure DevOps. */
+model RoleAssignmentList {
+  count?: int32;
+  value?: RoleAssignment[];
+}
+
+/** A collection of `SecurityRole` as returned by Azure DevOps. */
+model SecurityRoleList {
+  count?: int32;
+  value?: SecurityRole[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -169,7 +181,7 @@ interface Roleassignments {
     @extension("x-ms-required", false) @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<RoleAssignment[]>;
+  ): RoleAssignmentList;
 
   @tag("Roleassignments")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -212,7 +224,7 @@ interface Roleassignments {
 
     /** Roles to be assigned */
     @body body: UserRoleAssignmentRef[],
-  ): Body<RoleAssignment[]>;
+  ): RoleAssignmentList;
 
   /** Remove the role assignment on a resource */
   @tag("Roleassignments")
@@ -280,5 +292,5 @@ interface Roledefinitions {
     @extension("x-ms-required", false) @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SecurityRole[]>;
+  ): SecurityRoleList;
 }

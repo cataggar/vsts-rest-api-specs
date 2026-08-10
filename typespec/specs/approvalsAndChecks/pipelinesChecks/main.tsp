@@ -585,6 +585,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `CheckConfiguration` as returned by Azure DevOps. */
+model CheckConfigurationList {
+  count?: int32;
+  value?: CheckConfiguration[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -626,7 +632,7 @@ interface CheckConfigurations {
     @query(#{ explode: true })
     $expand?: "none" | "settings",
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<CheckConfiguration[]>;
+  ): CheckConfigurationList;
 
   /** Add a check configuration */
   @tag("Check Configurations")
@@ -750,7 +756,7 @@ interface CheckConfigurations {
 
     /** List of resources. */
     @body body: Resource[],
-  ): Body<CheckConfiguration[]>;
+  ): CheckConfigurationList;
 }
 
 interface CheckEvaluations {

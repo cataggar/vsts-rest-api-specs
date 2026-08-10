@@ -600,6 +600,24 @@ model TaskAgentQueue {
   @format("uuid") projectId?: string;
 }
 
+/** A collection of `ElasticPool` as returned by Azure DevOps. */
+model ElasticPoolList {
+  count?: int32;
+  value?: ElasticPool[];
+}
+
+/** A collection of `ElasticPoolLog` as returned by Azure DevOps. */
+model ElasticPoolLogList {
+  count?: int32;
+  value?: ElasticPoolLog[];
+}
+
+/** A collection of `ElasticNode` as returned by Azure DevOps. */
+model ElasticNodeList {
+  count?: int32;
+  value?: ElasticNode[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -623,7 +641,7 @@ interface Elasticpools {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ElasticPool[]>;
+  ): ElasticPoolList;
 
   /** Create a new elastic pool. This will create a new TaskAgentPool at the organization level. If a project id is provided, this will create a new TaskAgentQueue in the specified project. */
   @tag("Elasticpools")
@@ -713,7 +731,7 @@ interface Elasticpoollogs {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ElasticPoolLog[]>;
+  ): ElasticPoolLogList;
 }
 
 interface Nodes {
@@ -791,7 +809,7 @@ interface Nodes {
       | "pendingReimageCandidate",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ElasticNode[]>;
+  ): ElasticNodeList;
 
   /** Update properties on a specified ElasticNode */
   @tag("Nodes")

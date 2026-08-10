@@ -177,6 +177,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `Favorite` as returned by Azure DevOps. */
+model FavoriteList {
+  count?: int32;
+  value?: Favorite[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -203,7 +209,7 @@ interface Favorites {
     @query(#{ explode: true }) artifactScopeId?: string,
     @query(#{ explode: true }) includeExtendedDetails?: boolean,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Favorite[]>;
+  ): FavoriteList;
 
   @tag("Favorites")
   @extension("x-ms-docs-override-version", "7.2-preview.1")

@@ -924,6 +924,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `GroupEntitlement` as returned by Azure DevOps. */
+model GroupEntitlementList {
+  count?: int32;
+  value?: GroupEntitlement[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -959,7 +965,7 @@ interface GroupEntitlements {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GroupEntitlement[]>;
+  ): GroupEntitlementList;
 
   /** Create a group entitlement with license rule, extension rule. */
   @tag("Group Entitlements")

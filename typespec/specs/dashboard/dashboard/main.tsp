@@ -389,6 +389,18 @@ model WidgetTypesResponse {
   widgetTypes?: WidgetMetadata[];
 }
 
+/** A collection of `Dashboard` as returned by Azure DevOps. */
+model DashboardList {
+  count?: int32;
+  value?: Dashboard[];
+}
+
+/** A collection of `Widget` as returned by Azure DevOps. */
+model WidgetList {
+  count?: int32;
+  value?: Widget[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -480,7 +492,7 @@ interface Dashboards {
     @extension("x-ms-required", false) @path team: string,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<Dashboard[]>;
+  ): DashboardList;
 
   /** Create the supplied dashboard. */
   @tag("Dashboards")
@@ -631,7 +643,7 @@ interface Widgets {
     ...Parameters.`api-Version-preview`.`2`,
   ): {
     @header ETag?: string;
-    @body body: Widget[];
+    @body body: WidgetList;
   };
 
   /** Update the supplied widgets on the dashboard using supplied state. State of existing Widgets not passed in the widget list is preserved. */
@@ -664,7 +676,7 @@ interface Widgets {
     @body body: Widget[],
   ): {
     @header ETag?: string;
-    @body body: Widget[];
+    @body body: WidgetList;
   };
 
   /** Create a widget on the specified dashboard. */
@@ -724,7 +736,7 @@ interface Widgets {
     @body body: Widget[],
   ): {
     @header ETag?: string;
-    @body body: Widget[];
+    @body body: WidgetList;
   };
 
   /** Delete the specified widget. */

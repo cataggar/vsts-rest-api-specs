@@ -153,6 +153,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `AdminBehavior` as returned by Azure DevOps. */
+model AdminBehaviorList {
+  count?: int32;
+  value?: AdminBehavior[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -179,7 +185,7 @@ interface Behaviors {
     @format("uuid") @path processId: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AdminBehavior[]>;
+  ): AdminBehaviorList;
 }
 
 interface Processes {

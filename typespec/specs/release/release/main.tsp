@@ -3869,6 +3869,54 @@ model YamlSourceReference {
   name?: string;
 }
 
+/** A collection of `ReleaseApproval` as returned by Azure DevOps. */
+model ReleaseApprovalList {
+  count?: int32;
+  value?: ReleaseApproval[];
+}
+
+/** A collection of `ReleaseDefinition` as returned by Azure DevOps. */
+model ReleaseDefinitionList {
+  count?: int32;
+  value?: ReleaseDefinition[];
+}
+
+/** A collection of `ReleaseDefinitionRevision` as returned by Azure DevOps. */
+model ReleaseDefinitionRevisionList {
+  count?: int32;
+  value?: ReleaseDefinitionRevision[];
+}
+
+/** A collection of `Deployment` as returned by Azure DevOps. */
+model DeploymentList {
+  count?: int32;
+  value?: Deployment[];
+}
+
+/** A collection of `Folder` as returned by Azure DevOps. */
+model FolderList {
+  count?: int32;
+  value?: Folder[];
+}
+
+/** A collection of `Release` as returned by Azure DevOps. */
+model ReleaseList {
+  count?: int32;
+  value?: Release[];
+}
+
+/** A collection of `ReleaseTaskAttachment` as returned by Azure DevOps. */
+model ReleaseTaskAttachmentList {
+  count?: int32;
+  value?: ReleaseTaskAttachment[];
+}
+
+/** A collection of `ManualIntervention` as returned by Azure DevOps. */
+model ManualInterventionList {
+  count?: int32;
+  value?: ManualIntervention[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -3995,7 +4043,7 @@ interface Approvals {
     @query(#{ explode: true }) includeMyGroupApprovals?: boolean,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<ReleaseApproval[]>;
+  ): ReleaseApprovalList;
 
   /** Update status of an approval */
   @tag("Approvals")
@@ -4133,7 +4181,7 @@ interface Definitions {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: ReleaseDefinition[];
+    @body body: ReleaseDefinitionList;
   };
 
   /** Create a release definition */
@@ -4254,7 +4302,7 @@ interface Definitions {
     @path definitionId: int32,
 
     ...Parameters.`api-Version-preview`.`4`,
-  ): Body<ReleaseDefinitionRevision[]>;
+  ): ReleaseDefinitionRevisionList;
 
   /** Get release definition for a given definitionId and revision */
   @tag("Definitions")
@@ -4456,7 +4504,7 @@ interface Deployments {
     @query(#{ explode: true }) sourceBranch?: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Deployment[]>;
+  ): DeploymentList;
 }
 
 interface Folders {
@@ -4515,7 +4563,7 @@ interface Folders {
     queryOrder?: "none" | "ascending" | "descending",
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Folder[]>;
+  ): FolderList;
 
   /** Updates an existing folder at given existing path. */
   @tag("Folders")
@@ -4719,7 +4767,7 @@ interface Releases {
     @query(#{ explode: true }) path?: string,
 
     ...Parameters.`api-Version-preview`.`9`,
-  ): Body<Release[]>;
+  ): ReleaseList;
 
   /** Create a release. */
   @tag("Releases")
@@ -4978,7 +5026,7 @@ interface Attachments {
     @path type: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ReleaseTaskAttachment[]>;
+  ): ReleaseTaskAttachmentList;
 
   /** Get a release task attachment. */
   @tag("Attachments")
@@ -5056,7 +5104,7 @@ interface Attachments {
     @path type: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ReleaseTaskAttachment[]>;
+  ): ReleaseTaskAttachmentList;
 
   /** GetTaskAttachmentContent API is deprecated. Use GetReleaseTaskAttachmentContent API instead. */
   @tag("Attachments")
@@ -5121,7 +5169,7 @@ interface ManualInterventions {
     @path releaseId: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ManualIntervention[]>;
+  ): ManualInterventionList;
 
   /** Get manual intervention for a given release and manual intervention id. */
   @tag("Manual Interventions")

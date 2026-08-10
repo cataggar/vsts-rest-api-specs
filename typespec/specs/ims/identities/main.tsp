@@ -332,6 +332,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `Identity` as returned by Azure DevOps. */
+model IdentityList {
+  count?: int32;
+  value?: Identity[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -393,5 +399,5 @@ interface Identities {
     queryMembership?: "none" | "direct" | "expanded" | "expandedUp" | "expandedDown",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Identity[]>;
+  ): IdentityList;
 }

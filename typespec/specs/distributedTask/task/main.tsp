@@ -635,6 +635,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `TimelineRecord` as returned by Azure DevOps. */
+model TimelineRecordList {
+  count?: int32;
+  value?: TimelineRecord[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -812,5 +818,5 @@ interface Records {
 
     /** The array of timeline records to be updated. */
     @body body: VssJsonCollectionWrapper,
-  ): Body<TimelineRecord[]>;
+  ): TimelineRecordList;
 }

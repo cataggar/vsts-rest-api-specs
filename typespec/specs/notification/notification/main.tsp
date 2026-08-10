@@ -1662,6 +1662,30 @@ model VssNotificationEvent {
   sourceEventCreatedTime?: utcDateTime;
 }
 
+/** A collection of `INotificationDiagnosticLog` as returned by Azure DevOps. */
+model INotificationDiagnosticLogList {
+  count?: int32;
+  value?: INotificationDiagnosticLog[];
+}
+
+/** A collection of `NotificationEventType` as returned by Azure DevOps. */
+model NotificationEventTypeList {
+  count?: int32;
+  value?: NotificationEventType[];
+}
+
+/** A collection of `NotificationSubscription` as returned by Azure DevOps. */
+model NotificationSubscriptionList {
+  count?: int32;
+  value?: NotificationSubscription[];
+}
+
+/** A collection of `NotificationSubscriptionTemplate` as returned by Azure DevOps. */
+model NotificationSubscriptionTemplateList {
+  count?: int32;
+  value?: NotificationSubscriptionTemplate[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1700,7 +1724,7 @@ interface DiagnosticLogs {
     @query(#{ explode: true }) endTime?: utcDateTime,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<INotificationDiagnosticLog[]>;
+  ): INotificationDiagnosticLogList;
 }
 
 interface EventTypes {
@@ -1720,7 +1744,7 @@ interface EventTypes {
     @query(#{ explode: true }) publisherId?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<NotificationEventType[]>;
+  ): NotificationEventTypeList;
 
   /** Get a specific event type. */
   @tag("Event Types")
@@ -1826,7 +1850,7 @@ interface Subscriptions {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: SubscriptionQuery,
-  ): Body<NotificationSubscription[]>;
+  ): NotificationSubscriptionList;
 
   /** Get a list of notification subscriptions, either by subscription IDs or by all subscriptions for a given user or group. */
   @tag("Subscriptions")
@@ -1881,7 +1905,7 @@ interface Subscriptions {
       | "alwaysReturnBasicInformation"
       | "includeSystemSubscriptions",
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<NotificationSubscription[]>;
+  ): NotificationSubscriptionList;
 
   /** Create a new subscription. */
   @tag("Subscriptions")
@@ -2019,7 +2043,7 @@ interface Subscriptions {
     @extension("x-ms-required", false) @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<NotificationSubscriptionTemplate[]>;
+  ): NotificationSubscriptionTemplateList;
 }
 
 interface Diagnostics {

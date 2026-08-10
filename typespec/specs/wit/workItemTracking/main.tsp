@@ -1695,6 +1695,138 @@ model WorkItemUpdate {
   workItemId?: int32;
 }
 
+/** A collection of `WorkArtifactLink` as returned by Azure DevOps. */
+model WorkArtifactLinkList {
+  count?: int32;
+  value?: WorkArtifactLink[];
+}
+
+/** A collection of `WorkItemIcon` as returned by Azure DevOps. */
+model WorkItemIconList {
+  count?: int32;
+  value?: WorkItemIcon[];
+}
+
+/** A collection of `WorkItemRelationType` as returned by Azure DevOps. */
+model WorkItemRelationTypeList {
+  count?: int32;
+  value?: WorkItemRelationType[];
+}
+
+/** A collection of `WorkItemNextStateOnTransition` as returned by Azure DevOps. */
+model WorkItemNextStateOnTransitionList {
+  count?: int32;
+  value?: WorkItemNextStateOnTransition[];
+}
+
+/** A collection of `AccountRecentActivityWorkItemModel2` as returned by Azure DevOps. */
+model AccountRecentActivityWorkItemModel2List {
+  count?: int32;
+  value?: AccountRecentActivityWorkItemModel2[];
+}
+
+/** A collection of `GitHubConnectionModel` as returned by Azure DevOps. */
+model GitHubConnectionModelList {
+  count?: int32;
+  value?: GitHubConnectionModel[];
+}
+
+/** A collection of `GitHubConnectionRepoModel` as returned by Azure DevOps. */
+model GitHubConnectionRepoModelList {
+  count?: int32;
+  value?: GitHubConnectionRepoModel[];
+}
+
+/** A collection of `WorkItemClassificationNode` as returned by Azure DevOps. */
+model WorkItemClassificationNodeList {
+  count?: int32;
+  value?: WorkItemClassificationNode[];
+}
+
+/** A collection of `WorkItemField2` as returned by Azure DevOps. */
+model WorkItemField2List {
+  count?: int32;
+  value?: WorkItemField2[];
+}
+
+/** A collection of `QueryHierarchyItem` as returned by Azure DevOps. */
+model QueryHierarchyItemList {
+  count?: int32;
+  value?: QueryHierarchyItem[];
+}
+
+/** A collection of `WorkItemDeleteShallowReference` as returned by Azure DevOps. */
+model WorkItemDeleteShallowReferenceList {
+  count?: int32;
+  value?: WorkItemDeleteShallowReference[];
+}
+
+/** A collection of `WorkItemTagDefinition` as returned by Azure DevOps. */
+model WorkItemTagDefinitionList {
+  count?: int32;
+  value?: WorkItemTagDefinition[];
+}
+
+/** A collection of `WorkItem` as returned by Azure DevOps. */
+model WorkItemList {
+  count?: int32;
+  value?: WorkItem[];
+}
+
+/** A collection of `WorkItemUpdate` as returned by Azure DevOps. */
+model WorkItemUpdateList {
+  count?: int32;
+  value?: WorkItemUpdate[];
+}
+
+/** A collection of `CommentReaction` as returned by Azure DevOps. */
+model CommentReactionList {
+  count?: int32;
+  value?: CommentReaction[];
+}
+
+/** A collection of `IdentityRef` as returned by Azure DevOps. */
+model IdentityRefList {
+  count?: int32;
+  value?: IdentityRef[];
+}
+
+/** A collection of `CommentVersion` as returned by Azure DevOps. */
+model CommentVersionList {
+  count?: int32;
+  value?: CommentVersion[];
+}
+
+/** A collection of `WorkItemTypeCategory` as returned by Azure DevOps. */
+model WorkItemTypeCategoryList {
+  count?: int32;
+  value?: WorkItemTypeCategory[];
+}
+
+/** A collection of `WorkItemType` as returned by Azure DevOps. */
+model WorkItemTypeList {
+  count?: int32;
+  value?: WorkItemType[];
+}
+
+/** A collection of `WorkItemTypeFieldWithReferences` as returned by Azure DevOps. */
+model WorkItemTypeFieldWithReferencesList {
+  count?: int32;
+  value?: WorkItemTypeFieldWithReferences[];
+}
+
+/** A collection of `WorkItemStateColor` as returned by Azure DevOps. */
+model WorkItemStateColorList {
+  count?: int32;
+  value?: WorkItemStateColor[];
+}
+
+/** A collection of `WorkItemTemplateReference` as returned by Azure DevOps. */
+model WorkItemTemplateReferenceList {
+  count?: int32;
+  value?: WorkItemTemplateReference[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1730,7 +1862,7 @@ interface ArtifactLinkTypes {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkArtifactLink[]>;
+  ): WorkArtifactLinkList;
 }
 
 interface WorkItemIcons {
@@ -1747,7 +1879,7 @@ interface WorkItemIcons {
     @extension("x-ms-required", false) @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemIcon[]>;
+  ): WorkItemIconList;
 
   /** Get a work item icon given the friendly name and icon color. */
   @tag("Work Item Icons")
@@ -1797,7 +1929,7 @@ interface WorkItemRelationTypes {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemRelationType[]>;
+  ): WorkItemRelationTypeList;
 
   /** Gets the work item relation type definition. */
   @tag("Work Item Relation Types")
@@ -1838,7 +1970,7 @@ interface WorkItemTransitions {
     @query(#{ explode: true }) action?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemNextStateOnTransition[]>;
+  ): WorkItemNextStateOnTransitionList;
 }
 
 interface AccountMyWorkRecentActivity {
@@ -1855,7 +1987,7 @@ interface AccountMyWorkRecentActivity {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<AccountRecentActivityWorkItemModel2[]>;
+  ): AccountRecentActivityWorkItemModel2List;
 }
 
 interface GithubConnections {
@@ -1875,7 +2007,7 @@ interface GithubConnections {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitHubConnectionModel[]>;
+  ): GitHubConnectionModelList;
 
   /** Gets a list of repos within specified github connection. */
   @tag("Github Connections")
@@ -1894,7 +2026,7 @@ interface GithubConnections {
 
     @format("uuid") @path connectionId: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<GitHubConnectionRepoModel[]>;
+  ): GitHubConnectionRepoModelList;
 
   /** Add/remove list of repos within specified github connection. */
   @tag("Github Connections")
@@ -1914,7 +2046,7 @@ interface GithubConnections {
     @format("uuid") @path connectionId: string,
     ...Parameters.`api-Version-preview`.`1`,
     @body body: GitHubConnectionReposBatchRequest,
-  ): Body<GitHubConnectionRepoModel[]>;
+  ): GitHubConnectionRepoModelList;
 }
 
 interface ArtifactUriQueryOperations {
@@ -2078,7 +2210,7 @@ interface ClassificationNodes {
     @query(#{ explode: true }) $depth?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemClassificationNode[]>;
+  ): WorkItemClassificationNodeList;
 
   /** Delete an existing classification node. */
   @tag("Classification Nodes")
@@ -2253,7 +2385,7 @@ interface Fields {
     $expand?: "none" | "extensionFields" | "includeDeleted",
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WorkItemField2[]>;
+  ): WorkItemField2List;
 
   /** Create a new field. */
   @tag("Fields")
@@ -2407,7 +2539,7 @@ interface Queries {
     @query(#{ explode: true }) $includeDeleted?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<QueryHierarchyItem[]>;
+  ): QueryHierarchyItemList;
 
   /** Delete a query or a folder. This deletes any permission change on the deleted query or folder and any of its descendants if it is a folder. It is important to note that the deleted permission changes cannot be recovered upon undeleting the query or folder. */
   @tag("Queries")
@@ -2551,7 +2683,7 @@ interface Queries {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: QueryBatchGetRequest,
-  ): Body<QueryHierarchyItem[]>;
+  ): QueryHierarchyItemList;
 }
 
 interface Recyclebin {
@@ -2571,7 +2703,7 @@ interface Recyclebin {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemDeleteShallowReference[]>;
+  ): WorkItemDeleteShallowReferenceList;
 
   /** Destroys the specified work item permanently from the Recycle Bin. This action can not be undone. */
   @tag("Recyclebin")
@@ -2834,7 +2966,7 @@ interface Tags {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemTagDefinition[]>;
+  ): WorkItemTagDefinitionList;
 
   /** Delete the tag for the project. Please note, that the deleted tag will be removed from all Work Items as well as Pull Requests. */
   @tag("Tags")
@@ -2981,7 +3113,7 @@ interface WorkItems {
     errorPolicy?: "fail" | "omit",
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WorkItem[]>;
+  ): WorkItemList;
 
   /** Returns a single work item from a template. */
   @tag("Work Items")
@@ -3214,7 +3346,7 @@ interface WorkItems {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: WorkItemBatchGetRequest,
-  ): Body<WorkItem[]>;
+  ): WorkItemList;
 
   /** Deletes specified work items and sends them to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. WARNING: If the destroy parameter is set to true, work items deleted by this command will NOT go to recycle-bin and there is no way to restore/recover them after deletion. */
   @tag("Work Items")
@@ -3272,7 +3404,7 @@ interface Revisions {
     @query(#{ explode: true })
     $expand?: "none" | "relations" | "fields" | "links" | "all",
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WorkItem[]>;
+  ): WorkItemList;
 
   /** Returns a fully hydrated work item for the requested revision */
   @tag("Revisions")
@@ -3332,7 +3464,7 @@ interface Updates {
     @query(#{ explode: true }) $top?: int32,
     @query(#{ explode: true }) $skip?: int32,
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WorkItemUpdate[]>;
+  ): WorkItemUpdateList;
 
   /** Returns a single update for a work item */
   @tag("Updates")
@@ -3552,7 +3684,7 @@ interface CommentsReactions {
     @path commentId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<CommentReaction[]>;
+  ): CommentReactionList;
 
   /** Deletes an existing reaction on a comment. */
   @tag("Comments Reactions")
@@ -3682,7 +3814,7 @@ interface CommentReactionsEngagedUsers {
     @query(#{ explode: true }) $top?: int32,
     @query(#{ explode: true }) $skip?: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<IdentityRef[]>;
+  ): IdentityRefList;
 }
 
 interface CommentsVersions {
@@ -3703,7 +3835,7 @@ interface CommentsVersions {
     @path workItemId: int32,
     @path commentId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<CommentVersion[]>;
+  ): CommentVersionList;
 
   @tag("Comments Versions")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -3743,7 +3875,7 @@ interface WorkItemTypeCategories {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemTypeCategory[]>;
+  ): WorkItemTypeCategoryList;
 
   /** Get specific work item type category by name. */
   @tag("Work Item Type Categories")
@@ -3784,7 +3916,7 @@ interface WorkItemTypes {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemType[]>;
+  ): WorkItemTypeList;
 
   /** Returns a work item type definition. */
   @tag("Work Item Types")
@@ -3844,7 +3976,7 @@ interface WorkItemTypesField {
     $expand?: "none" | "allowedValues" | "dependentFields" | "all",
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<WorkItemTypeFieldWithReferences[]>;
+  ): WorkItemTypeFieldWithReferencesList;
 
   /** Get a field for a work item type with detailed references. */
   @tag("Work Item Types Field")
@@ -3906,7 +4038,7 @@ interface WorkItemTypeStates {
     @path type: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemStateColor[]>;
+  ): WorkItemStateColorList;
 }
 
 interface Templates {
@@ -3932,7 +4064,7 @@ interface Templates {
     @query(#{ explode: true }) workitemtypename?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemTemplateReference[]>;
+  ): WorkItemTemplateReferenceList;
 
   /** Creates a template */
   @tag("Templates")

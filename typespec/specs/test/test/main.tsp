@@ -5183,6 +5183,60 @@ model YamlReleaseReference {
   stagesToSkip?: string;
 }
 
+/** A collection of `BuildCoverage` as returned by Azure DevOps. */
+model BuildCoverageList {
+  count?: int32;
+  value?: BuildCoverage[];
+}
+
+/** A collection of `TestPoint` as returned by Azure DevOps. */
+model TestPointList {
+  count?: int32;
+  value?: TestPoint[];
+}
+
+/** A collection of `SuiteTestCase` as returned by Azure DevOps. */
+model SuiteTestCaseList {
+  count?: int32;
+  value?: SuiteTestCase[];
+}
+
+/** A collection of `TestRun` as returned by Azure DevOps. */
+model TestRunList {
+  count?: int32;
+  value?: TestRun[];
+}
+
+/** A collection of `TestAttachment` as returned by Azure DevOps. */
+model TestAttachmentList {
+  count?: int32;
+  value?: TestAttachment[];
+}
+
+/** A collection of `TestRunCoverage` as returned by Azure DevOps. */
+model TestRunCoverageList {
+  count?: int32;
+  value?: TestRunCoverage[];
+}
+
+/** A collection of `TestCaseResult` as returned by Azure DevOps. */
+model TestCaseResultList {
+  count?: int32;
+  value?: TestCaseResult[];
+}
+
+/** A collection of `TestIterationDetailsModel` as returned by Azure DevOps. */
+model TestIterationDetailsModelList {
+  count?: int32;
+  value?: TestIterationDetailsModel[];
+}
+
+/** A collection of `TestSession` as returned by Azure DevOps. */
+model TestSessionList {
+  count?: int32;
+  value?: TestSession[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -5231,7 +5285,7 @@ interface CodeCoverage {
     @query(#{ explode: true }) flags: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BuildCoverage[]>;
+  ): BuildCoverageList;
 
   /** Get code coverage data for a test run */
   @tag("Code Coverage")
@@ -5255,7 +5309,7 @@ interface CodeCoverage {
     @query(#{ explode: true }) flags: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestRunCoverage[]>;
+  ): TestRunCoverageList;
 }
 
 interface Points {
@@ -5302,7 +5356,7 @@ interface Points {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<TestPoint[]>;
+  ): TestPointList;
 
   /** Get a test point. */
   @tag("Points")
@@ -5362,7 +5416,7 @@ interface Points {
 
     /** Data to update. */
     @body body: PointUpdateModel,
-  ): Body<TestPoint[]>;
+  ): TestPointList;
 
   /** Get test points using query. */
   @tag("Points")
@@ -5415,7 +5469,7 @@ interface TestSuites {
     @path suiteId: int32,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<SuiteTestCase[]>;
+  ): SuiteTestCaseList;
 
   /** The test points associated with the test cases are removed from the test suite. The test case work item is not deleted from the system. See test cases resource to delete a test case permanently. */
   @tag("Test  Suites")
@@ -5499,7 +5553,7 @@ interface TestSuites {
 
     /** Model for updation of the properties of test case suite association. */
     @body body: SuiteTestCaseUpdateModel,
-  ): Body<SuiteTestCase[]>;
+  ): SuiteTestCaseList;
 
   /** Add test cases to suite. */
   @tag("Test  Suites")
@@ -5526,7 +5580,7 @@ interface TestSuites {
     @path testCaseIds: string,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<SuiteTestCase[]>;
+  ): SuiteTestCaseList;
 }
 
 interface ResultRetentionSettingsOperations {
@@ -5633,7 +5687,7 @@ interface Runs {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<TestRun[]>;
+  ): TestRunList;
 
   /** Create new test run. */
   @tag("Runs")
@@ -5767,7 +5821,7 @@ interface Attachments {
     @path runId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestAttachment[]>;
+  ): TestAttachmentList;
 
   /** Attach a file to a test run. */
   @tag("Attachments")
@@ -5847,7 +5901,7 @@ interface Attachments {
     @path testCaseResultId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestAttachment[]>;
+  ): TestAttachmentList;
 
   /** Attach a file to a test result. */
   @tag("Attachments")
@@ -5961,7 +6015,7 @@ interface Results {
     @format("array (TestOutcome)") @query(#{ explode: true }) outcomes?: string,
 
     ...Parameters.`api-Version-preview`.`6`,
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   /** Update test results in a test run. */
   @tag("Results")
@@ -5985,7 +6039,7 @@ interface Results {
 
     /** List of test results to update. */
     @body body: TestCaseResult[],
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   /** Add test results to a test run. */
   @tag("Results")
@@ -6009,7 +6063,7 @@ interface Results {
 
     /** List of test results to add. */
     @body body: TestCaseResult[],
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   /** Get a test result for a test run. */
   @tag("Results")
@@ -6082,7 +6136,7 @@ interface Iterations {
     @query(#{ explode: true }) includeActionResults?: boolean,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<TestIterationDetailsModel[]>;
+  ): TestIterationDetailsModelList;
 
   /** Get iteration for a result */
   @tag("Iterations")
@@ -6208,7 +6262,7 @@ interface Session {
     @query(#{ explode: true }) includeOnlyCompletedSessions?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestSession[]>;
+  ): TestSessionList;
 
   /** Update a test session */
   @tag("Session")

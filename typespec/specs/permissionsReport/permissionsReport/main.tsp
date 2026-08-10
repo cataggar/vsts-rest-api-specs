@@ -131,6 +131,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `PermissionsReport` as returned by Azure DevOps. */
+model PermissionsReportList {
+  count?: int32;
+  value?: PermissionsReport[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -154,7 +160,7 @@ interface PermissionsReportOperations {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PermissionsReport[]>;
+  ): PermissionsReportList;
 
   /** Request a permissions report to be created asyncronously */
   @tag("Permissions Report")

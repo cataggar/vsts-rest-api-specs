@@ -7,6 +7,7 @@ import {
   normalizeOperationIds,
   sanitizeDocStrings,
   stripRootTags,
+  wrapArrayResponses,
 } from "./patcher.mjs";
 
 test("sanitizeDocStrings collapses newlines and escapes quotes", () => {
@@ -219,4 +220,77 @@ test("declareContinuationTokenHeader resolves a referenced token parameter schem
 test("declareContinuationTokenHeader ignores operations without the token parameter", () => {
   const doc = { paths: { "/projects": { get: { parameters: [], responses: { 200: {} } } } } };
   assert.equal(declareContinuationTokenHeader(doc).declared, 0);
+});
+const arrayResponse = (ref) => ({
+  responses: { 200: { content: { "application/json": { schema: { type: "array", items: { $ref: ref } } } } } },
+});
+
+test("wrapArrayResponses replaces an array response with a count/value envelope", () => {
+  const doc = {
+    components: { schemas: { TeamProjectReference: { type: "object" } } },
+    paths: { "/projects": { get: arrayResponse("#/components/schemas/TeamProjectReference") } },
+  };
+  assert.equal(wrapArrayResponses(doc), 1);
+  assert.deepEqual(doc.paths["/projects"].get.responses[200].content["application/json"].schema, {
+    $ref: "#/components/schemas/TeamProjectReferenceList",
+  });
+  const envelope = doc.components.schemas.TeamProjectReferenceList;
+  assert.equal(envelope.type, "object");
+  assert.deepEqual(envelope.properties.count, { type: "integer", format: "int32" });
+  assert.deepEqual(envelope.properties.value, {
+    type: "array",
+    items: { $ref: "#/components/schemas/TeamProjectReference" },
+  });
+  // `count` is absent from some collections, so nothing may be required.
+  assert.equal(envelope.required, undefined);
+});
+
+test("wrapArrayResponses reuses one envelope across operations", () => {
+  const ref = "#/components/schemas/GitRepository";
+  const doc = {
+    components: { schemas: { GitRepository: { type: "object" } } },
+    paths: {
+      "/repos": { get: arrayResponse(ref) },
+      "/repos/recycle": { get: arrayResponse(ref) },
+    },
+  };
+  assert.equal(wrapArrayResponses(doc), 2);
+  assert.equal(Object.keys(doc.components.schemas).length, 2);
+});
+
+test("wrapArrayResponses leaves arrays of primitives alone", () => {
+  const doc = {
+    paths: {
+      "/names": {
+        get: { responses: { 200: { content: { "application/json": { schema: { type: "array", items: { type: "string" } } } } } } },
+      },
+    },
+  };
+  assert.equal(wrapArrayResponses(doc), 0);
+  assert.deepEqual(doc.paths["/names"].get.responses[200].content["application/json"].schema, {
+    type: "array",
+    items: { type: "string" },
+  });
+});
+
+test("wrapArrayResponses leaves non-array responses alone", () => {
+  const doc = {
+    paths: {
+      "/one": {
+        get: { responses: { 200: { content: { "application/json": { schema: { $ref: "#/components/schemas/Project" } } } } } },
+      },
+    },
+  };
+  assert.equal(wrapArrayResponses(doc), 0);
+});
+
+test("wrapArrayResponses does not clobber a conflicting existing envelope", () => {
+  const conflicting = { type: "object", properties: { value: { type: "array", items: { $ref: "#/components/schemas/Other" } } } };
+  const doc = {
+    components: { schemas: { Build: { type: "object" }, BuildList: conflicting } },
+    paths: { "/builds": { get: arrayResponse("#/components/schemas/Build") } },
+  };
+  assert.equal(wrapArrayResponses(doc), 0);
+  assert.equal(doc.components.schemas.BuildList, conflicting);
+  assert.equal(doc.paths["/builds"].get.responses[200].content["application/json"].schema.type, "array");
 });

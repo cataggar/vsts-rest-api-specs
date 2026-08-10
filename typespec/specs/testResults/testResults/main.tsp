@@ -2784,6 +2784,114 @@ model WorkItemToTestLinks {
   workItem?: WorkItemReference;
 }
 
+/** A collection of `SourceViewBuildCoverage` as returned by Azure DevOps. */
+model SourceViewBuildCoverageList {
+  count?: int32;
+  value?: SourceViewBuildCoverage[];
+}
+
+/** A collection of `CustomTestFieldDefinition` as returned by Azure DevOps. */
+model CustomTestFieldDefinitionList {
+  count?: int32;
+  value?: CustomTestFieldDefinition[];
+}
+
+/** A collection of `FieldDetailsForTestResults` as returned by Azure DevOps. */
+model FieldDetailsForTestResultsList {
+  count?: int32;
+  value?: FieldDetailsForTestResults[];
+}
+
+/** A collection of `TestCaseResult` as returned by Azure DevOps. */
+model TestCaseResultList {
+  count?: int32;
+  value?: TestCaseResult[];
+}
+
+/** A collection of `TestResultMetaData` as returned by Azure DevOps. */
+model TestResultMetaDataList {
+  count?: int32;
+  value?: TestResultMetaData[];
+}
+
+/** A collection of `WorkItemReference` as returned by Azure DevOps. */
+model WorkItemReferenceList {
+  count?: int32;
+  value?: WorkItemReference[];
+}
+
+/** A collection of `ShallowTestCaseResult` as returned by Azure DevOps. */
+model ShallowTestCaseResultList {
+  count?: int32;
+  value?: ShallowTestCaseResult[];
+}
+
+/** A collection of `TestResultSummary` as returned by Azure DevOps. */
+model TestResultSummaryList {
+  count?: int32;
+  value?: TestResultSummary[];
+}
+
+/** A collection of `TestSummaryForWorkItem` as returned by Azure DevOps. */
+model TestSummaryForWorkItemList {
+  count?: int32;
+  value?: TestSummaryForWorkItem[];
+}
+
+/** A collection of `AggregatedDataForResultTrend` as returned by Azure DevOps. */
+model AggregatedDataForResultTrendList {
+  count?: int32;
+  value?: AggregatedDataForResultTrend[];
+}
+
+/** A collection of `TestRun` as returned by Azure DevOps. */
+model TestRunList {
+  count?: int32;
+  value?: TestRun[];
+}
+
+/** A collection of `TestAttachment` as returned by Azure DevOps. */
+model TestAttachmentList {
+  count?: int32;
+  value?: TestAttachment[];
+}
+
+/** A collection of `TestRunCoverage` as returned by Azure DevOps. */
+model TestRunCoverageList {
+  count?: int32;
+  value?: TestRunCoverage[];
+}
+
+/** A collection of `TestMessageLogDetails` as returned by Azure DevOps. */
+model TestMessageLogDetailsList {
+  count?: int32;
+  value?: TestMessageLogDetails[];
+}
+
+/** A collection of `TestLog` as returned by Azure DevOps. */
+model TestLogList {
+  count?: int32;
+  value?: TestLog[];
+}
+
+/** A collection of `TestTag` as returned by Azure DevOps. */
+model TestTagList {
+  count?: int32;
+  value?: TestTag[];
+}
+
+/** A collection of `TestLogStoreAttachment` as returned by Azure DevOps. */
+model TestLogStoreAttachmentList {
+  count?: int32;
+  value?: TestLogStoreAttachment[];
+}
+
+/** A collection of `TestResultFailureType` as returned by Azure DevOps. */
+model TestResultFailureTypeList {
+  count?: int32;
+  value?: TestResultFailureType[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -2866,7 +2974,7 @@ interface Codecoverage {
 
     @query(#{ explode: true }) buildId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SourceViewBuildCoverage[]>;
+  ): SourceViewBuildCoverageList;
 
   @tag("Codecoverage")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -2885,7 +2993,7 @@ interface Codecoverage {
     @path runId: int32,
     @query(#{ explode: true }) flags: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestRunCoverage[]>;
+  ): TestRunCoverageList;
 }
 
 interface Filecoverage {
@@ -2987,7 +3095,7 @@ interface Extensionfields {
     scopeFilter: "none" | "testRun" | "testResult" | "testRunAndTestResult" | "system" | "all",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<CustomTestFieldDefinition[]>;
+  ): CustomTestFieldDefinitionList;
 
   /** Returns details of the custom test field which is updated. */
   @tag("Extensionfields")
@@ -3029,7 +3137,7 @@ interface Extensionfields {
 
     /** NewFields is an array of type CustomTestFieldDefinition. */
     @body body: CustomTestFieldDefinition[],
-  ): Body<CustomTestFieldDefinition[]>;
+  ): CustomTestFieldDefinitionList;
 
   /** Returns details of the custom test field for the specified testExtensionFieldId. */
   @tag("Extensionfields")
@@ -3167,7 +3275,7 @@ interface Resultgroupsbybuild {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: FieldDetailsForTestResults[];
+    @body body: FieldDetailsForTestResultsList;
   };
 }
 
@@ -3196,7 +3304,7 @@ interface Resultgroupsbyrelease {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: FieldDetailsForTestResults[];
+    @body body: FieldDetailsForTestResultsList;
   };
 }
 
@@ -3239,7 +3347,7 @@ interface Results {
     @query(#{ explode: true }) $top?: int32,
     ...Parameters.`api-Version-preview`.`2`,
     @body body: QueryModel,
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   @tag("Results")
   @extension("x-ms-docs-override-version", "7.2-preview.2")
@@ -3279,7 +3387,7 @@ interface Results {
     @format("array (TestOutcome)") @query(#{ explode: true }) outcomes?: string,
     @query(#{ explode: true }) $newTestsOnly?: boolean,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   @tag("Results")
   @extension("x-ms-docs-override-version", "7.2-preview.2")
@@ -3298,7 +3406,7 @@ interface Results {
     @path runId: int32,
     ...Parameters.`api-Version-preview`.`2`,
     @body body: TestCaseResult[],
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   @tag("Results")
   @extension("x-ms-docs-override-version", "7.2-preview.2")
@@ -3317,7 +3425,7 @@ interface Results {
     @path runId: int32,
     ...Parameters.`api-Version-preview`.`2`,
     @body body: TestCaseResult[],
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 
   @tag("Results")
   @extension("x-ms-docs-override-version", "7.2-preview.2")
@@ -3414,7 +3522,7 @@ interface ResultMetaData {
 
     /** TestCaseReference Ids of the test Result to be queried, comma separated list of valid ids (limit no. of ids 200). */
     @body body: string[],
-  ): Body<TestResultMetaData[]>;
+  ): TestResultMetaDataList;
 
   /** Update properties of test result meta data */
   @tag("Result Meta Data")
@@ -3489,7 +3597,7 @@ interface Workitems {
     @query(#{ explode: true }) days?: int32,
     @query(#{ explode: true }) $workItemCount?: int32,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemReference[]>;
+  ): WorkItemReferenceList;
 
   @tag("Workitems")
   @extension("x-ms-docs-override-version", "7.2-preview.2")
@@ -3508,7 +3616,7 @@ interface Workitems {
     @path runId: int32,
     @path testCaseResultId: int32,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WorkItemReference[]>;
+  ): WorkItemReferenceList;
 
   @tag("Workitems")
   @extension("x-ms-docs-override-version", "7.2-preview.2")
@@ -3573,7 +3681,7 @@ interface Resultsbybuild {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: ShallowTestCaseResult[];
+    @body body: ShallowTestCaseResultList;
   };
 }
 
@@ -3618,7 +3726,7 @@ interface Resultsbypipeline {
     @header continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ShallowTestCaseResult[]>;
+  ): ShallowTestCaseResultList;
 }
 
 interface Resultsbyrelease {
@@ -3647,7 +3755,7 @@ interface Resultsbyrelease {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: ShallowTestCaseResult[];
+    @body body: ShallowTestCaseResultList;
   };
 }
 
@@ -3837,7 +3945,7 @@ interface Resultsummarybyrelease {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: ReleaseReference[],
-  ): Body<TestResultSummary[]>;
+  ): TestResultSummaryList;
 }
 
 interface Resultsummarybyrequirement {
@@ -3858,7 +3966,7 @@ interface Resultsummarybyrequirement {
     @format("array (int32)") @query(#{ explode: true }) workItemIds?: string,
     ...Parameters.`api-Version-preview`.`1`,
     @body body: TestResultsContext,
-  ): Body<TestSummaryForWorkItem[]>;
+  ): TestSummaryForWorkItemList;
 }
 
 interface ResultTrendByBuild {
@@ -3878,7 +3986,7 @@ interface ResultTrendByBuild {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: TestResultTrendFilter,
-  ): Body<AggregatedDataForResultTrend[]>;
+  ): AggregatedDataForResultTrendList;
 }
 
 interface ResultTrendByRelease {
@@ -3898,7 +4006,7 @@ interface ResultTrendByRelease {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: TestResultTrendFilter,
-  ): Body<AggregatedDataForResultTrend[]>;
+  ): AggregatedDataForResultTrendList;
 }
 
 interface Runs {
@@ -3925,7 +4033,7 @@ interface Runs {
     @query(#{ explode: true }) $skip?: int32,
     @query(#{ explode: true }) $top?: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestRun[]>;
+  ): TestRunList;
 
   @tag("Runs")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -4020,7 +4128,7 @@ interface Attachments {
 
     @path runId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestAttachment[]>;
+  ): TestAttachmentList;
 
   @tag("Attachments")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -4105,7 +4213,7 @@ interface Attachments {
     @path runId: int32,
     @path testCaseResultId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestAttachment[]>;
+  ): TestAttachmentList;
 
   @tag("Attachments")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -4197,7 +4305,7 @@ interface MessageLogs {
     @path runId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestMessageLogDetails[]>;
+  ): TestMessageLogDetailsList;
 }
 
 interface ResultDocument {
@@ -4270,7 +4378,7 @@ interface Testlog {
     @header continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestLog[]>;
+  ): TestLogList;
 
   /** Get list of test run attachments reference */
   @tag("Testlog")
@@ -4317,7 +4425,7 @@ interface Testlog {
     @header continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestLog[]>;
+  ): TestLogList;
 
   /** Get list of build attachments reference */
   @tag("Testlog")
@@ -4364,7 +4472,7 @@ interface Testlog {
     @header continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestLog[]>;
+  ): TestLogList;
 }
 
 interface Testlogstoreendpoint {
@@ -4614,7 +4722,7 @@ interface Bugs {
     @path runId: int32,
     @path testCaseResultId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemReference[]>;
+  ): WorkItemReferenceList;
 }
 
 interface SimilarTestResults {
@@ -4649,7 +4757,7 @@ interface SimilarTestResults {
     @header continuationToken?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestCaseResult[]>;
+  ): TestCaseResultList;
 }
 
 interface Runsummary {
@@ -4721,7 +4829,7 @@ interface Tags {
 
     /** TestTagsUpdateModel */
     @body body: TestTagsUpdateModel,
-  ): Body<TestTag[]>;
+  ): TestTagList;
 
   /** Get all the tags in a build. */
   @tag("Tags")
@@ -4742,7 +4850,7 @@ interface Tags {
     @query(#{ explode: true }) buildId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestTag[]>;
+  ): TestTagList;
 }
 
 interface Testattachments {
@@ -4789,7 +4897,7 @@ interface Testattachments {
     @path runId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestLogStoreAttachment[]>;
+  ): TestLogStoreAttachmentList;
 
   /** Creates an attachment in the LogStore for the specified runId. */
   @tag("Testattachments")
@@ -4959,7 +5067,7 @@ interface Testfailuretype {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestResultFailureType[]>;
+  ): TestResultFailureTypeList;
 
   /** Creates a new test failure type */
   @tag("Testfailuretype")

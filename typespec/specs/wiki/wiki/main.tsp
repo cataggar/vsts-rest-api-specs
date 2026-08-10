@@ -638,6 +638,18 @@ model WikiV2 {
   versions?: GitVersionDescriptor[];
 }
 
+/** A collection of `WikiV2` as returned by Azure DevOps. */
+model WikiV2List {
+  count?: int32;
+  value?: WikiV2[];
+}
+
+/** A collection of `WikiPageDetail` as returned by Azure DevOps. */
+model WikiPageDetailList {
+  count?: int32;
+  value?: WikiPageDetail[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -668,7 +680,7 @@ interface Wikis {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<WikiV2[]>;
+  ): WikiV2List;
 
   /** Creates the wiki resource. */
   @tag("Wikis")
@@ -1410,5 +1422,5 @@ interface PagesBatch {
 
     /** Wiki batch page request. */
     @body body: WikiPagesBatchRequest,
-  ): Body<WikiPageDetail[]>;
+  ): WikiPageDetailList;
 }

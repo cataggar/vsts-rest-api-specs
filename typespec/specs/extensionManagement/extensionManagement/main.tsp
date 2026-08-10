@@ -1286,6 +1286,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `InstalledExtension` as returned by Azure DevOps. */
+model InstalledExtensionList {
+  count?: int32;
+  value?: InstalledExtension[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1323,7 +1329,7 @@ interface InstalledExtensions {
 
     @query(#{ explode: true }) includeInstallationIssues?: boolean,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<InstalledExtension[]>;
+  ): InstalledExtensionList;
 
   /** Update an installed extension. Typically this API is used to enable or disable an extension. */
   @tag("Installed Extensions")

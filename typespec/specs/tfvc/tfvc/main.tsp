@@ -823,6 +823,42 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `TfvcChange` as returned by Azure DevOps. */
+model TfvcChangeList {
+  count?: int32;
+  value?: TfvcChange[];
+}
+
+/** A collection of `AssociatedWorkItem` as returned by Azure DevOps. */
+model AssociatedWorkItemList {
+  count?: int32;
+  value?: AssociatedWorkItem[];
+}
+
+/** A collection of `TfvcChangesetRef` as returned by Azure DevOps. */
+model TfvcChangesetRefList {
+  count?: int32;
+  value?: TfvcChangesetRef[];
+}
+
+/** A collection of `TfvcItem` as returned by Azure DevOps. */
+model TfvcItemList {
+  count?: int32;
+  value?: TfvcItem[];
+}
+
+/** A collection of `TfvcBranchRef` as returned by Azure DevOps. */
+model TfvcBranchRefList {
+  count?: int32;
+  value?: TfvcBranchRef[];
+}
+
+/** A collection of `TfvcLabelRef` as returned by Azure DevOps. */
+model TfvcLabelRefList {
+  count?: int32;
+  value?: TfvcLabelRef[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -866,7 +902,7 @@ interface Changesets {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TfvcChange[];
+    @body body: TfvcChangeList;
   };
 
   /** Retrieves the work items associated with a particular changeset. */
@@ -885,7 +921,7 @@ interface Changesets {
     @extension("x-ms-required", false) @path id: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AssociatedWorkItem[]>;
+  ): AssociatedWorkItemList;
 
   /** Returns changesets for a given list of changeset Ids. */
   @tag("Changesets")
@@ -903,7 +939,7 @@ interface Changesets {
 
     /** List of changeset IDs. */
     @body body: TfvcChangesetsRequestData,
-  ): Body<TfvcChangesetRef[]>;
+  ): TfvcChangesetRefList;
 
   /** Retrieve Tfvc Changesets Note: This is a new version of the GetChangesets API that doesn't expose the unneeded queryParams present in the 1.0 version of the API. */
   @tag("Changesets")
@@ -960,7 +996,7 @@ interface Changesets {
     @query(#{ name: "searchCriteria.toId", explode: true }) searchCriteriaToId?: int32,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<TfvcChangesetRef[]>;
+  ): TfvcChangesetRefList;
 
   /** Create a new changeset. Accepts TfvcChangeset as JSON body */
   @tag("Changesets")
@@ -1077,7 +1113,7 @@ interface Labels {
     @query(#{ explode: true }) $skip?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TfvcItem[]>;
+  ): TfvcItemList;
 
   /** Get a collection of shallow label references. */
   @tag("Labels")
@@ -1119,7 +1155,7 @@ interface Labels {
     @query(#{ explode: true }) $skip?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TfvcLabelRef[]>;
+  ): TfvcLabelRefList;
 
   /** Get a single deep label. */
   @tag("Labels")
@@ -1223,7 +1259,7 @@ interface Shelvesets {
     @query(#{ explode: true }) $skip?: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TfvcChange[]>;
+  ): TfvcChangeList;
 
   /** Get work items associated with a shelveset. */
   @tag("Shelvesets")
@@ -1241,7 +1277,7 @@ interface Shelvesets {
     @query(#{ explode: true }) shelvesetId: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AssociatedWorkItem[]>;
+  ): AssociatedWorkItemList;
 }
 
 interface Branches {
@@ -1270,7 +1306,7 @@ interface Branches {
     @query(#{ explode: true }) includeLinks?: boolean,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TfvcBranchRef[]>;
+  ): TfvcBranchRefList;
 }
 
 interface Items {
@@ -1390,5 +1426,5 @@ interface Items {
       | "tip"
       | "mergeSource",
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TfvcItem[]>;
+  ): TfvcItemList;
 }

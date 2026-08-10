@@ -3532,6 +3532,114 @@ model YamlProcess {
   yamlFilename?: string;
 }
 
+/** A collection of `BuildController` as returned by Azure DevOps. */
+model BuildControllerList {
+  count?: int32;
+  value?: BuildController[];
+}
+
+/** A collection of `DefinitionResourceReference` as returned by Azure DevOps. */
+model DefinitionResourceReferenceList {
+  count?: int32;
+  value?: DefinitionResourceReference[];
+}
+
+/** A collection of `Build` as returned by Azure DevOps. */
+model BuildList {
+  count?: int32;
+  value?: Build[];
+}
+
+/** A collection of `BuildArtifact` as returned by Azure DevOps. */
+model BuildArtifactList {
+  count?: int32;
+  value?: BuildArtifact[];
+}
+
+/** A collection of `Attachment` as returned by Azure DevOps. */
+model AttachmentList {
+  count?: int32;
+  value?: Attachment[];
+}
+
+/** A collection of `Change` as returned by Azure DevOps. */
+model ChangeList {
+  count?: int32;
+  value?: Change[];
+}
+
+/** A collection of `RetentionLease` as returned by Azure DevOps. */
+model RetentionLeaseList {
+  count?: int32;
+  value?: RetentionLease[];
+}
+
+/** A collection of `BuildLog` as returned by Azure DevOps. */
+model BuildLogList {
+  count?: int32;
+  value?: BuildLog[];
+}
+
+/** A collection of `ResourceRef` as returned by Azure DevOps. */
+model ResourceRefList {
+  count?: int32;
+  value?: ResourceRef[];
+}
+
+/** A collection of `BuildDefinitionReference` as returned by Azure DevOps. */
+model BuildDefinitionReferenceList {
+  count?: int32;
+  value?: BuildDefinitionReference[];
+}
+
+/** A collection of `BuildMetric` as returned by Azure DevOps. */
+model BuildMetricList {
+  count?: int32;
+  value?: BuildMetric[];
+}
+
+/** A collection of `BuildDefinitionRevision` as returned by Azure DevOps. */
+model BuildDefinitionRevisionList {
+  count?: int32;
+  value?: BuildDefinitionRevision[];
+}
+
+/** A collection of `BuildDefinitionTemplate` as returned by Azure DevOps. */
+model BuildDefinitionTemplateList {
+  count?: int32;
+  value?: BuildDefinitionTemplate[];
+}
+
+/** A collection of `Folder` as returned by Azure DevOps. */
+model FolderList {
+  count?: int32;
+  value?: Folder[];
+}
+
+/** A collection of `BuildOptionDefinition` as returned by Azure DevOps. */
+model BuildOptionDefinitionList {
+  count?: int32;
+  value?: BuildOptionDefinition[];
+}
+
+/** A collection of `SourceProviderAttributes` as returned by Azure DevOps. */
+model SourceProviderAttributesList {
+  count?: int32;
+  value?: SourceProviderAttributes[];
+}
+
+/** A collection of `SourceRepositoryItem` as returned by Azure DevOps. */
+model SourceRepositoryItemList {
+  count?: int32;
+  value?: SourceRepositoryItem[];
+}
+
+/** A collection of `RepositoryWebhook` as returned by Azure DevOps. */
+model RepositoryWebhookList {
+  count?: int32;
+  value?: RepositoryWebhook[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -3572,7 +3680,7 @@ interface Controllers {
 
     @query(#{ explode: true }) name?: string,
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<BuildController[]>;
+  ): BuildControllerList;
 
   /** Gets a controller */
   @tag("Controllers")
@@ -3697,7 +3805,7 @@ interface Authorizedresources {
     @query(#{ explode: true }) type?: string,
     @query(#{ explode: true }) id?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<DefinitionResourceReference[]>;
+  ): DefinitionResourceReferenceList;
 
   @tag("Authorizedresources")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -3715,7 +3823,7 @@ interface Authorizedresources {
 
     ...Parameters.`api-Version-preview`.`1`,
     @body body: DefinitionResourceReference[],
-  ): Body<DefinitionResourceReference[]>;
+  ): DefinitionResourceReferenceList;
 }
 
 interface Builds {
@@ -3941,7 +4049,7 @@ interface Builds {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: Build[];
+    @body body: BuildList;
   };
 
   /** Updates multiple builds. */
@@ -3963,7 +4071,7 @@ interface Builds {
 
     /** The builds to update. */
     @body body: Build[],
-  ): Body<Build[]>;
+  ): BuildList;
 
   /** Queues a build */
   @tag("Builds")
@@ -4084,7 +4192,7 @@ interface Builds {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: Change[];
+    @body body: ChangeList;
   };
 
   /** Gets all retention leases that apply to a specific build. */
@@ -4106,7 +4214,7 @@ interface Builds {
     @path buildId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<RetentionLease[]>;
+  ): RetentionLeaseList;
 
   /** Gets the logs for a build. */
   @tag("Builds")
@@ -4130,9 +4238,9 @@ interface Builds {
   ):
     | {
         @header contentType: "application/zip";
-        @body body: BuildLog[];
+        @body body: BuildLogList;
       }
-    | Body<BuildLog[]>;
+    | BuildLogList;
 
   /** Gets an individual log file for a build. */
   @tag("Builds")
@@ -4195,7 +4303,7 @@ interface Builds {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ResourceRef[]>;
+  ): ResourceRefList;
 
   /** Gets the work items associated with a build, filtered to specific commits. */
   @tag("Builds")
@@ -4222,7 +4330,7 @@ interface Builds {
 
     /** A comma-delimited list of commit IDs. */
     @body body: string[],
-  ): Body<ResourceRef[]>;
+  ): ResourceRefList;
 
   /** Gets the changes made to the repository between two given builds. */
   @tag("Builds")
@@ -4249,7 +4357,7 @@ interface Builds {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Change[]>;
+  ): ChangeList;
 
   /** Gets all the work items between two builds. */
   @tag("Builds")
@@ -4276,7 +4384,7 @@ interface Builds {
     @query(#{ explode: true }) $top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ResourceRef[]>;
+  ): ResourceRefList;
 }
 
 interface Attachments {
@@ -4338,7 +4446,7 @@ interface Attachments {
     @path type: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Attachment[]>;
+  ): AttachmentList;
 }
 
 interface Artifacts {
@@ -4361,7 +4469,7 @@ interface Artifacts {
     @path buildId: int32,
 
     ...Parameters.`api-Version-preview`.`5`,
-  ): Body<BuildArtifact[]>;
+  ): BuildArtifactList;
 
   /** Associates an artifact with a build. */
   @tag("Artifacts")
@@ -5007,7 +5115,7 @@ interface Definitions {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: BuildDefinitionReference[];
+    @body body: BuildDefinitionReferenceList;
   };
 
   /** Creates a new definition. */
@@ -5161,7 +5269,7 @@ interface Definitions {
     @path definitionId: int32,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<BuildDefinitionRevision[]>;
+  ): BuildDefinitionRevisionList;
 }
 
 interface Metrics {
@@ -5187,7 +5295,7 @@ interface Metrics {
     @query(#{ explode: true }) minMetricsTime?: utcDateTime,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BuildMetric[]>;
+  ): BuildMetricList;
 
   /** Gets build metrics for a project. */
   @tag("Metrics")
@@ -5211,7 +5319,7 @@ interface Metrics {
     @query(#{ explode: true }) minMetricsTime?: utcDateTime,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<BuildMetric[]>;
+  ): BuildMetricList;
 }
 
 interface Resources {
@@ -5231,7 +5339,7 @@ interface Resources {
 
     @path definitionId: int32,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<DefinitionResourceReference[]>;
+  ): DefinitionResourceReferenceList;
 
   @tag("Resources")
   @extension("x-ms-docs-override-version", "7.2-preview.1")
@@ -5250,7 +5358,7 @@ interface Resources {
     @path definitionId: int32,
     ...Parameters.`api-Version-preview`.`1`,
     @body body: DefinitionResourceReference[],
-  ): Body<DefinitionResourceReference[]>;
+  ): DefinitionResourceReferenceList;
 }
 
 interface Yaml {
@@ -5303,7 +5411,7 @@ interface Templates {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<BuildDefinitionTemplate[]>;
+  ): BuildDefinitionTemplateList;
 
   /** Deletes a build definition template. */
   @tag("Templates")
@@ -5476,7 +5584,7 @@ interface Folders {
     queryOrder?: "none" | "folderAscending" | "folderDescending",
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Folder[]>;
+  ): FolderList;
 }
 
 interface GeneralSettings {
@@ -5561,7 +5669,7 @@ interface Options {
     @extension("x-ms-required", false) @path project: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<BuildOptionDefinition[]>;
+  ): BuildOptionDefinitionList;
 }
 
 interface Retention {
@@ -5642,7 +5750,7 @@ interface Leases {
     @format("array (MinimalRetentionLease)") @query(#{ explode: true }) leasesToFetch: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<RetentionLease[]>;
+  ): RetentionLeaseList;
 
   /** Adds new leases for pipeline runs. */
   @tag("Leases")
@@ -5661,7 +5769,7 @@ interface Leases {
 
     ...Parameters.`api-Version-preview`.`2`,
     @body body: NewRetentionLease[],
-  ): Body<RetentionLease[]>;
+  ): RetentionLeaseList;
 
   /** Returns the details of the retention lease given a lease id. */
   @tag("Leases")
@@ -5803,7 +5911,7 @@ interface SourceProviders {
     @path project: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SourceProviderAttributes[]>;
+  ): SourceProviderAttributesList;
 
   /** Gets a list of branches for the given source code repository. */
   @tag("Source Providers")
@@ -5902,7 +6010,7 @@ interface SourceProviders {
     @query(#{ explode: true }) path?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SourceRepositoryItem[]>;
+  ): SourceRepositoryItemList;
 
   /** Gets a pull request object from source provider. */
   @tag("Source Providers")
@@ -6006,7 +6114,7 @@ interface SourceProviders {
     @query(#{ explode: true }) repository?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<RepositoryWebhook[]>;
+  ): RepositoryWebhookList;
 
   /** Recreates the webhooks for the specified triggers in the given source code repository. */
   @tag("Source Providers")

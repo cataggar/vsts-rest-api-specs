@@ -1566,6 +1566,48 @@ model YamlReleaseReference {
   stagesToSkip?: string;
 }
 
+/** A collection of `TestSuite` as returned by Azure DevOps. */
+model TestSuiteList {
+  count?: int32;
+  value?: TestSuite[];
+}
+
+/** A collection of `TestConfiguration` as returned by Azure DevOps. */
+model TestConfigurationList {
+  count?: int32;
+  value?: TestConfiguration[];
+}
+
+/** A collection of `TestPlan` as returned by Azure DevOps. */
+model TestPlanList {
+  count?: int32;
+  value?: TestPlan[];
+}
+
+/** A collection of `TestCase` as returned by Azure DevOps. */
+model TestCaseList {
+  count?: int32;
+  value?: TestCase[];
+}
+
+/** A collection of `TestPoint` as returned by Azure DevOps. */
+model TestPointList {
+  count?: int32;
+  value?: TestPoint[];
+}
+
+/** A collection of `SuiteEntry` as returned by Azure DevOps. */
+model SuiteEntryList {
+  count?: int32;
+  value?: SuiteEntry[];
+}
+
+/** A collection of `TestVariable` as returned by Azure DevOps. */
+model TestVariableList {
+  count?: int32;
+  value?: TestVariable[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1600,7 +1642,7 @@ interface TestSuites {
     @query(#{ explode: true }) testCaseId: int32,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<TestSuite[]>;
+  ): TestSuiteList;
 
   /** Get test suites for plan. */
   @tag("Test  Suites")
@@ -1646,7 +1688,7 @@ interface TestSuites {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestSuite[];
+    @body body: TestSuiteList;
   };
 
   /** Create test suite. */
@@ -1809,7 +1851,7 @@ interface Configurations {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestConfiguration[];
+    @body body: TestConfigurationList;
   };
 
   /** Update a test configuration by its ID. */
@@ -1912,7 +1954,7 @@ interface TestPlans {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestPlan[];
+    @body body: TestPlanList;
   };
 
   /** Create a test plan. */
@@ -2097,7 +2139,7 @@ interface SuiteTestCase {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestCase[];
+    @body body: TestCaseList;
   };
 
   /** Update the configurations for test cases */
@@ -2125,7 +2167,7 @@ interface SuiteTestCase {
 
     /** A SuiteTestCaseCreateUpdateParameters object. */
     @body body: SuiteTestCaseCreateUpdateParameters[],
-  ): Body<TestCase[]>;
+  ): TestCaseList;
 
   /** Add test cases to a suite with specified configurations */
   @tag("Suite Test Case")
@@ -2152,7 +2194,7 @@ interface SuiteTestCase {
 
     /** SuiteTestCaseCreateUpdateParameters object. */
     @body body: SuiteTestCaseCreateUpdateParameters[],
-  ): Body<TestCase[]>;
+  ): TestCaseList;
 
   /** Get a particular Test Case from a Suite. */
   @tag("Suite Test Case")
@@ -2185,7 +2227,7 @@ interface SuiteTestCase {
     @query(#{ explode: true }) returnIdentityRef?: boolean,
 
     ...Parameters.`api-Version-preview`.`3`,
-  ): Body<TestCase[]>;
+  ): TestCaseList;
 }
 
 interface TestPointOperations {
@@ -2220,7 +2262,7 @@ interface TestPointOperations {
     @query(#{ explode: true }) includePointDetails?: boolean,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<TestPoint[]>;
+  ): TestPointList;
 
   /** Update Test Points. This is used to Reset test point to active, update the outcome of a test point or update the tester of a test point */
   @tag("Test Point")
@@ -2253,7 +2295,7 @@ interface TestPointOperations {
 
     /** A TestPointUpdateParams Object. */
     @body body: TestPointUpdateParams[],
-  ): Body<TestPoint[]>;
+  ): TestPointList;
 }
 
 interface TestPlanClone {
@@ -2327,7 +2369,7 @@ interface TestPlanRecycleBin {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestPlan[];
+    @body body: TestPlanList;
   };
 
   /** Restores the deleted test plan */
@@ -2400,7 +2442,7 @@ interface TestSuiteRecycleBinOperations {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestSuite[];
+    @body body: TestSuiteList;
   };
 
   /** Get Deleted Test Suites within a Project. */
@@ -2444,7 +2486,7 @@ interface TestSuiteRecycleBinOperations {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestSuite[];
+    @body body: TestSuiteList;
   };
 
   /** Restores the deleted test suite */
@@ -2504,7 +2546,7 @@ interface TestSuiteEntry {
     @query(#{ explode: true })
     suiteEntryType?: "testCase" | "suite",
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<SuiteEntry[]>;
+  ): SuiteEntryList;
 
   /** Reorder test suite entries in the test suite. */
   @tag("Test  Suite  Entry")
@@ -2528,7 +2570,7 @@ interface TestSuiteEntry {
 
     /** List of SuiteEntry to reorder. */
     @body body: SuiteEntryUpdateParams[],
-  ): Body<SuiteEntry[]>;
+  ): SuiteEntryList;
 }
 
 interface TestSuiteClone {
@@ -2666,7 +2708,7 @@ interface Variables {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: TestVariable[];
+    @body body: TestVariableList;
   };
 
   /** Create a test variable. */

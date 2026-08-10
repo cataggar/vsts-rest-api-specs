@@ -607,6 +607,24 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `EnvironmentInstance` as returned by Azure DevOps. */
+model EnvironmentInstanceList {
+  count?: int32;
+  value?: EnvironmentInstance[];
+}
+
+/** A collection of `EnvironmentDeploymentExecutionRecord` as returned by Azure DevOps. */
+model EnvironmentDeploymentExecutionRecordList {
+  count?: int32;
+  value?: EnvironmentDeploymentExecutionRecord[];
+}
+
+/** A collection of `VirtualMachineResource` as returned by Azure DevOps. */
+model VirtualMachineResourceList {
+  count?: int32;
+  value?: VirtualMachineResource[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -644,7 +662,7 @@ interface Environments {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: EnvironmentInstance[];
+    @body body: EnvironmentInstanceList;
   };
 
   /** Create an environment. */
@@ -776,7 +794,7 @@ interface Environmentdeploymentrecords {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: EnvironmentDeploymentExecutionRecord[];
+    @body body: EnvironmentDeploymentExecutionRecordList;
   };
 }
 
@@ -894,7 +912,7 @@ interface Vmresource {
     /** A continuation token for the next page of results. Absent on the last page. Pass it back as the `continuationToken` query parameter. */
     @header("x-ms-continuationtoken") xMsContinuationtoken?: string;
 
-    @body body: VirtualMachineResource[];
+    @body body: VirtualMachineResourceList;
   };
 
   /** Update Virtual Machine Resource */

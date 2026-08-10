@@ -1109,6 +1109,60 @@ model WorkItemTypeModel {
   url?: string;
 }
 
+/** A collection of `ProcessInfo` as returned by Azure DevOps. */
+model ProcessInfoList {
+  count?: int32;
+  value?: ProcessInfo[];
+}
+
+/** A collection of `ProcessBehavior` as returned by Azure DevOps. */
+model ProcessBehaviorList {
+  count?: int32;
+  value?: ProcessBehavior[];
+}
+
+/** A collection of `ProcessWorkItemType` as returned by Azure DevOps. */
+model ProcessWorkItemTypeList {
+  count?: int32;
+  value?: ProcessWorkItemType[];
+}
+
+/** A collection of `ProcessWorkItemTypeField` as returned by Azure DevOps. */
+model ProcessWorkItemTypeFieldList {
+  count?: int32;
+  value?: ProcessWorkItemTypeField[];
+}
+
+/** A collection of `Control` as returned by Azure DevOps. */
+model ControlList {
+  count?: int32;
+  value?: Control[];
+}
+
+/** A collection of `ProcessRule` as returned by Azure DevOps. */
+model ProcessRuleList {
+  count?: int32;
+  value?: ProcessRule[];
+}
+
+/** A collection of `WorkItemStateResultModel` as returned by Azure DevOps. */
+model WorkItemStateResultModelList {
+  count?: int32;
+  value?: WorkItemStateResultModel[];
+}
+
+/** A collection of `WorkItemTypeBehavior` as returned by Azure DevOps. */
+model WorkItemTypeBehaviorList {
+  count?: int32;
+  value?: WorkItemTypeBehavior[];
+}
+
+/** A collection of `PickListMetadata` as returned by Azure DevOps. */
+model PickListMetadataList {
+  count?: int32;
+  value?: PickListMetadata[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1148,7 +1202,7 @@ interface Processes {
     @query(#{ explode: true })
     $expand?: "none" | "projects",
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ProcessInfo[]>;
+  ): ProcessInfoList;
 
   /** Creates a process. */
   @tag("Processes")
@@ -1266,7 +1320,7 @@ interface Behaviors {
     @query(#{ explode: true })
     $expand?: "none" | "fields" | "combinedFields",
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ProcessBehavior[]>;
+  ): ProcessBehaviorList;
 
   /** Creates a single behavior in the given process. */
   @tag("Behaviors")
@@ -1410,7 +1464,7 @@ interface WorkItemTypes {
     $expand?: "none" | "states" | "behaviors" | "layout",
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ProcessWorkItemType[]>;
+  ): ProcessWorkItemTypeList;
 
   /** Creates a work item type in the process. */
   @tag("Work Item Types")
@@ -1538,7 +1592,7 @@ interface Fields {
     @path witRefName: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ProcessWorkItemTypeField[]>;
+  ): ProcessWorkItemTypeFieldList;
 
   /** Adds a field to a work item type. */
   @tag("Fields")
@@ -2016,7 +2070,7 @@ interface SystemControls {
     @path witRefName: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Control[]>;
+  ): ControlList;
 
   /** Deletes a system control modification on the work item form. */
   @tag("System Controls")
@@ -2040,7 +2094,7 @@ interface SystemControls {
     @path controlId: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Control[]>;
+  ): ControlList;
 
   /** Updates/adds a system control on the work item form. */
   @tag("System Controls")
@@ -2088,7 +2142,7 @@ interface Rules {
     @path witRefName: string,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<ProcessRule[]>;
+  ): ProcessRuleList;
 
   /** Adds a rule to work item type in the process. */
   @tag("Rules")
@@ -2206,7 +2260,7 @@ interface States {
     @path witRefName: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemStateResultModel[]>;
+  ): WorkItemStateResultModelList;
 
   /** Creates a state definition in the work item type of the process. */
   @tag("States")
@@ -2349,7 +2403,7 @@ interface WorkItemTypesBehaviors {
     @path witRefNameForBehaviors: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<WorkItemTypeBehavior[]>;
+  ): WorkItemTypeBehaviorList;
 
   /** Updates a behavior for the work item type of the process. */
   @tag("Work Item Types Behaviors")
@@ -2458,7 +2512,7 @@ interface Lists {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<PickListMetadata[]>;
+  ): PickListMetadataList;
 
   /** Creates a picklist. */
   @tag("Lists")

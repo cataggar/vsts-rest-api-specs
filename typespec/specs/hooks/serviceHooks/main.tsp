@@ -914,6 +914,42 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `Consumer` as returned by Azure DevOps. */
+model ConsumerList {
+  count?: int32;
+  value?: Consumer[];
+}
+
+/** A collection of `ConsumerAction` as returned by Azure DevOps. */
+model ConsumerActionList {
+  count?: int32;
+  value?: ConsumerAction[];
+}
+
+/** A collection of `Publisher` as returned by Azure DevOps. */
+model PublisherList {
+  count?: int32;
+  value?: Publisher[];
+}
+
+/** A collection of `EventTypeDescriptor` as returned by Azure DevOps. */
+model EventTypeDescriptorList {
+  count?: int32;
+  value?: EventTypeDescriptor[];
+}
+
+/** A collection of `Subscription` as returned by Azure DevOps. */
+model SubscriptionList {
+  count?: int32;
+  value?: Subscription[];
+}
+
+/** A collection of `Notification` as returned by Azure DevOps. */
+model NotificationList {
+  count?: int32;
+  value?: Notification[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -938,7 +974,7 @@ interface Consumers {
 
     @query(#{ explode: true }) publisherId?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Consumer[]>;
+  ): ConsumerList;
 
   /** Get a specific consumer service. Optionally filter out consumer actions that do not support any event types for the specified publisher. */
   @tag("Consumers")
@@ -976,7 +1012,7 @@ interface Consumers {
 
     @query(#{ explode: true }) publisherId?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ConsumerAction[]>;
+  ): ConsumerActionList;
 
   /** Get details about a specific consumer action. */
   @tag("Consumers")
@@ -1082,7 +1118,7 @@ interface Notifications {
     result?: "pending" | "succeeded" | "failed" | "filtered",
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Notification[]>;
+  ): NotificationList;
 
   /** Get a specific notification for a subscription. */
   @tag("Notifications")
@@ -1137,7 +1173,7 @@ interface Publishers {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Publisher[]>;
+  ): PublisherList;
 
   /** Get a specific service hooks publisher. */
   @tag("Publishers")
@@ -1173,7 +1209,7 @@ interface Publishers {
     @path publisherId: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<EventTypeDescriptor[]>;
+  ): EventTypeDescriptorList;
 
   /** Get a specific event type. */
   @tag("Publishers")
@@ -1253,7 +1289,7 @@ interface Subscriptions {
     @query(#{ explode: true }) consumerActionId?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Subscription[]>;
+  ): SubscriptionList;
 
   /** Create a subscription. */
   @tag("Subscriptions")

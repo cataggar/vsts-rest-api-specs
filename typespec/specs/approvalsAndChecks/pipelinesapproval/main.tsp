@@ -460,6 +460,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `Approval` as returned by Azure DevOps. */
+model ApprovalList {
+  count?: int32;
+  value?: Approval[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `2` {
@@ -552,7 +558,7 @@ interface Approvals {
     @query(#{ explode: true }) top?: int32,
 
     ...Parameters.`api-Version-preview`.`2`,
-  ): Body<Approval[]>;
+  ): ApprovalList;
 
   /** Update approvals. */
   @tag("Approvals")
@@ -571,7 +577,7 @@ interface Approvals {
 
     ...Parameters.`api-Version-preview`.`2`,
     @body body: ApprovalUpdateParameters[],
-  ): Body<Approval[]>;
+  ): ApprovalList;
 
   /** Get an approval. */
   @tag("Approvals")

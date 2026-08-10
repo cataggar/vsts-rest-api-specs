@@ -285,6 +285,18 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `AuditActionInfo` as returned by Azure DevOps. */
+model AuditActionInfoList {
+  count?: int32;
+  value?: AuditActionInfo[];
+}
+
+/** A collection of `AuditStream` as returned by Azure DevOps. */
+model AuditStreamList {
+  count?: int32;
+  value?: AuditStream[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -311,7 +323,7 @@ interface Actions {
     @query(#{ explode: true }) areaName?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AuditActionInfo[]>;
+  ): AuditActionInfoList;
 }
 
 interface AuditLog {
@@ -389,7 +401,7 @@ interface Streams {
     @path organization: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<AuditStream[]>;
+  ): AuditStreamList;
 
   /** Create new Audit Stream */
   @tag("Streams")

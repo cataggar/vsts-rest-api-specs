@@ -145,6 +145,12 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `Account` as returned by Azure DevOps. */
+model AccountList {
+  count?: int32;
+  value?: Account[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -172,5 +178,5 @@ interface Accounts {
 
     @query(#{ explode: true }) properties?: string,
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<Account[]>;
+  ): AccountList;
 }

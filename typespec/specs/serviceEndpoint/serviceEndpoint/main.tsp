@@ -1053,6 +1053,24 @@ model VssJsonCollectionWrapperBase {
   count?: int32;
 }
 
+/** A collection of `ServiceEndpoint` as returned by Azure DevOps. */
+model ServiceEndpointList {
+  count?: int32;
+  value?: ServiceEndpoint[];
+}
+
+/** A collection of `ServiceEndpointType` as returned by Azure DevOps. */
+model ServiceEndpointTypeList {
+  count?: int32;
+  value?: ServiceEndpointType[];
+}
+
+/** A collection of `ServiceEndpointExecutionRecord` as returned by Azure DevOps. */
+model ServiceEndpointExecutionRecordList {
+  count?: int32;
+  value?: ServiceEndpointExecutionRecord[];
+}
+
 namespace Parameters {
   namespace `api-Version-preview` {
     model `1` {
@@ -1101,7 +1119,7 @@ interface Endpoints {
 
     /** Names of the service endpoints to update. */
     @body body: ServiceEndpoint[],
-  ): Body<ServiceEndpoint[]>;
+  ): ServiceEndpointList;
 
   /** Delete a service endpoint */
   @tag("Endpoints")
@@ -1206,7 +1224,7 @@ interface Endpoints {
     @query(#{ explode: true }) includeDetails?: boolean,
 
     ...Parameters.`api-Version-preview`.`4`,
-  ): Body<ServiceEndpoint[]>;
+  ): ServiceEndpointList;
 
   /** Gets the service endpoints and patch new authorization parameters */
   @tag("Endpoints")
@@ -1230,7 +1248,7 @@ interface Endpoints {
 
     /** Scope, Validity of Token requested. */
     @body body: RefreshAuthenticationParameters[],
-  ): Body<ServiceEndpoint[]>;
+  ): ServiceEndpointList;
 
   /** Get the service endpoint details. */
   @tag("Endpoints")
@@ -1293,7 +1311,7 @@ interface Types {
     @query(#{ explode: true }) scheme?: string,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ServiceEndpointType[]>;
+  ): ServiceEndpointTypeList;
 
   /** Get service endpoint types with passed types filter. */
   @tag("Types")
@@ -1311,7 +1329,7 @@ interface Types {
 
     /** Filter to limit returned types */
     @body body: string[],
-  ): Body<ServiceEndpointType[]>;
+  ): ServiceEndpointTypeList;
 }
 
 interface Executionhistory {
@@ -1340,7 +1358,7 @@ interface Executionhistory {
     @query(#{ explode: true }) continuationToken?: int64,
 
     ...Parameters.`api-Version-preview`.`1`,
-  ): Body<ServiceEndpointExecutionRecord[]>;
+  ): ServiceEndpointExecutionRecordList;
 }
 
 interface Endpointproxy {
