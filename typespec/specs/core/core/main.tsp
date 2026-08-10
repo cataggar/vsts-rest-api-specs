@@ -152,7 +152,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -184,7 +184,7 @@ model OperationReference {
       ],
     }
   )
-  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed";
+  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed" | string;
 
   /** URL to get the full operation object. */
   url?: string;
@@ -207,7 +207,7 @@ model Process {
       ],
     }
   )
-  type?: "system" | "custom" | "inherited";
+  type?: "system" | "custom" | "inherited" | string;
 }
 
 model ProcessReference {
@@ -263,7 +263,15 @@ model ProjectInfo {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** A Uri that can be used to refer to this project. */
   uri?: string;
@@ -285,7 +293,7 @@ model ProjectInfo {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 model ProjectMessage {
@@ -301,7 +309,7 @@ model ProjectMessage {
       ],
     }
   )
-  projectChangeType?: "modified" | "deleted" | "added";
+  projectChangeType?: "modified" | "deleted" | "added" | string;
   shouldInvalidateSystemStore?: boolean;
 }
 
@@ -433,7 +441,7 @@ model TeamProjectCollection {
       ],
     }
   )
-  processCustomizationType?: "unknown" | "xml" | "inherited";
+  processCustomizationType?: "unknown" | "xml" | "inherited" | string;
 
   /** Project collection state. */
   state?: string;
@@ -496,7 +504,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** Url to the full version of the object. */
   url?: string;
@@ -515,7 +531,7 @@ model TeamProjectReference {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 /** A data transfer object that stores the metadata associated with the creation of temporary data. */

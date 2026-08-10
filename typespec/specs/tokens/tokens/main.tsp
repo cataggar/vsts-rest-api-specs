@@ -106,7 +106,8 @@ model AccessTokenResult {
     | "hostAuthorizationNotFound"
     | "hostAuthorizationIsNotValid"
     | "invalidScope"
-    | "globalPatUsageDisabled";
+    | "globalPatUsageDisabled"
+    | string;
   @format("uuid") authorizationId?: string;
   errorDescription?: string;
   hasError?: boolean;
@@ -131,7 +132,7 @@ model AuthorizationGrant {
       ],
     }
   )
-  grantType?: "none" | "jwtBearer" | "refreshToken" | "implicit" | "clientCredentials";
+  grantType?: "none" | "jwtBearer" | "refreshToken" | "implicit" | "clientCredentials" | string;
 }
 
 model IssuedToken {
@@ -278,7 +279,8 @@ model PatTokenResult {
     | "disablePatCreationPolicyViolation"
     | "failedToReadOrgPolicy"
     | "globalPATCreationBlocked"
-    | "expiredPatCannotBeExtended";
+    | "expiredPatCannotBeExtended"
+    | string;
 
   /** The error message (if any) that occurred */
   patTokenErrorMessage?: string;

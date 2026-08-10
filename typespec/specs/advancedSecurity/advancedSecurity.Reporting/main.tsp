@@ -132,7 +132,7 @@ model CombinedAlertFilterCriteria {
       ],
     }
   )
-  alertType?: "unknown" | "dependency" | "secret" | "code";
+  alertType?: "unknown" | "dependency" | "secret" | "code" | string;
 
   /** If provided, only return alerts with the specified validity status. */
   @extension(
@@ -159,7 +159,7 @@ model CombinedAlertFilterCriteria {
       ],
     }
   )
-  alertValidityStatus?: "none" | "unknown" | "active" | "inactive";
+  alertValidityStatus?: "none" | "unknown" | "active" | "inactive" | string;
 
   /** If provided, only return dependency alerts for the specified package names. */
   componentNames?: string[];
@@ -182,7 +182,8 @@ model CombinedAlertFilterCriteria {
     | "linux"
     | "conda"
     | "dockerReference"
-    | "vcpkg")[];
+    | "vcpkg"
+    | string)[];
 
   /** If provided, only return alerts with one of the specified dismissal types (closure reasons). Applicable only when filtering for closed/dismissed alerts. */
   dismissalTypes?: (
@@ -192,7 +193,8 @@ model CombinedAlertFilterCriteria {
     | "falsePositive"
     | "agreedToGuidance"
     | "toolUpgrade"
-    | "notDistributed")[];
+    | "notDistributed"
+    | string)[];
 
   /** If provided, only return alerts fixed on or before this date. */
   fixedDateEnd?: utcDateTime;
@@ -233,7 +235,8 @@ model CombinedAlertFilterCriteria {
     | "note"
     | "warning"
     | "error"
-    | "undefined")[];
+    | "undefined"
+    | string)[];
 
   /** If provided, return alerts that are active or inactive based on this value. <br />Otherwise, return alerts in any state. */
   @extension(
@@ -252,7 +255,7 @@ model CombinedAlertFilterCriteria {
       ],
     }
   )
-  state?: "open" | "closed";
+  state?: "open" | "closed" | string;
 
   /** If provided, only return code scanning alerts detected by the specified tools. */
   toolNames?: string[];
@@ -285,7 +288,7 @@ model DashboardAlert {
       ],
     }
   )
-  alertType?: "unknown" | "dependency" | "secret" | "code";
+  alertType?: "unknown" | "dependency" | "secret" | "code" | string;
 
   /** This value is computed and returned by the service. This value represents the first time the vulnerability was introduced. */
   introducedDate?: utcDateTime;
@@ -316,7 +319,16 @@ model DashboardAlert {
       ],
     }
   )
-  severity?: "low" | "medium" | "high" | "critical" | "note" | "warning" | "error" | "undefined";
+  severity?:
+    | "low"
+    | "medium"
+    | "high"
+    | "critical"
+    | "note"
+    | "warning"
+    | "error"
+    | "undefined"
+    | string;
 
   /** This value is computed and returned by the service. It is a value based on the results from all analysis configurations. */
   @extension(
@@ -335,7 +347,7 @@ model DashboardAlert {
       ],
     }
   )
-  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed";
+  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string;
 
   /** Title will only be rendered as text and does not support markdown formatting. There is a maximum character limit of 256. */
   title?: string;
@@ -368,7 +380,7 @@ model DashboardAlert {
       ],
     }
   )
-  validityStatus?: "none" | "unknown" | "active" | "inactive";
+  validityStatus?: "none" | "unknown" | "active" | "inactive" | string;
 }
 
 /** Location in the source control system where the issue was found */
@@ -416,7 +428,7 @@ model EnablementStateTypes {
 
 model FilterCriteria {
   /** If provided, only return summary data for alerts of this type. Otherwise, return summary data for alerts of all types. */
-  alertTypes?: ("unknown" | "dependency" | "secret" | "code")[];
+  alertTypes?: ("unknown" | "dependency" | "secret" | "code" | string)[];
 
   /** If provided, only return repos whose titles match this pattern. */
   keywords?: string;
@@ -436,7 +448,14 @@ model FilterCriteria {
       ],
     }
   )
-  period?: "undefined" | "last24Hours" | "last7Days" | "last14Days" | "last30Days" | "last90Days";
+  period?:
+    | "undefined"
+    | "last24Hours"
+    | "last7Days"
+    | "last14Days"
+    | "last30Days"
+    | "last90Days"
+    | string;
 
   /** If provided, only return summary data for these projects Otherwise, return summary data for all projects. */
   projects?: string[];
@@ -450,7 +469,8 @@ model FilterCriteria {
     | "note"
     | "warning"
     | "error"
-    | "undefined")[];
+    | "undefined"
+    | string)[];
 }
 
 model GraphSubjectBase {

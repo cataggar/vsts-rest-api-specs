@@ -99,7 +99,8 @@ model EnvironmentDeploymentExecutionRecord {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Project Id */
   @format("uuid") scopeId?: string;
@@ -171,7 +172,7 @@ model EnvironmentResource {
       ],
     }
   )
-  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes";
+  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes" | string;
 }
 
 /** EnvironmentResourceReference. */
@@ -198,7 +199,7 @@ model EnvironmentResourceReference {
       ],
     }
   )
-  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes";
+  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes" | string;
 }
 
 /** Properties to update Environment. */
@@ -407,7 +408,8 @@ model TaskAgentJobRequest {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Scope of the pipeline; matches the project ID. */
   @format("uuid") scopeId?: string;
@@ -468,7 +470,7 @@ model TaskAgentPoolReference {
       ],
     }
   )
-  options?: "none" | "elasticPool" | "singleUseAgents" | "preserveAgentOnJobFailure";
+  options?: "none" | "elasticPool" | "singleUseAgents" | "preserveAgentOnJobFailure" | string;
 
   /** Gets or sets the type of the pool */
   @extension(
@@ -481,7 +483,7 @@ model TaskAgentPoolReference {
       ],
     }
   )
-  poolType?: "automation" | "deployment";
+  poolType?: "automation" | "deployment" | string;
 
   @format("uuid") scope?: string;
 
@@ -528,7 +530,7 @@ model TaskAgentReference {
       values: #[#{ value: "offline", description: "" }, #{ value: "online", description: "" }],
     }
   )
-  status?: "offline" | "online";
+  status?: "offline" | "online" | string;
 
   /** Agent version. */
   version?: string;
@@ -561,7 +563,7 @@ model TaskAgentUpdateReason {
       ],
     }
   )
-  code?: "manual" | "minAgentVersionRequired" | "downgrade";
+  code?: "manual" | "minAgentVersionRequired" | "downgrade" | string;
 }
 
 model TaskOrchestrationOwner {

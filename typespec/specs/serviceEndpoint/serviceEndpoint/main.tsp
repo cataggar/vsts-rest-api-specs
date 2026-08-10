@@ -135,7 +135,7 @@ model AzureSpnOperationStatus {
       ],
     }
   )
-  errorCode?: "appRegistrationFailed";
+  errorCode?: "appRegistrationFailed" | string;
   severity?: string;
   state?: string;
   statusMessage?: string;
@@ -423,7 +423,8 @@ model InputDescriptor {
     | "combo"
     | "radioButtons"
     | "checkBox"
-    | "textArea";
+    | "textArea"
+    | string;
 
   /** Gets whether this input is confidential, such as for a password or application key */
   isConfidential?: boolean;
@@ -465,7 +466,7 @@ model InputValidation {
       ],
     }
   )
-  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri";
+  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri" | string;
 
   /** Gets or sets if this is a required field. */
   isRequired?: boolean;
@@ -818,7 +819,14 @@ model ServiceEndpointExecutionData {
       ],
     }
   )
-  result?: "succeeded" | "succeededWithIssues" | "failed" | "canceled" | "skipped" | "abandoned";
+  result?:
+    | "succeeded"
+    | "succeededWithIssues"
+    | "failed"
+    | "canceled"
+    | "skipped"
+    | "abandoned"
+    | string;
 
   /** Gets the start time of service endpoint execution. */
   startTime?: utcDateTime;
@@ -989,7 +997,8 @@ model ServiceEndpointRequestResult {
     | "badGateway"
     | "serviceUnavailable"
     | "gatewayTimeout"
-    | "httpVersionNotSupported";
+    | "httpVersionNotSupported"
+    | string;
 }
 
 /** Represents the details of service endpoint execution. */

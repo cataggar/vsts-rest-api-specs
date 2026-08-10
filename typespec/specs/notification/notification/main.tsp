@@ -71,7 +71,7 @@ model BatchNotificationOperation {
       ],
     }
   )
-  notificationOperation?: "none" | "suspendUnprocessed";
+  notificationOperation?: "none" | "suspendUnprocessed" | string;
   notificationQueryConditions?: NotificationQueryCondition[];
 }
 
@@ -418,7 +418,7 @@ model NotificationAdminSettings {
       ],
     }
   )
-  defaultGroupDeliveryPreference?: "noDelivery" | "eachMember";
+  defaultGroupDeliveryPreference?: "noDelivery" | "eachMember" | string;
 }
 
 model NotificationAdminSettingsUpdateParameters {
@@ -438,7 +438,7 @@ model NotificationAdminSettingsUpdateParameters {
       ],
     }
   )
-  defaultGroupDeliveryPreference?: "noDelivery" | "eachMember";
+  defaultGroupDeliveryPreference?: "noDelivery" | "eachMember" | string;
 }
 
 model NotificationBacklogStatus {
@@ -581,7 +581,8 @@ model NotificationEventFieldType {
     | "picklistInteger"
     | "picklistString"
     | "picklistDouble"
-    | "teamProject";
+    | "teamProject"
+    | string;
   value?: ValueDefinition;
 }
 
@@ -689,7 +690,8 @@ model NotificationReason {
     | "singleRole"
     | "directMemberGroupRole"
     | "inDirectMemberGroupRole"
-    | "aliasMemberGroupRole";
+    | "aliasMemberGroupRole"
+    | string;
   targetIdentities?: IdentityRef[];
 }
 
@@ -769,7 +771,8 @@ model NotificationStatistic {
     | "hourlyUnprocessedNotificationDelayByChannelByPublisher"
     | "hourlyTotalPipelineTime"
     | "hourlyNotificationPipelineTime"
-    | "hourlyEventPipelineTime";
+    | "hourlyEventPipelineTime"
+    | string;
   user?: IdentityRef;
 }
 
@@ -848,7 +851,8 @@ model NotificationStatisticsQueryConditions {
     | "hourlyUnprocessedNotificationDelayByChannelByPublisher"
     | "hourlyTotalPipelineTime"
     | "hourlyNotificationPipelineTime"
-    | "hourlyEventPipelineTime";
+    | "hourlyEventPipelineTime"
+    | string;
   user?: IdentityRef;
 }
 
@@ -876,7 +880,12 @@ model NotificationSubscriber {
       ],
     }
   )
-  deliveryPreference?: "noDelivery" | "preferredEmailAddress" | "eachMember" | "useDefault";
+  deliveryPreference?:
+    | "noDelivery"
+    | "preferredEmailAddress"
+    | "eachMember"
+    | "useDefault"
+    | string;
 
   @extension(
     "x-ms-enum",
@@ -914,7 +923,8 @@ model NotificationSubscriber {
     | "supportsNoDelivery"
     | "isUser"
     | "isGroup"
-    | "isTeam";
+    | "isTeam"
+    | string;
 
   /** Identifier of the subscriber. */
   @format("uuid") id?: string;
@@ -947,7 +957,12 @@ model NotificationSubscriberUpdateParameters {
       ],
     }
   )
-  deliveryPreference?: "noDelivery" | "preferredEmailAddress" | "eachMember" | "useDefault";
+  deliveryPreference?:
+    | "noDelivery"
+    | "preferredEmailAddress"
+    | "eachMember"
+    | "useDefault"
+    | string;
 
   /** New preferred email address for the subscriber. Specify an empty string to clear the current address. */
   preferredEmailAddress?: string;
@@ -1002,7 +1017,8 @@ model NotificationSubscription {
     | "contributedSubscription"
     | "canOptOut"
     | "teamSubscription"
-    | "oneActorMatches";
+    | "oneActorMatches"
+    | string;
 
   /** Subscription identifier. */
   id?: string;
@@ -1025,7 +1041,7 @@ model NotificationSubscription {
       ],
     }
   )
-  permissions?: "none" | "view" | "edit" | "delete";
+  permissions?: "none" | "view" | "edit" | "delete" | string;
 
   scope?: SubscriptionScope;
 
@@ -1115,7 +1131,8 @@ model NotificationSubscription {
     | "disabledByAdmin"
     | "disabled"
     | "enabled"
-    | "enabledOnProbation";
+    | "enabledOnProbation"
+    | string;
 
   /** Message that provides more details about the status of the subscription. */
   statusMessage?: string;
@@ -1157,7 +1174,7 @@ model NotificationSubscriptionTemplate {
       ],
     }
   )
-  type?: "user" | "team" | "both" | "none";
+  type?: "user" | "team" | "both" | "none" | string;
 }
 
 /** Parameters for updating an existing subscription. A subscription defines criteria for matching events and how the subscription's subscriber should be notified about those events. Note: only the fields to be updated should be set. */
@@ -1257,7 +1274,8 @@ model NotificationSubscriptionUpdateParameters {
     | "disabledByAdmin"
     | "disabled"
     | "enabled"
-    | "enabledOnProbation";
+    | "enabledOnProbation"
+    | string;
 
   /** Optional message that provides more details about the updated status. */
   statusMessage?: string;
@@ -1400,7 +1418,8 @@ model SubscriptionEvaluationResult {
     | "succeeded"
     | "failed"
     | "timedOut"
-    | "notFound";
+    | "notFound"
+    | string;
 
   events?: EventsEvaluationResult;
 
@@ -1469,7 +1488,8 @@ model SubscriptionQuery {
     | "includeDeletedSubscriptions"
     | "includeFilterDetails"
     | "alwaysReturnBasicInformation"
-    | "includeSystemSubscriptions";
+    | "includeSystemSubscriptions"
+    | string;
 }
 
 /** Conditions a subscription must match to qualify for the query result set. Not all fields are required. A subscription must match all conditions specified in order to qualify for the result set. */
@@ -1509,7 +1529,8 @@ model SubscriptionQueryCondition {
     | "contributedSubscription"
     | "canOptOut"
     | "teamSubscription"
-    | "oneActorMatches";
+    | "oneActorMatches"
+    | string;
 
   /** Scope that matching subscriptions must have. */
   scope?: string;

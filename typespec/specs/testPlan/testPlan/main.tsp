@@ -73,7 +73,7 @@ model CloneOperationCommonResponse {
       ],
     }
   )
-  state?: "failed" | "inProgress" | "queued" | "succeeded";
+  state?: "failed" | "inProgress" | "queued" | "succeeded" | string;
 }
 
 /** Clone options for cloning the test suite. */
@@ -399,7 +399,7 @@ model LibraryWorkItemsData {
       values: #[#{ value: "success", description: "" }, #{ value: "error", description: "" }],
     }
   )
-  returnCode?: "success" | "error";
+  returnCode?: "success" | "error" | string;
 
   /** List of work items returned when OrderByField is sent something other than Id. */
   workItemIds?: int32[];
@@ -445,7 +445,8 @@ model LibraryWorkItemsDataProviderRequest {
     | "testCasesNotLinkedToRequirements"
     | "testCasesLinkedToRequirements"
     | "allSharedSteps"
-    | "sharedStepsNotLinkedToRequirement";
+    | "sharedStepsNotLinkedToRequirement"
+    | string;
 
   /** Work item field on which to order the results. When not supplied, defaults to work item IDs. */
   orderByField?: string;
@@ -564,7 +565,8 @@ model Results {
     | "paused"
     | "inProgress"
     | "notImpacted"
-    | "maxValue";
+    | "maxValue"
+    | string;
 }
 
 /** An abstracted reference to some other resource. This class is used to provide the build data contracts with a uniform way to reference other resources in a way that provides easy traversal through links. */
@@ -660,7 +662,7 @@ model SuiteEntryUpdateParams {
       ],
     }
   )
-  suiteEntryType?: "testCase" | "suite";
+  suiteEntryType?: "testCase" | "suite" | string;
 }
 
 /** Create and Update Suite Test Case Parameters */
@@ -713,7 +715,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** Url to the full version of the object. */
   url?: string;
@@ -732,7 +742,7 @@ model TeamProjectReference {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 /** Test Case Class */
@@ -796,7 +806,8 @@ model TestCaseAssociatedResult {
     | "none"
     | "notImpacted"
     | "unspecified"
-    | "maxValue";
+    | "maxValue"
+    | string;
   plan?: TestPlanReference;
   pointId?: int32;
   resultId?: int32;
@@ -924,7 +935,7 @@ model TestConfigurationCreateUpdateParameters {
       ],
     }
   )
-  state?: "active" | "inactive";
+  state?: "active" | "inactive" | string;
 
   /** Dictionary of Test Variable, Selected Value */
   values?: NameValuePair[];
@@ -1100,7 +1111,7 @@ model TestPlansLibraryWorkItemFilter {
       ],
     }
   )
-  filterMode?: "or" | "and";
+  filterMode?: "or" | "and" | string;
 }
 
 /** The test plan update parameters. */
@@ -1195,7 +1206,8 @@ model TestPointResults {
     | "known_Issue"
     | "unknown"
     | "null_Value"
-    | "maxValue";
+    | "maxValue"
+    | string;
 
   /** Last Resolution State Id for the Test Point */
   @extension(
@@ -1220,7 +1232,8 @@ model TestPointResults {
     | "productIssue"
     | "configurationIssue"
     | "nullValue"
-    | "maxValue";
+    | "maxValue"
+    | string;
 
   lastResultDetails?: LastResultDetails;
 
@@ -1262,7 +1275,8 @@ model TestPointResults {
     | "inProgress"
     | "paused"
     | "completed"
-    | "maxValue";
+    | "maxValue"
+    | string;
 
   /** Last RUn Build Number for the Test Point */
   lastRunBuildNumber?: string;
@@ -1341,7 +1355,8 @@ model TestPointResults {
     | "paused"
     | "inProgress"
     | "notImpacted"
-    | "maxValue";
+    | "maxValue"
+    | string;
 
   /** State of the Test Point */
   @extension(
@@ -1367,7 +1382,7 @@ model TestPointResults {
       ],
     }
   )
-  state?: "none" | "ready" | "completed" | "notReady" | "inProgress" | "maxValue";
+  state?: "none" | "ready" | "completed" | "notReady" | "inProgress" | "maxValue" | string;
 }
 
 /** Test Point Update Parameters */
@@ -1458,7 +1473,7 @@ model TestSuiteCreateParams {
       ],
     }
   )
-  suiteType?: "none" | "dynamicTestSuite" | "staticTestSuite" | "requirementTestSuite";
+  suiteType?: "none" | "dynamicTestSuite" | "staticTestSuite" | "requirementTestSuite" | string;
 }
 
 /** Test Suite Create/Update Common Parameters */

@@ -42,7 +42,7 @@ model ElasticNode {
       ],
     }
   )
-  agentState?: "none" | "enabled" | "online" | "assigned";
+  agentState?: "none" | "enabled" | "online" | "assigned" | string;
 
   /** Compute Id. VMSS's InstanceId */
   computeId?: string;
@@ -74,7 +74,8 @@ model ElasticNode {
     | "stopped"
     | "reimaging"
     | "unhealthyVm"
-    | "unhealthyVmssVm";
+    | "unhealthyVmssVm"
+    | string;
 
   /** Users can force state changes to specific states (ToReimage, ToDelete, Save) */
   @extension(
@@ -131,7 +132,8 @@ model ElasticNode {
     | "retryDelete"
     | "unhealthyVm"
     | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate";
+    | "pendingReimageCandidate"
+    | string;
 
   /** Unique identifier since the agent and/or VM may be null */
   id?: int32;
@@ -200,7 +202,8 @@ model ElasticNode {
     | "retryDelete"
     | "unhealthyVm"
     | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate";
+    | "pendingReimageCandidate"
+    | string;
 
   /** Last state change. Only updated by SQL. */
   stateChangedOn?: utcDateTime;
@@ -263,7 +266,8 @@ model ElasticNodeSettings {
     | "retryDelete"
     | "unhealthyVm"
     | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate";
+    | "pendingReimageCandidate"
+    | string;
 }
 
 /** Data and settings for an elastic pool */
@@ -297,7 +301,7 @@ model ElasticPool {
       values: #[#{ value: "uniform", description: "" }, #{ value: "flexible", description: "" }],
     }
   )
-  orchestrationType?: "uniform" | "flexible";
+  orchestrationType?: "uniform" | "flexible" | string;
 
   /** Operating system type of the nodes in the pool */
   @extension(
@@ -307,7 +311,7 @@ model ElasticPool {
       values: #[#{ value: "windows", description: "" }, #{ value: "linux", description: "" }],
     }
   )
-  osType?: "windows" | "linux";
+  osType?: "windows" | "linux" | string;
 
   /** Id of the associated TaskAgentPool */
   poolId?: int32;
@@ -337,7 +341,7 @@ model ElasticPool {
       ],
     }
   )
-  state?: "online" | "offline" | "unhealthy" | "new";
+  state?: "online" | "offline" | "unhealthy" | "new" | string;
 
   /** The minimum time in minutes to keep idle agents alive */
   timeToLiveMinutes?: int32;
@@ -367,7 +371,7 @@ model ElasticPoolLog {
       ],
     }
   )
-  level?: "error" | "warning" | "info";
+  level?: "error" | "warning" | "info" | string;
 
   /** Log contents */
   message?: string;
@@ -386,7 +390,13 @@ model ElasticPoolLog {
       ],
     }
   )
-  operation?: "configurationJob" | "sizingJob" | "increaseCapacity" | "reimage" | "deleteVMs";
+  operation?:
+    | "configurationJob"
+    | "sizingJob"
+    | "increaseCapacity"
+    | "reimage"
+    | "deleteVMs"
+    | string;
 
   /** Id of the associated TaskAgentPool */
   poolId?: int32;
@@ -420,7 +430,7 @@ model ElasticPoolSettings {
       values: #[#{ value: "uniform", description: "" }, #{ value: "flexible", description: "" }],
     }
   )
-  orchestrationType?: "uniform" | "flexible";
+  orchestrationType?: "uniform" | "flexible" | string;
 
   /** Operating system type of the machines in the pool */
   @extension(
@@ -430,7 +440,7 @@ model ElasticPoolSettings {
       values: #[#{ value: "windows", description: "" }, #{ value: "linux", description: "" }],
     }
   )
-  osType?: "windows" | "linux";
+  osType?: "windows" | "linux" | string;
 
   /** Discard machines after each job completes */
   recycleAfterEachUse?: boolean;
@@ -565,7 +575,7 @@ model TaskAgentPoolReference {
       ],
     }
   )
-  options?: "none" | "elasticPool" | "singleUseAgents" | "preserveAgentOnJobFailure";
+  options?: "none" | "elasticPool" | "singleUseAgents" | "preserveAgentOnJobFailure" | string;
 
   /** Gets or sets the type of the pool */
   @extension(
@@ -578,7 +588,7 @@ model TaskAgentPoolReference {
       ],
     }
   )
-  poolType?: "automation" | "deployment";
+  poolType?: "automation" | "deployment" | string;
 
   @format("uuid") scope?: string;
 

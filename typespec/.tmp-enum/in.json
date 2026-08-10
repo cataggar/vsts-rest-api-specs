@@ -1,0 +1,53 @@
+{
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Vis": {
+        "anyOf": [
+          {
+            "type": "string",
+            "enum": [
+              "private",
+              "public"
+            ]
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "B": {
+        "properties": {
+          "v": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "private",
+                  "public"
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "A": {
+        "properties": {
+          "v": {
+            "$ref": "#/components/schemas/Vis"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "t",
+    "version": "1.0"
+  },
+  "openapi": "3.0.0"
+}

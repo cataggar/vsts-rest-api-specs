@@ -50,7 +50,7 @@ model Avatar {
       ],
     }
   )
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | string;
   timeStamp?: utcDateTime;
   value?: bytes[];
 }
@@ -223,7 +223,7 @@ model GraphScope {
       ],
     }
   )
-  scopeType?: "generic" | "serviceHost" | "teamProject";
+  scopeType?: "generic" | "serviceHost" | "teamProject" | string;
 
   /** The subject descriptor for the containing organization in the ancestor tree of this scope. */
   securingHostDescriptor?: string;
@@ -255,7 +255,7 @@ model GraphScopeCreationContext {
       ],
     }
   )
-  scopeType?: "generic" | "serviceHost" | "teamProject";
+  scopeType?: "generic" | "serviceHost" | "teamProject" | string;
 
   /** An optional ID that uniquely represents the scope within it's parent scope. If this parameter is not provided, Vsts will generate on automatically. */
   @format("uuid") storageKey?: string;
@@ -440,7 +440,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;

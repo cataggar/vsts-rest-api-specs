@@ -12,6 +12,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 1,
+        "extensibleEnums": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -32,6 +33,7 @@
         "pathParameters": 0,
         "operationIds": 8,
         "arrayResponses": 2,
+        "extensibleEnums": 13,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -63,7 +65,7 @@
         "criteria.states.secretAlerts": "criteriaStatesSecretAlerts",
         "api-version": "apiVersion"
       },
-      "lines": 1014
+      "lines": 1034
     },
     {
       "area": "advancedSecurity",
@@ -75,6 +77,7 @@
         "pathParameters": 0,
         "operationIds": 4,
         "arrayResponses": 5,
+        "extensibleEnums": 36,
         "continuationTokenHeaders": 2,
         "renamedContinuationTokenHeaders": 0
       },
@@ -105,7 +108,7 @@
         "criteria.validity": "criteriaValidity",
         "api-version": "apiVersion"
       },
-      "lines": 1825
+      "lines": 1857
     },
     {
       "area": "advancedSecurity",
@@ -117,6 +120,7 @@
         "pathParameters": 0,
         "operationIds": 10,
         "arrayResponses": 0,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -139,6 +143,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -159,6 +164,7 @@
         "pathParameters": 0,
         "operationIds": 3,
         "arrayResponses": 1,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -179,6 +185,7 @@
         "pathParameters": 0,
         "operationIds": 9,
         "arrayResponses": 2,
+        "extensibleEnums": 8,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -187,7 +194,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 848
+      "lines": 853
     },
     {
       "area": "approvalsAndChecks",
@@ -199,6 +206,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 2,
+        "extensibleEnums": 8,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -207,7 +215,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 619
+      "lines": 623
     },
     {
       "area": "artifacts",
@@ -219,6 +227,7 @@
         "pathParameters": 0,
         "operationIds": 36,
         "arrayResponses": 13,
+        "extensibleEnums": 12,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -239,6 +248,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -259,6 +269,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -279,6 +290,7 @@
         "pathParameters": 0,
         "operationIds": 9,
         "arrayResponses": 0,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -299,6 +311,7 @@
         "pathParameters": 0,
         "operationIds": 7,
         "arrayResponses": 0,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -319,6 +332,7 @@
         "pathParameters": 0,
         "operationIds": 13,
         "arrayResponses": 0,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -327,7 +341,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 894
+      "lines": 895
     },
     {
       "area": "artifactsPackageTypes",
@@ -339,6 +353,7 @@
         "pathParameters": 0,
         "operationIds": 10,
         "arrayResponses": 0,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -359,6 +374,7 @@
         "pathParameters": 0,
         "operationIds": 10,
         "arrayResponses": 0,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -379,6 +395,7 @@
         "pathParameters": 0,
         "operationIds": 7,
         "arrayResponses": 0,
+        "extensibleEnums": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -399,6 +416,7 @@
         "pathParameters": 0,
         "operationIds": 6,
         "arrayResponses": 2,
+        "extensibleEnums": 5,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -407,7 +425,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 517
+      "lines": 518
     },
     {
       "area": "build",
@@ -419,6 +437,7 @@
         "pathParameters": 2,
         "operationIds": 48,
         "arrayResponses": 29,
+        "extensibleEnums": 48,
         "continuationTokenHeaders": 3,
         "renamedContinuationTokenHeaders": 0
       },
@@ -429,7 +448,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 6149
+      "lines": 6191
     },
     {
       "area": "core",
@@ -441,6 +460,7 @@
         "pathParameters": 0,
         "operationIds": 8,
         "arrayResponses": 6,
+        "extensibleEnums": 9,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -449,7 +469,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1185
+      "lines": 1201
     },
     {
       "area": "dashboard",
@@ -461,6 +481,7 @@
         "pathParameters": 0,
         "operationIds": 10,
         "arrayResponses": 4,
+        "extensibleEnums": 5,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -469,7 +490,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 856
+      "lines": 863
     },
     {
       "area": "delegatedAuth",
@@ -481,6 +502,7 @@
         "pathParameters": 0,
         "operationIds": 2,
         "arrayResponses": 0,
+        "extensibleEnums": 7,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -489,7 +511,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 516
+      "lines": 522
     },
     {
       "area": "distributedTask",
@@ -501,6 +523,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -509,7 +532,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 173
+      "lines": 180
     },
     {
       "area": "distributedTask",
@@ -521,6 +544,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 3,
+        "extensibleEnums": 14,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -529,7 +553,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 832
+      "lines": 842
     },
     {
       "area": "distributedTask",
@@ -541,6 +565,7 @@
         "pathParameters": 0,
         "operationIds": 3,
         "arrayResponses": 1,
+        "extensibleEnums": 13,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -549,7 +574,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 823
+      "lines": 827
     },
     {
       "area": "distributedTask",
@@ -561,6 +586,7 @@
         "pathParameters": 0,
         "operationIds": 9,
         "arrayResponses": 14,
+        "extensibleEnums": 54,
         "continuationTokenHeaders": 3,
         "renamedContinuationTokenHeaders": 0
       },
@@ -569,7 +595,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 5524
+      "lines": 5548
     },
     {
       "area": "environments",
@@ -581,6 +607,7 @@
         "pathParameters": 0,
         "operationIds": 2,
         "arrayResponses": 3,
+        "extensibleEnums": 8,
         "continuationTokenHeaders": 3,
         "renamedContinuationTokenHeaders": 0
       },
@@ -589,7 +616,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1057
+      "lines": 1059
     },
     {
       "area": "extensionManagement",
@@ -601,6 +628,7 @@
         "pathParameters": 0,
         "operationIds": 5,
         "arrayResponses": 1,
+        "extensibleEnums": 20,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -609,7 +637,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1419
+      "lines": 1440
     },
     {
       "area": "favorite",
@@ -621,6 +649,7 @@
         "pathParameters": 0,
         "operationIds": 4,
         "arrayResponses": 1,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -641,6 +670,7 @@
         "pathParameters": 0,
         "operationIds": 88,
         "arrayResponses": 34,
+        "extensibleEnums": 69,
         "continuationTokenHeaders": 2,
         "renamedContinuationTokenHeaders": 0
       },
@@ -667,7 +697,7 @@
         "baseVersionDescriptor.version": "baseVersionDescriptorVersion",
         "api-version": "apiVersion"
       },
-      "lines": 8075
+      "lines": 8163
     },
     {
       "area": "graph",
@@ -679,6 +709,7 @@
         "pathParameters": 0,
         "operationIds": 13,
         "arrayResponses": 5,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 3
       },
@@ -699,6 +730,7 @@
         "pathParameters": 0,
         "operationIds": 8,
         "arrayResponses": 6,
+        "extensibleEnums": 11,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -707,7 +739,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1418
+      "lines": 1420
     },
     {
       "area": "ims",
@@ -719,6 +751,7 @@
         "pathParameters": 0,
         "operationIds": 1,
         "arrayResponses": 1,
+        "extensibleEnums": 5,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -739,6 +772,7 @@
         "pathParameters": 0,
         "operationIds": 19,
         "arrayResponses": 1,
+        "extensibleEnums": 19,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -747,7 +781,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1456
+      "lines": 1475
     },
     {
       "area": "notification",
@@ -759,6 +793,7 @@
         "pathParameters": 0,
         "operationIds": 5,
         "arrayResponses": 5,
+        "extensibleEnums": 18,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -767,7 +802,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2087
+      "lines": 2108
     },
     {
       "area": "operations",
@@ -779,6 +814,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -799,6 +835,7 @@
         "pathParameters": 0,
         "operationIds": 4,
         "arrayResponses": 1,
+        "extensibleEnums": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -809,7 +846,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 224
+      "lines": 225
     },
     {
       "area": "pipelines",
@@ -821,6 +858,7 @@
         "pathParameters": 0,
         "operationIds": 1,
         "arrayResponses": 2,
+        "extensibleEnums": 5,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -829,7 +867,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 677
+      "lines": 678
     },
     {
       "area": "policy",
@@ -841,6 +879,7 @@
         "pathParameters": 0,
         "operationIds": 1,
         "arrayResponses": 4,
+        "extensibleEnums": 1,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -861,6 +900,7 @@
         "pathParameters": 0,
         "operationIds": 3,
         "arrayResponses": 1,
+        "extensibleEnums": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -881,6 +921,7 @@
         "pathParameters": 0,
         "operationIds": 21,
         "arrayResponses": 10,
+        "extensibleEnums": 13,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -889,7 +930,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2590
+      "lines": 2594
     },
     {
       "area": "profile",
@@ -901,6 +942,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 3,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -921,6 +963,7 @@
         "pathParameters": 0,
         "operationIds": 16,
         "arrayResponses": 9,
+        "extensibleEnums": 53,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -929,7 +972,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 5225
+      "lines": 5254
     },
     {
       "area": "resourceUsage",
@@ -941,6 +984,7 @@
         "pathParameters": 0,
         "operationIds": 1,
         "arrayResponses": 0,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -961,6 +1005,7 @@
         "pathParameters": 0,
         "operationIds": 4,
         "arrayResponses": 0,
+        "extensibleEnums": 2,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -981,6 +1026,7 @@
         "pathParameters": 0,
         "operationIds": 9,
         "arrayResponses": 3,
+        "extensibleEnums": 0,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1001,6 +1047,7 @@
         "pathParameters": 0,
         "operationIds": 4,
         "arrayResponses": 3,
+        "extensibleEnums": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1021,6 +1068,7 @@
         "pathParameters": 0,
         "operationIds": 7,
         "arrayResponses": 6,
+        "extensibleEnums": 5,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1029,7 +1077,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 1386
+      "lines": 1395
     },
     {
       "area": "status",
@@ -1041,6 +1089,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 11,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1061,6 +1110,7 @@
         "pathParameters": 0,
         "operationIds": 10,
         "arrayResponses": 3,
+        "extensibleEnums": 4,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1069,7 +1119,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 523
+      "lines": 524
     },
     {
       "area": "test",
@@ -1081,6 +1131,7 @@
         "pathParameters": 0,
         "operationIds": 21,
         "arrayResponses": 15,
+        "extensibleEnums": 46,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1091,7 +1142,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 6315
+      "lines": 6350
     },
     {
       "area": "testPlan",
@@ -1103,6 +1154,7 @@
         "pathParameters": 0,
         "operationIds": 32,
         "arrayResponses": 16,
+        "extensibleEnums": 16,
         "continuationTokenHeaders": 8,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1113,7 +1165,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2801
+      "lines": 2816
     },
     {
       "area": "testResults",
@@ -1125,6 +1177,7 @@
         "pathParameters": 0,
         "operationIds": 40,
         "arrayResponses": 33,
+        "extensibleEnums": 33,
         "continuationTokenHeaders": 4,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1150,7 +1203,7 @@
         "releaseToCompare.name": "releaseToCompareName",
         "api-version": "apiVersion"
       },
-      "lines": 5166
+      "lines": 5189
     },
     {
       "area": "tfvc",
@@ -1162,6 +1215,7 @@
         "pathParameters": 0,
         "operationIds": 9,
         "arrayResponses": 10,
+        "extensibleEnums": 10,
         "continuationTokenHeaders": 1,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1190,7 +1244,7 @@
         "requestData.maxItemCount": "requestDataMaxItemCount",
         "api-version": "apiVersion"
       },
-      "lines": 1431
+      "lines": 1442
     },
     {
       "area": "tokenAdmin",
@@ -1202,6 +1256,7 @@
         "pathParameters": 0,
         "operationIds": 3,
         "arrayResponses": 0,
+        "extensibleEnums": 1,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1210,7 +1265,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 251
+      "lines": 252
     },
     {
       "area": "tokens",
@@ -1222,6 +1277,7 @@
         "pathParameters": 0,
         "operationIds": 0,
         "arrayResponses": 0,
+        "extensibleEnums": 3,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1230,7 +1286,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 419
+      "lines": 421
     },
     {
       "area": "wiki",
@@ -1242,6 +1298,7 @@
         "pathParameters": 0,
         "operationIds": 8,
         "arrayResponses": 2,
+        "extensibleEnums": 9,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1251,7 +1308,7 @@
         "versionDescriptor.version": "versionDescriptorVersion",
         "api-version": "apiVersion"
       },
-      "lines": 1427
+      "lines": 1435
     },
     {
       "area": "wit",
@@ -1263,6 +1320,7 @@
         "pathParameters": 0,
         "operationIds": 56,
         "arrayResponses": 26,
+        "extensibleEnums": 21,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1274,7 +1332,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 4260
+      "lines": 4262
     },
     {
       "area": "work",
@@ -1286,6 +1344,7 @@
         "pathParameters": 0,
         "operationIds": 23,
         "arrayResponses": 17,
+        "extensibleEnums": 19,
         "continuationTokenHeaders": 0,
         "renamedContinuationTokenHeaders": 0
       },
@@ -1296,7 +1355,7 @@
       "renamedParameters": {
         "api-version": "apiVersion"
       },
-      "lines": 2857
+      "lines": 2868
     }
   ]
 }

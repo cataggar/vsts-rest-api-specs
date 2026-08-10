@@ -64,7 +64,7 @@ model AccountRecentActivityWorkItemModelBase {
       ],
     }
   )
-  activityType?: "visited" | "edited" | "deleted" | "restored";
+  activityType?: "visited" | "edited" | "deleted" | "restored" | string;
 
   /** Last changed date of the work item */
   changedDate?: utcDateTime;
@@ -160,7 +160,7 @@ model Comment {
       values: #[#{ value: "markdown", description: "" }, #{ value: "html", description: "" }],
     }
   )
-  format?: "markdown" | "html";
+  format?: "markdown" | "html" | string;
 
   /** The id assigned to the comment. */
   id?: int32;
@@ -262,7 +262,7 @@ model CommentReaction {
       ],
     }
   )
-  type?: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused";
+  type?: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused" | string;
 }
 
 /** Represents a request to update a work item comment. */
@@ -500,7 +500,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -590,7 +590,7 @@ model QueryBatchGetRequest {
       ],
     }
   )
-  $expand?: "none" | "wiql" | "clauses" | "all" | "minimal";
+  $expand?: "none" | "wiql" | "clauses" | "all" | "minimal" | string;
 
   /** The flag to control error policy in a query batch request. Possible options are { Fail, Omit }. */
   @extension(
@@ -600,7 +600,7 @@ model QueryBatchGetRequest {
       values: #[#{ value: "fail", description: "" }, #{ value: "omit", description: "" }],
     }
   )
-  errorPolicy?: "fail" | "omit";
+  errorPolicy?: "fail" | "omit" | string;
 
   /** The requested query ids */
   ids?: string[];
@@ -658,7 +658,8 @@ model QueryHierarchyItem {
     | "linksOneHopDoesNotContain"
     | "linksRecursiveMustContain"
     | "linksRecursiveMayContain"
-    | "linksRecursiveDoesNotContain";
+    | "linksRecursiveDoesNotContain"
+    | string;
 
   /** If this is a query folder, indicates if it contains any children. */
   hasChildren?: boolean;
@@ -713,7 +714,7 @@ model QueryHierarchyItem {
       ],
     }
   )
-  queryRecursionOption?: "parentFirst" | "childFirst";
+  queryRecursionOption?: "parentFirst" | "childFirst" | string;
 
   /** The type of query. */
   @extension(
@@ -727,7 +728,7 @@ model QueryHierarchyItem {
       ],
     }
   )
-  queryType?: "flat" | "tree" | "oneHop";
+  queryType?: "flat" | "tree" | "oneHop" | string;
 
   /** The sort columns of the query. */
   sortColumns?: WorkItemQuerySortColumn[];
@@ -889,7 +890,7 @@ model WorkItem {
   id?: int32;
 
   /** Dictionary describing the Format for multiline fields selected by the last edit user. */
-  multilineFieldsFormat?: Record<"markdown" | "html">;
+  multilineFieldsFormat?: Record<"markdown" | "html" | string>;
 
   /** Relations of the work item. */
   relations?: WorkItemRelation[];
@@ -914,7 +915,7 @@ model WorkItemBatchGetRequest {
       ],
     }
   )
-  $expand?: "none" | "relations" | "fields" | "links" | "all";
+  $expand?: "none" | "relations" | "fields" | "links" | "all" | string;
 
   /** AsOf UTC date time string */
   asOf?: utcDateTime;
@@ -930,7 +931,7 @@ model WorkItemBatchGetRequest {
       ],
     }
   )
-  errorPolicy?: "fail" | "omit";
+  errorPolicy?: "fail" | "omit" | string;
 
   /** The requested fields */
   fields?: string[];
@@ -975,7 +976,7 @@ model WorkItemClassificationNode {
       ],
     }
   )
-  structureType?: "area" | "iteration";
+  structureType?: "area" | "iteration" | string;
 }
 
 /** Comment on Work Item */
@@ -990,7 +991,7 @@ model WorkItemComment {
       values: #[#{ value: "markdown", description: "" }, #{ value: "html", description: "" }],
     }
   )
-  format?: "markdown" | "html";
+  format?: "markdown" | "html" | string;
 
   /** The text of the comment in HTML format. */
   renderedText?: string;
@@ -1199,7 +1200,8 @@ model WorkItemField {
     | "identity"
     | "picklistString"
     | "picklistInteger"
-    | "picklistDouble";
+    | "picklistDouble"
+    | string;
 
   /** The usage of the field. */
   @extension(
@@ -1215,7 +1217,7 @@ model WorkItemField {
       ],
     }
   )
-  usage?: "none" | "workItem" | "workItemLink" | "tree" | "workItemTypeExtension";
+  usage?: "none" | "workItem" | "workItemLink" | "tree" | "workItemTypeExtension" | string;
 }
 
 /** Describes a field on a work item and it's properties specific to that work item type. */
@@ -1329,7 +1331,7 @@ model WorkItemQueryClause {
       ],
     }
   )
-  logicalOperator?: "none" | "and" | "or";
+  logicalOperator?: "none" | "and" | "or" | string;
 
   operator?: WorkItemFieldOperation;
 
@@ -1359,7 +1361,7 @@ model WorkItemQueryResult {
       ],
     }
   )
-  queryResultType?: "workItem" | "workItemLink";
+  queryResultType?: "workItem" | "workItemLink" | string;
 
   /** The type of the query */
   @extension(
@@ -1373,7 +1375,7 @@ model WorkItemQueryResult {
       ],
     }
   )
-  queryType?: "flat" | "tree" | "oneHop";
+  queryType?: "flat" | "tree" | "oneHop" | string;
 
   /** The sort columns of the query. */
   sortColumns?: WorkItemQuerySortColumn[];
@@ -1649,7 +1651,7 @@ model WorkItemTypeTemplateUpdateModel {
       values: #[#{ value: "import", description: "" }, #{ value: "validate", description: "" }],
     }
   )
-  actionType?: "import" | "validate";
+  actionType?: "import" | "validate" | string;
 
   /** Methodology to which the template belongs, eg. Agile, Scrum, CMMI. */
   methodology?: string;
@@ -1668,7 +1670,7 @@ model WorkItemTypeTemplateUpdateModel {
       ],
     }
   )
-  templateType?: "workItemType" | "globalWorkflow";
+  templateType?: "workItemType" | "globalWorkflow" | string;
 }
 
 /** Describes an update to a work item. */

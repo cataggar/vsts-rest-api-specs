@@ -60,7 +60,7 @@ model AdvancedFlakyDetectionParameter {
       ],
     }
   )
-  parameterType?: "failureRate" | "passRate" | "timingVariability" | "rerunCount";
+  parameterType?: "failureRate" | "passRate" | "timingVariability" | "rerunCount" | string;
 
   /** Weight for the parameter. Values between 0-100 */
   weight?: int32;
@@ -204,7 +204,8 @@ model AggregatedResultDetailsByOutcome {
     | "notApplicable"
     | "paused"
     | "inProgress"
-    | "notImpacted";
+    | "notImpacted"
+    | string;
 
   /** Number of results on rerun */
   rerunResultCount?: int32;
@@ -294,7 +295,8 @@ model AggregatedResultsByOutcome {
     | "notApplicable"
     | "paused"
     | "inProgress"
-    | "notImpacted";
+    | "notImpacted"
+    | string;
   rerunResultCount?: int32;
 }
 
@@ -323,7 +325,7 @@ model AggregatedRunsByOutcome {
       ],
     }
   )
-  outcome?: "passed" | "failed" | "notImpacted" | "others";
+  outcome?: "passed" | "failed" | "notImpacted" | "others" | string;
   runsCount?: int32;
 }
 
@@ -364,7 +366,8 @@ model AggregatedRunsByState {
     | "completed"
     | "aborted"
     | "waiting"
-    | "needsInvestigation";
+    | "needsInvestigation"
+    | string;
 }
 
 model AnalysisFailureGroupReturn {
@@ -482,7 +485,8 @@ model BatchResponse {
     | "badGateway"
     | "serviceUnavailable"
     | "gatewayTimeout"
-    | "httpVersionNotSupported";
+    | "httpVersionNotSupported"
+    | string;
 }
 
 model BranchCoverageStatistics {
@@ -511,7 +515,7 @@ model BranchInfo {
       ],
     }
   )
-  branchType?: "none" | "heads" | "tags" | "pull";
+  branchType?: "none" | "heads" | "tags" | "pull" | string;
 }
 
 /** BuildConfiguration Details. */
@@ -654,7 +658,7 @@ model CloneOperationInformation {
       ],
     }
   )
-  resultObjectType?: "testSuite" | "testPlan";
+  resultObjectType?: "testSuite" | "testPlan" | string;
 
   sourceObject?: ShallowReference;
   sourcePlan?: ShallowReference;
@@ -673,7 +677,7 @@ model CloneOperationInformation {
       ],
     }
   )
-  state?: "failed" | "inProgress" | "queued" | "succeeded";
+  state?: "failed" | "inProgress" | "queued" | "succeeded" | string;
 
   /** Url for getting the clone information */
   url?: string;
@@ -835,7 +839,8 @@ model CodeCoverageSummary {
     | "monitorJobFailed"
     | "moduleMergeInvokerJobTimeout"
     | "monitorJobTimeout"
-    | "invalidCoverageInput";
+    | "invalidCoverageInput"
+    | string;
   deltaBuild?: ShallowReference;
 
   /** Uri of build against which difference in coverage is computed */
@@ -862,7 +867,14 @@ model CodeCoverageSummary {
       ],
     }
   )
-  status?: "none" | "inProgress" | "completed" | "finalized" | "pending" | "updateRequestQueued";
+  status?:
+    | "none"
+    | "inProgress"
+    | "completed"
+    | "finalized"
+    | "pending"
+    | "updateRequestQueued"
+    | string;
 }
 
 model CodeCoverageSummary2 {
@@ -942,7 +954,7 @@ model CustomTestFieldDefinition {
       ],
     }
   )
-  fieldType?: "bit" | "dateTime" | "int" | "float" | "string" | "guid";
+  fieldType?: "bit" | "dateTime" | "int" | "float" | "string" | "guid" | string;
 
   /** Artifact to which customTestField will be set. */
   @extension(
@@ -968,7 +980,7 @@ model CustomTestFieldDefinition {
       ],
     }
   )
-  scope?: "none" | "testRun" | "testResult" | "testRunAndTestResult" | "system" | "all";
+  scope?: "none" | "testRun" | "testResult" | "testRunAndTestResult" | "system" | "all" | string;
 }
 
 /** Data structure which stores details for the customTestField to be updated. */
@@ -1082,7 +1094,7 @@ model FlakyDetection {
       ],
     }
   )
-  flakyDetectionType?: "custom" | "system";
+  flakyDetectionType?: "custom" | "system" | string;
 }
 
 model FlakyDetectionPipelines {
@@ -1106,7 +1118,7 @@ model FlakySettings {
       ],
     }
   )
-  advancedSystemDetectionMode?: "disabled" | "preview" | "enabled";
+  advancedSystemDetectionMode?: "disabled" | "preview" | "enabled" | string;
 
   flakyDetection?: FlakyDetection;
 
@@ -1122,7 +1134,7 @@ model FlakySettings {
 
 model FlakyTestBugConfig {
   /** Metadata properties for flaky test bug. */
-  bugMetadata?: ("errorMessage" | "stackTrace" | "testName" | "machine")[];
+  bugMetadata?: ("errorMessage" | "stackTrace" | "testName" | "machine" | string)[];
 
   /** Bug Priority for flaky test bug. */
   bugPriority?: int32;
@@ -1348,7 +1360,7 @@ model LegacyTestCaseResult {
       ],
     }
   )
-  resultGroupType?: "none" | "rerun" | "dataDriven" | "orderedTest" | "generic";
+  resultGroupType?: "none" | "rerun" | "dataDriven" | "orderedTest" | "generic" | string;
   revision?: int32;
   @format("uuid") runBy?: string;
   runByName?: string;
@@ -1990,7 +2002,8 @@ model Response {
     | "badGateway"
     | "serviceUnavailable"
     | "gatewayTimeout"
-    | "httpVersionNotSupported";
+    | "httpVersionNotSupported"
+    | string;
   url?: string;
 }
 
@@ -2039,7 +2052,7 @@ model ResultsFilter {
       ],
     }
   )
-  executedIn?: "any" | "tcm" | "tfs";
+  executedIn?: "any" | "tcm" | "tfs" | string;
   groupBy?: string;
   maxCompleteDate?: utcDateTime;
   resultsCount?: int32;
@@ -2241,7 +2254,7 @@ model RunStatistic {
       ],
     }
   )
-  resultMetadata?: "rerun" | "flaky";
+  resultMetadata?: "rerun" | "flaky" | string;
 
   /** State of the test run */
   state?: string;
@@ -2342,7 +2355,8 @@ model RunSummaryModel {
     | "notApplicable"
     | "paused"
     | "inProgress"
-    | "notImpacted";
+    | "notImpacted"
+    | string;
 }
 
 model RunUpdateModel {
@@ -2439,7 +2453,8 @@ model RunUpdateModel {
     | "timedOut"
     | "pendingAnalysis"
     | "analyzed"
-    | "cancellationInProgress";
+    | "cancellationInProgress"
+    | string;
 
   /** Tags to attach with the test run. */
   tags?: TestTag[];
@@ -2715,7 +2730,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** Url to the full version of the object. */
   url?: string;
@@ -2734,7 +2757,7 @@ model TeamProjectReference {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 model TestActionResult {
@@ -2841,7 +2864,7 @@ model TestAttachment {
       ],
     }
   )
-  attachmentType?: "generalAttachment" | "codeCoverage" | "consoleLog";
+  attachmentType?: "generalAttachment" | "codeCoverage" | "consoleLog" | string;
 
   /** Comment associated with attachment. */
   comment?: string;
@@ -2916,7 +2939,7 @@ model TestAuthoringDetails {
       ],
     }
   )
-  state?: "none" | "ready" | "completed" | "notReady" | "inProgress" | "maxValue";
+  state?: "none" | "ready" | "completed" | "notReady" | "inProgress" | "maxValue" | string;
   suiteId?: int32;
   @format("uuid") testerId?: string;
 }
@@ -3079,7 +3102,7 @@ model TestCaseResult {
       ],
     }
   )
-  resultGroupType?: "none" | "rerun" | "dataDriven" | "orderedTest" | "generic";
+  resultGroupType?: "none" | "rerun" | "dataDriven" | "orderedTest" | "generic" | string;
 
   /** Revision number of test result. */
   revision?: int32;
@@ -3220,7 +3243,7 @@ model TestConfiguration {
       ],
     }
   )
-  state?: "active" | "inactive";
+  state?: "active" | "inactive" | string;
 
   /** Url of Configuration Resource */
   url?: string;
@@ -3323,7 +3346,8 @@ model TestExtensionFieldDetails {
     | "date"
     | "time"
     | "dateTime2"
-    | "dateTimeOffset";
+    | "dateTimeOffset"
+    | string;
 }
 
 model TestFailureDetails {
@@ -3393,7 +3417,7 @@ model TestHistoryQuery {
       ],
     }
   )
-  groupBy?: "branch" | "environment";
+  groupBy?: "branch" | "environment" | string;
 
   /** History to get between time interval MaxCompleteDate and (MaxCompleteDate - TrendDays). Default is current date time. */
   maxCompleteDate?: utcDateTime;
@@ -3491,7 +3515,7 @@ model TestLogReference {
       ],
     }
   )
-  scope?: "run";
+  scope?: "run" | string;
 
   /** SubResultid for test log, if context is run and log is related to subresult */
   subResultId?: int32;
@@ -3504,7 +3528,7 @@ model TestLogReference {
       values: #[#{ value: "generalAttachment", description: "Any gereric attachment." }],
     }
   )
-  type?: "generalAttachment";
+  type?: "generalAttachment" | string;
 }
 
 /** Represents Test Log Status object. */
@@ -3564,7 +3588,8 @@ model TestLogStatus {
     | "containerNotFound"
     | "fileNotFound"
     | "directoryNotFound"
-    | "storageCapacityExceeded";
+    | "storageCapacityExceeded"
+    | string;
 
   /** Blob Transfer Error code */
   transferFailureType?: string;
@@ -3587,7 +3612,7 @@ model TestLogStoreAttachment {
       ],
     }
   )
-  attachmentType?: "generalAttachment" | "codeCoverage" | "consoleLog";
+  attachmentType?: "generalAttachment" | "codeCoverage" | "consoleLog" | string;
 
   /** Comment associated with attachment. */
   comment?: string;
@@ -3627,7 +3652,7 @@ model TestLogStoreEndpointDetails {
       ],
     }
   )
-  endpointType?: "root" | "file";
+  endpointType?: "root" | "file" | string;
 
   /** Test log store status code */
   @extension(
@@ -3681,7 +3706,8 @@ model TestLogStoreEndpointDetails {
     | "containerNotFound"
     | "fileNotFound"
     | "directoryNotFound"
-    | "storageCapacityExceeded";
+    | "storageCapacityExceeded"
+    | string;
 }
 
 model TestMessageLog2 {
@@ -3903,7 +3929,7 @@ model TestPointReference {
       ],
     }
   )
-  state?: "none" | "ready" | "completed" | "notReady" | "inProgress" | "maxValue";
+  state?: "none" | "ready" | "completed" | "notReady" | "inProgress" | "maxValue" | string;
 }
 
 model TestPointsEvent {
@@ -3984,7 +4010,7 @@ model TestResultAttachment {
       ],
     }
   )
-  attachmentType?: "generalAttachment" | "codeCoverage" | "consoleLog";
+  attachmentType?: "generalAttachment" | "codeCoverage" | "consoleLog" | string;
   comment?: string;
   creationDate?: utcDateTime;
   downloadQueryString?: string;
@@ -4230,7 +4256,7 @@ model TestResultsContext {
       ],
     }
   )
-  contextType?: "build" | "release" | "pipeline";
+  contextType?: "build" | "release" | "pipeline" | string;
   pipelineReference?: PipelineReference;
   release?: ReleaseReference;
 }
@@ -4314,7 +4340,7 @@ model TestResultsSession {
       ],
     }
   )
-  result?: "none" | "passed" | "failed" | "pending";
+  result?: "none" | "passed" | "failed" | "pending" | string;
 
   sessionSourcePipeline?: SessionSourcePipeline;
   source?: Source;
@@ -4336,7 +4362,7 @@ model TestResultsSession {
       ],
     }
   )
-  state?: "none" | "running" | "completed" | "waiting" | "cancelled";
+  state?: "none" | "running" | "completed" | "waiting" | "cancelled" | string;
 
   /** List of test run ids */
   testRuns?: int32[];
@@ -4512,7 +4538,8 @@ model TestRun {
     | "timedOut"
     | "pendingAnalysis"
     | "analyzed"
-    | "cancellationInProgress";
+    | "cancellationInProgress"
+    | string;
 
   /** Tags attached with this test run. */
   tags?: TestTag[];
@@ -4731,7 +4758,8 @@ model TestSession {
     | "xtWeb"
     | "feedbackWeb"
     | "xtDesktop2"
-    | "sessionInsightsForAll";
+    | "sessionInsightsForAll"
+    | string;
 
   /** Start date */
   startDate?: utcDateTime;
@@ -4757,7 +4785,14 @@ model TestSession {
       ],
     }
   )
-  state?: "unspecified" | "notStarted" | "inProgress" | "paused" | "completed" | "declined";
+  state?:
+    | "unspecified"
+    | "notStarted"
+    | "inProgress"
+    | "paused"
+    | "completed"
+    | "declined"
+    | string;
 
   /** Title of the test session */
   title?: string;
@@ -4939,7 +4974,7 @@ model TestSubResult {
       ],
     }
   )
-  resultGroupType?: "none" | "rerun" | "dataDriven" | "orderedTest" | "generic";
+  resultGroupType?: "none" | "rerun" | "dataDriven" | "orderedTest" | "generic" | string;
 
   /** Index number of sub result. */
   sequenceId?: int32;
@@ -5169,7 +5204,7 @@ model WorkItemToTestLinks {
       ],
     }
   )
-  executedIn?: "any" | "tcm" | "tfs";
+  executedIn?: "any" | "tcm" | "tfs" | string;
   tests?: TestMethod[];
   workItem?: WorkItemReference;
 }

@@ -87,7 +87,7 @@ model FeedBatchData {
     "x-ms-enum",
     #{ name: "FeedBatchOperation", values: #[#{ value: "saveCachedPackages", description: "" }] }
   )
-  operation?: "saveCachedPackages";
+  operation?: "saveCachedPackages" | string;
 }
 
 model FeedBatchOperationData {}
@@ -109,7 +109,7 @@ model FeedChange {
       ],
     }
   )
-  changeType?: "addOrUpdate" | "delete" | "permanentDelete";
+  changeType?: "addOrUpdate" | "delete" | "permanentDelete" | string;
 
   feed?: Feed;
 
@@ -158,7 +158,7 @@ model FeedCore {
       ],
     }
   )
-  capabilities?: "none" | "upstreamV2" | "underMaintenance" | "defaultCapabilities";
+  capabilities?: "none" | "upstreamV2" | "underMaintenance" | "defaultCapabilities" | string;
 
   /** This will either be the feed GUID or the feed GUID and view GUID depending on how the feed was accessed. */
   fullyQualifiedId?: string;
@@ -239,7 +239,7 @@ model FeedPermission {
       ],
     }
   )
-  role?: "custom" | "none" | "reader" | "contributor" | "administrator" | "collaborator";
+  role?: "custom" | "none" | "reader" | "contributor" | "administrator" | "collaborator" | string;
 }
 
 /** Retention policy settings. */
@@ -315,7 +315,7 @@ model FeedView {
       ],
     }
   )
-  type?: "none" | "release" | "implicit";
+  type?: "none" | "release" | "implicit" | string;
 
   /** Url of the view. */
   url?: string;
@@ -345,7 +345,7 @@ model FeedView {
       ],
     }
   )
-  visibility?: "private" | "collection" | "organization" | "aadTenant";
+  visibility?: "private" | "collection" | "organization" | "aadTenant" | string;
 }
 
 /** Permissions for feed service-wide operations such as the creation of new feeds. */
@@ -368,7 +368,7 @@ model GlobalPermission {
       ],
     }
   )
-  role?: "custom" | "none" | "feedCreator" | "administrator";
+  role?: "custom" | "none" | "feedCreator" | "administrator" | string;
 }
 
 /** An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID. */
@@ -403,7 +403,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -474,7 +474,7 @@ model OperationReference {
       ],
     }
   )
-  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed";
+  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed" | string;
 
   /** URL to get the full operation object. */
   url?: string;
@@ -628,7 +628,7 @@ model PackageVersionChange {
       ],
     }
   )
-  changeType?: "addOrUpdate" | "delete" | "permanentDelete";
+  changeType?: "addOrUpdate" | "delete" | "permanentDelete" | string;
 
   /** Token marker for this change, allowing the caller to send this value back to the service and receive changes beyond this one. */
   continuationToken?: int64;
@@ -778,7 +778,7 @@ model UpstreamSource {
       ],
     }
   )
-  status?: "ok" | "disabled";
+  status?: "ok" | "disabled" | string;
 
   /** Provides a human-readable reason for the status of the upstream. */
   statusDetails?: UpstreamStatusDetail[];
@@ -794,7 +794,7 @@ model UpstreamSource {
       ],
     }
   )
-  upstreamSourceType?: "public" | "internal";
+  upstreamSourceType?: "public" | "internal" | string;
 }
 
 model UpstreamStatusDetail {

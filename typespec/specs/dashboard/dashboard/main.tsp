@@ -41,7 +41,7 @@ model CopyDashboardOptions {
       ],
     }
   )
-  copyDashboardScope?: "collection_User" | "project_Team" | "project";
+  copyDashboardScope?: "collection_User" | "project_Team" | "project" | string;
 
   /** When this flag is set to true,option to select the folder to copy Queries of copy dashboard will appear. */
   copyQueriesFlag?: boolean;
@@ -89,7 +89,7 @@ model Dashboard {
       ],
     }
   )
-  dashboardScope?: "collection_User" | "project_Team" | "project";
+  dashboardScope?: "collection_User" | "project_Team" | "project" | string;
 
   /** Description of the dashboard. */
   description?: string;
@@ -153,7 +153,7 @@ model DashboardGroup {
       ],
     }
   )
-  permission?: "none" | "edit" | "manage" | "managePermissions";
+  permission?: "none" | "edit" | "manage" | "managePermissions" | string;
 
   /** A permissions bit mask describing the security permissions of the current team for dashboards. When this permission is the value None, use GroupMemberPermission. Permissions are evaluated based on the presence of a value other than None, else the GroupMemberPermission will be saved. */
   @extension(
@@ -170,7 +170,14 @@ model DashboardGroup {
       ],
     }
   )
-  teamDashboardPermission?: "none" | "read" | "create" | "edit" | "delete" | "managePermissions";
+  teamDashboardPermission?:
+    | "none"
+    | "read"
+    | "create"
+    | "edit"
+    | "delete"
+    | "managePermissions"
+    | string;
 
   url?: string;
 }
@@ -342,7 +349,7 @@ model WidgetMetadata {
   publisherName?: string;
 
   /** Data contract required for the widget to function and to work in its container. */
-  supportedScopes?: ("collection_User" | "project_Team")[];
+  supportedScopes?: ("collection_User" | "project_Team" | string)[];
 
   /** Tags associated with this widget, visible on each widget and filterable. */
   tags?: string[];

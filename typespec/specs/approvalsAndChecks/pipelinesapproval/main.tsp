@@ -50,7 +50,7 @@ model Approval {
       ],
     }
   )
-  executionOrder?: "anyOrder" | "inSequence";
+  executionOrder?: "anyOrder" | "inSequence" | string;
 
   /** Unique identifier of the approval. */
   @format("uuid") id?: string;
@@ -79,7 +79,7 @@ model Approval {
       ],
     }
   )
-  permissions?: "none" | "view" | "update" | "reassign" | "resourceAdmin" | "queueBuild";
+  permissions?: "none" | "view" | "update" | "reassign" | "resourceAdmin" | "queueBuild" | string;
 
   pipeline?: JObject;
 
@@ -119,7 +119,8 @@ model Approval {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 
   /** List of steps associated with the approval. */
   steps?: ApprovalStep[];
@@ -160,7 +161,7 @@ model ApprovalConfig {
       ],
     }
   )
-  executionOrder?: "anyOrder" | "inSequence";
+  executionOrder?: "anyOrder" | "inSequence" | string;
 
   /** Instructions for the approver. */
   instructions?: string;
@@ -231,7 +232,8 @@ model ApprovalsQueryParameters {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 
   /** Query approvals based on list of IDs approvals assigned to */
   assignedTo?: string[];
@@ -283,7 +285,7 @@ model ApprovalStep {
       ],
     }
   )
-  permissions?: "none" | "view" | "update" | "reassign" | "resourceAdmin" | "queueBuild";
+  permissions?: "none" | "view" | "update" | "reassign" | "resourceAdmin" | "queueBuild" | string;
 
   /** Current status of this step. */
   @extension(
@@ -321,7 +323,8 @@ model ApprovalStep {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 }
 
 /** Data for a single approval step history. */
@@ -388,7 +391,8 @@ model ApprovalUpdateParameters {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 }
 
 model GraphSubjectBase {

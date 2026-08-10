@@ -84,7 +84,7 @@ model RoleAssignment {
       ],
     }
   )
-  access?: "assigned" | "inherited";
+  access?: "assigned" | "inherited" | string;
 
   /** User friendly description of access assignment. */
   accessDisplayName?: string;

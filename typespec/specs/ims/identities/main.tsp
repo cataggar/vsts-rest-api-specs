@@ -67,7 +67,7 @@ model CreateScopeInfo {
       ],
     }
   )
-  scopeType?: "generic" | "serviceHost" | "teamProject";
+  scopeType?: "generic" | "serviceHost" | "teamProject" | string;
 }
 
 model FrameworkIdentityInfo {
@@ -85,7 +85,7 @@ model FrameworkIdentityInfo {
       ],
     }
   )
-  identityType?: "none" | "serviceIdentity" | "aggregateIdentity" | "importedIdentity";
+  identityType?: "none" | "serviceIdentity" | "aggregateIdentity" | "importedIdentity" | string;
   isActive?: boolean;
   role?: string;
 }
@@ -163,7 +163,7 @@ model IdentityBatchInfo {
       ],
     }
   )
-  queryMembership?: "none" | "direct" | "expanded" | "expandedUp" | "expandedDown";
+  queryMembership?: "none" | "direct" | "expanded" | "expandedUp" | "expandedDown" | string;
   socialDescriptors?: string[];
   subjectDescriptors?: string[];
 }
@@ -200,7 +200,7 @@ model IdentityScope {
       ],
     }
   )
-  scopeType?: "generic" | "serviceHost" | "teamProject";
+  scopeType?: "generic" | "serviceHost" | "teamProject" | string;
   @format("uuid") securingHostId?: string;
   subjectDescriptor?: string;
 }
@@ -279,7 +279,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;

@@ -60,7 +60,8 @@ model AccessLevel {
     | "express"
     | "professional"
     | "advanced"
-    | "stakeholder";
+    | "stakeholder"
+    | string;
 
   /** Assignment Source of the License (e.g. Group, Unknown etc. */
   @extension(
@@ -74,7 +75,7 @@ model AccessLevel {
       ],
     }
   )
-  assignmentSource?: "none" | "unknown" | "groupRule";
+  assignmentSource?: "none" | "unknown" | "groupRule" | string;
 
   /** Type of GitHub License (only Enterprise for now). To use the GitHubLicenseType, LicensingSource should be defined as 'github' in the request body. */
   @extension(
@@ -84,7 +85,7 @@ model AccessLevel {
       values: #[#{ value: "none", description: "" }, #{ value: "enterprise", description: "" }],
     }
   )
-  gitHubLicenseType?: "none" | "enterprise";
+  gitHubLicenseType?: "none" | "enterprise" | string;
 
   /** Display name of the License */
   licenseDisplayName?: string;
@@ -105,7 +106,7 @@ model AccessLevel {
       ],
     }
   )
-  licensingSource?: "none" | "account" | "msdn" | "profile" | "auto" | "trial" | "gitHub";
+  licensingSource?: "none" | "account" | "msdn" | "profile" | "auto" | "trial" | "gitHub" | string;
 
   /** Type of MSDN License (e.g. Visual Studio Professional, Visual Studio Enterprise etc.). To use the MsdnLicenseType, LicensingSource should be defined as 'msdn' in the request body. */
   @extension(
@@ -132,7 +133,8 @@ model AccessLevel {
     | "testProfessional"
     | "premium"
     | "ultimate"
-    | "enterprise";
+    | "enterprise"
+    | string;
 
   /** User status in the account */
   @extension(
@@ -165,7 +167,15 @@ model AccessLevel {
       ],
     }
   )
-  status?: "none" | "active" | "disabled" | "deleted" | "pending" | "expired" | "pendingDisabled";
+  status?:
+    | "none"
+    | "active"
+    | "disabled"
+    | "deleted"
+    | "pending"
+    | "expired"
+    | "pendingDisabled"
+    | string;
 
   /** Status message. */
   statusMessage?: string;
@@ -223,7 +233,7 @@ model Extension {
       ],
     }
   )
-  assignmentSource?: "none" | "unknown" | "groupRule";
+  assignmentSource?: "none" | "unknown" | "groupRule" | string;
 
   /** Gallery Id of the Extension. */
   id?: string;
@@ -247,7 +257,7 @@ model Extension {
       ],
     }
   )
-  source?: "none" | "account" | "msdn" | "profile" | "auto" | "trial" | "gitHub";
+  source?: "none" | "account" | "msdn" | "profile" | "auto" | "trial" | "gitHub" | string;
 }
 
 /** Summary of Extensions in the organization. */
@@ -286,7 +296,13 @@ model ExtensionSummaryData {
       ],
     }
   )
-  minimumLicenseRequired?: "none" | "express" | "advanced" | "advancedPlus" | "stakeholder";
+  minimumLicenseRequired?:
+    | "none"
+    | "express"
+    | "advanced"
+    | "advancedPlus"
+    | "stakeholder"
+    | string;
 
   /** Days remaining for the Trial to expire. */
   remainingTrialDays?: int32;
@@ -379,7 +395,8 @@ model Group {
     | "projectReader"
     | "projectContributor"
     | "projectAdministrator"
-    | "custom";
+    | "custom"
+    | string;
 }
 
 /** A group entity with additional properties including its license, extensions, and project membership */
@@ -419,7 +436,7 @@ model GroupEntitlement {
       ],
     }
   )
-  status?: "applyPending" | "applied" | "incompatible" | "unableToApply";
+  status?: "applyPending" | "applied" | "incompatible" | "unableToApply" | string;
 }
 
 model GroupEntitlementOperationReference {
@@ -473,7 +490,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -507,7 +524,8 @@ model LicenseSummaryData {
     | "express"
     | "professional"
     | "advanced"
-    | "stakeholder";
+    | "stakeholder"
+    | string;
 
   /** Count of Disabled Licenses. */
   disabled?: int32;
@@ -520,7 +538,7 @@ model LicenseSummaryData {
       values: #[#{ value: "none", description: "" }, #{ value: "enterprise", description: "" }],
     }
   )
-  gitHubLicenseType?: "none" | "enterprise";
+  gitHubLicenseType?: "none" | "enterprise" | string;
 
   /** Designates if this license quantity can be changed through purchase */
   isPurchasable?: boolean;
@@ -556,7 +574,8 @@ model LicenseSummaryData {
     | "testProfessional"
     | "premium"
     | "ultimate"
-    | "enterprise";
+    | "enterprise"
+    | string;
 
   /** Specifies the date when billing will charge for paid licenses */
   nextBillingDate?: utcDateTime;
@@ -577,7 +596,7 @@ model LicenseSummaryData {
       ],
     }
   )
-  source?: "none" | "account" | "msdn" | "profile" | "auto" | "trial" | "gitHub";
+  source?: "none" | "account" | "msdn" | "profile" | "auto" | "trial" | "gitHub" | string;
 
   /** Total license count after next billing cycle */
   totalAfterNextBillingDate?: int32;
@@ -693,7 +712,7 @@ model OperationReference {
       ],
     }
   )
-  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed";
+  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed" | string;
 
   /** URL to get the full operation object. */
   url?: string;
@@ -747,7 +766,7 @@ model ProjectEntitlement {
       ],
     }
   )
-  assignmentSource?: "none" | "unknown" | "groupRule";
+  assignmentSource?: "none" | "unknown" | "groupRule" | string;
 
   group?: Group;
 
@@ -763,7 +782,7 @@ model ProjectEntitlement {
       ],
     }
   )
-  projectPermissionInherited?: "notSet" | "notInherited" | "inherited";
+  projectPermissionInherited?: "notSet" | "notInherited" | "inherited" | string;
 
   projectRef?: ProjectRef;
 

@@ -267,7 +267,7 @@ model DemandSource {
       values: #[#{ value: "task", description: "" }, #{ value: "feature", description: "" }],
     }
   )
-  sourceType?: "task" | "feature";
+  sourceType?: "task" | "feature" | string;
   sourceVersion?: string;
 }
 
@@ -458,7 +458,8 @@ model DynamicPipelineJob {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
   @extension(
     "x-ms-enum",
     #{
@@ -470,7 +471,7 @@ model DynamicPipelineJob {
       ],
     }
   )
-  state?: "pending" | "inProgress" | "completed";
+  state?: "pending" | "inProgress" | "completed" | string;
 }
 
 /** Response for <c>dynamicpipelines/{planId}/logs/{logId}</c>. Carries the log content plus the task-level Issues the agent raised while running tasks that wrote to this log. Job-level (orchestration) issues are intentionally not included here — consumers care about what the tasks themselves reported, not the surrounding plan plumbing. */
@@ -518,7 +519,8 @@ model DynamicPipelinePlanStatus {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
   resultCode?: string;
   startTime?: utcDateTime;
   @extension(
@@ -533,7 +535,7 @@ model DynamicPipelinePlanStatus {
       ],
     }
   )
-  state?: "inProgress" | "queued" | "completed" | "throttled";
+  state?: "inProgress" | "queued" | "completed" | "throttled" | string;
 }
 
 model ElasticAgentPoolResizedEvent {
@@ -562,7 +564,7 @@ model ElasticNode {
       ],
     }
   )
-  agentState?: "none" | "enabled" | "online" | "assigned";
+  agentState?: "none" | "enabled" | "online" | "assigned" | string;
 
   /** Compute Id. VMSS's InstanceId */
   computeId?: string;
@@ -594,7 +596,8 @@ model ElasticNode {
     | "stopped"
     | "reimaging"
     | "unhealthyVm"
-    | "unhealthyVmssVm";
+    | "unhealthyVmssVm"
+    | string;
 
   /** Users can force state changes to specific states (ToReimage, ToDelete, Save) */
   @extension(
@@ -651,7 +654,8 @@ model ElasticNode {
     | "retryDelete"
     | "unhealthyVm"
     | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate";
+    | "pendingReimageCandidate"
+    | string;
 
   /** Unique identifier since the agent and/or VM may be null */
   id?: int32;
@@ -720,7 +724,8 @@ model ElasticNode {
     | "retryDelete"
     | "unhealthyVm"
     | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate";
+    | "pendingReimageCandidate"
+    | string;
 
   /** Last state change. Only updated by SQL. */
   stateChangedOn?: utcDateTime;
@@ -783,7 +788,8 @@ model ElasticNodeSettings {
     | "retryDelete"
     | "unhealthyVm"
     | "unhealthyVmPendingDelete"
-    | "pendingReimageCandidate";
+    | "pendingReimageCandidate"
+    | string;
 }
 
 /** Data and settings for an elastic pool */
@@ -817,7 +823,7 @@ model ElasticPool {
       values: #[#{ value: "uniform", description: "" }, #{ value: "flexible", description: "" }],
     }
   )
-  orchestrationType?: "uniform" | "flexible";
+  orchestrationType?: "uniform" | "flexible" | string;
 
   /** Operating system type of the nodes in the pool */
   @extension(
@@ -827,7 +833,7 @@ model ElasticPool {
       values: #[#{ value: "windows", description: "" }, #{ value: "linux", description: "" }],
     }
   )
-  osType?: "windows" | "linux";
+  osType?: "windows" | "linux" | string;
 
   /** Id of the associated TaskAgentPool */
   poolId?: int32;
@@ -857,7 +863,7 @@ model ElasticPool {
       ],
     }
   )
-  state?: "online" | "offline" | "unhealthy" | "new";
+  state?: "online" | "offline" | "unhealthy" | "new" | string;
 
   /** The minimum time in minutes to keep idle agents alive */
   timeToLiveMinutes?: int32;
@@ -887,7 +893,7 @@ model ElasticPoolLog {
       ],
     }
   )
-  level?: "error" | "warning" | "info";
+  level?: "error" | "warning" | "info" | string;
 
   /** Log contents */
   message?: string;
@@ -906,7 +912,13 @@ model ElasticPoolLog {
       ],
     }
   )
-  operation?: "configurationJob" | "sizingJob" | "increaseCapacity" | "reimage" | "deleteVMs";
+  operation?:
+    | "configurationJob"
+    | "sizingJob"
+    | "increaseCapacity"
+    | "reimage"
+    | "deleteVMs"
+    | string;
 
   /** Id of the associated TaskAgentPool */
   poolId?: int32;
@@ -940,7 +952,7 @@ model ElasticPoolSettings {
       values: #[#{ value: "uniform", description: "" }, #{ value: "flexible", description: "" }],
     }
   )
-  orchestrationType?: "uniform" | "flexible";
+  orchestrationType?: "uniform" | "flexible" | string;
 
   /** Operating system type of the machines in the pool */
   @extension(
@@ -950,7 +962,7 @@ model ElasticPoolSettings {
       values: #[#{ value: "windows", description: "" }, #{ value: "linux", description: "" }],
     }
   )
-  osType?: "windows" | "linux";
+  osType?: "windows" | "linux" | string;
 
   /** Discard machines after each job completes */
   recycleAfterEachUse?: boolean;
@@ -1060,7 +1072,8 @@ model EnvironmentDeploymentExecutionRecord {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Project Id */
   @format("uuid") scopeId?: string;
@@ -1141,7 +1154,7 @@ model EnvironmentResource {
       ],
     }
   )
-  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes";
+  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes" | string;
 }
 
 /** EnvironmentResourceDeploymentExecutionRecord. */
@@ -1183,7 +1196,8 @@ model EnvironmentResourceDeploymentExecutionRecord {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Start time of the environment resource deployment execution */
   startTime?: utcDateTime;
@@ -1213,7 +1227,7 @@ model EnvironmentResourceReference {
       ],
     }
   )
-  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes";
+  type?: "undefined" | "generic" | "virtualMachine" | "kubernetes" | string;
 }
 
 /** Properties to update Environment. */
@@ -1335,7 +1349,8 @@ model InputDescriptor {
     | "combo"
     | "radioButtons"
     | "checkBox"
-    | "textArea";
+    | "textArea"
+    | string;
 
   /** Gets whether this input is confidential, such as for a password or application key */
   isConfidential?: boolean;
@@ -1377,7 +1392,7 @@ model InputValidation {
       ],
     }
   )
-  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri";
+  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri" | string;
 
   /** Gets or sets if this is a required field. */
   isRequired?: boolean;
@@ -1476,7 +1491,7 @@ model Issue {
       values: #[#{ value: "error", description: "" }, #{ value: "warning", description: "" }],
     }
   )
-  type?: "error" | "warning";
+  type?: "error" | "warning" | string;
 }
 
 model JobAssignedEvent {
@@ -1533,7 +1548,8 @@ model JobCompletedEvent {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 }
 
 /** Represents the context of variables and vectors for a job request. */
@@ -1689,7 +1705,7 @@ model MaskHint {
       values: #[#{ value: "variable", description: "" }, #{ value: "regex", description: "" }],
     }
   )
-  type?: "variable" | "regex";
+  type?: "variable" | "regex" | string;
   value?: string;
 }
 
@@ -1876,7 +1892,7 @@ model ResourceLockRequest {
       ],
     }
   )
-  lockType?: "runLatest" | "sequential" | "branchRunLatest" | "parallel";
+  lockType?: "runLatest" | "sequential" | "branchRunLatest" | "parallel" | string;
 
   /** Attempt of the graph node */
   nodeAttempt?: int32;
@@ -1925,7 +1941,8 @@ model ResourceLockRequest {
     | "timedOut"
     | "canceled"
     | "abandoned"
-    | "waitingOnChecks";
+    | "waitingOnChecks"
+    | string;
 }
 
 model ResourcesHubData {
@@ -2097,7 +2114,8 @@ model ServiceEndpointExecutionData {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Gets the start time of service endpoint execution. */
   startTime?: utcDateTime;
@@ -2226,7 +2244,8 @@ model ServiceEndpointRequestResult {
     | "badGateway"
     | "serviceUnavailable"
     | "gatewayTimeout"
-    | "httpVersionNotSupported";
+    | "httpVersionNotSupported"
+    | string;
 }
 
 /** Represents type of the service endpoint. */
@@ -2438,7 +2457,8 @@ model TaskAgentJobRequest {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Scope of the pipeline; matches the project ID. */
   @format("uuid") scopeId?: string;
@@ -2487,7 +2507,7 @@ model TaskAgentJobStep {
       values: #[#{ value: "task", description: "" }, #{ value: "action", description: "" }],
     }
   )
-  type?: "task" | "action";
+  type?: "task" | "action" | string;
 }
 
 model TaskAgentJobTask {
@@ -2613,7 +2633,7 @@ model TaskAgentPoolMaintenanceJob {
       ],
     }
   )
-  result?: "succeeded" | "failed" | "canceled";
+  result?: "succeeded" | "failed" | "canceled" | string;
 
   /** Time that the maintenance job was started */
   startTime?: utcDateTime;
@@ -2631,7 +2651,7 @@ model TaskAgentPoolMaintenanceJob {
       ],
     }
   )
-  status?: "inProgress" | "completed" | "cancelling" | "queued";
+  status?: "inProgress" | "completed" | "cancelling" | "queued" | string;
 
   targetAgents?: TaskAgentPoolMaintenanceJobTargetAgent[];
 
@@ -2653,7 +2673,7 @@ model TaskAgentPoolMaintenanceJobTargetAgent {
       ],
     }
   )
-  result?: "succeeded" | "failed" | "canceled";
+  result?: "succeeded" | "failed" | "canceled" | string;
   @extension(
     "x-ms-enum",
     #{
@@ -2666,7 +2686,7 @@ model TaskAgentPoolMaintenanceJobTargetAgent {
       ],
     }
   )
-  status?: "inProgress" | "completed" | "cancelling" | "queued";
+  status?: "inProgress" | "completed" | "cancelling" | "queued" | string;
 }
 
 model TaskAgentPoolMaintenanceOptions {
@@ -2707,7 +2727,8 @@ model TaskAgentPoolMaintenanceSchedule {
     | "friday"
     | "saturday"
     | "sunday"
-    | "all";
+    | "all"
+    | string;
 
   /** The Job Id of the Scheduled job that will queue the pool maintenance job. */
   @format("uuid") scheduleJobId?: string;
@@ -2752,7 +2773,7 @@ model TaskAgentPoolReference {
       ],
     }
   )
-  options?: "none" | "elasticPool" | "singleUseAgents" | "preserveAgentOnJobFailure";
+  options?: "none" | "elasticPool" | "singleUseAgents" | "preserveAgentOnJobFailure" | string;
 
   /** Gets or sets the type of the pool */
   @extension(
@@ -2765,7 +2786,7 @@ model TaskAgentPoolReference {
       ],
     }
   )
-  poolType?: "automation" | "deployment";
+  poolType?: "automation" | "deployment" | string;
 
   @format("uuid") scope?: string;
 
@@ -2853,7 +2874,7 @@ model TaskAgentReference {
       values: #[#{ value: "offline", description: "" }, #{ value: "online", description: "" }],
     }
   )
-  status?: "offline" | "online";
+  status?: "offline" | "online" | string;
 
   /** Agent version. */
   version?: string;
@@ -2923,7 +2944,7 @@ model TaskAgentSkuUsageSummaryQuery {
       ],
     }
   )
-  groupBy?: "scopeIdentifier" | "queueId" | "definitionId";
+  groupBy?: "scopeIdentifier" | "queueId" | "definitionId" | string;
 
   /** Optional: restrict to specific SKUs. Null or empty means all SKUs. When multiple MeterIds are provided, results are ranked independently per SKU. */
   meterIds?: string[];
@@ -2997,7 +3018,7 @@ model TaskAgentStatusUpdate {
       values: #[#{ value: "offline", description: "" }, #{ value: "online", description: "" }],
     }
   )
-  status?: "offline" | "online";
+  status?: "offline" | "online" | string;
 
   /** Date on which the last connectivity status change occurred. */
   statusChangedOn?: utcDateTime;
@@ -3030,7 +3051,7 @@ model TaskAgentUpdateReason {
       ],
     }
   )
-  code?: "manual" | "minAgentVersionRequired" | "downgrade";
+  code?: "manual" | "minAgentVersionRequired" | "downgrade" | string;
 }
 
 model TaskAssignedEvent {
@@ -3056,7 +3077,7 @@ model TaskCommandRestrictions {
       values: #[#{ value: "any", description: "" }, #{ value: "restricted", description: "" }],
     }
   )
-  mode?: "any" | "restricted";
+  mode?: "any" | "restricted" | string;
 }
 
 model TaskCompletedEvent {
@@ -3090,7 +3111,8 @@ model TaskCompletedEvent {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 }
 
 model TaskDefinition {
@@ -3296,7 +3318,7 @@ model TaskGroupRevision {
       ],
     }
   )
-  changeType?: "add" | "update" | "delete" | "undelete";
+  changeType?: "add" | "update" | "delete" | "undelete" | string;
   comment?: string;
   fileId?: int32;
   majorVersion?: int32;
@@ -3505,7 +3527,7 @@ model TaskOrchestrationItem {
       values: #[#{ value: "container", description: "" }, #{ value: "job", description: "" }],
     }
   )
-  itemType?: "container" | "job";
+  itemType?: "container" | "job" | string;
 }
 
 model TaskOrchestrationJob {
@@ -3560,7 +3582,8 @@ model TaskOrchestrationPlan {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
   resultCode?: string;
   startTime?: utcDateTime;
   @extension(
@@ -3575,7 +3598,7 @@ model TaskOrchestrationPlan {
       ],
     }
   )
-  state?: "inProgress" | "queued" | "completed" | "throttled";
+  state?: "inProgress" | "queued" | "completed" | "throttled" | string;
   timeline?: TimelineReference;
 }
 
@@ -3598,7 +3621,7 @@ model TaskOrchestrationPlanGroupsQueueMetrics {
       ],
     }
   )
-  status?: "running" | "queued" | "all";
+  status?: "running" | "queued" | "all" | string;
 }
 
 model TaskOrchestrationPlanReference {
@@ -3817,7 +3840,8 @@ model TimelineRecord {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Evaluation of predefined conditions upon completion of record's operation. <br />Example: Evaluating `succeeded()`, Result = True <br />Example: Evaluating `and(succeeded(), eq(variables['system.debug'], False))`, Result = False */
   resultCode?: string;
@@ -3837,7 +3861,7 @@ model TimelineRecord {
       ],
     }
   )
-  state?: "pending" | "inProgress" | "completed";
+  state?: "pending" | "inProgress" | "completed" | string;
 
   task?: TaskReference;
 
@@ -3884,7 +3908,7 @@ model TimelineRecordReference {
       ],
     }
   )
-  state?: "pending" | "inProgress" | "completed";
+  state?: "pending" | "inProgress" | "completed" | string;
 }
 
 /** A reference to a timeline. */
@@ -4053,7 +4077,7 @@ model YamlCheckReference {
       ],
     }
   )
-  type?: "none" | "productionReadiness";
+  type?: "none" | "productionReadiness" | string;
 }
 
 /** A collection of `TaskAgentCloud` as returned by Azure DevOps. */

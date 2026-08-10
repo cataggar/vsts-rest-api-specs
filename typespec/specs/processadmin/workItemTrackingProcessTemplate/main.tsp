@@ -136,7 +136,7 @@ model ValidationIssue {
       values: #[#{ value: "warning", description: "" }, #{ value: "error", description: "" }],
     }
   )
-  issueType?: "warning" | "error";
+  issueType?: "warning" | "error" | string;
   line?: int32;
 }
 

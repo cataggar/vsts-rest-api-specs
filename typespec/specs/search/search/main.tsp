@@ -429,7 +429,7 @@ model Repository {
       ],
     }
   )
-  type?: "git" | "tfvc" | "custom";
+  type?: "git" | "tfvc" | "custom" | string;
 }
 
 model RepositoryContext {
@@ -545,7 +545,7 @@ model SettingResult {
       ],
     }
   )
-  scope?: "none" | "organization" | "project" | "user";
+  scope?: "none" | "organization" | "project" | "user" | string;
 
   /** Title of the settings page */
   title?: string;

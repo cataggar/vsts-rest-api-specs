@@ -59,7 +59,8 @@ model AgentArtifactDefinition {
     | "tfGit"
     | "externalTfsBuild"
     | "custom"
-    | "tfvc";
+    | "tfvc"
+    | string;
 
   /** Gets or sets the artifact definition details. */
   details?: string;
@@ -125,7 +126,7 @@ model ApprovalOptions {
       ],
     }
   )
-  executionOrder?: "beforeGates" | "afterSuccessfulGates" | "afterGatesAlways";
+  executionOrder?: "beforeGates" | "afterSuccessfulGates" | "afterGatesAlways" | string;
 
   /** Specify whether the user requesting a release or deployment should allow to approver. */
   releaseCreatorCanBeApprover?: boolean;
@@ -347,7 +348,7 @@ model AutoTriggerIssue {
       ],
     }
   )
-  issueSource?: "none" | "user" | "system";
+  issueSource?: "none" | "user" | "system" | string;
   project?: ProjectReference;
   releaseDefinitionReference?: ReleaseDefinitionShallowReference;
   @extension(
@@ -372,7 +373,8 @@ model AutoTriggerIssue {
     | "sourceRepo"
     | "containerImage"
     | "package"
-    | "pullRequest";
+    | "pullRequest"
+    | string;
 }
 
 model AzureKeyVaultVariableGroupProviderData {
@@ -519,7 +521,7 @@ model CodeRepositoryReference {
       ],
     }
   )
-  systemType?: "none" | "tfsGit" | "gitHub";
+  systemType?: "none" | "tfsGit" | "gitHub" | string;
 }
 
 model ComplianceSettings {
@@ -541,7 +543,7 @@ model Condition {
       ],
     }
   )
-  conditionType?: "undefined" | "event" | "environmentState" | "artifact";
+  conditionType?: "undefined" | "event" | "environmentState" | "artifact" | string;
 
   /** Gets or sets the name of the condition. e.g. 'ReleaseStarted'. */
   name?: string;
@@ -751,7 +753,8 @@ model Deployment {
     | "succeeded"
     | "partiallySucceeded"
     | "failed"
-    | "all";
+    | "all"
+    | string;
 
   /** Gets the unique identifier for deployment. */
   id?: int32;
@@ -834,7 +837,8 @@ model Deployment {
     | "cancelling"
     | "evaluatingGates"
     | "gateFailed"
-    | "all";
+    | "all"
+    | string;
 
   /** Gets list of PostDeployApprovals. */
   postDeployApprovals?: ReleaseApproval[];
@@ -861,7 +865,7 @@ model Deployment {
       ],
     }
   )
-  reason?: "none" | "manual" | "automated" | "scheduled" | "redeployTrigger";
+  reason?: "none" | "manual" | "automated" | "scheduled" | "redeployTrigger" | string;
 
   release?: ReleaseReference;
   releaseDefinition?: ReleaseDefinitionShallowReference;
@@ -990,7 +994,8 @@ model DeploymentAttempt {
     | "cancelling"
     | "evaluatingGates"
     | "gateFailed"
-    | "all";
+    | "all"
+    | string;
 
   postDeploymentGates?: ReleaseGates;
   preDeploymentGates?: ReleaseGates;
@@ -1012,7 +1017,7 @@ model DeploymentAttempt {
       ],
     }
   )
-  reason?: "none" | "manual" | "automated" | "scheduled" | "redeployTrigger";
+  reason?: "none" | "manual" | "automated" | "scheduled" | "redeployTrigger" | string;
 
   /** List of release deployphases executed in this deployment. */
   releaseDeployPhases?: ReleaseDeployPhase[];
@@ -1046,7 +1051,8 @@ model DeploymentAttempt {
     | "succeeded"
     | "partiallySucceeded"
     | "failed"
-    | "all";
+    | "all"
+    | string;
 }
 
 model DeploymentAuthorizationInfo {
@@ -1061,7 +1067,7 @@ model DeploymentAuthorizationInfo {
       ],
     }
   )
-  authorizationHeaderFor?: "revalidateApproverIdentity" | "onBehalfOf";
+  authorizationHeaderFor?: "revalidateApproverIdentity" | "onBehalfOf" | string;
 
   /** List of resources. */
   resources?: string[];
@@ -1161,7 +1167,8 @@ model DeploymentQueryParameters {
     | "succeeded"
     | "partiallySucceeded"
     | "failed"
-    | "all";
+    | "all"
+    | string;
 
   /** Query deployments of specified environments. */
   environments?: DefinitionEnvironmentReference[];
@@ -1179,7 +1186,7 @@ model DeploymentQueryParameters {
       ],
     }
   )
-  expands?: "all" | "deploymentOnly" | "approvals" | "artifacts";
+  expands?: "all" | "deploymentOnly" | "approvals" | "artifacts" | string;
 
   /** Specify deleted deployments should return or not. */
   isDeleted?: boolean;
@@ -1257,7 +1264,8 @@ model DeploymentQueryParameters {
     | "cancelling"
     | "evaluatingGates"
     | "gateFailed"
-    | "all";
+    | "all"
+    | string;
 
   /** Query deployments based query type. */
   @extension(
@@ -1270,7 +1278,7 @@ model DeploymentQueryParameters {
       ],
     }
   )
-  queryType?: "regular" | "failingSince";
+  queryType?: "regular" | "failingSince" | string;
 
   /** Query deployments based specified source branch. */
   sourceBranch?: string;
@@ -1318,7 +1326,8 @@ model DeployPhase {
     | "agentBasedDeployment"
     | "runOnServer"
     | "machineGroupBasedDeployment"
-    | "deploymentGates";
+    | "deploymentGates"
+    | string;
 
   /** Gets and sets the rank of deploy phase. */
   rank?: int32;
@@ -1397,7 +1406,7 @@ model EnvironmentTrigger {
       ],
     }
   )
-  triggerType?: "undefined" | "deploymentGroupRedeploy" | "rollbackRedeploy";
+  triggerType?: "undefined" | "deploymentGroupRedeploy" | "rollbackRedeploy" | string;
 }
 
 model EnvironmentTriggerContent {
@@ -1421,7 +1430,7 @@ model ExecutionInput {
       ],
     }
   )
-  parallelExecutionType?: "none" | "multiConfiguration" | "multiMachine";
+  parallelExecutionType?: "none" | "multiConfiguration" | "multiMachine" | string;
 }
 
 /** Class to represent favorite entry. */
@@ -1581,7 +1590,8 @@ model InputDescriptor {
     | "combo"
     | "radioButtons"
     | "checkBox"
-    | "textArea";
+    | "textArea"
+    | string;
 
   /** Gets whether this input is confidential, such as for a password or application key */
   isConfidential?: boolean;
@@ -1623,7 +1633,7 @@ model InputValidation {
       ],
     }
   )
-  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri";
+  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri" | string;
 
   /** Gets or sets if this is a required field. */
   isRequired?: boolean;
@@ -1761,7 +1771,8 @@ model MailMessage {
     | "issues"
     | "testResults"
     | "workItems"
-    | "releaseInfo")[];
+    | "releaseInfo"
+    | string)[];
 
   /** Mail sender type. */
   @extension(
@@ -1774,7 +1785,7 @@ model MailMessage {
       ],
     }
   )
-  senderType?: "serviceAccount" | "requestingUser";
+  senderType?: "serviceAccount" | "requestingUser" | string;
 
   /** Subject of the mail. */
   subject?: string;
@@ -1826,7 +1837,7 @@ model ManualIntervention {
       ],
     }
   )
-  status?: "unknown" | "pending" | "rejected" | "approved" | "canceled" | "bypassed";
+  status?: "unknown" | "pending" | "rejected" | "approved" | "canceled" | "bypassed" | string;
 
   /** Get task instance identifier. */
   @format("uuid") taskInstanceId?: string;
@@ -1845,7 +1856,7 @@ model ManualIntervention {
       ],
     }
   )
-  type?: "task" | "proofOfPresence";
+  type?: "task" | "proofOfPresence" | string;
 
   /** Gets url to access the manual intervention. */
   url?: string;
@@ -1873,7 +1884,7 @@ model ManualInterventionUpdateMetadata {
       ],
     }
   )
-  status?: "unknown" | "pending" | "rejected" | "approved" | "canceled" | "bypassed";
+  status?: "unknown" | "pending" | "rejected" | "approved" | "canceled" | "bypassed" | string;
 }
 
 model MappingDetails {
@@ -1938,7 +1949,7 @@ model PipelineProcess {
       values: #[#{ value: "designer", description: "" }, #{ value: "yaml", description: "" }],
     }
   )
-  type?: "designer" | "yaml";
+  type?: "designer" | "yaml" | string;
 }
 
 model ProcessParameters {
@@ -2023,7 +2034,7 @@ model PropertySelector {
       ],
     }
   )
-  selectorType?: "inclusion" | "exclusion";
+  selectorType?: "inclusion" | "exclusion" | string;
 }
 
 model PullRequestConfiguration {
@@ -2148,7 +2159,7 @@ model Release {
       ],
     }
   )
-  reason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest";
+  reason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest" | string;
 
   releaseDefinition?: ReleaseDefinitionShallowReference;
 
@@ -2171,7 +2182,7 @@ model Release {
       ],
     }
   )
-  status?: "undefined" | "draft" | "active" | "abandoned";
+  status?: "undefined" | "draft" | "active" | "abandoned" | string;
 
   /** Gets or sets list of tags. */
   tags?: string[];
@@ -2211,7 +2222,7 @@ model ReleaseApproval {
       ],
     }
   )
-  approvalType?: "undefined" | "preDeploy" | "postDeploy" | "all";
+  approvalType?: "undefined" | "preDeploy" | "postDeploy" | "all" | string;
 
   approvedBy?: IdentityRef;
   approver?: IdentityRef;
@@ -2273,7 +2284,8 @@ model ReleaseApproval {
     | "rejected"
     | "reassigned"
     | "canceled"
-    | "skipped";
+    | "skipped"
+    | string;
 
   /** Gets url to access the approval. */
   url?: string;
@@ -2405,7 +2417,7 @@ model ReleaseDefinition {
       ],
     }
   )
-  source?: "undefined" | "restApi" | "userInterface" | "ibiza" | "portalExtensionApi";
+  source?: "undefined" | "restApi" | "userInterface" | "ibiza" | "portalExtensionApi" | string;
 
   /** Gets or sets list of tags. */
   tags?: string[];
@@ -2604,7 +2616,7 @@ model ReleaseDefinitionRevision {
       ],
     }
   )
-  changeType?: "add" | "update" | "delete" | "undelete";
+  changeType?: "add" | "update" | "delete" | "undelete" | string;
 
   /** Gets comments for revision. */
   comment?: string;
@@ -2699,7 +2711,8 @@ model ReleaseDeployPhase {
     | "agentBasedDeployment"
     | "runOnServer"
     | "machineGroupBasedDeployment"
-    | "deploymentGates";
+    | "deploymentGates"
+    | string;
 
   /** Rank of the phase. */
   rank?: int32;
@@ -2737,7 +2750,8 @@ model ReleaseDeployPhase {
     | "failed"
     | "canceled"
     | "skipped"
-    | "cancelling";
+    | "cancelling"
+    | string;
 }
 
 model ReleaseEnvironment {
@@ -2831,7 +2845,8 @@ model ReleaseEnvironment {
     | "rejected"
     | "queued"
     | "scheduled"
-    | "partiallySucceeded";
+    | "partiallySucceeded"
+    | string;
 
   /** Gets time to deploy. */
   timeToDeploy?: float64;
@@ -2866,7 +2881,7 @@ model ReleaseEnvironmentCompletedEvent {
       ],
     }
   )
-  reason?: "none" | "manual" | "automated" | "scheduled" | "redeployTrigger";
+  reason?: "none" | "manual" | "automated" | "scheduled" | "redeployTrigger" | string;
   releaseCreatedBy?: IdentityRef;
   releaseLogsUri?: string;
   releaseName?: string;
@@ -2920,7 +2935,8 @@ model ReleaseEnvironmentStatusUpdatedEvent {
     | "rejected"
     | "queued"
     | "scheduled"
-    | "partiallySucceeded";
+    | "partiallySucceeded"
+    | string;
   @extension(
     "x-ms-enum",
     #{
@@ -2993,7 +3009,8 @@ model ReleaseEnvironmentStatusUpdatedEvent {
     | "cancelling"
     | "evaluatingGates"
     | "gateFailed"
-    | "all";
+    | "all"
+    | string;
   @extension(
     "x-ms-enum",
     #{
@@ -3019,7 +3036,8 @@ model ReleaseEnvironmentStatusUpdatedEvent {
     | "succeeded"
     | "partiallySucceeded"
     | "failed"
-    | "all";
+    | "all"
+    | string;
   releaseId?: int32;
 }
 
@@ -3060,7 +3078,8 @@ model ReleaseEnvironmentUpdateMetadata {
     | "rejected"
     | "queued"
     | "scheduled"
-    | "partiallySucceeded";
+    | "partiallySucceeded"
+    | string;
 
   /** Sets list of environment variables to be overridden at deployment time. */
   variables?: Record<ConfigurationVariableValue>;
@@ -3108,7 +3127,7 @@ model ReleaseGates {
       ],
     }
   )
-  status?: "none" | "pending" | "inProgress" | "succeeded" | "failed" | "canceled";
+  status?: "none" | "pending" | "inProgress" | "succeeded" | "failed" | "canceled" | string;
 
   /** Date and time at which all gates executed successfully. */
   succeedingSince?: utcDateTime;
@@ -3154,7 +3173,7 @@ model ReleaseNotCreatedEvent {
       ],
     }
   )
-  releaseReason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest";
+  releaseReason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest" | string;
   requestedBy?: IdentityRef;
 }
 
@@ -3197,7 +3216,7 @@ model ReleaseReference {
       ],
     }
   )
-  reason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest";
+  reason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest" | string;
 
   releaseDefinition?: ReleaseDefinitionShallowReference;
 }
@@ -3252,7 +3271,8 @@ model ReleaseSchedule {
     | "friday"
     | "saturday"
     | "sunday"
-    | "all";
+    | "all"
+    | string;
 
   /** Team Foundation Job Definition Job Id. */
   @format("uuid") jobId?: string;
@@ -3334,7 +3354,7 @@ model ReleaseStartMetadata {
       ],
     }
   )
-  reason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest";
+  reason?: "none" | "manual" | "continuousIntegration" | "schedule" | "pullRequest" | string;
 
   /** Sets list of release variables to be overridden at deployment time. */
   variables?: Record<ConfigurationVariableValue>;
@@ -3403,7 +3423,8 @@ model ReleaseTask {
     | "skipped"
     | "succeeded"
     | "failed"
-    | "partiallySucceeded";
+    | "partiallySucceeded"
+    | string;
 
   task?: WorkflowTaskReference;
 
@@ -3474,7 +3495,8 @@ model ReleaseTriggerBase {
     | "sourceRepo"
     | "containerImage"
     | "package"
-    | "pullRequest";
+    | "pullRequest"
+    | string;
 }
 
 model ReleaseUpdatedEvent {
@@ -3508,7 +3530,7 @@ model ReleaseUpdateMetadata {
       ],
     }
   )
-  status?: "undefined" | "draft" | "active" | "abandoned";
+  status?: "undefined" | "draft" | "active" | "abandoned" | string;
 }
 
 model ReleaseWorkItemRef {
@@ -3635,7 +3657,14 @@ model SummaryMailSection {
       ],
     }
   )
-  sectionType?: "details" | "environments" | "issues" | "testResults" | "workItems" | "releaseInfo";
+  sectionType?:
+    | "details"
+    | "environments"
+    | "issues"
+    | "testResults"
+    | "workItems"
+    | "releaseInfo"
+    | string;
 
   /** Title of the summary mail. */
   title?: string;
@@ -3848,7 +3877,7 @@ model YamlFileSource {
       values: #[#{ value: "none", description: "" }, #{ value: "tfsGit", description: "" }],
     }
   )
-  type?: "none" | "tfsGit";
+  type?: "none" | "tfsGit" | string;
 }
 
 model YamlPipelineProcess {

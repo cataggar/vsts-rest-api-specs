@@ -157,7 +157,8 @@ model AggregatedResultsByOutcome {
     | "notApplicable"
     | "paused"
     | "inProgress"
-    | "notImpacted";
+    | "notImpacted"
+    | string;
   rerunResultCount?: int32;
 }
 
@@ -186,7 +187,7 @@ model AggregatedRunsByOutcome {
       ],
     }
   )
-  outcome?: "passed" | "failed" | "notImpacted" | "others";
+  outcome?: "passed" | "failed" | "notImpacted" | "others" | string;
   runsCount?: int32;
 }
 
@@ -227,7 +228,8 @@ model AggregatedRunsByState {
     | "completed"
     | "aborted"
     | "waiting"
-    | "needsInvestigation";
+    | "needsInvestigation"
+    | string;
 }
 
 model ArtifactResource {
@@ -343,7 +345,7 @@ model Build {
       ],
     }
   )
-  priority?: "low" | "belowNormal" | "normal" | "aboveNormal" | "high";
+  priority?: "low" | "belowNormal" | "normal" | "aboveNormal" | "high" | string;
 
   project?: TeamProjectReference;
   properties?: PropertiesCollection;
@@ -364,7 +366,7 @@ model Build {
       ],
     }
   )
-  queueOptions?: "none" | "doNotRun";
+  queueOptions?: "none" | "doNotRun" | string;
 
   /** The current position of the build in the queue. */
   queuePosition?: int32;
@@ -439,7 +441,8 @@ model Build {
     | "buildCompletion"
     | "resourceTrigger"
     | "triggered"
-    | "all";
+    | "all"
+    | string;
 
   repository?: BuildRepository;
   requestedBy?: IdentityRef;
@@ -462,7 +465,7 @@ model Build {
       ],
     }
   )
-  result?: "none" | "succeeded" | "partiallySucceeded" | "failed" | "canceled";
+  result?: "none" | "succeeded" | "partiallySucceeded" | "failed" | "canceled" | string;
 
   /** Indicates whether the build is retained by a release. */
   retainedByRelease?: boolean;
@@ -501,7 +504,8 @@ model Build {
     | "postponed"
     | "abandoned"
     | "notStarted"
-    | "all";
+    | "all"
+    | string;
 
   tags?: string[];
 
@@ -553,7 +557,7 @@ model BuildAgent {
       ],
     }
   )
-  status?: "unavailable" | "available" | "offline";
+  status?: "unavailable" | "available" | "offline" | string;
   statusMessage?: string;
   updatedDate?: utcDateTime;
   uri?: string;
@@ -652,7 +656,7 @@ model BuildController {
       ],
     }
   )
-  status?: "unavailable" | "available" | "offline";
+  status?: "unavailable" | "available" | "offline" | string;
 
   /** The date the controller was last updated. */
   updatedDate?: utcDateTime;
@@ -699,7 +703,7 @@ model BuildDefinition {
       ],
     }
   )
-  jobAuthorizationScope?: "projectCollection" | "project";
+  jobAuthorizationScope?: "projectCollection" | "project" | string;
 
   /** The job cancel timeout (in minutes) for builds cancelled by user for this definition. */
   jobCancelTimeoutInMinutes?: int32;
@@ -759,7 +763,7 @@ model BuildDefinition3_2 {
       ],
     }
   )
-  jobAuthorizationScope?: "projectCollection" | "project";
+  jobAuthorizationScope?: "projectCollection" | "project" | string;
 
   /** The job cancel timeout in minutes for builds which are cancelled by user for this definition */
   jobCancelTimeoutInMinutes?: int32;
@@ -801,7 +805,7 @@ model BuildDefinitionReference {
       values: #[#{ value: "definition", description: "" }, #{ value: "draft", description: "" }],
     }
   )
-  quality?: "definition" | "draft";
+  quality?: "definition" | "draft" | string;
 
   queue?: AgentPoolQueue;
 }
@@ -826,7 +830,7 @@ model BuildDefinitionReference3_2 {
       values: #[#{ value: "definition", description: "" }, #{ value: "draft", description: "" }],
     }
   )
-  quality?: "definition" | "draft";
+  quality?: "definition" | "draft" | string;
 
   queue?: AgentPoolQueue;
 }
@@ -850,7 +854,7 @@ model BuildDefinitionRevision {
       ],
     }
   )
-  changeType?: "add" | "update" | "delete";
+  changeType?: "add" | "update" | "delete" | string;
 
   /** The comment associated with the change. */
   comment?: string;
@@ -929,7 +933,8 @@ model BuildDefinitionSourceProvider {
     | "batchedGatedCheckIn"
     | "pullRequest"
     | "buildCompletion"
-    | "all";
+    | "all"
+    | string;
 }
 
 /** Represents a step in a build phase. */
@@ -1158,7 +1163,15 @@ model BuildOptionInputDefinition {
       ],
     }
   )
-  type?: "string" | "boolean" | "stringList" | "radio" | "pickList" | "multiLine" | "branchFilter";
+  type?:
+    | "string"
+    | "boolean"
+    | "stringList"
+    | "radio"
+    | "pickList"
+    | "multiLine"
+    | "branchFilter"
+    | string;
 
   /** The rule that is applied to determine whether the input is visible in the UI. */
   visibleRule?: string;
@@ -1250,7 +1263,8 @@ model BuildProcessTemplate {
     | "buildCompletion"
     | "resourceTrigger"
     | "triggered"
-    | "all";
+    | "all"
+    | string;
   teamProject?: string;
   @extension(
     "x-ms-enum",
@@ -1263,7 +1277,7 @@ model BuildProcessTemplate {
       ],
     }
   )
-  templateType?: "custom" | "default" | "upgrade";
+  templateType?: "custom" | "default" | "upgrade" | string;
   url?: string;
   version?: string;
 }
@@ -1310,7 +1324,7 @@ model BuildReference {
       ],
     }
   )
-  result?: "none" | "succeeded" | "partiallySucceeded" | "failed" | "canceled";
+  result?: "none" | "succeeded" | "partiallySucceeded" | "failed" | "canceled" | string;
 
   /** The time that the build was started. */
   startTime?: utcDateTime;
@@ -1340,7 +1354,8 @@ model BuildReference {
     | "postponed"
     | "abandoned"
     | "notStarted"
-    | "all";
+    | "all"
+    | string;
 }
 
 /** Represents information about a build report. */
@@ -1401,7 +1416,7 @@ model BuildRequestValidationResult {
       ],
     }
   )
-  result?: "ok" | "warning" | "error";
+  result?: "ok" | "warning" | "error" | string;
 }
 
 /** Represents information about resources used by builds in the system. */
@@ -1478,7 +1493,7 @@ model BuildServer {
       ],
     }
   )
-  status?: "online" | "offline";
+  status?: "online" | "offline" | string;
   statusChangedDate?: utcDateTime;
   uri?: string;
   url?: string;
@@ -1565,7 +1580,8 @@ model BuildSummary {
     | "buildCompletion"
     | "resourceTrigger"
     | "triggered"
-    | "all";
+    | "all"
+    | string;
   requestedFor?: IdentityRef;
   startTime?: utcDateTime;
   @extension(
@@ -1592,7 +1608,8 @@ model BuildSummary {
     | "postponed"
     | "abandoned"
     | "notStarted"
-    | "all";
+    | "all"
+    | string;
 }
 
 model BuildTagsAddedEvent {
@@ -1651,7 +1668,8 @@ model BuildTrigger {
     | "batchedGatedCheckIn"
     | "pullRequest"
     | "buildCompletion"
-    | "all";
+    | "all"
+    | string;
 }
 
 model BuildUpdatedEvent {
@@ -1816,7 +1834,7 @@ model DefinitionReference {
       ],
     }
   )
-  queueStatus?: "enabled" | "paused" | "disabled";
+  queueStatus?: "enabled" | "paused" | "disabled" | string;
 
   /** The definition revision number. */
   revision?: int32;
@@ -1829,7 +1847,7 @@ model DefinitionReference {
       values: #[#{ value: "xaml", description: "" }, #{ value: "build", description: "" }],
     }
   )
-  type?: "xaml" | "build";
+  type?: "xaml" | "build" | string;
 
   /** The definition's URI. */
   uri?: string;
@@ -2041,7 +2059,7 @@ model Issue {
       values: #[#{ value: "error", description: "" }, #{ value: "warning", description: "" }],
     }
   )
-  type?: "error" | "warning";
+  type?: "error" | "warning" | string;
 }
 
 /** Job in pipeline. This is related to matrixing in YAML. */
@@ -2076,7 +2094,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -2165,7 +2183,7 @@ model Phase {
       ],
     }
   )
-  jobAuthorizationScope?: "projectCollection" | "project";
+  jobAuthorizationScope?: "projectCollection" | "project" | string;
 
   /** The cancellation timeout, in minutes, for builds queued against this definition. */
   jobCancelTimeoutInMinutes?: int32;
@@ -2303,7 +2321,7 @@ model PipelineTriggerSettings {
       ],
     }
   )
-  forkCommentOption?: "none" | "nonTeamMembersNonContributor" | "nonTeamMembers" | "all";
+  forkCommentOption?: "none" | "nonTeamMembersNonContributor" | "nonTeamMembers" | "all" | string;
 
   /** Make comments required to have builds in pull requests from forks. */
   forkIsCommentRequiredForPullRequest?: boolean;
@@ -2324,7 +2342,12 @@ model PipelineTriggerSettings {
       ],
     }
   )
-  internalRepoCommentOption?: "none" | "nonTeamMembersNonContributor" | "nonTeamMembers" | "all";
+  internalRepoCommentOption?:
+    | "none"
+    | "nonTeamMembersNonContributor"
+    | "nonTeamMembers"
+    | "all"
+    | string;
 
   /** Make comments required to have builds in repository-internal pull requests. */
   internalRepoIsCommentRequiredForPullRequest?: boolean;
@@ -2423,7 +2446,7 @@ model PullRequestTrigger {
       ],
     }
   )
-  forkCommentOption?: "none" | "nonTeamMembersNonContributor" | "nonTeamMembers" | "all";
+  forkCommentOption?: "none" | "nonTeamMembersNonContributor" | "nonTeamMembers" | "all" | string;
   forkIsCommentRequiredForPullRequest?: boolean;
   forks?: Forks;
   @extension(
@@ -2438,7 +2461,12 @@ model PullRequestTrigger {
       ],
     }
   )
-  internalRepoCommentOption?: "none" | "nonTeamMembersNonContributor" | "nonTeamMembers" | "all";
+  internalRepoCommentOption?:
+    | "none"
+    | "nonTeamMembersNonContributor"
+    | "nonTeamMembers"
+    | "all"
+    | string;
   internalRepoIsCommentRequiredForPullRequest?: boolean;
   isCommentRequiredForPullRequest?: boolean;
   pathFilters?: string[];
@@ -2508,7 +2536,8 @@ model RepositoryWebhook {
     | "batchedGatedCheckIn"
     | "pullRequest"
     | "buildCompletion"
-    | "all")[];
+    | "all"
+    | string)[];
 
   /** The URL of the repository. */
   url?: string;
@@ -2614,7 +2643,8 @@ model Schedule {
     | "friday"
     | "saturday"
     | "sunday"
-    | "all";
+    | "all"
+    | string;
 
   /** The Job Id of the Scheduled job that will queue the scheduled build. Since a single trigger can have multiple schedules and we want a single job to process a single schedule (since each schedule has a list of branches to build), the schedule itself needs to define the Job Id. This value will be filled in when a definition is added or updated. The UI does not provide it or use it. */
   @format("uuid") scheduleJobId?: string;
@@ -2771,7 +2801,7 @@ model SupportedTrigger {
   notificationType?: string;
 
   /** The capabilities supported by this trigger. */
-  supportedCapabilities?: Record<"unsupported" | "supported" | "required">;
+  supportedCapabilities?: Record<"unsupported" | "supported" | "required" | string>;
 
   /** The type of trigger. */
   @extension(
@@ -2821,7 +2851,8 @@ model SupportedTrigger {
     | "batchedGatedCheckIn"
     | "pullRequest"
     | "buildCompletion"
-    | "all";
+    | "all"
+    | string;
 }
 
 /** Represents a Subversion mapping entry. */
@@ -2978,7 +3009,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** Url to the full version of the object. */
   url?: string;
@@ -2997,7 +3036,7 @@ model TeamProjectReference {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 model TestResultsContext {
@@ -3013,7 +3052,7 @@ model TestResultsContext {
       ],
     }
   )
-  contextType?: "build" | "release" | "pipeline";
+  contextType?: "build" | "release" | "pipeline" | string;
   pipelineReference?: PipelineReference;
   release?: ReleaseReference;
 }
@@ -3121,7 +3160,8 @@ model TimelineRecord {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** The result code. */
   resultCode?: string;
@@ -3141,7 +3181,7 @@ model TimelineRecord {
       ],
     }
   )
-  state?: "pending" | "inProgress" | "completed";
+  state?: "pending" | "inProgress" | "completed" | string;
 
   task?: TaskReference;
 
@@ -3201,7 +3241,7 @@ model UpdateStageParameters {
       ],
     }
   )
-  state?: "cancel" | "retry" | "run";
+  state?: "cancel" | "retry" | "run" | string;
 }
 
 model UpdateTagParameters {
@@ -3300,7 +3340,7 @@ model WorkspaceMapping {
       ],
     }
   )
-  mappingType?: "map" | "cloak";
+  mappingType?: "map" | "cloak" | string;
 
   /** Server location of the definition */
   serverItem?: string;
@@ -3430,7 +3470,8 @@ model XamlBuildDefinition {
     | "buildCompletion"
     | "resourceTrigger"
     | "triggered"
-    | "all";
+    | "all"
+    | string;
 
   /** How builds are triggered from this definition */
   @extension(
@@ -3480,7 +3521,8 @@ model XamlBuildDefinition {
     | "batchedGatedCheckIn"
     | "pullRequest"
     | "buildCompletion"
-    | "all";
+    | "all"
+    | string;
 }
 
 model XamlBuildReference {

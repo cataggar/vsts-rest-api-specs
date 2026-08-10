@@ -52,7 +52,7 @@ model Configuration {
       ],
     }
   )
-  manifestToolAction?: "none" | "validate" | "generate" | "all";
+  manifestToolAction?: "none" | "validate" | "generate" | "all" | string;
 
   packageName?: ConfigurationSetting;
   packageVersion?: ConfigurationSetting;

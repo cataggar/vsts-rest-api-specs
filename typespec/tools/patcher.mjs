@@ -328,17 +328,80 @@ export function wrapArrayResponses(document) {
   return wrapped;
 }
 
+/**
+ * Azure DevOps returns string enum values its own specification does not
+ * declare, and it adds new ones without republishing. Project visibility
+ * is the documented case: the service answers `"organization"` where the
+ * Swagger lists only `private` and `public`, so a client with a closed
+ * enum fails to deserialize the project list.
+ *
+ * Rather than chase each gap as it surfaces — `azure-devops-rust-api`
+ * patches that one enum by hand — every string enum in the model schemas
+ * is made *extensible*, which is how Azure data-plane enums are normally
+ * modelled anyway. `anyOf: [ <the enum>, { type: "string" } ]` is the
+ * shape `tsp-openapi3` converts into `"a" | "b" | string`; the compiler
+ * treats that as an extensible enum, and unknown values round-trip
+ * instead of being rejected.
+ *
+ * Scoped to `components.schemas`, so request parameters keep their
+ * closed enums: those are supplied by the caller, not the service, and a
+ * fixed set is both correct and easier to pass.
+ */
+export function makeEnumsExtensible(document) {
+  let widened = 0;
+
+  // Upstream frequently omits `type` next to `enum`, so the value kind
+  // is what decides, not the declared type.
+  const isStringEnum = (schema) =>
+    (schema.type === undefined || schema.type === "string") &&
+    Array.isArray(schema.enum) &&
+    schema.enum.length > 0 &&
+    schema.enum.every((value) => typeof value === "string");
+
+  const visit = (node) => {
+    if (Array.isArray(node)) {
+      for (const item of node) visit(item);
+      return;
+    }
+    if (!node || typeof node !== "object") return;
+
+    for (const key of Object.keys(node)) {
+      const value = node[key];
+      if (value && typeof value === "object" && !Array.isArray(value) && isStringEnum(value)) {
+        // Documentation and Autorest metadata stay on the property.
+        // Left on the union arm they would render as a decorator in a
+        // position TypeSpec does not accept.
+        const { description, "x-ms-enum": msEnum, enum: values, type, ...rest } = value;
+        node[key] = {
+          ...rest,
+          ...(description === undefined ? {} : { description }),
+          ...(msEnum === undefined ? {} : { "x-ms-enum": msEnum }),
+          anyOf: [{ type: "string", enum: values }, { type: "string" }],
+        };
+        widened += 1;
+        continue;
+      }
+      visit(value);
+    }
+  };
+
+  visit(document.components?.schemas ?? {});
+  return widened;
+}
+
 /** Applies every patch in order and returns a summary of what changed. */
 export function patchDocument(document) {
   sanitizeDocStrings(document);
   stripRootTags(document);
   const arrayResponses = wrapArrayResponses(document);
   const continuation = declareContinuationTokenHeader(document);
+  const extensibleEnums = makeEnumsExtensible(document);
   return {
     duplicateProperties: dedupeAllOfProperties(document),
     pathParameters: fixPathParameterCasing(document),
     operationIds: normalizeOperationIds(document),
     arrayResponses,
+    extensibleEnums,
     continuationTokenHeaders: continuation.declared,
     renamedContinuationTokenHeaders: continuation.renamed,
   };

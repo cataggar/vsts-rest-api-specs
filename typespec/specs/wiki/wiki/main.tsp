@@ -73,7 +73,7 @@ model Comment {
       ],
     }
   )
-  state?: "active" | "resolved" | "closed";
+  state?: "active" | "resolved" | "closed" | string;
 
   /** The plaintext/markdown version of the comment */
   text?: string;
@@ -154,7 +154,7 @@ model CommentMention {
       ],
     }
   )
-  type?: "person" | "workItem" | "pullRequest";
+  type?: "person" | "workItem" | "pullRequest" | string;
 }
 
 /** Contains information about comment reaction for a particular reaction type. */
@@ -185,7 +185,7 @@ model CommentReaction {
       ],
     }
   )
-  type?: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused";
+  type?: "like" | "dislike" | "heart" | "hooray" | "smile" | "confused" | string;
 }
 
 /** Base class for comment resource references */
@@ -208,7 +208,7 @@ model CommentUpdateParameters {
       ],
     }
   )
-  state?: "active" | "resolved" | "closed";
+  state?: "active" | "resolved" | "closed" | string;
 
   /** The updated text of the comment */
   text?: string;
@@ -279,7 +279,7 @@ model GitVersionDescriptor {
       ],
     }
   )
-  versionOptions?: "none" | "previousChange" | "firstParent";
+  versionOptions?: "none" | "previousChange" | "firstParent" | string;
 
   /** Version type (branch, tag, or commit). Determines how Id is interpreted */
   @extension(
@@ -293,7 +293,7 @@ model GitVersionDescriptor {
       ],
     }
   )
-  versionType?: "branch" | "tag" | "commit";
+  versionType?: "branch" | "tag" | "commit" | string;
 }
 
 model GraphSubjectBase {
@@ -374,7 +374,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
   url?: string;
   @extension(
     "x-ms-enum",
@@ -383,7 +391,7 @@ model TeamProjectReference {
       values: #[#{ value: "private", description: "" }, #{ value: "public", description: "" }],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 /** This class is used to serialize collections as a single JSON object on the wire. */
@@ -460,7 +468,7 @@ model WikiCreateBaseParameters {
       ],
     }
   )
-  type?: "projectWiki" | "codeWiki";
+  type?: "projectWiki" | "codeWiki" | string;
 }
 
 /** Wiki creations parameters. */

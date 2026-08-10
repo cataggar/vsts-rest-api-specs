@@ -47,7 +47,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -124,7 +124,7 @@ model UPackPackagesBatchRequest {
       ],
     }
   )
-  operation?: "promote" | "delete" | "permanentDelete" | "restoreToFeed";
+  operation?: "promote" | "delete" | "permanentDelete" | "restoreToFeed" | string;
 
   /** The packages onto which the operation will be performed. */
   packages?: MinimalPackageDetails[];

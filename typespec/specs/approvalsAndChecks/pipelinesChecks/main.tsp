@@ -60,7 +60,7 @@ model ApprovalConfig {
       ],
     }
   )
-  executionOrder?: "anyOrder" | "inSequence";
+  executionOrder?: "anyOrder" | "inSequence" | string;
 
   /** Instructions for the approver. */
   instructions?: string;
@@ -168,7 +168,8 @@ model CheckDefinitionData {
     | "main"
     | "postChecks"
     | "proofOfPresenceTemp"
-    | "final";
+    | "final"
+    | string;
 
   /** Check DefinitionRef Id */
   @format("uuid") definitionRefId?: string;
@@ -218,7 +219,7 @@ model CheckIssue {
       values: #[#{ value: "error", description: "" }, #{ value: "warning", description: "" }],
     }
   )
-  type?: "error" | "warning";
+  type?: "error" | "warning" | string;
 }
 
 model CheckIssueData {
@@ -262,7 +263,8 @@ model CheckRun {
     | "main"
     | "postChecks"
     | "proofOfPresenceTemp"
-    | "final";
+    | "final"
+    | string;
   @format("uuid") id?: string;
 
   /** List of check run result updates. */
@@ -306,7 +308,8 @@ model CheckRunResult {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 }
 
 model CheckRunUpdate {
@@ -350,7 +353,8 @@ model CheckRunUpdate {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 }
 
 model CheckSuite {
@@ -401,7 +405,8 @@ model CheckSuite {
     | "deferred"
     | "failed"
     | "completed"
-    | "all";
+    | "all"
+    | string;
 }
 
 /** The check run property. */
@@ -442,7 +447,7 @@ model CheckSuiteUpdateParameter {
       ],
     }
   )
-  action?: "rerun" | "bypass" | "defer";
+  action?: "rerun" | "bypass" | "defer" | string;
 
   /** Check id of the check run to be updated. */
   @format("uuid") checkId?: string;

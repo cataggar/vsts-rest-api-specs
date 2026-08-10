@@ -49,7 +49,7 @@ model GeographyWithHealth {
       ],
     }
   )
-  health?: "unknown" | "unhealthy" | "degraded" | "advisory" | "healthy";
+  health?: "unknown" | "unhealthy" | "degraded" | "advisory" | "healthy" | string;
 }
 
 model LiveSiteEvent {
@@ -80,7 +80,7 @@ model LiveSiteEvent {
       ],
     }
   )
-  icMSyncStatus?: "skipped" | "succeeded" | "inProgress" | "failed";
+  icMSyncStatus?: "skipped" | "succeeded" | "inProgress" | "failed" | string;
 
   id?: int64;
   impact?: LiveSiteEventImpact[];
@@ -99,7 +99,7 @@ model LiveSiteEvent {
       ],
     }
   )
-  severity?: "unhealthy" | "degraded" | "advisory";
+  severity?: "unhealthy" | "degraded" | "advisory" | string;
   startTime?: utcDateTime;
   @extension(
     "x-ms-enum",
@@ -108,7 +108,7 @@ model LiveSiteEvent {
       values: #[#{ value: "active", description: "" }, #{ value: "resolved", description: "" }],
     }
   )
-  state?: "active" | "resolved";
+  state?: "active" | "resolved" | string;
   title?: string;
 }
 
@@ -129,7 +129,7 @@ model LiveSiteEventImpact {
       ],
     }
   )
-  scopeType?: "geography" | "organization";
+  scopeType?: "geography" | "organization" | string;
   serviceId?: string;
 }
 
@@ -151,7 +151,7 @@ model LiveSiteEventLog {
       ],
     }
   )
-  scopeType?: "geography" | "organization";
+  scopeType?: "geography" | "organization" | string;
   @extension(
     "x-ms-enum",
     #{
@@ -163,7 +163,7 @@ model LiveSiteEventLog {
       ],
     }
   )
-  type?: "event" | "postmortem" | "notification";
+  type?: "event" | "postmortem" | "notification" | string;
 }
 
 model LiveSiteEventLogAttachment {
@@ -183,7 +183,7 @@ model LiveSiteEventLogAttachment {
       ],
     }
   )
-  scopeType?: "geography" | "organization";
+  scopeType?: "geography" | "organization" | string;
 }
 
 model LiveSiteEventScope {
@@ -237,7 +237,7 @@ model Service {
       ],
     }
   )
-  state?: "active" | "hidden" | "deleted";
+  state?: "active" | "hidden" | "deleted" | string;
 }
 
 model ServiceHealth {
@@ -265,7 +265,7 @@ model ServiceWithHealth {
       ],
     }
   )
-  health?: "unknown" | "unhealthy" | "degraded" | "advisory" | "healthy";
+  health?: "unknown" | "unhealthy" | "degraded" | "advisory" | "healthy" | string;
 }
 
 model Status {
@@ -293,7 +293,7 @@ model StatusSummary {
       ],
     }
   )
-  health?: "unknown" | "unhealthy" | "degraded" | "advisory" | "healthy";
+  health?: "unknown" | "unhealthy" | "degraded" | "advisory" | "healthy" | string;
   message?: string;
 }
 

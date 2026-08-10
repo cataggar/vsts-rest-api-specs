@@ -57,7 +57,7 @@ model Account {
       ],
     }
   )
-  accountStatus?: "none" | "enabled" | "disabled" | "deleted" | "moved";
+  accountStatus?: "none" | "enabled" | "disabled" | "deleted" | "moved" | string;
 
   /** Type of account: Personal, Organization */
   @extension(
@@ -70,7 +70,7 @@ model Account {
       ],
     }
   )
-  accountType?: "personal" | "organization";
+  accountType?: "personal" | "organization" | string;
 
   /** Uri for an account */
   accountUri?: string;

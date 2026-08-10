@@ -152,7 +152,7 @@ model PolicyEvaluationRecord {
       ],
     }
   )
-  status?: "queued" | "running" | "approved" | "rejected" | "notApplicable" | "broken";
+  status?: "queued" | "running" | "approved" | "rejected" | "notApplicable" | "broken" | string;
 }
 
 /** User-friendly policy type with description (used for querying policy types). */

@@ -61,7 +61,7 @@ model OperationReference {
       ],
     }
   )
-  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed";
+  status?: "notSet" | "queued" | "inProgress" | "cancelled" | "succeeded" | "failed" | string;
 
   /** URL to get the full operation object. */
   url?: string;

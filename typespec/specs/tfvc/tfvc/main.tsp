@@ -80,7 +80,8 @@ model Change {
     | "sourceRename"
     | "targetRename"
     | "property"
-    | "all";
+    | "all"
+    | string;
 
   /** Current version. */
   @format("T") item?: string;
@@ -209,7 +210,7 @@ model ItemContent {
       ],
     }
   )
-  contentType?: "rawText" | "base64Encoded";
+  contentType?: "rawText" | "base64Encoded" | string;
 }
 
 model ItemModel {
@@ -290,7 +291,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** Url to the full version of the object. */
   url?: string;
@@ -309,7 +318,7 @@ model TeamProjectReference {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 /** Class representing a branch object. */
@@ -513,7 +522,7 @@ model TfvcItemDescriptor {
       ],
     }
   )
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full";
+  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full" | string;
 
   /** Specify the desired version, can be null or empty string only if VersionType is latest or tip. */
   version?: string;
@@ -533,7 +542,7 @@ model TfvcItemDescriptor {
       ],
     }
   )
-  versionOption?: "none" | "previous" | "useRename";
+  versionOption?: "none" | "previous" | "useRename" | string;
 
   /** Defaults to Latest. */
   @extension(
@@ -566,7 +575,8 @@ model TfvcItemDescriptor {
     | "date"
     | "latest"
     | "tip"
-    | "mergeSource";
+    | "mergeSource"
+    | string;
 }
 
 /** Request body used by Get Items Batch */
@@ -762,7 +772,7 @@ model TfvcVersionDescriptor {
       ],
     }
   )
-  versionOption?: "none" | "previous" | "useRename";
+  versionOption?: "none" | "previous" | "useRename" | string;
   @extension(
     "x-ms-enum",
     #{
@@ -793,7 +803,8 @@ model TfvcVersionDescriptor {
     | "date"
     | "latest"
     | "tip"
-    | "mergeSource";
+    | "mergeSource"
+    | string;
 }
 
 model VersionControlProjectInfo {
@@ -804,7 +815,7 @@ model VersionControlProjectInfo {
       values: #[#{ value: "tfvc", description: "" }, #{ value: "git", description: "" }],
     }
   )
-  defaultSourceControlType?: "tfvc" | "git";
+  defaultSourceControlType?: "tfvc" | "git" | string;
   project?: TeamProjectReference;
   supportsGit?: boolean;
   supportsTFVC?: boolean;

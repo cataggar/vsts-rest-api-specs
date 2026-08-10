@@ -60,7 +60,7 @@ model CargoPackagesBatchRequest {
       ],
     }
   )
-  operation?: "promote" | "delete" | "permanentDelete" | "restoreToFeed" | "yank";
+  operation?: "promote" | "delete" | "permanentDelete" | "restoreToFeed" | "yank" | string;
 
   /** The packages onto which the operation will be performed. */
   packages?: MinimalPackageDetails[];
@@ -102,7 +102,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -166,7 +166,7 @@ model UpstreamingBehavior {
       ],
     }
   )
-  versionsFromExternalUpstreams?: "auto" | "allowExternalVersions";
+  versionsFromExternalUpstreams?: "auto" | "allowExternalVersions" | string;
 }
 
 /** Upstream source definition, including its Identity, package type, and other associated information. */
@@ -194,7 +194,7 @@ model UpstreamSourceInfo {
       ],
     }
   )
-  sourceType?: "public" | "internal";
+  sourceType?: "public" | "internal" | string;
 }
 
 namespace Parameters {

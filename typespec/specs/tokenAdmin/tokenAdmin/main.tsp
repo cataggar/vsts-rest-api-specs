@@ -140,7 +140,8 @@ model SessionTokenResult {
     | "disablePatCreationPolicyViolation"
     | "failedToReadOrgPolicy"
     | "globalPATCreationBlocked"
-    | "expiredPatCannotBeExtended";
+    | "expiredPatCannotBeExtended"
+    | string;
   sessionTokenErrorMessage?: string;
 }
 

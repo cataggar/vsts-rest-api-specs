@@ -83,7 +83,8 @@ model DebugEntry {
     | "lineNumbers"
     | "globalSymbols"
     | "private"
-    | "sourceIndexed";
+    | "sourceIndexed"
+    | string;
 
   /** The identifier of symbol request to which this debug entry belongs. */
   requestId?: string;
@@ -109,7 +110,7 @@ model DebugEntry {
       ],
     }
   )
-  status?: "none" | "created" | "blobMissing";
+  status?: "none" | "created" | "blobMissing" | string;
 }
 
 /** A batch of debug entry to create. */
@@ -132,7 +133,7 @@ model DebugEntryCreateBatch {
       ],
     }
   )
-  createBehavior?: "throwIfExists" | "skipIfExists" | "overwriteIfExists";
+  createBehavior?: "throwIfExists" | "skipIfExists" | "overwriteIfExists" | string;
 
   /** The debug entries. */
   debugEntries?: DebugEntry[];
@@ -217,7 +218,7 @@ model Request {
       ],
     }
   )
-  status?: "none" | "created" | "sealed" | "unavailable";
+  status?: "none" | "created" | "sealed" | "unavailable" | string;
 }
 
 model ResourceBase {

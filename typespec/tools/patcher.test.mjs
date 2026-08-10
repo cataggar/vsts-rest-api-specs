@@ -4,6 +4,7 @@ import {
   declareContinuationTokenHeader,
   dedupeAllOfProperties,
   fixPathParameterCasing,
+  makeEnumsExtensible,
   normalizeOperationIds,
   sanitizeDocStrings,
   stripRootTags,
@@ -293,4 +294,100 @@ test("wrapArrayResponses does not clobber a conflicting existing envelope", () =
   assert.equal(wrapArrayResponses(doc), 0);
   assert.equal(doc.components.schemas.BuildList, conflicting);
   assert.equal(doc.paths["/builds"].get.responses[200].content["application/json"].schema.type, "array");
+});
+test("makeEnumsExtensible widens a string enum into an open union", () => {
+  const doc = {
+    components: {
+      schemas: {
+        TeamProjectReference: {
+          type: "object",
+          properties: {
+            visibility: {
+              type: "string",
+              description: "Project visibility.",
+              enum: ["private", "public"],
+            },
+          },
+        },
+      },
+    },
+  };
+  assert.equal(makeEnumsExtensible(doc), 1);
+  assert.deepEqual(doc.components.schemas.TeamProjectReference.properties.visibility, {
+    description: "Project visibility.",
+    anyOf: [{ type: "string", enum: ["private", "public"] }, { type: "string" }],
+  });
+});
+
+test("makeEnumsExtensible leaves non-string enums alone", () => {
+  const doc = {
+    components: { schemas: { A: { type: "object", properties: { n: { type: "integer", enum: [1, 2] } } } } },
+  };
+  assert.equal(makeEnumsExtensible(doc), 0);
+  assert.deepEqual(doc.components.schemas.A.properties.n, { type: "integer", enum: [1, 2] });
+});
+
+test("makeEnumsExtensible leaves request parameters alone", () => {
+  const doc = {
+    components: { schemas: {} },
+    paths: {
+      "/builds": {
+        get: { parameters: [{ in: "query", name: "order", schema: { type: "string", enum: ["asc", "desc"] } }] },
+      },
+    },
+  };
+  assert.equal(makeEnumsExtensible(doc), 0);
+  assert.deepEqual(doc.paths["/builds"].get.parameters[0].schema, { type: "string", enum: ["asc", "desc"] });
+});
+
+test("makeEnumsExtensible reaches enums nested in arrays and sub-schemas", () => {
+  const doc = {
+    components: {
+      schemas: {
+        A: {
+          type: "object",
+          properties: {
+            states: { type: "array", items: { type: "string", enum: ["new", "done"] } },
+          },
+        },
+      },
+    },
+  };
+  assert.equal(makeEnumsExtensible(doc), 1);
+  assert.deepEqual(doc.components.schemas.A.properties.states.items, {
+    anyOf: [{ type: "string", enum: ["new", "done"] }, { type: "string" }],
+  });
+});
+
+test("makeEnumsExtensible is idempotent", () => {
+  const doc = {
+    components: { schemas: { A: { type: "object", properties: { v: { type: "string", enum: ["x"] } } } } },
+  };
+  assert.equal(makeEnumsExtensible(doc), 1);
+  assert.equal(makeEnumsExtensible(doc), 0);
+});
+
+test("makeEnumsExtensible widens an enum that omits its type, as upstream writes them", () => {
+  const doc = {
+    components: {
+      schemas: {
+        TeamProjectReference: {
+          type: "object",
+          properties: {
+            visibility: {
+              description: "Indicates whom the project is visible to.",
+              enum: ["private", "public"],
+              "x-ms-enum": { name: "ProjectVisibility" },
+            },
+          },
+        },
+      },
+    },
+  };
+  assert.equal(makeEnumsExtensible(doc), 1);
+  assert.deepEqual(doc.components.schemas.TeamProjectReference.properties.visibility, {
+    description: "Indicates whom the project is visible to.",
+    "x-ms-enum": { name: "ProjectVisibility" },
+    anyOf: [{ type: "string", enum: ["private", "public"] }, { type: "string" }],
+  });
 });

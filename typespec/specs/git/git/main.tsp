@@ -258,7 +258,8 @@ model Change {
     | "sourceRename"
     | "targetRename"
     | "property"
-    | "all";
+    | "all"
+    | string;
 
   /** Current version. */
   @format("T") item?: string;
@@ -354,7 +355,7 @@ model Comment {
       ],
     }
   )
-  commentType?: "unknown" | "text" | "codeChange" | "system";
+  commentType?: "unknown" | "text" | "codeChange" | "system" | string;
 
   /** The comment content. */
   content?: string;
@@ -438,7 +439,7 @@ model CommentThread {
       ],
     }
   )
-  status?: "unknown" | "active" | "fixed" | "wontFix" | "closed" | "byDesign" | "pending";
+  status?: "unknown" | "active" | "fixed" | "wontFix" | "closed" | "byDesign" | "pending" | string;
 
   threadContext?: CommentThreadContext;
 }
@@ -553,7 +554,8 @@ model CreateMigrationRequest {
     | "sourceRepositoryContainsLfsObjects"
     | "sourceRepositoryNotReadOnly"
     | "boardsGitHubConnectionProvisioning"
-    | "all";
+    | "all"
+    | string;
 
   /** The GitHub login of the migration owner. Set by the server when GitHubUserToken is provided. */
   targetOwnerUserId?: string;
@@ -735,7 +737,7 @@ model GitAsyncRefOperation {
       ],
     }
   )
-  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned";
+  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned" | string;
 
   /** A URL that can be used to make further requests for status about the operation */
   url?: string;
@@ -810,7 +812,8 @@ model GitAsyncRefOperationDetail {
     | "operationIndentityNotFound"
     | "asyncOperationNotFound"
     | "other"
-    | "emptyCommitterSignature";
+    | "emptyCommitterSignature"
+    | string;
 
   /** Indicates if the operation went beyond the maximum time allowed for a cherry pick or revert operation. */
   timedout?: boolean;
@@ -858,7 +861,7 @@ model GitBaseVersionDescriptor {
       ],
     }
   )
-  baseVersionOptions?: "none" | "previousChange" | "firstParent";
+  baseVersionOptions?: "none" | "previousChange" | "firstParent" | string;
 
   /** Version type (branch, tag, or commit). Determines how Id is interpreted */
   @extension(
@@ -872,7 +875,7 @@ model GitBaseVersionDescriptor {
       ],
     }
   )
-  baseVersionType?: "branch" | "tag" | "commit";
+  baseVersionType?: "branch" | "tag" | "commit" | string;
 }
 
 model GitBlobRef {
@@ -1053,7 +1056,8 @@ model GitConflict {
     | "rename2to1"
     | "renameAdd"
     | "renameDelete"
-    | "renameRename";
+    | "renameRename"
+    | string;
   mergeBaseCommit?: GitCommitRef;
   mergeOrigin?: GitMergeOriginRef;
   mergeSourceCommit?: GitCommitRef;
@@ -1095,7 +1099,8 @@ model GitConflict {
     | "invalidPath"
     | "unknownAction"
     | "unknownMergeType"
-    | "otherError";
+    | "otherError"
+    | string;
   @extension(
     "x-ms-enum",
     #{
@@ -1107,7 +1112,7 @@ model GitConflict {
       ],
     }
   )
-  resolutionStatus?: "unresolved" | "partiallyResolved" | "resolved";
+  resolutionStatus?: "unresolved" | "partiallyResolved" | "resolved" | string;
   resolvedBy?: IdentityRef;
   resolvedDate?: utcDateTime;
   url?: string;
@@ -1273,7 +1278,8 @@ model GitConflictUpdateResult {
     | "badRequest"
     | "invalidResolution"
     | "unsupportedConflictType"
-    | "notFound";
+    | "notFound"
+    | string;
 }
 
 model GitDeletedRepository {
@@ -1338,7 +1344,7 @@ model GitForkSyncRequest {
       ],
     }
   )
-  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned";
+  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned" | string;
 }
 
 /** Parameters for creating a fork request */
@@ -1395,7 +1401,7 @@ model GitImportRequest {
       ],
     }
   )
-  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned";
+  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned" | string;
 
   /** A link back to this import request resource. */
   url?: string;
@@ -1466,7 +1472,16 @@ model GitItem {
       ],
     }
   )
-  gitObjectType?: "bad" | "commit" | "tree" | "blob" | "tag" | "ext2" | "ofsDelta" | "refDelta";
+  gitObjectType?:
+    | "bad"
+    | "commit"
+    | "tree"
+    | "blob"
+    | "tag"
+    | "ext2"
+    | "ofsDelta"
+    | "refDelta"
+    | string;
 
   latestProcessedChange?: GitCommitRef;
 
@@ -1497,7 +1512,7 @@ model GitItemDescriptor {
       ],
     }
   )
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full";
+  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full" | string;
 
   /** Version string (interpretation based on VersionType defined in subclass */
   version?: string;
@@ -1517,7 +1532,7 @@ model GitItemDescriptor {
       ],
     }
   )
-  versionOptions?: "none" | "previousChange" | "firstParent";
+  versionOptions?: "none" | "previousChange" | "firstParent" | string;
 
   /** How to interpret version (branch,tag,commit) */
   @extension(
@@ -1531,7 +1546,7 @@ model GitItemDescriptor {
       ],
     }
   )
-  versionType?: "branch" | "tag" | "commit";
+  versionType?: "branch" | "tag" | "commit" | string;
 }
 
 model GitItemRequestData {
@@ -1592,7 +1607,7 @@ model GitMerge {
       ],
     }
   )
-  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned";
+  status?: "queued" | "inProgress" | "completed" | "failed" | "abandoned" | string;
 }
 
 /** Status information about a requested merge operation. */
@@ -1641,7 +1656,16 @@ model GitObject {
       ],
     }
   )
-  objectType?: "bad" | "commit" | "tree" | "blob" | "tag" | "ext2" | "ofsDelta" | "refDelta";
+  objectType?:
+    | "bad"
+    | "commit"
+    | "tree"
+    | "blob"
+    | "tag"
+    | "ext2"
+    | "ofsDelta"
+    | "refDelta"
+    | string;
 }
 
 model GitPathAction {
@@ -1658,7 +1682,7 @@ model GitPathAction {
       ],
     }
   )
-  action?: "none" | "edit" | "delete" | "add" | "rename";
+  action?: "none" | "edit" | "delete" | "add" | "rename" | string;
   base64Content?: string;
   path?: string;
   rawTextContent?: string;
@@ -1748,7 +1772,7 @@ model GitPullRequest {
       ],
     }
   )
-  mergeFailureType?: "none" | "unknown" | "caseSensitive" | "objectTooLarge";
+  mergeFailureType?: "none" | "unknown" | "caseSensitive" | "objectTooLarge" | string;
 
   /** The ID of the job used to run the pull request merge. Used internally. */
   @format("uuid") mergeId?: string;
@@ -1770,7 +1794,14 @@ model GitPullRequest {
       ],
     }
   )
-  mergeStatus?: "notSet" | "queued" | "conflicts" | "succeeded" | "rejectedByPolicy" | "failure";
+  mergeStatus?:
+    | "notSet"
+    | "queued"
+    | "conflicts"
+    | "succeeded"
+    | "rejectedByPolicy"
+    | "failure"
+    | string;
 
   /** The ID of the pull request. */
   pullRequestId?: int32;
@@ -1803,7 +1834,7 @@ model GitPullRequest {
       ],
     }
   )
-  status?: "notSet" | "active" | "abandoned" | "completed" | "all";
+  status?: "notSet" | "active" | "abandoned" | "completed" | "all" | string;
 
   /** If true, this pull request supports multiple iterations. Iteration support means individual pushes to the source branch of the pull request can be reviewed and comments left in one iteration will be tracked across future iterations. */
   supportsIterations?: boolean;
@@ -1886,7 +1917,7 @@ model GitPullRequestCompletionOptions {
       ],
     }
   )
-  mergeStrategy?: "noFastForward" | "squash" | "rebase" | "rebaseMerge";
+  mergeStrategy?: "noFastForward" | "squash" | "rebase" | "rebaseMerge" | string;
 
   /** SquashMerge is deprecated. You should explicitly set the value of MergeStrategy. This flag is only used when MergeStrategy is not specified and the target branch has no merge-strategy policy configured. In all other cases it is ignored. */
   squashMerge?: boolean;
@@ -1959,7 +1990,15 @@ model GitPullRequestIteration {
       ],
     }
   )
-  reason?: "push" | "forcePush" | "create" | "rebase" | "unknown" | "retarget" | "resolveConflicts";
+  reason?:
+    | "push"
+    | "forcePush"
+    | "create"
+    | "rebase"
+    | "unknown"
+    | "retarget"
+    | "resolveConflicts"
+    | string;
 
   sourceRefCommit?: GitCommitRef;
   targetRefCommit?: GitCommitRef;
@@ -2014,7 +2053,7 @@ model GitPullRequestQueryInput {
       ],
     }
   )
-  include?: "notSet" | "labels";
+  include?: "notSet" | "labels" | string;
 
   /** The list of commit IDs to search for. */
   items?: string[];
@@ -2037,7 +2076,7 @@ model GitPullRequestQueryInput {
       ],
     }
   )
-  type?: "notSet" | "lastMergeCommit" | "commit";
+  type?: "notSet" | "lastMergeCommit" | "commit" | string;
 }
 
 model GitPullRequestReviewFileContentInfo {
@@ -2081,7 +2120,7 @@ model GitPullRequestSearchCriteria {
       ],
     }
   )
-  queryTimeRangeType?: "created" | "closed";
+  queryTimeRangeType?: "created" | "closed" | string;
 
   /** If set, search for pull requests whose target branch is in this repository. */
   @format("uuid") repositoryId?: string;
@@ -2112,7 +2151,7 @@ model GitPullRequestSearchCriteria {
       ],
     }
   )
-  status?: "notSet" | "active" | "abandoned" | "completed" | "all";
+  status?: "notSet" | "active" | "abandoned" | "completed" | "all" | string;
 
   /** The operator used for filtering by labels. Defaults to And if unset. When And is used, pull requests must have all specified labels. When Or is used, pull requests must have at least one of the specified labels. */
   @extension(
@@ -2125,7 +2164,7 @@ model GitPullRequestSearchCriteria {
       ],
     }
   )
-  tagsFilterOperator?: "and" | "or";
+  tagsFilterOperator?: "and" | "or" | string;
 
   /** If set, search for pull requests into this branch. */
   targetRefName?: string;
@@ -2230,7 +2269,12 @@ model GitQueryCommitsCriteria {
       ],
     }
   )
-  historyMode?: "simplifiedHistory" | "firstParent" | "fullHistory" | "fullHistorySimplifyMerges";
+  historyMode?:
+    | "simplifiedHistory"
+    | "firstParent"
+    | "fullHistory"
+    | "fullHistorySimplifyMerges"
+    | string;
 
   /** If provided, specifies the exact commit ids of the commits to fetch. May not be combined with other parameters. */
   ids?: string[];
@@ -2284,7 +2328,7 @@ model GitQueryRefsCriteria {
       ],
     }
   )
-  searchType?: "exact" | "startsWith" | "contains";
+  searchType?: "exact" | "startsWith" | "contains" | string;
 }
 
 model GitRecycleBinRepositoryDetails {
@@ -2321,7 +2365,7 @@ model GitRefFavorite {
       ],
     }
   )
-  type?: "invalid" | "folder" | "ref";
+  type?: "invalid" | "folder" | "ref" | string;
   url?: string;
 }
 
@@ -2444,7 +2488,8 @@ model GitRefUpdateResult {
     | "refNameConflict"
     | "rejectedByPolicy"
     | "succeededNonExistentRef"
-    | "succeededCorruptRef";
+    | "succeededCorruptRef"
+    | string;
 }
 
 model GitRepository {
@@ -2525,7 +2570,13 @@ model GitResolutionMergeContent {
       ],
     }
   )
-  mergeType?: "undecided" | "takeSourceContent" | "takeTargetContent" | "autoMerged" | "userMerged";
+  mergeType?:
+    | "undecided"
+    | "takeSourceContent"
+    | "takeTargetContent"
+    | "autoMerged"
+    | "userMerged"
+    | string;
   userMergedBlob?: GitBlobRef;
   userMergedContent?: bytes[];
 }
@@ -2550,7 +2601,8 @@ model GitResolutionPathConflict {
     | "keepSourceRenameTarget"
     | "keepSourceDeleteTarget"
     | "keepTargetRenameSource"
-    | "keepTargetDeleteSource";
+    | "keepTargetDeleteSource"
+    | string;
   renamePath?: string;
 }
 
@@ -2567,7 +2619,7 @@ model GitResolutionPickOneAction {
       ],
     }
   )
-  action?: "undecided" | "pickSourceAction" | "pickTargetAction";
+  action?: "undecided" | "pickSourceAction" | "pickTargetAction" | string;
 }
 
 model GitResolutionRename1to2 {
@@ -2584,7 +2636,7 @@ model GitResolutionRename1to2 {
       ],
     }
   )
-  action?: "undecided" | "keepSourcePath" | "keepTargetPath" | "keepBothFiles";
+  action?: "undecided" | "keepSourcePath" | "keepTargetPath" | "keepBothFiles" | string;
 }
 
 model GitRevert {
@@ -2633,7 +2685,8 @@ model GitStatus {
     | "failed"
     | "error"
     | "notApplicable"
-    | "partiallySucceeded";
+    | "partiallySucceeded"
+    | string;
 
   /** URL with status details. */
   targetUrl?: string;
@@ -2681,7 +2734,7 @@ model GitTargetVersionDescriptor {
       ],
     }
   )
-  targetVersionOptions?: "none" | "previousChange" | "firstParent";
+  targetVersionOptions?: "none" | "previousChange" | "firstParent" | string;
 
   /** Version type (branch, tag, or commit). Determines how Id is interpreted */
   @extension(
@@ -2695,7 +2748,7 @@ model GitTargetVersionDescriptor {
       ],
     }
   )
-  targetVersionType?: "branch" | "tag" | "commit";
+  targetVersionType?: "branch" | "tag" | "commit" | string;
 }
 
 model GitTemplate {
@@ -2763,7 +2816,8 @@ model GitTreeDiffEntry {
     | "sourceRename"
     | "targetRename"
     | "property"
-    | "all";
+    | "all"
+    | string;
 
   /** Object type of the tree entry. Blob, Tree or Commit('submodule') */
   @extension(
@@ -2782,7 +2836,16 @@ model GitTreeDiffEntry {
       ],
     }
   )
-  objectType?: "bad" | "commit" | "tree" | "blob" | "tag" | "ext2" | "ofsDelta" | "refDelta";
+  objectType?:
+    | "bad"
+    | "commit"
+    | "tree"
+    | "blob"
+    | "tag"
+    | "ext2"
+    | "ofsDelta"
+    | "refDelta"
+    | string;
 
   /** Relative path in base and target trees. */
   path?: string;
@@ -2816,7 +2879,16 @@ model GitTreeEntryRef {
       ],
     }
   )
-  gitObjectType?: "bad" | "commit" | "tree" | "blob" | "tag" | "ext2" | "ofsDelta" | "refDelta";
+  gitObjectType?:
+    | "bad"
+    | "commit"
+    | "tree"
+    | "blob"
+    | "tag"
+    | "ext2"
+    | "ofsDelta"
+    | "refDelta"
+    | string;
 
   /** Mode represented as octal string */
   mode?: string;
@@ -2884,7 +2956,7 @@ model GitVersionDescriptor {
       ],
     }
   )
-  versionOptions?: "none" | "previousChange" | "firstParent";
+  versionOptions?: "none" | "previousChange" | "firstParent" | string;
 
   /** Version type (branch, tag, or commit). Determines how Id is interpreted */
   @extension(
@@ -2898,7 +2970,7 @@ model GitVersionDescriptor {
       ],
     }
   )
-  versionType?: "branch" | "tag" | "commit";
+  versionType?: "branch" | "tag" | "commit" | string;
 }
 
 /** Globally unique key for a repository. */
@@ -2968,7 +3040,8 @@ model HistoryEntry {
     | "sourceRename"
     | "targetRename"
     | "property"
-    | "all";
+    | "all"
+    | string;
 
   /** The path of the item at this point in history (only relevant for File history, not folders) */
   serverItem?: string;
@@ -3060,7 +3133,7 @@ model ItemContent {
       ],
     }
   )
-  contentType?: "rawText" | "base64Encoded";
+  contentType?: "rawText" | "base64Encoded" | string;
 }
 
 /** Optional details to include when returning an item model */
@@ -3084,7 +3157,7 @@ model ItemDetailsOptions {
       ],
     }
   )
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full";
+  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full" | string;
 }
 
 model ItemModel {
@@ -3120,7 +3193,7 @@ model JsonPatchOperation {
       ],
     }
   )
-  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test";
+  `op`?: "add" | "remove" | "replace" | "move" | "copy" | "test" | string;
 
   /** The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The '-' character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-). */
   path?: string;
@@ -3152,7 +3225,7 @@ model LineDiffBlock {
       ],
     }
   )
-  changeType?: "none" | "add" | "delete" | "edit";
+  changeType?: "none" | "add" | "delete" | "edit" | string;
 
   /** Line number where this block starts in modified file. */
   modifiedLineNumberStart?: int32;
@@ -3185,7 +3258,7 @@ model LineDiffBlockDetail {
       ],
     }
   )
-  changeType?: "none" | "add" | "delete" | "edit";
+  changeType?: "none" | "add" | "delete" | "edit" | string;
 
   /** Line number where this block starts in modified file. */
   modifiedLineNumberStart?: int32;
@@ -3301,7 +3374,8 @@ model Migration {
     | "sourceRepositoryContainsLfsObjects"
     | "sourceRepositoryNotReadOnly"
     | "boardsGitHubConnectionProvisioning"
-    | "all";
+    | "all"
+    | string;
 
   /** The current stage of the migration (Queued, Validation, Synchronization, Cutover, Migrated). */
   @extension(
@@ -3340,7 +3414,8 @@ model Migration {
     | "migrated"
     | "readyForCutover"
     | "degraded"
-    | "reviewForCutover";
+    | "reviewForCutover"
+    | string;
 
   /** If the migration is 'active', 'complete', or 'failed'. */
   @extension(
@@ -3358,7 +3433,7 @@ model Migration {
       ],
     }
   )
-  status?: "active" | "completed" | "failed" | "paused";
+  status?: "active" | "completed" | "failed" | "paused" | string;
 
   /** The ID of the user that will end up owning the migrated repository. */
   targetOwnerUserId?: string;
@@ -3431,7 +3506,8 @@ model PipelineRewireEntry {
     | "crossRepoTemplates"
     | "multiRepoCheckout"
     | "separatePipelineRepo"
-    | "crossProject";
+    | "crossProject"
+    | string;
 
   /** The build definition ID of the clone pipeline, if one has been created. */
   cloneDefinitionId?: int32;
@@ -3510,7 +3586,8 @@ model PipelineRewireEntry {
     | "rewired"
     | "swapComplete"
     | "failed"
-    | "awaitingCodeSync";
+    | "awaitingCodeSync"
+    | string;
 
   /** The YAML filename used by the pipeline definition. */
   yamlFilename?: string;
@@ -3752,7 +3829,8 @@ model SupportedIde {
     | "tower"
     | "visualStudio"
     | "vsCode"
-    | "webStorm";
+    | "webStorm"
+    | string;
 
   /** The name of the IDE. */
   name?: string;
@@ -3821,7 +3899,15 @@ model TeamProjectReference {
       ],
     }
   )
-  state?: "deleting" | "new" | "wellFormed" | "createPending" | "all" | "unchanged" | "deleted";
+  state?:
+    | "deleting"
+    | "new"
+    | "wellFormed"
+    | "createPending"
+    | "all"
+    | "unchanged"
+    | "deleted"
+    | string;
 
   /** Url to the full version of the object. */
   url?: string;
@@ -3840,7 +3926,7 @@ model TeamProjectReference {
       ],
     }
   )
-  visibility?: "private" | "public";
+  visibility?: "private" | "public" | string;
 }
 
 /** Class representing a branch object. */
@@ -4059,7 +4145,7 @@ model TfvcItemDescriptor {
       ],
     }
   )
-  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full";
+  recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full" | string;
 
   /** Specify the desired version, can be null or empty string only if VersionType is latest or tip. */
   version?: string;
@@ -4079,7 +4165,7 @@ model TfvcItemDescriptor {
       ],
     }
   )
-  versionOption?: "none" | "previous" | "useRename";
+  versionOption?: "none" | "previous" | "useRename" | string;
 
   /** Defaults to Latest. */
   @extension(
@@ -4112,7 +4198,8 @@ model TfvcItemDescriptor {
     | "date"
     | "latest"
     | "tip"
-    | "mergeSource";
+    | "mergeSource"
+    | string;
 }
 
 /** Metadata for an item including the previous hash value for files. */
@@ -4316,7 +4403,7 @@ model TfvcVersionDescriptor {
       ],
     }
   )
-  versionOption?: "none" | "previous" | "useRename";
+  versionOption?: "none" | "previous" | "useRename" | string;
   @extension(
     "x-ms-enum",
     #{
@@ -4347,7 +4434,8 @@ model TfvcVersionDescriptor {
     | "date"
     | "latest"
     | "tip"
-    | "mergeSource";
+    | "mergeSource"
+    | string;
 }
 
 /** Real time event (SignalR) for a title/description update on a pull request */
@@ -4382,7 +4470,7 @@ model UpdateMigrationRequest {
       ],
     }
   )
-  statusRequested?: "active" | "completed" | "failed" | "paused";
+  statusRequested?: "active" | "completed" | "failed" | "paused" | string;
 
   /** True if the migration should only perform pre-migration validation. */
   validateOnly?: boolean;
@@ -4427,7 +4515,7 @@ model UpdateRefsRequest {
       ],
     }
   )
-  updateMode?: "bestEffort" | "allOrNone";
+  updateMode?: "bestEffort" | "allOrNone" | string;
 }
 
 model VersionControlProjectInfo {
@@ -4438,7 +4526,7 @@ model VersionControlProjectInfo {
       values: #[#{ value: "tfvc", description: "" }, #{ value: "git", description: "" }],
     }
   )
-  defaultSourceControlType?: "tfvc" | "git";
+  defaultSourceControlType?: "tfvc" | "git" | string;
   project?: TeamProjectReference;
   supportsGit?: boolean;
   supportsTFVC?: boolean;

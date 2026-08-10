@@ -46,7 +46,7 @@ model MaskHint {
       values: #[#{ value: "variable", description: "" }, #{ value: "regex", description: "" }],
     }
   )
-  type?: "variable" | "regex";
+  type?: "variable" | "regex" | string;
   value?: string;
 }
 
@@ -87,7 +87,7 @@ model TaskOrchestrationItem {
       values: #[#{ value: "container", description: "" }, #{ value: "job", description: "" }],
     }
   )
-  itemType?: "container" | "job";
+  itemType?: "container" | "job" | string;
 }
 
 model TaskOrchestrationOwner {
@@ -119,7 +119,14 @@ model TaskOrchestrationPlan {
       ],
     }
   )
-  result?: "succeeded" | "succeededWithIssues" | "failed" | "canceled" | "skipped" | "abandoned";
+  result?:
+    | "succeeded"
+    | "succeededWithIssues"
+    | "failed"
+    | "canceled"
+    | "skipped"
+    | "abandoned"
+    | string;
   resultCode?: string;
   startTime?: utcDateTime;
   @extension(
@@ -134,7 +141,7 @@ model TaskOrchestrationPlan {
       ],
     }
   )
-  state?: "inProgress" | "queued" | "completed" | "throttled";
+  state?: "inProgress" | "queued" | "completed" | "throttled" | string;
   timeline?: TimelineReference;
 }
 

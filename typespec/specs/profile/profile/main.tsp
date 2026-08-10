@@ -58,7 +58,7 @@ model Avatar {
       ],
     }
   )
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | string;
   timeStamp?: utcDateTime;
   value?: bytes[];
 }
@@ -90,7 +90,7 @@ model CreateProfileContext {
       ],
     }
   )
-  profileState?: "custom" | "customReadOnly" | "readOnly";
+  profileState?: "custom" | "customReadOnly" | "readOnly" | string;
 }
 
 model GeoRegion {
@@ -130,7 +130,7 @@ model Profile {
       ],
     }
   )
-  profileState?: "custom" | "customReadOnly" | "readOnly";
+  profileState?: "custom" | "customReadOnly" | "readOnly" | string;
 
   /** The maximum revision number of any attribute. */
   revision?: int32;

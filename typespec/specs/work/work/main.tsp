@@ -51,7 +51,7 @@ model BacklogConfiguration {
       ],
     }
   )
-  bugsBehavior?: "off" | "asRequirements" | "asTasks";
+  bugsBehavior?: "off" | "asRequirements" | "asTasks" | string;
 
   /** Hidden Backlog */
   hiddenBacklogs?: string[];
@@ -126,7 +126,7 @@ model BacklogLevelConfiguration {
       ],
     }
   )
-  type?: "portfolio" | "requirement" | "task";
+  type?: "portfolio" | "requirement" | "task" | string;
 
   /** Max number of work items to show in the given backlog */
   workItemCountLimit?: int32;
@@ -200,7 +200,7 @@ model BoardColumn {
       ],
     }
   )
-  columnType?: "incoming" | "inProgress" | "outgoing";
+  columnType?: "incoming" | "inProgress" | "outgoing" | string;
   description?: string;
   @format("uuid") id?: string;
   isSplit?: boolean;
@@ -273,7 +273,7 @@ model CardFieldSettings {
       ],
     }
   )
-  assignedToDisplayFormat?: "avatarOnly" | "fullName" | "avatarAndFullName";
+  assignedToDisplayFormat?: "avatarOnly" | "fullName" | "avatarAndFullName" | string;
 
   /** A collection of field information of rendered core fields on cards. */
   coreFields?: FieldInfo[];
@@ -332,7 +332,7 @@ model CreatePlan {
     "x-ms-enum",
     #{ name: "PlanType", values: #[#{ value: "deliveryTimelineView", description: "" }] }
   )
-  type?: "deliveryTimelineView";
+  type?: "deliveryTimelineView" | string;
 }
 
 model DateRange {
@@ -415,7 +415,15 @@ model FieldInfo {
       ],
     }
   )
-  fieldType?: "string" | "plainText" | "integer" | "dateTime" | "treePath" | "boolean" | "double";
+  fieldType?:
+    | "string"
+    | "plainText"
+    | "integer"
+    | "dateTime"
+    | "treePath"
+    | "boolean"
+    | "double"
+    | string;
 
   /** Indicates if the field definition is for an identity field. */
   isIdentity?: boolean;
@@ -586,7 +594,7 @@ model Plan {
     "x-ms-enum",
     #{ name: "PlanType", values: #[#{ value: "deliveryTimelineView", description: "" }] }
   )
-  type?: "deliveryTimelineView";
+  type?: "deliveryTimelineView" | string;
 
   /** The resource url to locate the plan via rest api */
   url?: string;
@@ -606,7 +614,7 @@ model Plan {
       ],
     }
   )
-  userPermissions?: "none" | "view" | "edit" | "delete" | "manage" | "allPermissions";
+  userPermissions?: "none" | "view" | "edit" | "delete" | "manage" | "allPermissions" | string;
 }
 
 /** Metadata about a plan definition that is stored in favorites service */
@@ -634,7 +642,7 @@ model PlanMetadata {
       ],
     }
   )
-  userPermissions?: "none" | "view" | "edit" | "delete" | "manage" | "allPermissions";
+  userPermissions?: "none" | "view" | "edit" | "delete" | "manage" | "allPermissions" | string;
 }
 
 /** Base class for plan view data contracts. Anything common goes here. */
@@ -857,7 +865,7 @@ model TeamIterationAttributes {
       ],
     }
   )
-  timeFrame?: "past" | "current" | "future";
+  timeFrame?: "past" | "current" | "future" | string;
 }
 
 /** Represents capacity for a specific team member */
@@ -892,7 +900,7 @@ model TeamSetting {
       ],
     }
   )
-  bugsBehavior?: "off" | "asRequirements" | "asTasks";
+  bugsBehavior?: "off" | "asRequirements" | "asTasks" | string;
 
   defaultIteration?: TeamSettingsIteration;
 
@@ -907,7 +915,8 @@ model TeamSetting {
     | "wednesday"
     | "thursday"
     | "friday"
-    | "saturday")[];
+    | "saturday"
+    | string)[];
 }
 
 /** Base class for TeamSettings data contracts. Anything common goes here. */
@@ -957,7 +966,7 @@ model TeamSettingsPatch {
       ],
     }
   )
-  bugsBehavior?: "off" | "asRequirements" | "asTasks";
+  bugsBehavior?: "off" | "asRequirements" | "asTasks" | string;
   @format("uuid") defaultIteration?: string;
   defaultIterationMacro?: string;
   workingDays?: (
@@ -967,7 +976,8 @@ model TeamSettingsPatch {
     | "wednesday"
     | "thursday"
     | "friday"
-    | "saturday")[];
+    | "saturday"
+    | string)[];
 }
 
 model TimelineCriteriaStatus {
@@ -983,7 +993,7 @@ model TimelineCriteriaStatus {
       ],
     }
   )
-  type?: "ok" | "invalidFilterClause" | "unknown";
+  type?: "ok" | "invalidFilterClause" | "unknown" | string;
 }
 
 model TimelineIterationStatus {
@@ -1001,7 +1011,7 @@ model TimelineIterationStatus {
       ],
     }
   )
-  type?: "ok" | "isOverlapping";
+  type?: "ok" | "isOverlapping" | string;
 }
 
 model TimelineTeamData {
@@ -1121,7 +1131,8 @@ model TimelineTeamStatus {
     | "maxTeamFieldsExceeded"
     | "backlogInError"
     | "missingTeamFieldValue"
-    | "noIterationsExist";
+    | "noIterationsExist"
+    | string;
 }
 
 model UpdatePlan {
@@ -1142,7 +1153,7 @@ model UpdatePlan {
     "x-ms-enum",
     #{ name: "PlanType", values: #[#{ value: "deliveryTimelineView", description: "" }] }
   )
-  type?: "deliveryTimelineView";
+  type?: "deliveryTimelineView" | string;
 }
 
 model UpdateTaskboardColumn {
@@ -1188,7 +1199,7 @@ model WorkItem {
   id?: int32;
 
   /** Dictionary describing the Format for multiline fields selected by the last edit user. */
-  multilineFieldsFormat?: Record<"markdown" | "html">;
+  multilineFieldsFormat?: Record<"markdown" | "html" | string>;
 
   /** Relations of the work item. */
   relations?: WorkItemRelation[];

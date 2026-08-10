@@ -43,7 +43,7 @@ model Consumer {
       ],
     }
   )
-  authenticationType?: "none" | "oAuth" | "external";
+  authenticationType?: "none" | "oAuth" | "external" | string;
 
   /** Gets or sets this consumer's localized description. */
   description?: string;
@@ -261,7 +261,8 @@ model InputDescriptor {
     | "combo"
     | "radioButtons"
     | "checkBox"
-    | "textArea";
+    | "textArea"
+    | string;
 
   /** Gets whether this input is confidential, such as for a password or application key */
   isConfidential?: boolean;
@@ -311,7 +312,7 @@ model InputFilterCondition {
       values: #[#{ value: "equals", description: "" }, #{ value: "notEquals", description: "" }],
     }
   )
-  operator?: "equals" | "notEquals";
+  operator?: "equals" | "notEquals" | string;
 }
 
 /** Describes what values are valid for a subscription input */
@@ -331,7 +332,7 @@ model InputValidation {
       ],
     }
   )
-  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri";
+  dataType?: "none" | "string" | "number" | "boolean" | "guid" | "uri" | string;
 
   /** Gets or sets if this is a required field. */
   isRequired?: boolean;
@@ -444,7 +445,7 @@ model Notification {
       ],
     }
   )
-  result?: "pending" | "succeeded" | "failed" | "filtered";
+  result?: "pending" | "succeeded" | "failed" | "filtered" | string;
 
   /** Status of the notification */
   @extension(
@@ -469,7 +470,7 @@ model Notification {
       ],
     }
   )
-  status?: "queued" | "processing" | "requestInProgress" | "queuedForRetry" | "completed";
+  status?: "queued" | "processing" | "requestInProgress" | "queuedForRetry" | "completed" | string;
 
   /** The subscriber Id associated with this notification. This is the last identity who touched in the subscription. In case of test notifications it can be the tester if the subscription is not created yet. */
   @format("uuid") subscriberId?: string;
@@ -558,7 +559,7 @@ model NotificationResultsSummaryDetail {
       ],
     }
   )
-  result?: "pending" | "succeeded" | "failed" | "filtered";
+  result?: "pending" | "succeeded" | "failed" | "filtered" | string;
 }
 
 /** Defines a query for service hook notifications. */
@@ -603,7 +604,7 @@ model NotificationsQuery {
       ],
     }
   )
-  resultType?: "pending" | "succeeded" | "failed" | "filtered";
+  resultType?: "pending" | "succeeded" | "failed" | "filtered" | string;
 
   /** Optional notification status to filter results to */
   @extension(
@@ -628,7 +629,7 @@ model NotificationsQuery {
       ],
     }
   )
-  status?: "queued" | "processing" | "requestInProgress" | "queuedForRetry" | "completed";
+  status?: "queued" | "processing" | "requestInProgress" | "queuedForRetry" | "completed" | string;
 
   /** Optional list of subscription ids to restrict the results to */
   subscriptionIds?: string[];
@@ -792,7 +793,8 @@ model Subscription {
     | "onProbation"
     | "disabledByUser"
     | "disabledBySystem"
-    | "disabledByInactiveIdentity";
+    | "disabledByInactiveIdentity"
+    | string;
   subscriber?: IdentityRef;
   url?: string;
 }
@@ -826,7 +828,7 @@ model SubscriptionInputValuesQuery {
       ],
     }
   )
-  scope?: "publisher" | "consumer";
+  scope?: "publisher" | "consumer" | string;
 
   subscription?: Subscription;
 }

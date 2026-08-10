@@ -55,7 +55,8 @@ model PermissionsReport {
     | "inProgress"
     | "completedWithErrors"
     | "completedSuccessfully"
-    | "deleted";
+    | "deleted"
+    | string;
   reportStatusLastUpdatedTime?: utcDateTime;
   requestedTime?: utcDateTime;
 
@@ -109,7 +110,7 @@ model PermissionsReportResource {
       ],
     }
   )
-  resourceType?: "repo" | "ref" | "projectGit" | "release" | "tfvc";
+  resourceType?: "repo" | "ref" | "projectGit" | "release" | "tfvc" | string;
 }
 
 /** The class to represent a collection of REST reference links. */

@@ -106,7 +106,8 @@ model AccessTokenResult {
     | "hostAuthorizationNotFound"
     | "hostAuthorizationIsNotValid"
     | "invalidScope"
-    | "globalPatUsageDisabled";
+    | "globalPatUsageDisabled"
+    | string;
   @format("uuid") authorizationId?: string;
   errorDescription?: string;
   hasError?: boolean;
@@ -168,7 +169,8 @@ model AuthorizationDecision {
     | "invalidRedirectUri"
     | "invalidUserId"
     | "invalidUserType"
-    | "accessDenied";
+    | "accessDenied"
+    | string;
   authorizationGrant?: AuthorizationGrant;
   hasError?: boolean;
   isAuthorized?: boolean;
@@ -205,7 +207,8 @@ model AuthorizationDescription {
     | "invalidScope"
     | "redirectUriRequired"
     | "insecureRedirectUri"
-    | "invalidRedirectUri";
+    | "invalidRedirectUri"
+    | string;
   scopeDescriptions?: AuthorizationScopeDescription[];
 }
 
@@ -229,7 +232,7 @@ model AuthorizationGrant {
       ],
     }
   )
-  grantType?: "none" | "jwtBearer" | "refreshToken" | "implicit" | "clientCredentials";
+  grantType?: "none" | "jwtBearer" | "refreshToken" | "implicit" | "clientCredentials" | string;
 }
 
 model AuthorizationScopeDescription {
@@ -269,7 +272,8 @@ model HostAuthorizationDecision {
     | "mediumTrust"
     | "highTrust"
     | "fullTrust"
-    | "application";
+    | "application"
+    | string;
   hasError?: boolean;
   @extension(
     "x-ms-enum",
@@ -291,7 +295,8 @@ model HostAuthorizationDecision {
     | "accessDenied"
     | "failedToAuthorizeHost"
     | "clientIdNotFound"
-    | "invalidClientId";
+    | "invalidClientId"
+    | string;
   @format("uuid") hostAuthorizationId?: string;
   @format("uuid") registrationId?: string;
   registrationName?: string;
@@ -352,7 +357,8 @@ model Registration {
     | "mediumTrust"
     | "highTrust"
     | "fullTrust"
-    | "application";
+    | "application"
+    | string;
 
   /** Identity Id of the owner of the ADO OAuth App Registration */
   @format("uuid") identityId?: string;

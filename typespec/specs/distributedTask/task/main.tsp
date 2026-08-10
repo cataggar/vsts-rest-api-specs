@@ -58,7 +58,8 @@ model DynamicPipelineJob {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
   @extension(
     "x-ms-enum",
     #{
@@ -70,7 +71,7 @@ model DynamicPipelineJob {
       ],
     }
   )
-  state?: "pending" | "inProgress" | "completed";
+  state?: "pending" | "inProgress" | "completed" | string;
 }
 
 /** Response for <c>dynamicpipelines/{planId}/logs/{logId}</c>. Carries the log content plus the task-level Issues the agent raised while running tasks that wrote to this log. Job-level (orchestration) issues are intentionally not included here — consumers care about what the tasks themselves reported, not the surrounding plan plumbing. */
@@ -118,7 +119,8 @@ model DynamicPipelinePlanStatus {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
   resultCode?: string;
   startTime?: utcDateTime;
   @extension(
@@ -133,7 +135,7 @@ model DynamicPipelinePlanStatus {
       ],
     }
   )
-  state?: "inProgress" | "queued" | "completed" | "throttled";
+  state?: "inProgress" | "queued" | "completed" | "throttled" | string;
 }
 
 /** An issue (error, warning) associated with a pipeline run. */
@@ -155,7 +157,7 @@ model Issue {
       values: #[#{ value: "error", description: "" }, #{ value: "warning", description: "" }],
     }
   )
-  type?: "error" | "warning";
+  type?: "error" | "warning" | string;
 }
 
 /** A pipeline job event to be processed by the execution plan. */
@@ -191,7 +193,7 @@ model MaskHint {
       values: #[#{ value: "variable", description: "" }, #{ value: "regex", description: "" }],
     }
   )
-  type?: "variable" | "regex";
+  type?: "variable" | "regex" | string;
   value?: string;
 }
 
@@ -239,7 +241,7 @@ model TaskAgentJobStep {
       values: #[#{ value: "task", description: "" }, #{ value: "action", description: "" }],
     }
   )
-  type?: "task" | "action";
+  type?: "task" | "action" | string;
 }
 
 model TaskAgentJobTask {
@@ -316,7 +318,7 @@ model TaskOrchestrationItem {
       values: #[#{ value: "container", description: "" }, #{ value: "job", description: "" }],
     }
   )
-  itemType?: "container" | "job";
+  itemType?: "container" | "job" | string;
 }
 
 model TaskOrchestrationOwner {
@@ -358,7 +360,8 @@ model TaskOrchestrationPlan {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
   resultCode?: string;
   startTime?: utcDateTime;
   @extension(
@@ -373,7 +376,7 @@ model TaskOrchestrationPlan {
       ],
     }
   )
-  state?: "inProgress" | "queued" | "completed" | "throttled";
+  state?: "inProgress" | "queued" | "completed" | "throttled" | string;
   timeline?: TimelineReference;
 }
 
@@ -390,7 +393,7 @@ model TaskOrchestrationPlanGroupsQueueMetrics {
       ],
     }
   )
-  status?: "running" | "queued" | "all";
+  status?: "running" | "queued" | "all" | string;
 }
 
 model TaskOrchestrationPlanReference {
@@ -553,7 +556,8 @@ model TimelineRecord {
     | "skipped"
     | "abandoned"
     | "manuallyQueued"
-    | "dependentOnManualQueue";
+    | "dependentOnManualQueue"
+    | string;
 
   /** Evaluation of predefined conditions upon completion of record's operation. <br />Example: Evaluating `succeeded()`, Result = True <br />Example: Evaluating `and(succeeded(), eq(variables['system.debug'], False))`, Result = False */
   resultCode?: string;
@@ -573,7 +577,7 @@ model TimelineRecord {
       ],
     }
   )
-  state?: "pending" | "inProgress" | "completed";
+  state?: "pending" | "inProgress" | "completed" | string;
 
   task?: TaskReference;
 

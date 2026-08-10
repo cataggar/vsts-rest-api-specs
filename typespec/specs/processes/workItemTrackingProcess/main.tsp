@@ -185,7 +185,8 @@ model FieldModel {
     | "identity"
     | "picklistInteger"
     | "picklistString"
-    | "picklistDouble";
+    | "picklistDouble"
+    | string;
   url?: string;
 }
 
@@ -286,7 +287,7 @@ model Page {
       ],
     }
   )
-  pageType?: "custom" | "history" | "links" | "attachments";
+  pageType?: "custom" | "history" | "links" | "attachments" | string;
 
   /** The sections of the page. */
   sections?: Section[];
@@ -347,7 +348,7 @@ model ProcessBehavior {
       ],
     }
   )
-  customization?: "system" | "inherited" | "custom";
+  customization?: "system" | "inherited" | "custom" | string;
 
   /** . Description */
   description?: string;
@@ -438,7 +439,7 @@ model ProcessInfo {
       ],
     }
   )
-  customizationType?: "system" | "inherited" | "custom";
+  customizationType?: "system" | "inherited" | "custom" | string;
 
   /** Description of the process. */
   description?: string;
@@ -498,7 +499,7 @@ model ProcessProperties {
       ],
     }
   )
-  class?: "system" | "derived" | "custom";
+  class?: "system" | "derived" | "custom" | string;
 
   /** Is the process default process. */
   isDefault?: boolean;
@@ -538,7 +539,7 @@ model ProcessRule {
       ],
     }
   )
-  customizationType?: "system" | "inherited" | "custom";
+  customizationType?: "system" | "inherited" | "custom" | string;
 
   /** Id to uniquely identify the rule. */
   @format("uuid") id?: string;
@@ -575,7 +576,7 @@ model ProcessWorkItemType {
       ],
     }
   )
-  customization?: "system" | "inherited" | "custom";
+  customization?: "system" | "inherited" | "custom" | string;
 
   /** Description of the work item type */
   description?: string;
@@ -632,7 +633,7 @@ model ProcessWorkItemTypeField {
       ],
     }
   )
-  customization?: "system" | "inherited" | "custom";
+  customization?: "system" | "inherited" | "custom" | string;
 
   /** The default value of the field. */
   defaultValue?: {};
@@ -692,7 +693,8 @@ model ProcessWorkItemTypeField {
     | "identity"
     | "picklistInteger"
     | "picklistString"
-    | "picklistDouble";
+    | "picklistDouble"
+    | string;
 
   /** Resource URL of the field. */
   url?: string;
@@ -793,7 +795,8 @@ model RuleAction {
     | "copyFromServerClock"
     | "copyFromServerCurrentUser"
     | "hideTargetField"
-    | "disallowValue";
+    | "disallowValue"
+    | string;
 
   /** Field on which the action should be taken. */
   targetField?: string;
@@ -865,7 +868,8 @@ model RuleCondition {
     | "whenValueIsDefined"
     | "whenValueIsNotDefined"
     | "whenCurrentUserIsMemberOfGroup"
-    | "whenCurrentUserIsNotMemberOfGroup";
+    | "whenCurrentUserIsNotMemberOfGroup"
+    | string;
 
   /** Field that defines condition. */
   field?: string;
@@ -1045,7 +1049,7 @@ model WorkItemStateResultModel {
       ],
     }
   )
-  customizationType?: "system" | "inherited" | "custom";
+  customizationType?: "system" | "inherited" | "custom" | string;
 
   /** If the Work item state is hidden. */
   hidden?: boolean;
@@ -1093,7 +1097,7 @@ model WorkItemTypeModel {
       ],
     }
   )
-  class?: "system" | "derived" | "custom";
+  class?: "system" | "derived" | "custom" | string;
   color?: string;
   description?: string;
   icon?: string;

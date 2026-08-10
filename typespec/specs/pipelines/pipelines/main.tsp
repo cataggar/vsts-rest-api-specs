@@ -79,7 +79,7 @@ model CreatePipelineConfigurationParameters {
       ],
     }
   )
-  type?: "unknown" | "yaml" | "designerJson" | "justInTime" | "designerHyphenJson";
+  type?: "unknown" | "yaml" | "designerJson" | "justInTime" | "designerHyphenJson" | string;
 }
 
 /** Parameters to create a pipeline. */
@@ -164,7 +164,7 @@ model PipelineConfiguration {
       ],
     }
   )
-  type?: "unknown" | "yaml" | "designerJson" | "justInTime" | "designerHyphenJson";
+  type?: "unknown" | "yaml" | "designerJson" | "justInTime" | "designerHyphenJson" | string;
 }
 
 /** A reference to a Pipeline. */
@@ -214,7 +214,8 @@ model Repository {
     | "azureReposGit"
     | "gitHubEnterprise"
     | "bitBucket"
-    | "azureReposGitHyphenated";
+    | "azureReposGitHyphenated"
+    | string;
 }
 
 model RepositoryResource {
@@ -255,7 +256,7 @@ model Run {
       ],
     }
   )
-  result?: "unknown" | "succeeded" | "failed" | "canceled";
+  result?: "unknown" | "succeeded" | "failed" | "canceled" | string;
   @extension(
     "x-ms-enum",
     #{
@@ -268,7 +269,7 @@ model Run {
       ],
     }
   )
-  state?: "unknown" | "inProgress" | "canceling" | "completed";
+  state?: "unknown" | "inProgress" | "canceling" | "completed" | string;
   tags?: string[];
   templateParameters?: Record<{}>;
   url?: string;

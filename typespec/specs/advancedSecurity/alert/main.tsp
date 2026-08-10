@@ -53,7 +53,7 @@ model Alert {
       ],
     }
   )
-  alertType?: "unknown" | "dependency" | "secret" | "code";
+  alertType?: "unknown" | "dependency" | "secret" | "code" | string;
 
   /** Confidence level of the alert. */
   @extension(
@@ -66,7 +66,7 @@ model Alert {
       ],
     }
   )
-  confidence?: "high" | "other";
+  confidence?: "high" | "other" | string;
 
   dismissal?: Dismissal;
 
@@ -126,7 +126,16 @@ model Alert {
       ],
     }
   )
-  severity?: "low" | "medium" | "high" | "critical" | "note" | "warning" | "error" | "undefined";
+  severity?:
+    | "low"
+    | "medium"
+    | "high"
+    | "critical"
+    | "note"
+    | "warning"
+    | "error"
+    | "undefined"
+    | string;
 
   /** This value is computed and returned by the service. It is a value based on the results from all analysis configurations. */
   @extension(
@@ -145,7 +154,7 @@ model Alert {
       ],
     }
   )
-  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed";
+  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string;
 
   /** Title will only be rendered as text and does not support markdown formatting. There is a maximum character limit of 256. */
   title?: string;
@@ -187,7 +196,7 @@ model AlertAnalysisInstance {
       ],
     }
   )
-  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed";
+  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string;
 }
 
 /** Request model for getting alerts by IDs with optional alert type filter. */
@@ -217,7 +226,7 @@ model AlertBatchRequest {
       ],
     }
   )
-  alertType?: "unknown" | "dependency" | "secret" | "code";
+  alertType?: "unknown" | "dependency" | "secret" | "code" | string;
 }
 
 /** Alert metadata. */
@@ -251,7 +260,7 @@ model AlertMetadataBatchRequest {
       ],
     }
   )
-  errorPolicy?: "fail" | "omit";
+  errorPolicy?: "fail" | "omit" | string;
 }
 
 /** Used to represent an update in a relationship between an alert and an artifact. */
@@ -301,7 +310,8 @@ model AlertStateUpdate {
     | "falsePositive"
     | "agreedToGuidance"
     | "toolUpgrade"
-    | "notDistributed";
+    | "notDistributed"
+    | string;
   @extension(
     "x-ms-enum",
     #{
@@ -318,7 +328,7 @@ model AlertStateUpdate {
       ],
     }
   )
-  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed";
+  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string;
 }
 
 /** Represents the count of alerts for a specific alert type. */
@@ -345,7 +355,7 @@ model AlertTypeCount {
       ],
     }
   )
-  alertType?: "unknown" | "dependency" | "secret" | "code";
+  alertType?: "unknown" | "dependency" | "secret" | "code" | string;
 
   /** The number of alerts of this type. Null when scanning is not configured for this alert type. */
   count?: int32;
@@ -378,7 +388,7 @@ model AlertValidityInfo {
       ],
     }
   )
-  validityStatus?: "none" | "unknown" | "active" | "inactive";
+  validityStatus?: "none" | "unknown" | "active" | "inactive" | string;
 }
 
 /** AnalysisConfiguration class models a build definition. */
@@ -405,7 +415,7 @@ model AnalysisConfiguration {
       ],
     }
   )
-  analysisConfigurationType?: "default" | "adoPipeline";
+  analysisConfigurationType?: "default" | "adoPipeline" | string;
 
   /** Name of the tool that ran on this configuration. */
   toolName?: string;
@@ -480,7 +490,7 @@ model AnalysisResult {
       ],
     }
   )
-  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed";
+  state?: "unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string;
 }
 
 /** Payload sent by the autofix pipeline to report the outcome of a run. */
@@ -502,7 +512,7 @@ model AutofixCallbackRequest {
       ],
     }
   )
-  status?: "done" | "failed";
+  status?: "done" | "failed" | string;
 }
 
 /** Represents an autofix request resource. */
@@ -531,7 +541,7 @@ model AutofixRequest {
       ],
     }
   )
-  status?: "none" | "pending" | "pipelineRunning" | "done" | "failed";
+  status?: "none" | "pending" | "pipelineRunning" | "done" | "failed" | string;
 }
 
 model Branch {
@@ -600,7 +610,8 @@ model Dependency {
     | "linux"
     | "conda"
     | "dockerReference"
-    | "vcpkg";
+    | "vcpkg"
+    | string;
 
   /** Version information */
   componentVersion?: string;
@@ -668,7 +679,8 @@ model Dismissal {
     | "falsePositive"
     | "agreedToGuidance"
     | "toolUpgrade"
-    | "notDistributed";
+    | "notDistributed"
+    | string;
 
   /** Informational message attached to the dismissal */
   message?: string;
@@ -759,7 +771,7 @@ model License {
       ],
     }
   )
-  state?: "unknown" | "notHarvested" | "harvested";
+  state?: "unknown" | "notHarvested" | "harvested" | string;
 
   /** License type */
   @extension(
@@ -802,7 +814,8 @@ model License {
     | "strongCopyleft"
     | "networkCopyleft"
     | "other"
-    | "noAssertion";
+    | "noAssertion"
+    | string;
 
   /** Url for license information */
   url?: string;
@@ -830,7 +843,7 @@ model LogicalLocation {
       ],
     }
   )
-  kind?: "unknown" | "rootDependency" | "component" | "vulnerableDependency";
+  kind?: "unknown" | "rootDependency" | "component" | "vulnerableDependency" | string;
 
   license?: License;
 }
@@ -852,7 +865,7 @@ model Metadata {
       ],
     }
   )
-  `op`?: "none" | "add" | "remove";
+  `op`?: "none" | "add" | "remove" | string;
 
   value?: RelationMetadata;
 }
@@ -872,7 +885,7 @@ model MetadataChange {
       ],
     }
   )
-  changeType?: "none" | "created" | "updated" | "deleted";
+  changeType?: "none" | "created" | "updated" | "deleted" | string;
 
   value?: RelationMetadata;
 }
@@ -965,7 +978,7 @@ model Result {
       ],
     }
   )
-  resultType?: "unknown" | "dependency" | "versionControl";
+  resultType?: "unknown" | "dependency" | "versionControl" | string;
 
   /** ID of the rule that the triggered the alert */
   ruleId?: int32;
@@ -990,7 +1003,16 @@ model Result {
       ],
     }
   )
-  severity?: "low" | "medium" | "high" | "critical" | "note" | "warning" | "error" | "undefined";
+  severity?:
+    | "low"
+    | "medium"
+    | "high"
+    | "critical"
+    | "note"
+    | "warning"
+    | "error"
+    | "undefined"
+    | string;
 
   versionControlResult?: VersionControlResult;
 }
@@ -1044,7 +1066,8 @@ model SarifUploadStatus {
     | "completed"
     | "failed"
     | "requeued"
-    | "concurrentProcessing";
+    | "concurrentProcessing"
+    | string;
 }
 
 model SarifValidationError {
@@ -1079,10 +1102,10 @@ model SearchCriteria {
       ],
     }
   )
-  alertType?: "unknown" | "dependency" | "secret" | "code";
+  alertType?: "unknown" | "dependency" | "secret" | "code" | string;
 
   /** If provided, only return alerts at these confidence levels. <br />Both High and Other need to be specified to fetch alerts of all confidence levels. <br />Otherwise, return alerts with high confidence level. <br />Only applicable for secret alerts. */
-  confidenceLevels?: ("high" | "other")[];
+  confidenceLevels?: ("high" | "other" | string)[];
 
   /** If provided, only alerts for this dependency are returned. <br />Otherwise, return alerts for all dependencies. <br />In a sarif submission, a dependency (or a component) is specified in result.RelatedLocations[].logicalLocation. <br />Not applicable for secret alerts. */
   dependencyName?: string;
@@ -1135,10 +1158,11 @@ model SearchCriteria {
     | "note"
     | "warning"
     | "error"
-    | "undefined")[];
+    | "undefined"
+    | string)[];
 
   /** If provided, only return alerts in these states. <br />Otherwise, return alerts in any state. */
-  states?: ("unknown" | "active" | "dismissed" | "fixed" | "autoDismissed")[];
+  states?: ("unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string)[];
 
   /** If provided, only return alerts last seen before this date. <br />Otherwise return all alerts. */
   toDate?: utcDateTime;
@@ -1147,7 +1171,7 @@ model SearchCriteria {
   toolName?: string;
 
   /** If provided, only return alerts with the validity specified here. If the validity status is Unknown, fetch alerts of all validity results. <br />Only applicable for secret alerts. <br />Filtering by validity status may cause less alerts to be returned than requested with TOP parameter. <br />Due to this behavior, the ContinuationToken(<![CDATA[<header name>]]>) in the response header should be relied on to decide if another batch needs to be fetched. */
-  validity?: ("none" | "unknown" | "active" | "inactive")[];
+  validity?: ("none" | "unknown" | "active" | "inactive" | string)[];
 }
 
 /** An Analysis tool that can generate security alerts */
@@ -1167,7 +1191,7 @@ model UxFilters {
   branches?: Branch[];
 
   /** Display alerts for specified confidence levels. Show alerts for all confidence levels. if none are specified. */
-  confidenceLevels?: ("high" | "other")[];
+  confidenceLevels?: ("high" | "other" | string)[];
 
   /** Display alerts for specified licenses. Show alerts for all licenses if none are specified. */
   licenses?: License[];
@@ -1195,16 +1219,17 @@ model UxFilters {
     | "note"
     | "warning"
     | "error"
-    | "undefined")[];
+    | "undefined"
+    | string)[];
 
   /** Display alerts for specified states. Show alerts for all states if none are specified. */
-  states?: ("unknown" | "active" | "dismissed" | "fixed" | "autoDismissed")[];
+  states?: ("unknown" | "active" | "dismissed" | "fixed" | "autoDismissed" | string)[];
 
   /** Display alerts for specified tools. Show alerts for all tools if none are specified. */
   tools?: Tool[];
 
   /** Display alerts for specified validity. Show alerts for all validities if none are specified. */
-  validity?: ("none" | "unknown" | "active" | "inactive")[];
+  validity?: ("none" | "unknown" | "active" | "inactive" | string)[];
 }
 
 model ValidationFingerprint {
@@ -1265,7 +1290,8 @@ model ValidationFingerprint {
     | "notExploitable"
     | "inconclusive"
     | "validationNotSupported"
-    | "transientError";
+    | "transientError"
+    | string;
 }
 
 /** Data associated to a validation request for an alert. Along with the request status, this includes the validity data that is part of Get Alert(s) response. */
@@ -1296,7 +1322,13 @@ model ValidationRequestInfo {
       ],
     }
   )
-  alertValidationRequestStatus?: "none" | "created" | "inProgress" | "completed" | "failed";
+  alertValidationRequestStatus?:
+    | "none"
+    | "created"
+    | "inProgress"
+    | "completed"
+    | "failed"
+    | string;
 }
 
 /** Information for locating files in a source control system */

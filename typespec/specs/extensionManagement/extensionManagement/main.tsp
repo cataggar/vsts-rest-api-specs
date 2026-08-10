@@ -40,7 +40,7 @@ model AcquisitionOperation {
       ],
     }
   )
-  operationState?: "disallow" | "allow" | "completed";
+  operationState?: "disallow" | "allow" | "completed" | string;
 
   /** AcquisitionOperationType: install, request, buy, etc... */
   @extension(
@@ -61,7 +61,15 @@ model AcquisitionOperation {
       ],
     }
   )
-  operationType?: "get" | "install" | "buy" | "try" | "request" | "none" | "purchaseRequest";
+  operationType?:
+    | "get"
+    | "install"
+    | "buy"
+    | "try"
+    | "request"
+    | "none"
+    | "purchaseRequest"
+    | string;
 
   /** Optional reason to justify current state. Typically used with Disallow state. */
   reason?: string;
@@ -247,7 +255,8 @@ model ContributionNodeQuery {
     | "includeChildren"
     | "includeSubTree"
     | "includeAll"
-    | "ignoreConstraints";
+    | "ignoreConstraints"
+    | string;
 }
 
 /** Result of a contribution node query. Wraps the resulting contribution nodes and provider details. */
@@ -304,7 +313,8 @@ model ContributionPropertyDescription {
     | "dateTime"
     | "dictionary"
     | "array"
-    | "object";
+    | "object"
+    | string;
 }
 
 model ContributionProviderDetails {
@@ -401,7 +411,7 @@ model ExtensionAcquisitionRequest {
       ],
     }
   )
-  assignmentType?: "none" | "me" | "all";
+  assignmentType?: "none" | "me" | "all" | string;
 
   /** The id of the subscription used for purchase */
   billingId?: string;
@@ -428,7 +438,15 @@ model ExtensionAcquisitionRequest {
       ],
     }
   )
-  operationType?: "get" | "install" | "buy" | "try" | "request" | "none" | "purchaseRequest";
+  operationType?:
+    | "get"
+    | "install"
+    | "buy"
+    | "try"
+    | "request"
+    | "none"
+    | "purchaseRequest"
+    | string;
 
   properties?: JObject;
 
@@ -527,7 +545,8 @@ model ExtensionEvent {
     | "disabled"
     | "versionUpdated"
     | "actionRequired"
-    | "actionResolved";
+    | "actionResolved"
+    | string;
 }
 
 /** Base class for an event callback for an extension */
@@ -641,7 +660,7 @@ model ExtensionPolicy {
       ],
     }
   )
-  install?: "none" | "private" | "public" | "preview" | "released" | "firstParty" | "all";
+  install?: "none" | "private" | "public" | "preview" | "released" | "firstParty" | "all" | string;
 
   /** Permission on 'Request' operation */
   @extension(
@@ -659,7 +678,7 @@ model ExtensionPolicy {
       ],
     }
   )
-  request?: "none" | "private" | "public" | "preview" | "released" | "firstParty" | "all";
+  request?: "none" | "private" | "public" | "preview" | "released" | "firstParty" | "all" | string;
 }
 
 /** A request for an extension (to be installed or have a license assigned) */
@@ -693,7 +712,7 @@ model ExtensionRequest {
       ],
     }
   )
-  requestState?: "open" | "accepted" | "rejected";
+  requestState?: "open" | "accepted" | "rejected" | string;
 
   /** Date at which the request was resolved */
   resolveDate?: utcDateTime;
@@ -724,7 +743,7 @@ model ExtensionRequestEvent {
       ],
     }
   )
-  updateType?: "created" | "approved" | "rejected" | "deleted";
+  updateType?: "created" | "approved" | "rejected" | "deleted" | string;
 }
 
 model ExtensionRequestsEvent {
@@ -748,7 +767,7 @@ model ExtensionRequestsEvent {
       ],
     }
   )
-  updateType?: "created" | "approved" | "rejected" | "deleted";
+  updateType?: "created" | "approved" | "rejected" | "deleted" | string;
 }
 
 model ExtensionRequestUrls {
@@ -813,7 +832,7 @@ model ExtensionVersion {
       ],
     }
   )
-  flags?: "none" | "validated" | "prerelease" | "deleted";
+  flags?: "none" | "validated" | "prerelease" | "deleted" | string;
   lastUpdated?: utcDateTime;
   properties?: {}[];
   targetPlatform?: string;
@@ -899,7 +918,7 @@ model InstalledExtension {
       ],
     }
   )
-  flags?: "builtIn" | "trusted";
+  flags?: "builtIn" | "trusted" | string;
 
   installState?: InstalledExtensionState;
 
@@ -977,7 +996,8 @@ model InstalledExtensionState {
     | "needsReauthorization"
     | "autoUpgradeError"
     | "warning"
-    | "unpublished";
+    | "unpublished"
+    | string;
 
   /** List of installation issues */
   installationIssues?: InstalledExtensionStateIssue[];
@@ -1011,7 +1031,7 @@ model InstalledExtensionStateIssue {
       ],
     }
   )
-  type?: "warning" | "error";
+  type?: "warning" | "error" | string;
 }
 
 /** Represents a JSON object. */
@@ -1045,7 +1065,7 @@ model LicensingOverride {
       ],
     }
   )
-  behavior?: "onlyIfLicensed" | "onlyIfUnlicensed" | "alwaysInclude";
+  behavior?: "onlyIfLicensed" | "onlyIfUnlicensed" | "alwaysInclude" | string;
 
   /** Fully qualified contribution id which we want to define licensing behavior for */
   id?: string;
@@ -1065,7 +1085,7 @@ model PublishedExtension {
       ],
     }
   )
-  deploymentType?: "exe" | "msi" | "vsix" | "referralLink";
+  deploymentType?: "exe" | "msi" | "vsix" | "referralLink" | string;
   displayName?: string;
   @format("uuid") extensionId?: string;
   extensionName?: string;
@@ -1149,7 +1169,8 @@ model PublishedExtension {
     | "trial"
     | "locked"
     | "hidden"
-    | "deleted";
+    | "deleted"
+    | string;
   installationTargets?: InstallationTarget[];
   lastUpdated?: utcDateTime;
   longDescription?: string;
@@ -1205,7 +1226,7 @@ model PublisherFacts {
       ],
     }
   )
-  flags?: "unChanged" | "none" | "disabled" | "verified" | "certified" | "serviceFlags";
+  flags?: "unChanged" | "none" | "disabled" | "verified" | "certified" | "serviceFlags" | string;
   isDomainVerified?: boolean;
   @format("uuid") publisherId?: string;
   publisherName?: string;

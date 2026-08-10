@@ -46,7 +46,7 @@ model AuditActionInfo {
       ],
     }
   )
-  category?: "unknown" | "modify" | "remove" | "create" | "access" | "execute";
+  category?: "unknown" | "modify" | "remove" | "create" | "access" | "execute" | string;
 }
 
 model AuditLogEntry {
@@ -103,7 +103,7 @@ model AuditLogEntry {
       ],
     }
   )
-  scopeType?: "unknown" | "deployment" | "enterprise" | "organization" | "project";
+  scopeType?: "unknown" | "deployment" | "enterprise" | "organization" | "project" | string;
 
   /** The time when the event occurred in UTC */
   timestamp?: utcDateTime;
@@ -162,7 +162,8 @@ model AuditStream {
     | "disabledByUser"
     | "disabledBySystem"
     | "deleted"
-    | "backfilling";
+    | "backfilling"
+    | string;
 
   /** Reason for the current stream status, i.e. Disabled by the system, Invalid credentials, etc. */
   statusReason?: string;
@@ -217,7 +218,7 @@ model DecoratedAuditLogEntry {
       ],
     }
   )
-  category?: "unknown" | "modify" | "remove" | "create" | "access" | "execute";
+  category?: "unknown" | "modify" | "remove" | "create" | "access" | "execute" | string;
 
   /** DisplayName of the category */
   categoryDisplayName?: string;
@@ -263,7 +264,7 @@ model DecoratedAuditLogEntry {
       ],
     }
   )
-  scopeType?: "unknown" | "deployment" | "enterprise" | "organization" | "project";
+  scopeType?: "unknown" | "deployment" | "enterprise" | "organization" | "project" | string;
 
   /** The time when the event occurred in UTC */
   timestamp?: utcDateTime;
